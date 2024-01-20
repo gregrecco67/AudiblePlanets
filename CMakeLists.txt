@@ -1,0 +1,135 @@
+cmake_minimum_required(VERSION 3.26)
+project(AudiblePlanets)
+set_property (DIRECTORY APPEND PROPERTY LABELS ${PROJECT_NAME})
+
+
+add_subdirectory(JUCE)
+add_subdirectory("modules/melatonin_blur")
+
+foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_simd)
+	juce_add_module (
+		"${CMAKE_CURRENT_LIST_DIR}/modules/gin/modules/${module_name}"
+		)
+
+	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
+endforeach()
+
+juce_add_plugin (${PROJECT_NAME}
+				PRODUCT_NAME "Audible Planets" 
+				VERSION 0.1.0
+				COMPANY_NAME "Void-Star"
+				COMPANY_WEBSITE "https://void-star.com/"
+				FORMATS "VST3" "AU" "Standalone" 
+				BUNDLE_ID com.void-star.audible-planets
+				DESCRIPTION "An expressive, quasi-Ptolemaic semi-modular synthesizer."
+				PLUGIN_MANUFACTURER_CODE "Vdst"
+				PLUGIN_CODE "APts" 
+				AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
+				IS_SYNTH TRUE
+				NEEDS_MIDI_INPUT TRUE
+				NEEDS_MIDI_OUTPUT FALSE
+				COPY_PLUGIN_AFTER_BUILD TRUE
+			)
+
+if (APPLE)
+	target_compile_options(${PROJECT_NAME} PRIVATE 
+			-Wall -Wstrict-aliasing -Wunused-parameter -Wconditional-uninitialized -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wbool-conversion -Wextra-semi 
+			-Wunreachable-code -Winconsistent-missing-destructor-override -Wshift-sign-overflow -Wnullable-to-nonnull-conversion -Wuninitialized -Wno-missing-field-initializers 
+			-Wno-ignored-qualifiers -Wno-missing-braces -Wno-char-subscripts -Wno-unused-private-field -fno-aligned-allocation -Wunused-private-field -Wunreachable-code 
+			-Wenum-compare -Wshadow -Wfloat-conversion -Wshadow-uncaptured-local -Wshadow-field -Wsign-compare -Wdeprecated-this-capture -Wimplicit-float-conversion 
+			-ffast-math -fno-finite-math-only -Wfloat-equal
+			"$<$<CONFIG:RELEASE>:-Werror>"
+		)
+endif ()
+
+# Binary Data
+
+set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
+
+juce_add_binary_data (Synth_Assets SOURCES
+						"./Resources/layout.json")
+
+file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.h)
+
+target_sources (${PROJECT_NAME} PRIVATE ${source_files})
+source_group (TREE ${CMAKE_CURRENT_SOURCE_DIR}/Source PREFIX Source FILES ${source_files})
+
+file(GLOB_RECURSE AssetFiles CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.png"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.svg"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.otf"
+)
+
+juce_add_binary_data(Assets SOURCES ${AssetFiles})
+
+# Required for Linux happiness:
+set_target_properties(Assets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS YES)
+
+
+target_link_libraries (${PROJECT_NAME} PRIVATE
+						Synth_Assets
+
+						gin
+						gin_graphics
+						gin_gui
+						gin_dsp
+						gin_plugin
+						gin_simd
+
+						juce::juce_cryptography
+						juce::juce_data_structures
+						juce::juce_events
+						juce::juce_graphics
+						juce::juce_gui_basics
+						juce::juce_gui_extra
+						juce::juce_core
+						juce::juce_audio_basics
+
+
+
+						$<$<PLATFORM_ID:Linux>:curl>
+
+					PUBLIC
+						Assets
+						juce::juce_recommended_config_flags
+					)
+
+if (APPLE)
+	set_target_properties(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO")
+endif()
+
+if (WIN32)
+	target_compile_options(${PROJECT_NAME} PRIVATE -wd4996 -wd4458)
+endif()
+
+juce_generate_juce_header (${PROJECT_NAME})
+
+get_property (debug_configs GLOBAL PROPERTY DEBUG_CONFIGURATIONS)
+
+if (NOT debug_configs)
+    set (debug_configs Debug)
+endif ()
+
+set (config_is_debug "$<IN_LIST:$<CONFIG>,${debug_configs}>")
+set (config_is_release "$<NOT:${config_is_debug}>")
+
+target_compile_definitions (${PROJECT_NAME} PRIVATE 
+								JUCE_DISPLAY_SPLASH_SCREEN=0
+								JUCE_MODAL_LOOPS_PERMITTED=1
+								JUCE_COREGRAPHICS_DRAW_ASYNC=1
+								JUCE_VST3_CAN_REPLACE_VST2=0
+								JUCE_WEB_BROWSER=0
+								JUCE_SILENCE_XCODE_15_LINKER_WARNING=1
+							)
+
+if (APPLE)
+	set_target_properties(${PROJECT_NAME} PROPERTIES
+			XCODE_ATTRIBUTE_DEPLOYMENT_POSTPROCESSING[variant=Release] YES
+			XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH[variant=Debug] "YES"
+			)
+endif()
