@@ -213,7 +213,7 @@ public:
         addControl (new gin::Switch (proc.globalParams.legato), 1, 1);
         addControl (new gin::Switch (proc.globalParams.mono), 2, 1);
 
-        setSize (168, 163);
+        //setSize (168, 163);
     }
 
     APAudioProcessor& proc;

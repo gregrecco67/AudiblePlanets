@@ -195,7 +195,7 @@ void APAudioProcessor::DelayParams::setup (APAudioProcessor& p)
 }
 
 //==============================================================================
-APAudioProcessor::APAudioProcessor() : gin::Processor(false)
+APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true), false)
 {
     enableLegacyMode();
     setVoiceStealingEnabled (true);
