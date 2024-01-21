@@ -82,17 +82,6 @@ public:
         JUCE_DECLARE_NON_COPYABLE(ADSRParams)
     };
 
-    //struct EnvelopeParams
-    //{
-    //    EnvelopeParams() = default;
-
-    //    gin::Parameter::Ptr attack, decay, sustain, release, velocityTracking;
-
-    //    void setup (APAudioProcessor& p, juce::String num);
-
-    //    JUCE_DECLARE_NON_COPYABLE (EnvelopeParams)
-    //};
-
     // Global Params
     struct GlobalParams
     {
@@ -106,36 +95,31 @@ public:
     };
 
     //==============================================================================
-    gin::ModSrcId modSrcPressure, modSrcTimbre, modScrPitchBend, modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
-        modSrcNote, modSrcVelocity, modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4,
-        modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4;
+    gin::ModSrcId modSrcPressure, modSrcTimbre, modScrPitchBend, modSrcLFO1,
+        modSrcNote, modSrcVelocity, modSrcMonoLFO1,
+        modSrcEnv1;
 
     //==============================================================================
 
-    OSCParams osc1Params, osc2Params, osc3Params, osc4Params;
-    LFOParams lfo1Params, lfo2Params, lfo3Params, lfo4Params;
-
-    //    EnvelopeParams env1Params, env2Params, env3Params, env4Params;
-    ADSRParams env1Params, env2Params, env3Params, env4Params;
+    OSCParams osc1Params; //, osc2Params, osc3Params, osc4Params;
+    LFOParams lfo1Params; //, lfo2Params, lfo3Params, lfo4Params;
+    ADSRParams env1Params; //, env2Params, env3Params, env4Params;
+    
     FilterParams filterParams;
 
     GlobalParams globalParams;
 
+    
     //==============================================================================
     gin::StereoDelay stereoDelay{ 120.1 };
     gin::GainProcessor outputGain;
-
 
     gin::BandLimitedLookupTables analogTables;
 
     //==============================================================================
     gin::ModMatrix modMatrix;
 
-    gin::LFO lfo1, lfo2, lfo3, lfo4;
-    std::array<gin::LFO, 4> monoLFOs{lfo1, lfo2, lfo3, lfo4};
-    std::array<gin::ModSrcId, 4> monoLFOIds{modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4};
-    std::array<gin::ModSrcId, 4> lfoIds{modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4};
-
+    gin::LFO lfo1; //, lfo2, lfo3, lfo4;
     juce::AudioPlayHead* playhead = nullptr;
     bool presetLoaded = false;
 

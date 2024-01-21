@@ -7,11 +7,11 @@
 class OscillatorBox : public gin::ParamBox
 {
 public:
-    OscillatorBox (const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::OSCParams& params)
+    OscillatorBox (const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::OSCParams& oscparams)
         : gin::ParamBox (name), proc (proc_)
     {
-        setName ( name.toUpperCase() );
-        auto& osc = params;
+        setName ( name );
+        auto& osc = oscparams;
 
         addControl (new gin::Knob (osc.coarse), 1, 0);
         addControl (new gin::Knob (osc.fine, true), 2, 0);
@@ -36,12 +36,12 @@ public:
 class ADSRBox : public gin::ParamBox
 {
 public:
-    ADSRBox (const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::ADSRParams& params)
+    ADSRBox (const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::ADSRParams& envparams)
         : gin::ParamBox (name), proc (proc_)
     {
         setName ( name.toUpperCase() );
 
-        auto& preset = params;
+        auto& preset = envparams;
 
         adsr = new gin::ADSRComponent ();
         adsr->setParams (preset.attack, preset.decay, preset.sustain, preset.release);

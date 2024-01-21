@@ -4,7 +4,7 @@
 //==============================================================================
 SynthVoice::SynthVoice (APAudioProcessor& p)
     : proc (p)
-    , osc1 (proc.analogTables, 4), osc2 (proc.analogTables, 4), osc3 (proc.analogTables, 4), osc4 (proc.analogTables, 4)
+    , osc1 (proc.analogTables, 4)
 {
     filter.setNumChannels (2);
 }
@@ -35,29 +35,18 @@ void SynthVoice::noteStarted()
     filter.reset();
 
 	lfo1.reset();
-	lfo2.reset();
-	lfo3.reset();
-	lfo4.reset();
 
     updateParams (0);
     snapParams();
-    //updateParams (0);
-    //snapParams();
+    updateParams (0);
+    snapParams();
     //
 	osc1.noteOn();
-	osc2.noteOn();
-	osc3.noteOn();
-	osc4.noteOn();
 
 
 	env1.reset();
-	env2.reset();
-	env3.reset();
-	env4.reset();
 	env1.noteOn();
-	env2.noteOn();
-	env3.noteOn();
-	env4.noteOn();
+	
 }
 
 void SynthVoice::noteRetriggered()
@@ -81,21 +70,12 @@ void SynthVoice::noteRetriggered()
     updateParams (0);
 
 	osc1.noteOn();
-	osc2.noteOn();
-	osc3.noteOn();
-	osc4.noteOn();
 	env1.noteOn();
-	env2.noteOn();
-	env3.noteOn();
-	env4.noteOn();
 }
 
 void SynthVoice::noteStopped (bool allowTailOff)
 {
 	env1.noteOff();
-	env2.noteOff();
-	env3.noteOff();
-	env4.noteOff();
 
     if (! allowTailOff)
     {
@@ -121,22 +101,13 @@ void SynthVoice::setCurrentSampleRate (double newRate)
     MPESynthesiserVoice::setCurrentSampleRate (newRate);
 
 	osc1.setSampleRate(newRate);
-	osc2.setSampleRate(newRate);
-	osc3.setSampleRate(newRate);
-	osc4.setSampleRate(newRate);
 
 	filter.setSampleRate(newRate);
 
 	lfo1.setSampleRate(newRate);
-	lfo2.setSampleRate(newRate);
-	lfo3.setSampleRate(newRate);
-	lfo4.setSampleRate(newRate);
 
 	noteSmoother.setSampleRate(newRate);
 	env1.setSampleRate(newRate);
-	env2.setSampleRate(newRate);
-	env3.setSampleRate(newRate);
-	env4.setSampleRate(newRate);
 }
 
 void SynthVoice::renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
@@ -145,17 +116,11 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int st
 
 	// Run OSC
 	gin::ScratchBuffer osc1buffer(2, numSamples);
-	gin::ScratchBuffer osc2buffer(2, numSamples);
-	gin::ScratchBuffer osc3buffer(2, numSamples);
-	gin::ScratchBuffer osc4buffer(2, numSamples);
 
 
 
 
 	osc1.processAdding(currentMidiNote, osc1Params, osc1buffer);
-	osc2.processAdding(currentMidiNote, osc2Params, osc2buffer);
-	osc3.processAdding(currentMidiNote, osc3Params, osc3buffer);
-	osc4.processAdding(currentMidiNote, osc4Params, osc4buffer);
 
     // Apply velocity
     float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();

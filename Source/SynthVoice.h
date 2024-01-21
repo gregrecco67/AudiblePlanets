@@ -33,13 +33,13 @@ private:
 
     APAudioProcessor& proc;
 
-    gin::BLLTVoicedStereoOscillator osc1, osc2, osc3, osc4;
+    gin::BLLTVoicedStereoOscillator osc1;
 
     gin::Filter filter;
     
-    gin::LFO lfo1, lfo2, lfo3, lfo4;
+    gin::LFO lfo1;
 
-    gin::AnalogADSR env1, env2, env3, env4;
+    gin::AnalogADSR env1;
 
     float currentMidiNote;
     gin::VoicedStereoOscillatorParams osc1Params, osc2Params, osc3Params, osc4Params;

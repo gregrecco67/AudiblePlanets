@@ -206,18 +206,9 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutp
     setupModMatrix();
 
 	osc1Params.setup(*this, String{ "1" });
-	osc2Params.setup(*this, String{ "2" });
-	osc3Params.setup(*this, String{ "3" });
-	osc4Params.setup(*this, String{ "4" });
 	filterParams.setup(*this);
 	lfo1Params.setup(*this, String{ "1" });
-	lfo2Params.setup(*this, String{ "2" });
-	lfo3Params.setup(*this, String{ "3" });
-	lfo4Params.setup(*this, String{ "4" });
 	env1Params.setup(*this, String{ "1" });
-	env2Params.setup(*this, String{ "2" });
-	env3Params.setup(*this, String{ "3" });
-	env4Params.setup(*this, String{ "4" });
     globalParams.setup (*this);
 
     init();
@@ -240,17 +231,8 @@ void APAudioProcessor::setupModMatrix()
 
     modSrcMonoLFO1   = modMatrix.addMonoModSource ("mlfo1", "mLFO1", true);
     modSrcLFO1       = modMatrix.addPolyModSource ("lfo1", "LFO1", true);
-    modSrcMonoLFO2   = modMatrix.addMonoModSource ("mlfo2", "mLFO2", true);
-    modSrcLFO2       = modMatrix.addPolyModSource ("lfo2", "LFO2", true);
-    modSrcMonoLFO3   = modMatrix.addMonoModSource ("mlfo3", "mLFO3", true);
-    modSrcLFO3       = modMatrix.addPolyModSource ("lfo3", "LFO3", true);
-    modSrcMonoLFO4   = modMatrix.addMonoModSource ("mlfo4", "mLFO4", true);
-    modSrcLFO4       = modMatrix.addPolyModSource ("lfo4", "LFO4", true);
 
     modSrcEnv1 	 = modMatrix.addPolyModSource ("env1", "Env1", true);
-    modSrcEnv2 	 = modMatrix.addPolyModSource ("env2", "Env2", true);
-    modSrcEnv3 	 = modMatrix.addPolyModSource ("env3", "Env3", true);
-    modSrcEnv4 	 = modMatrix.addPolyModSource ("env4", "Env4", true);
     
     auto firstMonoParam = globalParams.mono;
     bool polyParam = true;
@@ -270,11 +252,7 @@ void APAudioProcessor::reset()
 {
     Processor::reset();
 
-    stereoDelay.reset();
     lfo1.reset();
-    lfo2.reset();
-    lfo3.reset();
-    lfo4.reset();
 }
 
 void APAudioProcessor::prepareToPlay (double newSampleRate, int newSamplesPerBlock)
@@ -287,9 +265,6 @@ void APAudioProcessor::prepareToPlay (double newSampleRate, int newSamplesPerBlo
 
     stereoDelay.setSampleRate (newSampleRate);
     lfo1.setSampleRate (newSampleRate);
-    lfo2.setSampleRate (newSampleRate);
-    lfo3.setSampleRate (newSampleRate);
-    lfo4.setSampleRate (newSampleRate);
 
     analogTables.setSampleRate (newSampleRate);
 }
@@ -402,7 +377,7 @@ void APAudioProcessor::updateParams (int newBlockSize)
  //   }
 
     // Output gain
-    outputGain.setGain (modMatrix.getValue (globalParams.level));
+    //outputGain.setGain (modMatrix.getValue (globalParams.level));
 }
 
 void APAudioProcessor::handleMidiEvent (const juce::MidiMessage& m)

@@ -3,14 +3,9 @@
 Editor::Editor (APAudioProcessor& proc_)
     : proc ( proc_ )
 {
-    addAndMakeVisible (osc1);
-	addAndMakeVisible(osc2);
-	addAndMakeVisible(osc3);
-	//addAndMakeVisible(lfo1);
-	//addAndMakeVisible(lfo2);
-	//addAndMakeVisible(lfo3);
-	//addAndMakeVisible(lfo4);
-	addAndMakeVisible(adsr1);
+    addAndMakeVisible(osc1);
+	addAndMakeVisible(lfo1);
+	addAndMakeVisible(env1);
 	addAndMakeVisible(filter);
 	addAndMakeVisible(mod);
 	addAndMakeVisible(mtx);

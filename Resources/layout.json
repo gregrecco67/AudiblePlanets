@@ -3,46 +3,10 @@
     [
         { "id": "osc1", "x": "0", "y": 0, "w": "56 * 4", "h": 163, "children":
             [
-                { "id": "Wave", "x": 0, "y": 23, "w": 56, "h": 70 },
-                { "id": "Tune", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
+                { "id": "Coarse", "x": 0, "y": 23, "w": 56, "h": 70 },
                 { "id": "Fine", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Level", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Unison", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
-                { "id": "Detune", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Spread", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Pan", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 }
-            ]
-        },
-        { "id": "osc2", "x": "0", "y": "prevB()", "w": "56 * 4", "h": 163, "children":
-            [
-                { "id": "Wave", "x": 0, "y": 23, "w": 56, "h": 70 },
-                { "id": "Tune", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Fine", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Level", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Unison", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
-                { "id": "Detune", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Spread", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Pan", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 }
-            ]
-        },
-        { "id": "osc3", "x": "0", "y": "prevB()", "w": "56 * 4", "h": 163, "children":
-            [
-                { "id": "Wave", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
-                { "id": "Tune", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Fine", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Level", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Unison", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
-                { "id": "Detune", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Spread", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Pan", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 }
-            ]
-        },
-        { "id": "osc4", "x": "0", "y": "prevB()", "w": "56 * 4", "h": 163, "children":
-            [
-                { "id": "Wave", "x": 0, "y": 23, "w": 56, "h": 70 },
-                { "id": "Tune", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Fine", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
-                { "id": "Level", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
+                { "id": "Radius", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
+                { "id": "Tones", "x": "prevR()", "y": 23, "w": 56, "h": 70 },
                 { "id": "Unison", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
                 { "id": "Detune", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "Spread", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
@@ -57,7 +21,7 @@
                 { "id": "Key", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 }
             ]
          },
-        { "id": "adsr1", "x": "prevR()+1", "y": "prevY()", "w": "210 + 70", "h": 163, "children":
+        { "id": "env1", "x": "prevR()+1", "y": "prevY()", "w": "210 + 70", "h": 163, "children":
             [
                 { "id": "A", "x": "70/2", "y": 106, "w": 42, "h": 57 },
                 { "id": "D", "x": "prevR()", "y": "prevY()", "w": 42, "h": 57 },
