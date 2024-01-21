@@ -4,7 +4,7 @@
 //==============================================================================
 SynthVoice::SynthVoice (APAudioProcessor& p)
     : proc (p)
-    , oscillator (proc.analogTables, 8)
+    , osc1 (proc.analogTables, 4), osc2 (proc.analogTables, 4), osc3 (proc.analogTables, 4), osc4 (proc.analogTables, 4)
 {
     filter.setNumChannels (2);
 }
@@ -34,19 +34,30 @@ void SynthVoice::noteStarted()
 
     filter.reset();
 
-    modLFO.reset();
+	lfo1.reset();
+	lfo2.reset();
+	lfo3.reset();
+	lfo4.reset();
 
     updateParams (0);
     snapParams();
     //updateParams (0);
     //snapParams();
     //
-    oscillator.noteOn();
+	osc1.noteOn();
+	osc2.noteOn();
+	osc3.noteOn();
+	osc4.noteOn();
 
-    modLFO.noteOn();
 
-    adsr.reset();
-    adsr.noteOn();
+	env1.reset();
+	env2.reset();
+	env3.reset();
+	env4.reset();
+	env1.noteOn();
+	env2.noteOn();
+	env3.noteOn();
+	env4.noteOn();
 }
 
 void SynthVoice::noteRetriggered()
@@ -69,13 +80,22 @@ void SynthVoice::noteRetriggered()
     
     updateParams (0);
 
-    oscillator.noteOn();
-    adsr.noteOn();
+	osc1.noteOn();
+	osc2.noteOn();
+	osc3.noteOn();
+	osc4.noteOn();
+	env1.noteOn();
+	env2.noteOn();
+	env3.noteOn();
+	env4.noteOn();
 }
 
 void SynthVoice::noteStopped (bool allowTailOff)
 {
-    adsr.noteOff();
+	env1.noteOff();
+	env2.noteOff();
+	env3.noteOff();
+	env4.noteOff();
 
     if (! allowTailOff)
     {
@@ -100,45 +120,63 @@ void SynthVoice::setCurrentSampleRate (double newRate)
 {
     MPESynthesiserVoice::setCurrentSampleRate (newRate);
 
-    oscillator.setSampleRate (newRate);
-    filter.setSampleRate (newRate);
+	osc1.setSampleRate(newRate);
+	osc2.setSampleRate(newRate);
+	osc3.setSampleRate(newRate);
+	osc4.setSampleRate(newRate);
 
-    modLFO.setSampleRate (newRate);
+	filter.setSampleRate(newRate);
 
-    noteSmoother.setSampleRate (newRate);
-    adsr.setSampleRate (newRate);
+	lfo1.setSampleRate(newRate);
+	lfo2.setSampleRate(newRate);
+	lfo3.setSampleRate(newRate);
+	lfo4.setSampleRate(newRate);
+
+	noteSmoother.setSampleRate(newRate);
+	env1.setSampleRate(newRate);
+	env2.setSampleRate(newRate);
+	env3.setSampleRate(newRate);
+	env4.setSampleRate(newRate);
 }
 
 void SynthVoice::renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
 {
     updateParams (numSamples);
 
-    // Run OSC
-    gin::ScratchBuffer buffer (2, numSamples);
+	// Run OSC
+	gin::ScratchBuffer osc1buffer(2, numSamples);
+	gin::ScratchBuffer osc2buffer(2, numSamples);
+	gin::ScratchBuffer osc3buffer(2, numSamples);
+	gin::ScratchBuffer osc4buffer(2, numSamples);
 
-    if (proc.oscParams.enable->isOn())
-        oscillator.processAdding (currentMidiNote, oscParams, buffer);
+
+
+
+	osc1.processAdding(currentMidiNote, osc1Params, osc1buffer);
+	osc2.processAdding(currentMidiNote, osc2Params, osc2buffer);
+	osc3.processAdding(currentMidiNote, osc3Params, osc3buffer);
+	osc4.processAdding(currentMidiNote, osc4Params, osc4buffer);
 
     // Apply velocity
     float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
-    buffer.applyGain (gin::velocityToGain (velocity, ampKeyTrack));
+    osc1buffer.applyGain (gin::velocityToGain (velocity, ampKeyTrack));
 
     // Apply filter
     if (proc.filterParams.enable->isOn())
-        filter.process (buffer);
+        filter.process (osc1buffer);
     
     // Run ADSR
-    adsr.processMultiplying (buffer);
+    env1.processMultiplying (osc1buffer);
     
-    if (adsr.getState() == gin::AnalogADSR::State::idle)
+    if (env1.getState() == gin::AnalogADSR::State::idle)
     {
         clearCurrentNote();
         stopVoice();
     }
 
     // Copy output to synth
-    outputBuffer.addFrom (0, startSample, buffer, 0, 0, numSamples);
-    outputBuffer.addFrom (1, startSample, buffer, 1, 0, numSamples);
+    outputBuffer.addFrom (0, startSample, osc1buffer, 0, 0, numSamples);
+    outputBuffer.addFrom (1, startSample, osc1buffer, 1, 0, numSamples);
     
     finishBlock (numSamples);
 }
@@ -149,29 +187,19 @@ void SynthVoice::updateParams (int blockSize)
     
     proc.modMatrix.setPolyValue (*this, proc.modSrcNote, note.initialNote / 127.0f);
 
-    if (proc.oscParams.enable->isOn())
-    {
-        currentMidiNote = noteSmoother.getCurrentValue() * 127.0f;
-        if (glideInfo.glissando) currentMidiNote = (float) juce::roundToInt (currentMidiNote);
-        currentMidiNote += float (note.totalPitchbendInSemitones);
-        currentMidiNote += getValue (proc.oscParams.tune) + getValue (proc.oscParams.finetune) / 100.0f;
+	currentMidiNote = noteSmoother.getCurrentValue() * 127.0f;
+	if (glideInfo.glissando) currentMidiNote = (float)juce::roundToInt(currentMidiNote);
+	currentMidiNote += float(note.totalPitchbendInSemitones);
+	currentMidiNote += getValue(proc.osc1Params.coarse) + getValue(proc.osc1Params.fine);
 
-        switch (proc.oscParams.wave->getUserValueInt())
-        {
-            case 0: oscParams.wave = gin::Wave::sine;       break;
-            case 1: oscParams.wave = gin::Wave::triangle;   break;
-            case 2: oscParams.wave = gin::Wave::sawUp;      break;
-            case 3: oscParams.wave = gin::Wave::pulse;      break;;
-        }
-        
-        oscParams.voices     = int (proc.oscParams.voices->getProcValue());
-        oscParams.pan        = getValue (proc.oscParams.pan);
-        oscParams.spread     = getValue (proc.oscParams.spread) / 100.0f;
-        oscParams.detune     = getValue (proc.oscParams.detune);
-        oscParams.gain       = getValue (proc.oscParams.level);
-    }
+    osc1Params.wave = gin::Wave::sine;
+
+	osc1Params.pan = getValue(proc.osc1Params.pan);
+	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
+	osc1Params.detune = getValue(proc.osc1Params.detune);
+	osc1Params.gain = getValue(proc.osc1Params.level);
     
-    ampKeyTrack = getValue (proc.adsrParams.velocityTracking);
+    ampKeyTrack = getValue (proc.env1Params.velocityTracking);
 
     if (proc.filterParams.enable->isOn())
     {
@@ -223,38 +251,31 @@ void SynthVoice::updateParams (int blockSize)
         filter.setParams (f, q);
     }
     
-    if (proc.lfoParams.enable->isOn())
-    {
-        gin::LFO::Parameters params;
+	gin::LFO::Parameters params;
 
-        float freq = 0;
-        if (proc.lfoParams.sync->getProcValue() > 0.0f)
-            freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t (proc.lfoParams.beat->getProcValue())].toSeconds (proc.playhead);
-        else
-            freq = getValue (proc.lfoParams.rate);
+	float freq = 0;
+	if (proc.lfo1Params.sync->getProcValue() > 0.0f)
+		freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(proc.lfo1Params.beat->getProcValue())].toSeconds(proc.playhead);
+	else
+		freq = getValue(proc.lfo1Params.rate);
 
-        params.waveShape = (gin::LFO::WaveShape) int (proc.lfoParams.wave->getProcValue());
-        params.frequency = freq;
-        params.phase     = getValue (proc.lfoParams.phase);
-        params.offset    = getValue (proc.lfoParams.offset);
-        params.depth     = getValue (proc.lfoParams.depth);
-        params.delay     = getValue (proc.lfoParams.delay);
-        params.fade      = getValue (proc.lfoParams.fade);
+	params.waveShape = (gin::LFO::WaveShape) int(proc.lfo1Params.wave->getProcValue());
+	params.frequency = freq;
+	params.phase = getValue(proc.lfo1Params.phase);
+	params.offset = getValue(proc.lfo1Params.offset);
+	params.depth = getValue(proc.lfo1Params.depth);
+	params.delay = getValue(proc.lfo1Params.delay);
+	params.fade = getValue(proc.lfo1Params.fade);
 
-        modLFO.setParameters (params);
-        modLFO.process (blockSize);
+	lfo1.setParameters(params);
+	lfo1.process(blockSize);
 
-        proc.modMatrix.setPolyValue (*this, proc.modSrcLFO, modLFO.getOutput());
-    }
-    else
-    {
-        proc.modMatrix.setPolyValue (*this, proc.modSrcLFO, 0);
-    }
+	proc.modMatrix.setPolyValue(*this, proc.modSrcLFO1, lfo1.getOutput());
 
-    adsr.setAttack (getValue (proc.adsrParams.attack));
-    adsr.setDecay (getValue (proc.adsrParams.decay));
-    adsr.setSustainLevel (getValue (proc.adsrParams.sustain));
-    adsr.setRelease (fastKill ? 0.01f : getValue (proc.adsrParams.release));
+    env1.setAttack (getValue (proc.env1Params.attack));
+    env1.setDecay (getValue (proc.env1Params.decay));
+    env1.setSustainLevel (getValue (proc.env1Params.sustain));
+    env1.setRelease (fastKill ? 0.01f : getValue (proc.env1Params.release));
     
     noteSmoother.process (blockSize);
 }

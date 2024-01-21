@@ -5,23 +5,20 @@
 APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
     : ProcessorEditor (p), wtProc (p)
 {
-    scope.setName ("scope");
-    scope.setNumChannels (2);
-    scope.setTriggerMode (gin::TriggeredScope::TriggerMode::Up);
-    scope.setColour (gin::TriggeredScope::traceColourId + 0, findColour(gin::PluginLookAndFeel::accentColourId, true).withAlpha (0.7f));
-    scope.setColour (gin::TriggeredScope::traceColourId + 1, findColour(gin::PluginLookAndFeel::accentColourId, true).withAlpha (0.7f));
-    scope.setColour (gin::TriggeredScope::lineColourId, juce::Colours::transparentBlack);
+    
+    addAndMakeVisible(tabbed);
+    tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
+    tabbed.addTab("2. Mods", APColors::tabBkgd, &tab2, false, 1);
+    tabbed.addTab("3. FX",   APColors::tabBkgd, &tab3, false, 2);
 
-    addAndMakeVisible (editor);
-    addAndMakeVisible (scope);
+    tab1.addAndMakeVisible (editor);
     
     usage.panic.onClick = [this] { wtProc.presetLoaded = true; };
     addAndMakeVisible (usage);
     
     usage.setBounds (45, 12, 80, 16);
-    scope.setBounds (520, 5, 65, 30);
 
-    setSize (617, 450);
+    setSize (1200,700);
 }
 
 APAudioProcessorEditor::~APAudioProcessorEditor()
@@ -44,8 +41,10 @@ void APAudioProcessorEditor::resized()
 
     auto rc = getLocalBounds().reduced (1);
     rc.removeFromTop (40);
-
-    editor.setBounds (rc);
+    tabbed.setBounds (rc);
+    auto editorArea = tabbed.getLocalBounds();
+    editorArea.removeFromBottom(tabbed.getTabBarDepth());
+    editor.setBounds(editorArea);
     patchBrowser.setBounds (rc);
 }
 

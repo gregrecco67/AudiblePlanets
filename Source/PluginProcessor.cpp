@@ -72,6 +72,20 @@ static juce::String filterTextFunction (const gin::Parameter&, float v)
     }
 }
 
+static juce::String envSelectTextFunction (const gin::Parameter&, float v)
+{
+	switch (int (v))
+	{
+		case 0: return "Env 1";
+		case 1: return "Env 2";
+		case 2: return "Env 3";
+		case 3: return "Env 4";
+		default:
+			jassertfalse;
+			return {};
+	}
+}
+
 static juce::String freqTextFunction (const gin::Parameter&, float v)
 {
     return juce::String (int (gin::getMidiNoteInHertz (v)));
@@ -91,26 +105,25 @@ static juce::String glideModeTextFunction (const gin::Parameter&, float v)
 }
 
 //==============================================================================
-void APAudioProcessor::OSCParams::setup (APAudioProcessor& p)
+void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String num) // we've got 4
 {
     juce::String id = "osc";
     juce::String nm = "OSC";
 
-    wave       = p.addIntParam (id + "wave",       nm + "Wave",        "Wave",      "", { 0.0, 3.0, 1.0, 1.0 }, 1.0, 0.0f, subTextFunction);
-    enable     = p.addIntParam (id + "enable",     nm + "Enable",      "Enable",    "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f);
-    voices     = p.addIntParam (id + "unison",     nm + "Unison",      "Unison",    "", { 1.0, 8.0, 1.0, 1.0 }, 1.0, 0.0f);
-    tune       = p.addExtParam (id + "tune",       nm + "Tune",        "Tune",      "st", { -36.0, 36.0, 1.0, 1.0 }, 0.0, 0.0f);
-    finetune   = p.addExtParam (id + "finetune",   nm + "Fine Tune",   "Fine",      "ct", { -100.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
-    level      = p.addExtParam (id + "level",      nm + "Level",       "Level",     "db", { -100.0, 0.0, 1.0, 4.0 }, 0.0, 0.0f);
-    detune     = p.addExtParam (id + "detune",     nm + "Detune",      "Detune",    "", { 0.0, 0.5, 0.0, 1.0 }, 0.0, 0.0f);
-    spread     = p.addExtParam (id + "spread",     nm + "Spread",      "Spread",    "%", { -100.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
-    pan        = p.addExtParam (id + "pan",        nm + "Pan",         "Pan",       "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-
+    coarse    = p.addExtParam (id + num + "coarse",     nm + num + "Coarse",      "Coarse",    "", { 1.0, 24.0, 1.0, 1.0 }, 1.0, 0.0f);
+    fine      = p.addExtParam (id + num + "fine",       nm + num + "Fine",        "Fine",      "ct", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+    radius    = p.addExtParam (id + num + "radius",     nm + num + "Radius",      "Radius",    "%", { 0.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
+    tones     = p.addExtParam (id + num + "tones",      nm + num + "Tones",       "Tones",     "", { 1.0, 8.0, 1.0, 1.0 }, 1.0, 0.0f);
+    level     = p.addExtParam (id + num + "level",      nm + num + "Level", "Level", "db", { -100.0, 0.0, 1.0, 4.0 }, 0.0, 0.0f);
+    detune    = p.addExtParam (id + num + "detune",     nm + num + "Detune",      "Detune",    "", { 0.0, 0.5, 0.0, 1.0 }, 0.0, 0.0f);
+    spread    = p.addExtParam (id + num + "spread",     nm + num + "Spread",      "Spread",    "%", { -100.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
+    pan       = p.addExtParam (id + num + "pan",        nm + num + "Pan",         "Pan",       "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+    env       = p.addExtParam (id + num + "env",        nm + num + "Env",         "Env",       "", { 0.0, 3.0, 0.0, 1.0 }, (float)(num.getIntValue() - 1), 0.0f);
     level->conversionFunction = [] (float in)   { return juce::Decibels::decibelsToGain (in); };
 }
 
 //==============================================================================
-void APAudioProcessor::FilterParams::setup (APAudioProcessor& p)
+void APAudioProcessor::FilterParams::setup (APAudioProcessor& p) // each osc has a filter, but the params are global (though it's also a poly mod dest)
 {
     juce::String id = "flt";
     juce::String nm = "FLT ";
@@ -127,15 +140,15 @@ void APAudioProcessor::FilterParams::setup (APAudioProcessor& p)
 }
 
 //==============================================================================
-void APAudioProcessor::LFOParams::setup (APAudioProcessor& p)
-{
-    juce::String id = "lfo";
-    juce::String nm = "LFO";
+void APAudioProcessor::LFOParams::setup (APAudioProcessor& p, String num) // most complicated
+{                                                                                                            
+    // we've got 4 in the processor as mono sources, and four for each voice as poly sources / dests
+    juce::String id = "lfo" + num;
+    juce::String nm = "LFO" + num;
 
     auto notes = gin::NoteDuration::getNoteDurations();
 
-    enable           = p.addIntParam (id + "enable",  nm + "Enable",  "Enable", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-    sync             = p.addIntParam (id + "sync",    nm + "Sync",    "Sync",   "", { 0.0, 1.0, 1.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
+    sync             = p.addIntParam (id + "sync",    nm + "Sync",    "Sync",   "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
     wave             = p.addIntParam (id + "wave",    nm + "Wave",    "Wave",   "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
     rate             = p.addExtParam (id + "rate",    nm + "Rate",    "Rate",   "Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
     beat             = p.addIntParam (id + "beat",    nm + "Beat",    "Beat",   "", { 0.0, float (notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
@@ -144,20 +157,24 @@ void APAudioProcessor::LFOParams::setup (APAudioProcessor& p)
     offset           = p.addExtParam (id + "offset",  nm + "Offset",  "Offset", "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
     fade             = p.addExtParam (id + "fade",    nm + "Fade",    "Fade",   "s", { -60.0, 60.0, 0.0, 0.2f, true }, 0.0f, 0.0f);
     delay            = p.addExtParam (id + "delay",   nm + "Delay",   "Delay",  "s", { 0.0, 60.0, 0.0, 0.2f }, 0.0f, 0.0f);
+
+    this->num = num.getIntValue();
 }
 
 //==============================================================================
-void APAudioProcessor::ADSRParams::setup (APAudioProcessor& p)
+void APAudioProcessor::ADSRParams::setup(APAudioProcessor& p, String num) // 
 {
-    velocityTracking = p.addExtParam ("vel",     "Vel",     "Vel",   "", { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
-    attack           = p.addExtParam ("attack",  "Attack",  "A",     "s", { 0.0, 60.0, 0.0, 0.2f },  0.1f, 0.0f);
-    decay            = p.addExtParam ("decay",   "Decay",   "D",     "s", { 0.0, 60.0, 0.0, 0.2f },  0.1f, 0.0f);
-    sustain          = p.addExtParam ("sustain", "Sustain", "S",     "%", { 0.0, 100.0, 0.0, 1.0 }, 80.0f, 0.0f);
-    release          = p.addExtParam ("release", "Release", "R",     "s", { 0.0, 60.0, 0.0, 0.2f },  0.1f, 0.0f);
+    String id = "env" + num;
+    velocityTracking = p.addExtParam(id + "vel", id + "Vel", "Vel", "", { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
+    attack = p.addExtParam(id + "attack", id + "Attack", "A", "s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
+    decay = p.addExtParam(id + "decay", id + "Decay", "D", "s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
+    sustain = p.addExtParam(id + "sustain", id + "Sustain", "S", "%", { 0.0, 100.0, 0.0, 1.0 }, 80.0f, 0.0f);
+    release = p.addExtParam(id + "release", id + "Release", "R", "s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
 
-    sustain->conversionFunction          = [] (float in) { return in / 100.0f; };
-    velocityTracking->conversionFunction = [] (float in) { return in / 100.0f; };
+    sustain->conversionFunction = [](float in) { return in / 100.0f; };
+    velocityTracking->conversionFunction = [](float in) { return in / 100.0f; };
 }
+
 
 //==============================================================================
 void APAudioProcessor::GlobalParams::setup (APAudioProcessor& p)
@@ -174,38 +191,10 @@ void APAudioProcessor::GlobalParams::setup (APAudioProcessor& p)
 }
 
 //==============================================================================
-void APAudioProcessor::DelayParams::setup (APAudioProcessor& p)
-{
-    enable = p.addIntParam ("dlEnable",    "Enable",     "",   "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-
-    float mxd = float (gin::NoteDuration::getNoteDurations().size()) - 1.0f;
-
-    sync  = p.addExtParam ("dlSync",  "Sync",      "", "",   {   0.0f,   1.0f, 1.0f, 1.0f},    0.0f, 0.0f, enableTextFunction);
-    time  = p.addExtParam ("dlTime",  "Delay",     "", "",   {   0.0f, 120.0f, 0.0f, 0.3f},    1.0f, 0.0f);
-    beat  = p.addExtParam ("dlBeat",  "Delay",     "", "",   {   0.0f,    mxd, 1.0f, 1.0f},   13.0f, 0.0f, durationTextFunction);
-    fb    = p.addExtParam ("dlFb",    "FB",        "", "dB", {-100.0f,   0.0f, 0.0f, 5.0f},  -10.0f, 0.1f);
-    cf    = p.addExtParam ("dlCf",    "CF",        "", "dB", {-100.0f,   0.0f, 0.0f, 5.0f}, -100.0f, 0.1f);
-    mix   = p.addExtParam ("dlMix",   "Mix",       "", "%",  {   0.0f, 100.0f, 0.0f, 1.0f},    0.5f, 0.1f);
-
-    delay = p.addIntParam ("dlDelay", "Delay",     "", "",   {   0.0f, 120.0f, 0.0f, 1.0f},    1.0f, {0.2f, gin::SmoothingType::eased});
-
-    fb->conversionFunction  = [] (float in) { return juce::Decibels::decibelsToGain (in); };
-    cf->conversionFunction  = [] (float in) { return juce::Decibels::decibelsToGain (in); };
-    mix->conversionFunction = [] (float in) { return in / 100.0f; };
-}
-
-//==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true), false)
 {
     enableLegacyMode();
     setVoiceStealingEnabled (true);
-
-    oscParams.setup (*this);
-    filterParams.setup (*this);
-    lfoParams.setup (*this);
-    adsrParams.setup (*this);
-    globalParams.setup (*this);
-    delayParams.setup (*this);
 
     for (int i = 0; i < 50; i++)
     {
@@ -215,6 +204,22 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutp
     }
 
     setupModMatrix();
+
+	osc1Params.setup(*this, String{ "1" });
+	osc2Params.setup(*this, String{ "2" });
+	osc3Params.setup(*this, String{ "3" });
+	osc4Params.setup(*this, String{ "4" });
+	filterParams.setup(*this);
+	lfo1Params.setup(*this, String{ "1" });
+	lfo2Params.setup(*this, String{ "2" });
+	lfo3Params.setup(*this, String{ "3" });
+	lfo4Params.setup(*this, String{ "4" });
+	env1Params.setup(*this, String{ "1" });
+	env2Params.setup(*this, String{ "2" });
+	env3Params.setup(*this, String{ "3" });
+	env4Params.setup(*this, String{ "4" });
+    globalParams.setup (*this);
+
     init();
 }
 
@@ -233,8 +238,19 @@ void APAudioProcessor::setupModMatrix()
     modSrcNote      = modMatrix.addPolyModSource ("note", "MIDI Note Number", false);
     modSrcVelocity  = modMatrix.addPolyModSource ("vel", "MIDI Velocity", false);
 
-    modSrcMonoLFO   = modMatrix.addMonoModSource ("mlfo", "LFO", true);
-    modSrcLFO       = modMatrix.addPolyModSource ("lfo", "LFO", true);
+    modSrcMonoLFO1   = modMatrix.addMonoModSource ("mlfo1", "mLFO1", true);
+    modSrcLFO1       = modMatrix.addPolyModSource ("lfo1", "LFO1", true);
+    modSrcMonoLFO2   = modMatrix.addMonoModSource ("mlfo2", "mLFO2", true);
+    modSrcLFO2       = modMatrix.addPolyModSource ("lfo2", "LFO2", true);
+    modSrcMonoLFO3   = modMatrix.addMonoModSource ("mlfo3", "mLFO3", true);
+    modSrcLFO3       = modMatrix.addPolyModSource ("lfo3", "LFO3", true);
+    modSrcMonoLFO4   = modMatrix.addMonoModSource ("mlfo4", "mLFO4", true);
+    modSrcLFO4       = modMatrix.addPolyModSource ("lfo4", "LFO4", true);
+
+    modSrcEnv1 	 = modMatrix.addPolyModSource ("env1", "Env1", true);
+    modSrcEnv2 	 = modMatrix.addPolyModSource ("env2", "Env2", true);
+    modSrcEnv3 	 = modMatrix.addPolyModSource ("env3", "Env3", true);
+    modSrcEnv4 	 = modMatrix.addPolyModSource ("env4", "Env4", true);
     
     auto firstMonoParam = globalParams.mono;
     bool polyParam = true;
@@ -255,7 +271,10 @@ void APAudioProcessor::reset()
     Processor::reset();
 
     stereoDelay.reset();
-    modLFO.reset();
+    lfo1.reset();
+    lfo2.reset();
+    lfo3.reset();
+    lfo4.reset();
 }
 
 void APAudioProcessor::prepareToPlay (double newSampleRate, int newSamplesPerBlock)
@@ -267,7 +286,10 @@ void APAudioProcessor::prepareToPlay (double newSampleRate, int newSamplesPerBlo
     modMatrix.setSampleRate (newSampleRate);
 
     stereoDelay.setSampleRate (newSampleRate);
-    modLFO.setSampleRate (newSampleRate);
+    lfo1.setSampleRate (newSampleRate);
+    lfo2.setSampleRate (newSampleRate);
+    lfo3.setSampleRate (newSampleRate);
+    lfo4.setSampleRate (newSampleRate);
 
     analogTables.setSampleRate (newSampleRate);
 }
@@ -322,9 +344,6 @@ void APAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mid
 
     playhead = nullptr;
 
-    if (buffer.getNumSamples() <= scopeFifo.getFreeSpace())
-        scopeFifo.write (buffer);
-
     endBlock (buffer.getNumSamples());
 }
 
@@ -346,62 +365,41 @@ juce::Array<float> APAudioProcessor::getLiveFilterCutoff()
 void APAudioProcessor::applyEffects (juce::AudioSampleBuffer& buffer)
 {
     // Apply Delay
-    if (delayParams.enable->isOn())
-        stereoDelay.process (buffer);
+    //if (delayParams.enable->isOn())
+    //    stereoDelay.process (buffer);
 
     // Output gain
     outputGain.process (buffer);
 }
 
+
+
 void APAudioProcessor::updateParams (int newBlockSize)
 {
     // Update Mono LFOs
-    if (lfoParams.enable->isOn())
-    {
-        gin::LFO::Parameters params;
+ //   for(auto lfoparams : {&lfo1Params, &lfo2Params, &lfo3Params, &lfo4Params})
+	//{
+	//	gin::LFO::Parameters classparams;
+ //       auto& lfo = this->monoLFOs[lfoparams->num-1];
+	//	float freq = 0;
+	//	if (lfoparams->sync->getProcValue() > 0.0f)
+	//		freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(lfoparams->beat->getProcValue())].toSeconds(playhead);
+	//	else
+	//		freq = modMatrix.getValue(lfoparams->rate);
 
-        float freq = 0;
-        if (lfoParams.sync->getProcValue() > 0.0f)
-            freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t (lfoParams.beat->getProcValue())].toSeconds (playhead);
-        else
-            freq = modMatrix.getValue (lfoParams.rate);
+	//	classparams.waveShape = (gin::LFO::WaveShape) int(lfoparams->wave->getProcValue());
+	//	classparams.frequency = freq;
+	//	classparams.phase = modMatrix.getValue(lfoparams->phase);
+	//	classparams.offset = modMatrix.getValue(lfoparams->offset);
+	//	classparams.depth = modMatrix.getValue(lfoparams->depth);
+	//	classparams.delay = 0;
+	//	classparams.fade = 0;
 
-        params.waveShape = (gin::LFO::WaveShape) int (lfoParams.wave->getProcValue());
-        params.frequency = freq;
-        params.phase     = modMatrix.getValue (lfoParams.phase);
-        params.offset    = modMatrix.getValue (lfoParams.offset);
-        params.depth     = modMatrix.getValue (lfoParams.depth);
-        params.delay     = 0;
-        params.fade      = 0;
+	//	lfo.setParameters(classparams);
+	//	lfo.process(newBlockSize);
 
-        modLFO.setParameters (params);
-        modLFO.process (newBlockSize);
-
-        modMatrix.setMonoValue (modSrcMonoLFO, modLFO.getOutput());
-    }
-    else
-    {
-        modMatrix.setMonoValue (modSrcMonoLFO, 0);
-    }
-    
-    // Update Delay
-    if (delayParams.enable->isOn())
-    {
-        if (delayParams.sync->isOn())
-        {
-            auto& duration = gin::NoteDuration::getNoteDurations()[(size_t)delayParams.beat->getUserValueInt()];
-            delayParams.delay->setUserValue (duration.toSeconds (getPlayHead()));
-        }
-        else
-        {
-            delayParams.delay->setUserValue (delayParams.time->getUserValue());
-        }
-
-        stereoDelay.setParams (delayParams.delay->getUserValue(),
-                               modMatrix.getValue (delayParams.mix),
-                               modMatrix.getValue (delayParams.fb),
-                               modMatrix.getValue (delayParams.cf));
-    }
+	//	modMatrix.setMonoValue(this->lfoIds[lfoparams->num - 1], lfo.getOutput());
+ //   }
 
     // Output gain
     outputGain.setGain (modMatrix.getValue (globalParams.level));
@@ -432,3 +430,4 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new APAudioProcessor();
 }
+

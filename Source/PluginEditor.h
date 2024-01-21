@@ -4,6 +4,7 @@
 #include "PluginProcessor.h"
 #include "Panels.h"
 #include "Editor.h"
+#include "APColors.h"
 
 //==============================================================================
 class APAudioProcessorEditor : public gin::ProcessorEditor,
@@ -21,9 +22,12 @@ public:
 private:
     APAudioProcessor& wtProc;
 
-    gin::TriggeredScope scope { wtProc.scopeFifo };
+    
     gin::SynthesiserUsage usage { wtProc };
     
+    juce::TabbedComponent tabbed{juce::TabbedButtonBar::TabsAtBottom };
+    juce::Component tab1, tab2, tab3;
+
     Editor editor { wtProc };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessorEditor)
