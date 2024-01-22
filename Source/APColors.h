@@ -1,5 +1,6 @@
 #pragma once
 #include <juce_graphics/juce_graphics.h>
+#include <JuceHeader.h>
 
 namespace APColors
 {
@@ -26,3 +27,4 @@ namespace APColors
 
 	const juce::Colour tabBkgd = juce::Colour(31, 30, 31).brighter(0.05f);
 }
+

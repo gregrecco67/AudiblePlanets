@@ -2,6 +2,9 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "APColors.h"
+
+
 
 //==============================================================================
 class OscillatorBox : public gin::ParamBox
@@ -12,11 +15,35 @@ public:
     {
         setName ( name );
 
-        addControl (new gin::Knob (osc.coarse), 0, 0);
-        addControl (new gin::Knob (osc.fine, true), 1, 0);
-        addControl (new gin::Knob (osc.radius), 2, 0);
+        addControl (c = new gin::Knob (osc.coarse), 0, 0);
+        addControl (f = new gin::Knob (osc.fine, true), 1, 0);
+        addControl (r = new gin::Knob (osc.radius), 2, 0);
         addControl (new gin::Knob (osc.tones, true), 3, 0);
 		addControl(new gin::Switch(osc.saw), 4, 0);
+
+		
+		switch (osc.num) {
+		case 1:
+			c->setLookAndFeel(&lnf1);
+			f->setLookAndFeel(&lnf1);
+			r->setLookAndFeel(&lnf1);
+			break;
+		case 2:
+			c->setLookAndFeel(&lnf2);
+			f->setLookAndFeel(&lnf2);
+			r->setLookAndFeel(&lnf2);
+			break;
+		case 3:
+			c->setLookAndFeel(&lnf3);
+			f->setLookAndFeel(&lnf3);
+			r->setLookAndFeel(&lnf3);
+			break;
+		case 4:
+			c->setLookAndFeel(&lnf4);
+			f->setLookAndFeel(&lnf4);
+			r->setLookAndFeel(&lnf4);
+			break;
+		}
 
         addControl (new gin::Knob (osc.detune), 2, 2);
         addControl (new gin::Knob (osc.spread), 3, 2);
@@ -37,7 +64,44 @@ public:
 
     ~OscillatorBox() override
     {
+		c->setLookAndFeel(nullptr);
+		f->setLookAndFeel(nullptr);
+		r->setLookAndFeel(nullptr);
     }
+
+	class APLookAndFeel1 : public gin::CopperLookAndFeel
+	{
+	public:
+		APLookAndFeel1(){
+			setColour(juce::Slider::rotarySliderFillColourId, APColors::redLight);
+			setColour(juce::Slider::trackColourId, APColors::redMuted);
+		}
+	};
+	class APLookAndFeel2 : public gin::CopperLookAndFeel
+	{
+	public:
+		APLookAndFeel2() {
+			setColour(juce::Slider::rotarySliderFillColourId, APColors::yellowLight);
+			setColour(juce::Slider::trackColourId, APColors::yellowMuted);
+		}
+	};
+	class APLookAndFeel3 : public gin::CopperLookAndFeel
+	{
+	public:
+		APLookAndFeel3() {
+			setColour(juce::Slider::rotarySliderFillColourId, APColors::greenLight);
+			setColour(juce::Slider::trackColourId, APColors::greenMuted);
+		}
+	};
+	class APLookAndFeel4 : public gin::CopperLookAndFeel
+	{
+	public:
+		APLookAndFeel4() {
+			setColour(juce::Slider::rotarySliderFillColourId, APColors::blueLight);
+			setColour(juce::Slider::trackColourId, APColors::blueMuted);
+		}
+	};
+
 
 	void paramChanged() override {
 		gin::ParamBox::paramChanged();
@@ -52,10 +116,15 @@ public:
 
 	void resized() override {
 		gin::ParamBox::resized();
+
 		fixedHz.setBounds(56, 76+23, 56, 35);
 	}
+	APLookAndFeel1 lnf1;
+	APLookAndFeel2 lnf2;
+	APLookAndFeel3 lnf3;
+	APLookAndFeel4 lnf4;
 	APAudioProcessor::OSCParams& osc;
-	
+	gin::ParamComponent::Ptr c = nullptr, f = nullptr, r = nullptr;
 	Label fixedHz;
     APAudioProcessor& proc;
 };

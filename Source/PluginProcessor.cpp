@@ -155,6 +155,7 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String num) /
     env       = p.addExtParam (id + "env",        nm + "Env",         "Env",       "", { 0.0, 3.0, 1.0, 1.0 }, (float)(num.getIntValue() - 1), 0.0f, envSelectTextFunction);
 	saw       = p.addExtParam (id + "saw",        nm + "Saw",         "Saw",       "", { 0.0, 1.0, 1.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
 	fixed     = p.addExtParam (id + "fixed",      nm + "Fixed",       "Fixed",     "", { 0.0, 1.0, 1.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
+	this->num = num.getIntValue();
 }
 
 //==============================================================================
@@ -237,7 +238,7 @@ void APAudioProcessor::GlobalParams::setup (APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 {
-	equant = p.addExtParam("equant", "Equant", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+	equant = p.addExtParam("equant", "Equant", "", "", { -0.5, 0.5, 0.0, 1.0 }, 0.0, 0.0f);
 	pitch = p.addExtParam("pitch", "Pitch", "", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0, 0.0f);
 	blend = p.addExtParam("blend", "Blend", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
 	demodmix = p.addExtParam("demodmix", "Demodulate", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);

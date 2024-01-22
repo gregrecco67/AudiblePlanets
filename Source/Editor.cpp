@@ -57,7 +57,7 @@ void Editor::timerCallback() {
     if (vizEpi3Phase > juce::MathConstants<float>::twoPi)
         vizEpi3Phase -= juce::MathConstants<float>::twoPi;
 
-    orbitViz.setEquant(proc.timbreParams.equant->getValue());
+    orbitViz.setEquant(proc.timbreParams.equant->getUserValue());
     orbitViz.setDefRad(proc.osc1Params.radius->getValue());
     orbitViz.setEpi1Rad(proc.osc2Params.radius->getValue());
     orbitViz.setEpi2Rad(proc.osc3Params.radius->getValue());

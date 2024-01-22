@@ -45,7 +45,7 @@ public:
         gin::Parameter::Ptr coarse, fine, radius, tones, detune, spread, pan, env, saw, fixed;
 
         void setup(APAudioProcessor& p, juce::String number);
-
+		int num;
         JUCE_DECLARE_NON_COPYABLE(OSCParams)
     };
 
