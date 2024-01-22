@@ -162,7 +162,7 @@ void SynthVoice::updateParams (int blockSize)
 	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
 	osc1Params.detune = getValue(proc.osc1Params.detune);
-	osc1Params.gain = getValue(proc.osc1Params.level);
+	osc1Params.gain = Decibels::gainToDecibels(getValue(proc.osc1Params.radius));
     
     ampKeyTrack = getValue (proc.env1Params.velocityTracking);
 

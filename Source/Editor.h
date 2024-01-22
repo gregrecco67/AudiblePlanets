@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Panels.h"
+#include "BinaryData.h"
 
 //==============================================================================
 class Editor : public juce::Component
@@ -17,17 +18,25 @@ private:
     APAudioProcessor& proc;
 
 	OscillatorBox osc1{ "osc1", proc, proc.osc1Params };
+	OscillatorBox osc2{ "osc2", proc, proc.osc2Params };
+	OscillatorBox osc3{ "osc3", proc, proc.osc3Params };
+	OscillatorBox osc4{ "osc4", proc, proc.osc4Params };
 
-	ADSRBox env1{ "env1", proc, proc.env1Params };
-    FilterBox filter                        { "filter", proc };
+	ENVBox env1{ "env1", proc, proc.env1Params };
+	ENVBox env2{ "env2", proc, proc.env2Params };
+	ENVBox env3{ "env3", proc, proc.env3Params };
+	ENVBox env4{ "env4", proc, proc.env4Params };
 
-	LFOBox lfo1{ "LFO1", proc, proc.lfo1Params, proc.modSrcLFO1, proc.modSrcMonoLFO1, proc.lfo1 };
-	//LFOBox lfo2{ "LFO2", proc, proc.lfo2Params, proc.modSrcLFO2, proc.modSrcMonoLFO2, proc.lfo2 };
-	//LFOBox lfo3{ "LFO3", proc, proc.lfo3Params, proc.modSrcLFO3, proc.modSrcMonoLFO3, proc.lfo3 };
-	//LFOBox lfo4{ "LFO4", proc, proc.lfo4Params, proc.modSrcLFO4, proc.modSrcMonoLFO4, proc.lfo4 };
+    FilterBox filter                        { "flt", proc };
+
+	LFOBox lfo1{ "lfo1", proc, proc.lfo1Params, proc.modSrcLFO1, proc.modSrcMonoLFO1, proc.lfo1 };
+	LFOBox lfo2{ "lfo2", proc, proc.lfo2Params, proc.modSrcLFO2, proc.modSrcMonoLFO2, proc.lfo2 };
+	LFOBox lfo3{ "lfo3", proc, proc.lfo3Params, proc.modSrcLFO3, proc.modSrcMonoLFO3, proc.lfo3 };
+	LFOBox lfo4{ "lfo4", proc, proc.lfo4Params, proc.modSrcLFO4, proc.modSrcMonoLFO4, proc.lfo4 };
     ModBox mod                              { "mod", proc };
     MatrixBox mtx                           { "mtx", proc };
     GlobalBox global                        { "global", proc };
+	TimbreBox timbre						{ "timbre", proc };
 
     //DelayBox delay { proc };
 

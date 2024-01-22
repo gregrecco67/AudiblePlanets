@@ -7,56 +7,119 @@
 class OscillatorBox : public gin::ParamBox
 {
 public:
-    OscillatorBox (const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::OSCParams& oscparams)
-        : gin::ParamBox (name), proc (proc_)
+    OscillatorBox (const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::OSCParams& oscparams_)
+        : gin::ParamBox (name), proc (proc_), osc(oscparams_)
     {
         setName ( name );
-        auto& osc = oscparams;
 
-        addControl (new gin::Knob (osc.coarse), 1, 0);
-        addControl (new gin::Knob (osc.fine, true), 2, 0);
-        addControl (new gin::Knob (osc.radius), 3, 0);
-        addControl (new gin::Knob (osc.tones, true), 4, 0);
+        addControl (new gin::Knob (osc.coarse), 0, 0);
+        addControl (new gin::Knob (osc.fine, true), 1, 0);
+        addControl (new gin::Knob (osc.radius), 2, 0);
+        addControl (new gin::Knob (osc.tones, true), 3, 0);
+		addControl(new gin::Switch(osc.saw), 4, 0);
 
-        addControl (new gin::Knob (osc.pan), 0, 1);
-        addControl (new gin::Knob (osc.detune), 1, 1);
-        addControl (new gin::Knob (osc.spread), 2, 1);
-        addControl(new gin::Select(osc.env), 3, 1);
-		addControl(new gin::Knob(osc.level), 4, 1);
+        addControl (new gin::Knob (osc.detune), 2, 2);
+        addControl (new gin::Knob (osc.spread), 3, 2);
+        addControl (new gin::Knob (osc.pan), 4, 2);
+
+        addControl(new gin::Select(osc.env));
+		addControl(new gin::Switch(osc.fixed));
+		
+		watchParam(osc.fixed);
+		watchParam(osc.saw);
+		watchParam(osc.coarse);
+		watchParam(osc.fine);
+
+		addAndMakeVisible(fixedHz);
+
+		fixedHz.setJustificationType(Justification::centred);
     }
 
     ~OscillatorBox() override
     {
     }
 
+	void paramChanged() override {
+		gin::ParamBox::paramChanged();
+		if (osc.fixed->isOn()) {
+			fixedHz.setVisible(true);
+			fixedHz.setText(String((osc.coarse->getUserValue() + osc.fine->getUserValue()) * 100) + String(" Hz"), juce::dontSendNotification);
+		}
+		else {
+			fixedHz.setVisible(false);
+		}
+	}
+
+	void resized() override {
+		gin::ParamBox::resized();
+		fixedHz.setBounds(56, 76+23, 56, 35);
+	}
+	APAudioProcessor::OSCParams& osc;
+	
+	Label fixedHz;
     APAudioProcessor& proc;
 };
 
 //==============================================================================
-class ADSRBox : public gin::ParamBox
+class ENVBox : public gin::ParamBox
 {
 public:
-    ADSRBox (const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::ADSRParams& envparams)
-        : gin::ParamBox (name), proc (proc_)
+    ENVBox (const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::ENVParams& envparams_)
+        : gin::ParamBox (name), proc (proc_), envparams(envparams_)
     {
-        setName ( name.toUpperCase() );
+        setName ( name );
 
-        auto& preset = envparams;
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
 
-        adsr = new gin::ADSRComponent ();
-        adsr->setParams (preset.attack, preset.decay, preset.sustain, preset.release);
-        addControl (adsr, 0, 0, 4, 1);
+        //auto& preset = envparams;
 
-        addControl (new gin::Knob (preset.attack), 0, 1);
-        addControl (new gin::Knob (preset.decay), 1, 1);
-        addControl (new gin::Knob (preset.sustain), 2, 1);
-        addControl (new gin::Knob (preset.release), 3, 1);
-        addControl (new gin::Knob (preset.velocityTracking), 4, 1);
-    }
+        addControl (new gin::Knob (envparams.attack), 0, 1);
+        addControl (new gin::Knob (envparams.decay), 1, 1);
+        addControl (new gin::Knob (envparams.sustain), 2, 1);
+        addControl (new gin::Knob (envparams.release), 3, 1);
+        addControl (new gin::Knob (envparams.velocityTracking), 4, 1);
+		addControl(new gin::Knob(envparams.acurve), 0, 2);
+		addControl(new gin::Knob(envparams.drcurve), 1, 2);
+		addControl(r = new gin::Knob(envparams.time), 2, 2);
+		addControl(b =new gin::Select(envparams.duration), 3, 2);
+		addControl(new gin::Select(envparams.syncrepeat), 4, 2);
+		watchParam(envparams.syncrepeat);
+	}
 
-    APAudioProcessor& proc;
-    gin::ParamComponent::Ptr a, d, s, r;
-    gin::ADSRComponent* adsr;
+	void paramChanged() override
+	{
+		gin::ParamBox::paramChanged();
+
+		if (r && b)
+		{
+			auto choice = envparams.syncrepeat->getUserValueInt();
+			r->setVisible(choice == 2);
+			b->setVisible(choice == 1);
+		}
+	}
+
+	APAudioProcessor& proc;
+	int idx;
+	gin::ParamComponent::Ptr r = nullptr;
+	gin::ParamComponent::Ptr b = nullptr;
+	APAudioProcessor::ENVParams& envparams;
+};
+
+//==============================================================================
+class TimbreBox : public gin::ParamBox
+{
+public:
+	TimbreBox(const juce::String& name, APAudioProcessor& proc)
+		: gin::ParamBox(name)
+	{
+		setName(name);
+
+		auto& timbreparams = proc.timbreParams;
+		addControl(new gin::Knob(timbreparams.equant), 0, 0);
+		addControl(new gin::Knob(timbreparams.pitch), 0, 1);
+		addControl(new gin::Knob(timbreparams.blend), 1, 1);
+		addControl(new gin::Knob(timbreparams.demodmix), 1, 2);
+	}
 };
 
 //==============================================================================
@@ -96,29 +159,33 @@ class LFOBox : public gin::ParamBox
 {
 public:
     LFOBox (const juce::String& num, APAudioProcessor& proc_, APAudioProcessor::LFOParams& lfoparams_, gin::ModSrcId& modsrcID, gin::ModSrcId& monoID, gin::LFO modLFO)
-        : gin::ParamBox(num), proc(proc_), lfoparams(lfoparams_)
+        : gin::ParamBox(num), proc(proc_), lfoparams(lfoparams_), lfo(&modLFO)
     {
-        setName((num).toUpperCase());
+        setName(num);
+
+		addEnable(lfoparams.enable);
 
         addModSource (new gin::ModulationSourceButton (proc.modMatrix, monoID, false));
         addModSource (new gin::ModulationSourceButton (proc.modMatrix, modsrcID, true));
 
+        addControl (new gin::Switch (lfoparams.sync), 3, 1);
+        addControl (new gin::Select (lfoparams.wave), 2, 1);
         addControl (r = new gin::Knob (lfoparams.rate), 0, 0);
         addControl (b = new gin::Select (lfoparams.beat), 0, 0);
         addControl (new gin::Knob (lfoparams.depth, true), 1, 0);
+
+        addControl (new gin::Knob (lfoparams.phase, true), 4, 1);
+        addControl (new gin::Knob (lfoparams.offset, true), 5, 1);
         addControl (new gin::Knob (lfoparams.fade, true), 0, 1);
         addControl (new gin::Knob (lfoparams.delay), 1, 1);
 
-        addControl (new gin::Select (lfoparams.wave), 2, 1);
-        addControl (new gin::Switch (lfoparams.sync), 3, 1);
-        addControl (new gin::Knob (lfoparams.phase, true), 4, 1);
-        addControl (new gin::Knob (lfoparams.offset, true), 5, 1);
 
         auto l = new gin::LFOComponent();
         l->phaseCallback = [this, num]   
         {
             std::vector<float> res;
-            res.push_back (proc.monoLFOs[num.getIntValue() - 1].getCurrentPhase());
+			auto unit = num.getTrailingIntValue() - 1;
+            res.push_back (proc.monoLFOs[unit]->getCurrentPhase());
             return res;
         };
         l->setParams (lfoparams.wave, lfoparams.sync, lfoparams.rate, lfoparams.beat, lfoparams.depth, 
@@ -146,6 +213,7 @@ public:
     gin::ParamComponent::Ptr r = nullptr;
     gin::ParamComponent::Ptr b = nullptr;
     APAudioProcessor::LFOParams& lfoparams;
+	gin::LFO* lfo;
 };
 
 //==============================================================================
@@ -156,7 +224,7 @@ public:
         : gin::ParamBox (name), proc (proc_)
     {
         setName ("mod");
-        
+        setTitle("mod sources");
         addControl (new gin::ModSrcListBox (proc.modMatrix), 0, 0, 3, 2);
     }
 
@@ -171,6 +239,7 @@ public:
         : gin::ParamBox (name), proc (proc_)
     {
         setName ("mtx");
+		setTitle("mod matrix");
 
         addControl (new gin::ModMatrixBox (proc, proc.modMatrix), 0, 0, 3, 2);
     }

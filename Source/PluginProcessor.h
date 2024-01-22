@@ -42,7 +42,7 @@ public:
     {
         OSCParams() = default;
 
-        gin::Parameter::Ptr coarse, fine, radius, tones, level, detune, spread, pan, env;
+        gin::Parameter::Ptr coarse, fine, radius, tones, detune, spread, pan, env, saw, fixed;
 
         void setup(APAudioProcessor& p, juce::String number);
 
@@ -64,23 +64,35 @@ public:
     {
         LFOParams() = default;
 
-        gin::Parameter::Ptr enable, sync, wave, rate, beat, depth, phase, offset, fade, delay, level;
+        gin::Parameter::Ptr enable, sync, wave, rate, beat, depth, phase, offset, fade, delay, level, env;
 
         void setup(APAudioProcessor& p, String num);
         int num;
         JUCE_DECLARE_NON_COPYABLE(LFOParams)
     };
 
-    struct ADSRParams
+    struct ENVParams
     {
-        ADSRParams() = default;
+        ENVParams() = default;
 
-        gin::Parameter::Ptr attack, decay, sustain, release, velocityTracking;
+        gin::Parameter::Ptr attack, decay, sustain, release, velocityTracking,
+			acurve, drcurve, syncrepeat, time, duration;
 
         void setup(APAudioProcessor& p, juce::String number);
 
-        JUCE_DECLARE_NON_COPYABLE(ADSRParams)
+        JUCE_DECLARE_NON_COPYABLE(ENVParams)
     };
+
+	struct TimbreParams
+	{
+		TimbreParams() = default;
+
+		gin::Parameter::Ptr equant, pitch, blend, demodmix;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(TimbreParams)
+	};
 
     // Global Params
     struct GlobalParams
@@ -95,21 +107,20 @@ public:
     };
 
     //==============================================================================
-    gin::ModSrcId modSrcPressure, modSrcTimbre, modScrPitchBend, modSrcLFO1,
-        modSrcNote, modSrcVelocity, modSrcMonoLFO1,
-        modSrcEnv1;
+    gin::ModSrcId modSrcPressure, modSrcTimbre, modScrPitchBend, modSrcNote, modSrcVelocity,
+		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
+		modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4,
+        modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4;
 
     //==============================================================================
 
-    OSCParams osc1Params; //, osc2Params, osc3Params, osc4Params;
-    LFOParams lfo1Params; //, lfo2Params, lfo3Params, lfo4Params;
-    ADSRParams env1Params; //, env2Params, env3Params, env4Params;
-    
+	OSCParams osc1Params, osc2Params, osc3Params, osc4Params;
+    LFOParams lfo1Params, lfo2Params, lfo3Params, lfo4Params;
+    ENVParams env1Params, env2Params, env3Params, env4Params; //, env2Params, env3Params, env4Params;
+    TimbreParams timbreParams;
     FilterParams filterParams;
-
     GlobalParams globalParams;
 
-    
     //==============================================================================
     gin::StereoDelay stereoDelay{ 120.1 };
     gin::GainProcessor outputGain;
@@ -119,7 +130,9 @@ public:
     //==============================================================================
     gin::ModMatrix modMatrix;
 
-    gin::LFO lfo1; //, lfo2, lfo3, lfo4;
+    gin::LFO lfo1, lfo2, lfo3, lfo4;
+	std::array<gin::LFO*, 4> monoLFOs{ &lfo1, &lfo2, &lfo3, &lfo4 };
+	std::array<gin::ModSrcId*, 4> lfoIds{ &modSrcMonoLFO1, &modSrcMonoLFO2, &modSrcMonoLFO3, &modSrcMonoLFO4 };
     juce::AudioPlayHead* playhead = nullptr;
     bool presetLoaded = false;
 

@@ -46,9 +46,6 @@ endif ()
 
 set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
 
-juce_add_binary_data (Synth_Assets SOURCES
-						"./Resources/layout.json")
-
 file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.c
@@ -61,6 +58,7 @@ file(GLOB_RECURSE AssetFiles CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.png"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.svg"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.otf"
+	"${CMAKE_CURRENT_SOURCE_DIR}/assets/*.json"
 )
 
 juce_add_binary_data(Assets SOURCES ${AssetFiles})
@@ -70,10 +68,8 @@ set_target_properties(Assets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
 
-
-target_link_libraries (${PROJECT_NAME} PRIVATE
-						Synth_Assets
-
+target_link_libraries (${PROJECT_NAME} 
+					PRIVATE
 						gin
 						gin_graphics
 						gin_gui
@@ -90,10 +86,7 @@ target_link_libraries (${PROJECT_NAME} PRIVATE
 						juce::juce_core
 						juce::juce_audio_basics
 
-
-
 						$<$<PLATFORM_ID:Linux>:curl>
-
 					PUBLIC
 						Assets
 						juce::juce_recommended_config_flags
