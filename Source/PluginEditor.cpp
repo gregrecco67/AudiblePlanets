@@ -17,7 +17,7 @@ APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
     addAndMakeVisible (usage);
     
     usage.setBounds (45, 12, 80, 16);
-    setSize (1200,725);
+    setSize (1186,725);
 
 }
 

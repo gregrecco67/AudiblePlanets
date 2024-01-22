@@ -106,6 +106,17 @@ public:
         JUCE_DECLARE_NON_COPYABLE(GlobalParams)
     };
 
+	struct OrbitParams
+	{
+		OrbitParams() = default;
+
+		gin::Parameter::Ptr speed, scale;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(OrbitParams)
+	};
+
     //==============================================================================
     gin::ModSrcId modSrcPressure, modSrcTimbre, modScrPitchBend, modSrcNote, modSrcVelocity,
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
@@ -120,6 +131,7 @@ public:
     TimbreParams timbreParams;
     FilterParams filterParams;
     GlobalParams globalParams;
+	OrbitParams orbitParams;
 
     //==============================================================================
     gin::StereoDelay stereoDelay{ 120.1 };

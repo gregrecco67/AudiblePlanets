@@ -271,6 +271,23 @@ public:
     APAudioProcessor& proc;
 };
 
+//==============================================================================
+class OrbitBox : public gin::ParamBox 
+{
+public:
+	OrbitBox(const juce::String& name, APAudioProcessor& proc_)
+		: gin::ParamBox(name), proc(proc_)
+	{
+		setName("orbit");
+
+		addControl(new gin::Knob(proc.orbitParams.speed), 0, 0);
+		addControl(new gin::Knob(proc.orbitParams.scale), 1, 0);
+		addControl(new gin::Select(proc.timbreParams.algo), 0, 1);
+	}
+
+	APAudioProcessor& proc;
+};
+
 ////==============================================================================
 //class DelayBox : public gin::ParamBox
 //{

@@ -8,7 +8,7 @@ public:
 	struct Position { float x; float y; };
 	Position epicycleCenter{ 1,0 };
 
-	
+	void setScale(float input) { scale = input; }
 
 	void addCircle(juce::Path& path, juce::Point<float>& center, float size) {
 		path.addEllipse(center.getX() - size*0.5f, center.getY() -size*0.5f, size, size);
@@ -21,7 +21,7 @@ public:
 	void paint(juce::Graphics& g) override {
 		// redefine variables
 		juce::Rectangle<float> bounds = getLocalBounds().toFloat();
-		auto width = bounds.getWidth();
+		auto width = bounds.getWidth() * scale;
 		auto equantPos = juce::Point<float>(bounds.getCentreX(), bounds.getCentreY() + equant * 0.5f * (width / 2.95f) );
 		auto r1 = defRad *  (width / 6.f);
 		auto r2 = epi1Rad * (width / 6.f);
@@ -182,5 +182,6 @@ public:
 private:
 	float equant{ 0.f }, defPhase{ 0.f }, epi1Phase{ 0.f }, epi2Phase{ 0.f }, epi3Phase{ 0.f }, defRad{ 1.f }, epi1Rad{ 0.5f }, epi2Rad{ 0.25f }, epi3Rad{ 0.2f };
 	int algo{ 0 };
+	float scale{ 1.f };
 
 };

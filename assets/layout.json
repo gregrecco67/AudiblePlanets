@@ -149,7 +149,12 @@
                 { "id": "Fade", "x": "prevR()", "y": "prevY()", "w": 42, "h": 57 },
                 { "id": "lfo", "x": "getX('Offset')", "y": "getY('Rate')", "r": "getR('Fade')", "b": "getY('Fade')" }
             ] },
-        { "id": "mod", "r": "parR()", "y": 0, "w": "56*3", "h": 163, "children":
+        { "id": "timbre", "x": "getR('lfo1')+2", "y": 0, "w": "56*4", "h": 162 , "children" :
+            [
+                { "id": "Demodulate", "x": "56*2", "y": 23, "w": "56*2", "h": 140 }
+            ]
+        },
+        { "id": "mod", "x": "getR('timbre')+2", "y": 0, "w": "56*3+2", "h": 163, "children":
             [
                 { "id": "modlist", "x": 0, "y": 23, "r": "parW()", "b": "parH()" }
             ] 
@@ -172,9 +177,12 @@
                 { "id": "Level", "x": "prevR()", "y": "prevY()",  "w": 56, "h": 70 }
             ] 
         },
-        { "id": "timbre", "x": "getR('lfo1')+2", "y": 0, "w": "56*4", "h": 163 , "children" :
+        { "id": "orbit", "x": "getR('global')+2", "y": "getY('global')", "w": "56*2-2", "h": 163, "children": 
             [
-                { "id": "Demodulate", "x": "56*2", "y": 23, "w": "56*2", "h": 140 }
-            ]}
-]
+                { "id": "Speed", "x": 0, "y": 23, "w": 54, "h": 70},
+                { "id": "Scale", "x": 54, "y": 23, "w": 54, "h": 70},
+                { "id":  "Algorithm", "x": 0, "y": 93, "w": "56*2-8", "h": 70 }
+            ]
+        }
+    ]
 }

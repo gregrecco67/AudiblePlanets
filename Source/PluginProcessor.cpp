@@ -234,6 +234,7 @@ void APAudioProcessor::GlobalParams::setup (APAudioProcessor& p)
     level->conversionFunction     = [] (float in) { return juce::Decibels::decibelsToGain (in); };
 }
 
+//==============================================================================
 void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 {
 	equant = p.addExtParam("equant", "Equant", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
@@ -243,6 +244,12 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
     algo = p.addIntParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0, 0.f, algoTextFunction);
 }
 
+//==============================================================================
+void APAudioProcessor::OrbitParams::setup(APAudioProcessor& p)
+{
+	speed = p.addIntParam("speed", "Speed", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	scale = p.addIntParam("scale", "Scale", "", "", { 1.0, 6.0, 0.0, 1.0 }, 1.0f, 0.0f);
+}
 
 //==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true), false)
@@ -276,7 +283,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutp
 	globalParams.setup (*this);
 	filterParams.setup(*this);
 	timbreParams.setup(*this);
-
+	orbitParams.setup(*this);
 
     setupModMatrix();
     init();
