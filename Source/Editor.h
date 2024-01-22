@@ -4,15 +4,17 @@
 #include "PluginProcessor.h"
 #include "Panels.h"
 #include "BinaryData.h"
+#include "OrbitViz.h"
 
 //==============================================================================
-class Editor : public juce::Component
+class Editor : public juce::Component, public juce::Timer
 {
 public:
     Editor (APAudioProcessor& proc_);
 
     void setupCallbacks();
     void resized() override;
+    void timerCallback() override;
 
 private:
     APAudioProcessor& proc;
@@ -38,7 +40,13 @@ private:
     GlobalBox global                        { "global", proc };
 	TimbreBox timbre						{ "timbre", proc };
 
-    //DelayBox delay { proc };
+    ComboBox algoSelector;
+    OrbitViz orbitViz;
+    int frameRate{ 30 };
+    float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };
+    float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * (float)frameRate) };
 
+    //DelayBox delay { proc };
+    
     gin::Layout layout { *this };
 };

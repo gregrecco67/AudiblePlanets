@@ -99,6 +99,20 @@ static juce::String syncrepeatTextFunction(const gin::Parameter&, float v)
 	}
 }
 
+static juce::String algoTextFunction(const gin::Parameter&, float v)
+{
+    switch (int (v))
+    {
+        case 0: return "1-2-3-4";
+        case 1: return "1-2-3, 2-4";
+        case 2: return "1-2, 1-3-4";
+        case 3: return "1-2, 1-3, 1-4";
+        default:
+            jassertfalse;
+            return {};
+    }
+}
+
 static juce::String freqTextFunction (const gin::Parameter&, float v)
 {
     return juce::String (int (gin::getMidiNoteInHertz (v)));
@@ -226,6 +240,7 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 	pitch = p.addExtParam("pitch", "Pitch", "", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0, 0.0f);
 	blend = p.addExtParam("blend", "Blend", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
 	demodmix = p.addExtParam("demodmix", "Demodulate", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+    algo = p.addIntParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0, 0.f, algoTextFunction);
 }
 
 

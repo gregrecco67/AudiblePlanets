@@ -76,7 +76,7 @@ target_link_libraries (${PROJECT_NAME}
 						gin_dsp
 						gin_plugin
 						gin_simd
-
+                        melatonin_blur
 						juce::juce_cryptography
 						juce::juce_data_structures
 						juce::juce_events
