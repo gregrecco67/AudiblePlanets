@@ -103,10 +103,10 @@ static juce::String algoTextFunction(const gin::Parameter&, float v)
 {
     switch (int (v))
     {
-        case 0: return "1-2-3-4";
-        case 1: return "1-2-3, 2-4";
-        case 2: return "1-2, 1-3-4";
-        case 3: return "1-2, 1-3, 1-4";
+        case 0: return String("1-2-3-(4)");
+        case 1: return String("1-2-(3), 2-(4)");
+        case 2: return String("1-(2), 1-3-(4)");
+        case 3: return String("1-(2), 1-(3), 1-(4)");
         default:
             jassertfalse;
             return {};

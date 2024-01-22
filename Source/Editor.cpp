@@ -62,7 +62,7 @@ void Editor::timerCallback() {
     orbitViz.setEpi1Rad(proc.osc2Params.radius->getValue());
     orbitViz.setEpi2Rad(proc.osc3Params.radius->getValue());
     orbitViz.setEpi3Rad(proc.osc4Params.radius->getValue());
-    orbitViz.setAlgo(proc.timbreParams.algo->getValue());
+    orbitViz.setAlgo(proc.timbreParams.algo->getUserValue());
     orbitViz.setDefPhase(vizDefPhase);
     orbitViz.setEpi1Phase(vizEpi1Phase);
     orbitViz.setEpi2Phase(vizEpi2Phase);
