@@ -148,7 +148,7 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String num) /
 		fine = p.addExtParam(id + "fine", nm + "Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
 	}
 	radius    = p.addExtParam (id + "radius",     nm + "Radius",      "Radius",    "", { 0.0, 1.0, 0.0, 1.0 }, 0.3, 0.0f);
-    tones     = p.addExtParam (id + "tones",      nm + "Tones",       "Tones",     "", { 1.0, 8.0, 1.0, 1.0 }, 1.0, 0.0f);
+    tones     = p.addExtParam (id + "tones",      nm + "Tones",       "Tones",     "", { 1.0, 5.9, 0.001, 1.0 }, 1.0, 0.0f);
     detune    = p.addExtParam (id + "detune",     nm + "Detune",      "Detune",    "", { 0.0, 0.5, 0.0, 1.0 }, 0.0, 0.0f);
     spread    = p.addExtParam (id + "spread",     nm + "Spread",      "Spread",    "%", { -100.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
     pan       = p.addExtParam (id + "pan",        nm + "Pan",         "Pan",       "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
@@ -248,7 +248,7 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::OrbitParams::setup(APAudioProcessor& p)
 {
-	speed = p.addIntParam("speed", "Speed", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	speed = p.addIntParam("speed", "Speed", "", "", { 0.0, 0.2, 0.0, 1.0 }, 0.03f, 0.0f);
 	scale = p.addIntParam("scale", "Scale", "", "", { 1.0, 6.0, 0.0, 1.0 }, 1.0f, 0.0f);
 }
 
