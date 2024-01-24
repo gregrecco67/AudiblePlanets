@@ -167,14 +167,14 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 	// Apply velocity
 	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat() * baseAmplitude;
-	osc1SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc1CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc2SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc2CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc3SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc3CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc4SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc4CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	//osc1SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	//osc1CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	//osc2SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	//osc2CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	//osc3SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	//osc3CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	//osc4SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	//osc4CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
 
 
 	// Run ADSR
@@ -329,7 +329,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			sample3R = (square3R * (1.0f - blend) * 2.0f + saw3R * (blend - 0.5f) * 2.f);
 			sample4L = (square4L * (1.0f - blend) * 2.0f + saw4L * (blend - 0.5f) * 2.f);
 			sample4R = (square4R * (1.0f - blend) * 2.0f + saw4R * (blend - 0.5f) * 2.f);
-
 		}
 
 
@@ -347,12 +346,13 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL + equant) * (epi4.yL + equant));
 		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR + equant) * (epi4.yR + equant));
 
-		demodSample2L *= atanDistance2L;
-		demodSample2R *= atanDistance2R;
-		demodSample3L *= atanDistance3L;
-		demodSample3R *= atanDistance3R;
-		demodSample4L *= atanDistance4L;
-		demodSample4R *= atanDistance4R;
+		// trying out a  volume-taming factor
+		demodSample2L *= atanDistance2L * 0.75f;
+		demodSample2R *= atanDistance2R * 0.75f;
+		demodSample3L *= atanDistance3L * 0.75f;
+		demodSample3R *= atanDistance3R * 0.75f;
+		demodSample4L *= atanDistance4L * 0.75f;
+		demodSample4R *= atanDistance4R * 0.75f;
 
 		// original recipe
 		modSample2L *= envs[1]->getOutput();
@@ -387,9 +387,11 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		synthBuffer.setSample(1, i, sampleR);
 	}
 
+	synthBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	
 	// Apply filter -- we'll do this after orbital processing
-	//if (proc.filterParams.enable->isOn())
-	//	filter.process(synthBuffer);
+	if (proc.filterParams.enable->isOn())
+		filter.process(synthBuffer);
 
 	if (env1.getState() == gin::AnalogADSR::State::idle)
 	{

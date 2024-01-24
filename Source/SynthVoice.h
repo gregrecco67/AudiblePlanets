@@ -57,7 +57,7 @@ private:
 	int algo{ 0 };
 	float equant{ 0.f };
     
-	float baseAmplitude = 0.5f;
+	float baseAmplitude = 0.625f;
     gin::EasedValueSmoother<float> noteSmoother;
     
     float ampKeyTrack = 1.0f;

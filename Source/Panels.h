@@ -18,7 +18,7 @@ public:
         addControl (c = new gin::Knob (osc.coarse), 0, 0);
         addControl (f = new gin::Knob (osc.fine, true), 1, 0);
         addControl (r = new gin::Knob (osc.radius), 2, 0);
-        addControl (new gin::Knob (osc.tones, true), 3, 0);
+        addControl (new gin::Knob (osc.tones), 3, 0);
 		addControl(new gin::Switch(osc.saw), 4, 0);
 
 		
@@ -47,7 +47,7 @@ public:
 
         addControl (new gin::Knob (osc.detune), 2, 2);
         addControl (new gin::Knob (osc.spread), 3, 2);
-        addControl (new gin::Knob (osc.pan), 4, 2);
+        addControl (new gin::Knob (osc.pan, true), 4, 2);
 
         addControl(new gin::Select(osc.env));
 		addControl(new gin::Switch(osc.fixed));
@@ -147,9 +147,9 @@ public:
         addControl (new gin::Knob (envparams.sustain), 2, 1);
         addControl (new gin::Knob (envparams.release), 3, 1);
         addControl (new gin::Knob (envparams.velocityTracking), 4, 1);
-		addControl(new gin::Knob(envparams.acurve), 0, 2);
+		addControl(new gin::Knob(envparams.acurve, true), 0, 2);
 		addControl(new gin::Knob(envparams.drcurve), 1, 2);
-		addControl(r = new gin::Knob(envparams.time), 2, 2);
+		addControl(r = new gin::Knob(envparams.time, true), 2, 2);
 		addControl(b =new gin::Select(envparams.duration), 3, 2);
 		addControl(new gin::Select(envparams.syncrepeat), 4, 2);
 		watchParam(envparams.syncrepeat);
@@ -168,7 +168,6 @@ public:
 	}
 
 	APAudioProcessor& proc;
-	int idx;
 	gin::ParamComponent::Ptr r = nullptr;
 	gin::ParamComponent::Ptr b = nullptr;
 	APAudioProcessor::ENVParams& envparams;
@@ -184,11 +183,11 @@ public:
 		setName(name);
 
 		auto& timbreparams = proc.timbreParams;
-		addControl(new gin::Knob(timbreparams.equant), 0, 0);
-		addControl(new gin::Knob(timbreparams.pitch), 0, 1);
+		addControl(new gin::Knob(timbreparams.equant, true), 0, 0);
+		addControl(new gin::Knob(timbreparams.pitch, true), 0, 1);
 		addControl(new gin::Knob(timbreparams.blend), 1, 1);
         addControl(new gin::Select (timbreparams.algo), 1, 0);
-		addControl(new gin::Knob(timbreparams.demodmix), 1, 2);
+		addControl(new gin::Knob(timbreparams.demodmix, true), 1, 2);
 	}
 };
 
@@ -279,7 +278,6 @@ public:
     }
 
     APAudioProcessor& proc;
-    int idx;
     gin::ParamComponent::Ptr r = nullptr;
     gin::ParamComponent::Ptr b = nullptr;
     APAudioProcessor::LFOParams& lfoparams;

@@ -27,7 +27,7 @@ public:
 
     struct Params
     {
-        Wave wave = Wave::sawUp;
+        Wave wave = Wave::sine;
         float leftGain = 1.0;
         float rightGain = 1.0;
 		float tones = 1.0;
@@ -213,7 +213,7 @@ protected:
 
 struct APVoicedStereoOscillatorParams : public APVoicedOscillatorParams
 {
-    Wave wave = Wave::sawUp;
+    Wave wave = Wave::sine;
 
     inline void init (APStereoOscillator::Params& p) const
     {
