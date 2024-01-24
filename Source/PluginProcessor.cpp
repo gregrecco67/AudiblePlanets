@@ -242,7 +242,7 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 	pitch = p.addExtParam("pitch", "Pitch", "", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0, 0.0f);
 	blend = p.addExtParam("blend", "Blend", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
 	demodmix = p.addExtParam("demodmix", "Demodulate", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-    algo = p.addIntParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0, 0.f, algoTextFunction);
+    algo = p.addExtParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0, 0.f, algoTextFunction);
 }
 
 //==============================================================================

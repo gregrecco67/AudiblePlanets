@@ -101,6 +101,70 @@ template <class F> class FastMath {
 		- juce::dsp::SIMDRegister<float>(2.3868346521031027639830001794722295e-8f) * x2)))));
 	}
 
+	static inline float minimaxAtan(float a) {
+		float b = a * a;
+		float u = -0.011719135406045413f;
+		u = u * b + 0.052647350616021903f;
+		u = u * b + -0.11642648118471723f;
+		u = u * b + 0.19354037577295979f;
+		u = u * b + -0.33262282784074959f;
+		u = u * b + 0.99997721907991632f;
+		return u * a;
+	}
+
+	static inline float fastAtan2(float x, float y) {
+		if (x != 0.0f)
+		{
+			if (fabsf(x) > fabsf(y)) // all the branches allow us to avoid calling minimaxAtan() outside [-1,1]
+				// technique described here: https://mazzo.li/posts/vectorized-atan2.html
+			{
+				const float z = y / x;
+				if (x > 0.0)
+				{
+					// atan2(y,x) = atan(y/x) if x > 0
+					return minimaxAtan(z);
+				}
+				else if (y >= 0.0)
+				{
+					// atan2(y,x) = atan(y/x) + PI if x < 0, y >= 0
+					return minimaxAtan(z) + (float)M_PI;
+				}
+				else
+				{
+					// atan2(y,x) = atan(y/x) - PI if x < 0, y < 0
+					return minimaxAtan(z) - (float)M_PI;
+				}
+			}
+			else // Use property atan(y/x) = PI/2 - atan(x/y) if |y/x| > 1.
+			{
+				const float z = x / y;
+				if (y > 0.0)
+				{
+					// atan2(y,x) = PI/2 - atan(x/y) if |y/x| > 1, y > 0
+					return -minimaxAtan(z) + (float)M_PI * 0.5f;
+				}
+				else
+				{
+					// atan2(y,x) = -PI/2 - atan(x/y) if |y/x| > 1, y < 0
+					return -minimaxAtan(z) - (float)M_PI * 0.5f;
+				}
+			}
+		}
+		else
+		{
+			if (y > 0.0f) // x = 0, y > 0
+			{
+				return (float)M_PI * 0.5f;
+			}
+			else if (y < 0.0f) // x = 0, y < 0
+			{
+				return (float)-M_PI * 0.5f;
+			}
+		}
+		return 0.0f;
+
+	}
+
   private:
 
     FastMath() {}

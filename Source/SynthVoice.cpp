@@ -1,15 +1,24 @@
 #include "SynthVoice.h"
 #include "PluginProcessor.h"
+#include <numbers>
 
+using namespace std::numbers;
 //==============================================================================
+
+void SynthVoice::Oscillator::noteOn()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		phases[i] = (phases[i] >= 0) ? phases[i] : 0.0f;
+	}
+}
+
+
+
 SynthVoice::SynthVoice (APAudioProcessor& p)
     : proc (p)
 {
     filter.setNumChannels (2);
-	osc1Params.voices = 4;
-	osc2Params.voices = 4;
-	osc3Params.voices = 4;
-	osc4Params.voices = 4;
 }
 
 void SynthVoice::noteStarted()
@@ -126,10 +135,11 @@ void SynthVoice::setCurrentSampleRate (double newRate)
 {
     MPESynthesiserVoice::setCurrentSampleRate (newRate);
 
-	osc1.setSampleRate(newRate);
-	osc2.setSampleRate(newRate);
-	osc3.setSampleRate(newRate);
-	osc4.setSampleRate(newRate);
+	// use currentSampleRate to set up oscillators
+	osc1.sampleRate = newRate;
+	osc2.sampleRate = newRate;
+	osc3.sampleRate = newRate;
+	osc4.sampleRate = newRate;
 
 	filter.setSampleRate(newRate);
 
@@ -149,73 +159,151 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int st
 {
     updateParams (numSamples);
 
-	// Run OSC
-	gin::ScratchBuffer osc1SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc1CosineBuffer(2, numSamples);
-	gin::ScratchBuffer osc2SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc2CosineBuffer(2, numSamples);
-	gin::ScratchBuffer osc3SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc3CosineBuffer(2, numSamples);
-	gin::ScratchBuffer osc4SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc4CosineBuffer(2, numSamples);
-	gin::ScratchBuffer synthBuffer(2, numSamples);
+	synthBuffer.setSize(2, numSamples, false, false, true);
+	synthBuffer.clear();
+	juce::dsp::AudioBlock<float> synthBlock{ synthBuffer }; // put buffer in a block
+	juce::dsp::ProcessContextReplacing<float> synthContext{ synthBlock }; // put that block in a context
 
-	osc1.processAdding(osc1Freq, osc1Params, osc1SineBuffer, osc1CosineBuffer);
-	osc2.processAdding(osc2Freq, osc2Params, osc2SineBuffer, osc2CosineBuffer);
-	osc3.processAdding(osc3Freq, osc3Params, osc3SineBuffer, osc3CosineBuffer);
-	osc4.processAdding(osc4Freq, osc4Params, osc4SineBuffer, osc4CosineBuffer);
+	// 2. get write pointers
+	auto* bufferL = synthBuffer.getWritePointer(0);
+	auto* bufferR = synthBuffer.getWritePointer(1); // "stereo"
 
 	// Apply velocity
 	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat() * baseAmplitude;
-	osc1SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc1CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc2SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc2CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc3SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc3CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc4SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	osc4CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-    
+	auto gainLevel = juce::Decibels::decibelsToGain(getValue(proc.globalParams.level));
+
 	// Apply filter -- we'll do this after orbital processing
 	//if (proc.filterParams.enable->isOn())
 	//	filter.process(osc1buffer);
 
 	// Run ADSR
-	envs[0]->processMultiplying(osc1SineBuffer);
-	envs[0]->processMultiplying(osc1CosineBuffer);
-	envs[1]->processMultiplying(osc2SineBuffer);
-	envs[1]->processMultiplying(osc2CosineBuffer);
-	envs[2]->processMultiplying(osc3SineBuffer);
-	envs[2]->processMultiplying(osc3CosineBuffer);
-	envs[3]->processMultiplying(osc4SineBuffer);
-	envs[3]->processMultiplying(osc4CosineBuffer);
+	
 
-	// algo 1
+	auto algo = (int)getValue(proc.timbreParams.algo);
+	auto demod = getValue(proc.timbreParams.demodmix);
+	auto blend = getValue(proc.timbreParams.blend);
+	
+	envVals[0] = env1.process(numSamples);
+	envVals[1] = env2.process(numSamples);
+	envVals[2] = env3.process(numSamples);
+	envVals[3] = env4.process(numSamples);
+
+	auto equantVal = getValue(proc.timbreParams.equant);
+	auto voiceLevel = juce::Decibels::decibelsToGain(getValue(proc.globalParams.level));
+
+
 	for (int i = 0; i < numSamples; i++)
 	{
-		epi1 = {
-			osc1SineBuffer.getSample(0, i), osc1CosineBuffer.getSample(0, i),
-			osc1SineBuffer.getSample(1, i), osc1CosineBuffer.getSample(1, i)
-		};
-		epi2 = {
-			epi1.xL + osc2SineBuffer.getSample(0, i), epi1.yL + osc2CosineBuffer.getSample(0, i),
-			epi1.xR + osc2SineBuffer.getSample(1, i), epi1.yR + osc2CosineBuffer.getSample(1, i)
-		};
-		epi3 = {
-			epi2.xL + osc3SineBuffer.getSample(0, i), epi2.yL + osc3CosineBuffer.getSample(0, i),
-			epi2.xR + osc3SineBuffer.getSample(1, i), epi2.yR + osc3CosineBuffer.getSample(1, i)
-		};
-		epi4 = {
-			epi3.xL + osc4SineBuffer.getSample(0, i), epi3.yL + osc4CosineBuffer.getSample(0, i),
-			epi3.xR + osc4SineBuffer.getSample(1, i), epi3.yR + osc4CosineBuffer.getSample(1, i)
-		};
-		
-		synthBuffer.setSample(0, i, epi4.xL);
-		synthBuffer.setSample(1, i, epi4.xR);
+		auto osc1Samples = osc1.getNextSamples();
+		auto osc2Samples = osc2.getNextSamples();
+		auto osc3Samples = osc3.getNextSamples();
+		auto osc4Samples = osc4.getNextSamples();
+
+		epi1.xL = envVals[oscEnvs[0]] * osc1Samples.cosL;
+		epi1.yL = envVals[oscEnvs[0]] * osc1Samples.sinL;
+		epi1.xR = envVals[oscEnvs[0]] * osc1Samples.cosR;
+		epi1.yR = envVals[oscEnvs[0]] * osc1Samples.sinR;
+
+		epi2.xL = envVals[oscEnvs[1]] * (epi1.xL + osc2Samples.cosL);
+		epi2.yL = envVals[oscEnvs[1]] * (epi1.yL + osc2Samples.sinL);
+		epi2.xR = envVals[oscEnvs[1]] * (epi1.xR + osc2Samples.cosR);
+		epi2.yR = envVals[oscEnvs[1]] * (epi1.yR + osc2Samples.sinR);
+
+		if (algo == 0 || algo == 1)
+		{
+			epi3.xL = envVals[oscEnvs[2]] * (epi2.xL + osc3Samples.cosL);
+			epi3.yL = envVals[oscEnvs[2]] * (epi2.yL + osc3Samples.sinL);
+			epi3.xR = envVals[oscEnvs[2]] * (epi2.xR + osc3Samples.cosR);
+			epi3.yR = envVals[oscEnvs[2]] * (epi2.yR + osc3Samples.sinR);
+		}
+		else
+		{
+			epi3.xL = envVals[oscEnvs[2]] * (epi1.xL + osc3Samples.cosL);
+			epi3.yL = envVals[oscEnvs[2]] * (epi1.yL + osc3Samples.sinL);
+			epi3.xR = envVals[oscEnvs[2]] * (epi1.xR + osc3Samples.cosR);
+			epi3.yR = envVals[oscEnvs[2]] * (epi1.yR + osc3Samples.sinR);
+		}
+		if (algo == 0 || algo == 2)
+			epi4.xL = envVals[oscEnvs[3]] * (epi3.xL + osc4Samples.cosL);
+			epi4.yL = envVals[oscEnvs[3]] * (epi3.yL + osc4Samples.sinL);
+			epi4.xR = envVals[oscEnvs[3]] * (epi3.xR + osc4Samples.cosR);
+			epi4.yR = envVals[oscEnvs[3]] * (epi3.yR + osc4Samples.sinR);
+		if (algo == 1)
+		{
+			epi4.xL = envVals[oscEnvs[3]] * (epi2.xL + osc4Samples.cosL);
+			epi4.yL = envVals[oscEnvs[3]] * (epi2.yL + osc4Samples.sinL);
+			epi4.xR = envVals[oscEnvs[3]] * (epi2.xR + osc4Samples.cosR);
+			epi4.yR = envVals[oscEnvs[3]] * (epi2.yR + osc4Samples.sinR);
+		}
+		if (algo == 3)
+		{
+			epi4.xL = envVals[oscEnvs[3]] * (epi1.xL + osc4Samples.cosL);
+			epi4.yL = envVals[oscEnvs[3]] * (epi1.yL + osc4Samples.sinL);
+			epi4.xR = envVals[oscEnvs[3]] * (epi1.xR + osc4Samples.cosR);
+			epi4.yR = envVals[oscEnvs[3]] * (epi1.yR + osc4Samples.sinR);
+		}
+
+		// bodies' positions are set, now interpret them
+		float atanAngle2L, atanAngle2R, atanAngle3L, atanAngle3R, atanAngle4L, atanAngle4R;
+		float sine2L, sine2R, sine3L, sine3R, sine4L, sine4R;
+		float square2L, square2R, square3L, square3R, square4L, square4R;
+		float saw2L, saw2R, saw3L, saw3R, saw4L, saw4R;
+
+		float sampleL, sampleR;
+		if (algo == 0)
+		{
+			atanAngle4L = FastMath<float>::fastAtan2(epi4.xL, epi4.yL + equantVal);
+			atanAngle4R = FastMath<float>::fastAtan2(epi4.xR, epi4.yR + equantVal);
+			sine4L = FastMath<float>::fastSin(atanAngle4L);
+			sine4R = FastMath<float>::fastSin(atanAngle4R);
+			square4L = (atanAngle4L > 0.f) ? 1.0f : -1.0f;
+			square4R = (atanAngle4R > 0.f) ? 1.0f : -1.0f;
+			saw4L = atanAngle4L * inv_pi;
+			saw4R = atanAngle4R * inv_pi;
+
+			if (blend < 0.5)
+			{
+				sampleL = (sine4L * (1.f - blend * 2.0f) + square4L * blend * 2.0f);
+				sampleR = (sine4R * (1.f - blend * 2.0f) + square4R * blend * 2.0f);
+			}
+			else
+			{
+				sampleL = (square4L * (1.0f - blend) * 2.0f + saw4L * (blend - 0.5f) * 2.f);
+				sampleR = (square4R * (1.0f - blend) * 2.0f + saw4R * (blend - 0.5f) * 2.f);
+			}
+
+			float modSampleL = sampleL;
+			float demodSampleL = sampleL;
+			float modSampleR = sampleR;
+			float demodSampleR = sampleR;
+
+			auto atanDistanceL = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL + equantVal) * (epi4.yL + equantVal) );
+			auto atanDistanceR = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR + equantVal) * (epi4.yR + equantVal) );
+			demodSampleL *= atanDistanceL;
+			demodSampleR *= atanDistanceR;
+
+			// original recipe
+			modSampleL *= envVals[oscEnvs[3]]; // i.e., getCurrentValue() for whatever env is selected for osc4 [idx=3], since we now construe the planet as the carrier(!)
+			modSampleR *= envVals[oscEnvs[3]];
+
+			// mix by demod amount
+			sampleL = (modSampleL * (1.0f - demod) + demodSampleL * demod);
+			sampleR = (modSampleR * (1.0f - demod) + demodSampleR * demod);
+
+			bufferL[i] = sampleL * gainLevel;
+			bufferR[i] = sampleR * gainLevel;
+		}
+
+		//synthBuffer.setSample(0, i, epi4.xL);
+		//synthBuffer.setSample(1, i, epi4.xR);
 	}
 
 
-    if (env1.getState() == gin::AnalogADSR::State::idle)
+    if (   env1.getState() == gin::AnalogADSR::State::idle 
+		&& env2.getState() == gin::AnalogADSR::State::idle
+		&& env3.getState() == gin::AnalogADSR::State::idle
+		&& env4.getState() == gin::AnalogADSR::State::idle
+		)
     {
         clearCurrentNote();
         stopVoice();
@@ -240,102 +328,49 @@ void SynthVoice::updateParams (int blockSize)
 	currentMidiNote += float(note.totalPitchbendInSemitones);
 	//currentMidiNote += getValue(proc.osc1Params.coarse) + getValue(proc.osc1Params.fine);
 
-	osc1Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc1Params.coarse) + getValue(proc.osc1Params.fine));
-	osc2Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc2Params.coarse) + getValue(proc.osc2Params.fine));
-	osc3Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc3Params.coarse) + getValue(proc.osc3Params.fine));
-	osc4Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc4Params.coarse) + getValue(proc.osc4Params.fine));
+	auto osc1Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc1Params.coarse) + getValue(proc.osc1Params.fine));
+	auto osc2Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc2Params.coarse) + getValue(proc.osc2Params.fine));
+	auto osc3Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc3Params.coarse) + getValue(proc.osc3Params.fine));
+	auto osc4Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc4Params.coarse) + getValue(proc.osc4Params.fine));
 
-    osc1Params.wave = getValue(proc.osc1Params.saw) ? Wave::sawUp : Wave::cosine;
+	Oscillator::Params osc1Params;
+	osc1Params.saw = (bool)getValue(proc.osc1Params.saw);
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
 	osc1Params.detune = getValue(proc.osc1Params.detune);
-	osc1Params.gain = getValue(proc.osc1Params.radius);
-	switch ((int)getValue(proc.osc1Params.env))
-	{
-	case 0:
-		envs[0] = &env1;
-		break;
-	case 1:
-		envs[0] = &env2;
-		break;
-	case 2:
-		envs[0] = &env3;
-		break;
-	case 3:
-		envs[0] = &env4;
-		break;
-	}
+	osc1Params.radius = getValue(proc.osc1Params.radius);
+	oscEnvs[0] = (int)getValue(proc.osc1Params.env); // set env index for osc 1
 
-	osc2Params.wave = getValue(proc.osc2Params.saw) ? Wave::sawUp : Wave::sine;
+	Oscillator::Params osc2Params;
+	osc2Params.saw = (bool)getValue(proc.osc2Params.saw);
 	osc2Params.tones = getValue(proc.osc2Params.tones);
 	osc2Params.pan = getValue(proc.osc2Params.pan);
 	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
 	osc2Params.detune = getValue(proc.osc2Params.detune);
-	osc2Params.gain = getValue(proc.osc2Params.radius);
-	switch ((int)getValue(proc.osc2Params.env))
-	{
-	case 0:
-		envs[1] = &env1;
-		break;
-	case 1:
-		envs[1] = &env2;
-		break;
-	case 2:
-		envs[1] = &env3;
-		break;
-	case 3:
-		envs[1] = &env4;
-		break;
-	}
-
-	osc3Params.wave = getValue(proc.osc3Params.saw) ? Wave::sawUp : Wave::sine;
+	osc2Params.radius = getValue(proc.osc2Params.radius);
+	oscEnvs[1] = (int)getValue(proc.osc2Params.env);
+	
+	Oscillator::Params osc3Params;
+	osc3Params.saw = (bool)getValue(proc.osc3Params.saw);
 	osc3Params.tones = getValue(proc.osc3Params.tones);
 	osc3Params.pan = getValue(proc.osc3Params.pan);
 	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
 	osc3Params.detune = getValue(proc.osc3Params.detune);
-	osc3Params.gain = getValue(proc.osc3Params.radius);
-	switch ((int)getValue(proc.osc3Params.env))
-	{
-	case 0:
-		envs[2] = &env1;
-		break;
-	case 1:
-		envs[2] = &env2;
-		break;
-	case 2:
-		envs[2] = &env3;
-		break;
-	case 3:
-		envs[2] = &env4;
-		break;
-	}
+	osc3Params.radius = getValue(proc.osc3Params.radius);
+	oscEnvs[2] = (int)getValue(proc.osc3Params.env);
 
-	osc4Params.wave = getValue(proc.osc4Params.saw) ? Wave::sawUp : Wave::sine;
+	Oscillator::Params osc4Params;
+	osc4Params.saw = (bool)getValue(proc.osc4Params.saw);
 	osc4Params.tones = getValue(proc.osc4Params.tones);
 	osc4Params.pan = getValue(proc.osc4Params.pan);
 	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;
 	osc4Params.detune = getValue(proc.osc4Params.detune);
-	osc4Params.gain = getValue(proc.osc4Params.radius);
-	switch ((int)getValue(proc.osc4Params.env))
-	{
-	case 0:
-		envs[3] = &env1;
-		break;
-	case 1:
-		envs[3] = &env2;
-		break;
-	case 2:
-		envs[3] = &env3;
-		break;
-	case 3:
-		envs[3] = &env4;
-		break;
-	}
-
-
-    
-    //ampKeyTrack = getValue (proc.env1Params.velocityTracking);
+	osc4Params.radius = getValue(proc.osc4Params.radius);
+	oscEnvs[3] = (int)getValue(proc.osc4Params.env);
+	
+	// make this a member of global in pluginprocessor, etc.
+    // ampKeyTrack = getValue (proc.env1Params.velocityTracking);
 
     if (proc.filterParams.enable->isOn())
     {
@@ -447,3 +482,4 @@ float SynthVoice::getFilterCutoffNormalized()
     auto range = proc.filterParams.frequency->getUserRange();
     return range.convertTo0to1 (juce::jlimit (range.start, range.end, gin::getMidiNoteFromHertz (freq)));
 }
+

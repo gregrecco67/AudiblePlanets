@@ -1,8 +1,14 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Oscillators.h"
+#include "FastMath.hpp"
+#define SEMITONE 1.05946309436f
+#define SEMITONE_INV 0.94387431268f
+
 class APAudioProcessor;
+
+
+
 
 //==============================================================================
 class SynthVoice : public gin::SynthesiserVoice,
@@ -31,16 +37,17 @@ public:
 private:
     void updateParams (int blockSize);
 
+	double sampleRate = 44100.0;
+
     APAudioProcessor& proc;
 
-    APBLLTVoicedStereoOscillator osc1, osc2, osc3, osc4;
 
     gin::Filter filter;
     
     gin::LFO lfo1, lfo2, lfo3, lfo4;
-
-    gin::AnalogADSR env1, env2, env3, env4;
-	std::array<gin::AnalogADSR*, 4> envs{&env1, &env2, &env3, &env4};
+	gin::AnalogADSR env1, env2, env3, env4;
+	std::array<int, 4> oscEnvs{0, 1, 2, 3}; // since these can be applied to any osc
+	std::array<float, 4> envVals = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	struct StereoPosition { float xL, yL, xR, yR; };
 	StereoPosition epi1{ 1.0f, 0.0f, 1.0f, 0.0f};
@@ -49,10 +56,32 @@ private:
 	StereoPosition epi4{ 1.0f, 0.0f, 1.0f, 0.0f };
 
     float currentMidiNote = -1;
-    APVoicedStereoOscillatorParams osc1Params, osc2Params, osc3Params, osc4Params;
-	float osc1Freq = 0.0f, osc2Freq = 0.0f, osc3Freq = 0.0f, osc4Freq = 0.0f;
+   
+	//APBLLTVoicedStereoOscillator osc1, osc2, osc3, osc4;
+	//APVoicedStereoOscillatorParams osc1Params, osc2Params, osc3Params, osc4Params;
     
-	float baseAmplitude = 0.16f;
+	class Oscillator
+	{
+	public:
+		Oscillator() {}
+
+		float notes[4], freqs[4], phases[4]{ -1.0 }, deltas[4], sampleRate;
+		struct Params {
+			float note, tones, detune, spread, pan, radius; // radius == volume in old scheme
+			bool saw;
+		};
+		Params params;
+		void setParams(Params p);
+		void noteOn();
+		void reset();
+		struct Samples { float sinL, cosL, sinR, cosR; };
+		Samples getNextSamples();
+	};
+
+	Oscillator osc1, osc2, osc3, osc4;
+
+	juce::AudioBuffer<float> synthBuffer;
+	float baseAmplitude = 0.25f;
 
     gin::EasedValueSmoother<float> noteSmoother;
     
