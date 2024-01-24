@@ -1,20 +1,7 @@
 #include "SynthVoice.h"
 #include "PluginProcessor.h"
-#include <numbers>
 
-using namespace std::numbers;
 //==============================================================================
-
-void SynthVoice::Oscillator::noteOn()
-{
-	for (int i = 0; i < 4; i++)
-	{
-		phases[i] = (phases[i] >= 0) ? phases[i] : 0.0f;
-	}
-}
-
-
-
 SynthVoice::SynthVoice (APAudioProcessor& p)
     : proc (p)
 {
@@ -333,6 +320,12 @@ void SynthVoice::updateParams (int blockSize)
 	auto osc3Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc3Params.coarse) + getValue(proc.osc3Params.fine));
 	auto osc4Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc4Params.coarse) + getValue(proc.osc4Params.fine));
 
+    // n  =  12*log2(fn/440 Hz).
+    auto osc1ModNote = 69 + 12 * std::log2(osc1Freq * 0.00227272727); // 0.00227272727 = inverse 440 Hz
+    auto osc2ModNote = 69 + 12 * std::log2(osc2Freq * 0.00227272727);
+    auto osc3ModNote = 69 + 12 * std::log2(osc3Freq * 0.00227272727);
+    auto osc4ModNote = 69 + 12 * std::log2(osc4Freq * 0.00227272727);
+    
 	Oscillator::Params osc1Params;
 	osc1Params.saw = (bool)getValue(proc.osc1Params.saw);
 	osc1Params.tones = getValue(proc.osc1Params.tones);
@@ -340,7 +333,9 @@ void SynthVoice::updateParams (int blockSize)
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
 	osc1Params.detune = getValue(proc.osc1Params.detune);
 	osc1Params.radius = getValue(proc.osc1Params.radius);
+    osc1Params.note = osc1ModNote;
 	oscEnvs[0] = (int)getValue(proc.osc1Params.env); // set env index for osc 1
+    osc1.setParams(osc1Params);
 
 	Oscillator::Params osc2Params;
 	osc2Params.saw = (bool)getValue(proc.osc2Params.saw);
@@ -349,7 +344,9 @@ void SynthVoice::updateParams (int blockSize)
 	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
 	osc2Params.detune = getValue(proc.osc2Params.detune);
 	osc2Params.radius = getValue(proc.osc2Params.radius);
+    osc2Params.note = osc2ModNote;
 	oscEnvs[1] = (int)getValue(proc.osc2Params.env);
+    osc2.setParams(osc2Params);
 	
 	Oscillator::Params osc3Params;
 	osc3Params.saw = (bool)getValue(proc.osc3Params.saw);
@@ -358,7 +355,9 @@ void SynthVoice::updateParams (int blockSize)
 	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
 	osc3Params.detune = getValue(proc.osc3Params.detune);
 	osc3Params.radius = getValue(proc.osc3Params.radius);
+    osc3Params.note = osc3ModNote;
 	oscEnvs[2] = (int)getValue(proc.osc3Params.env);
+    osc3.setParams(osc3Params);
 
 	Oscillator::Params osc4Params;
 	osc4Params.saw = (bool)getValue(proc.osc4Params.saw);
@@ -367,8 +366,10 @@ void SynthVoice::updateParams (int blockSize)
 	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;
 	osc4Params.detune = getValue(proc.osc4Params.detune);
 	osc4Params.radius = getValue(proc.osc4Params.radius);
+    osc4Params.note = osc4ModNote;
 	oscEnvs[3] = (int)getValue(proc.osc4Params.env);
-	
+    osc4.setParams(osc4Params);
+    
 	// make this a member of global in pluginprocessor, etc.
     // ampKeyTrack = getValue (proc.env1Params.velocityTracking);
 

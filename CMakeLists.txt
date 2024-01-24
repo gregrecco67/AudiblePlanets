@@ -38,7 +38,7 @@ if (APPLE)
 			-Wno-ignored-qualifiers -Wno-missing-braces -Wno-char-subscripts -Wno-unused-private-field -fno-aligned-allocation -Wunused-private-field -Wunreachable-code 
 			-Wenum-compare -Wshadow -Wfloat-conversion -Wshadow-uncaptured-local -Wshadow-field -Wsign-compare -Wdeprecated-this-capture -Wimplicit-float-conversion 
 			-ffast-math -fno-finite-math-only -Wfloat-equal
-			"$<$<CONFIG:RELEASE>:-Werror>"
+#			"$<$<CONFIG:RELEASE>:-Werror>"
 		)
 endif ()
 
@@ -47,6 +47,7 @@ endif ()
 set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
 
 file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.h)

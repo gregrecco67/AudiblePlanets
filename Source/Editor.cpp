@@ -1,4 +1,5 @@
 #include "Editor.h"
+#include "BinaryData.h"
 
 Editor::Editor (APAudioProcessor& proc_)
     : proc ( proc_ ), algoSelector (proc.timbreParams.algo)
@@ -78,11 +79,11 @@ void Editor::resized()
     auto height = area.getHeight();
     orbitViz.setBounds(area.getRight() - (394), height * 0.5, 394, height * 0.5);
     
-#if JUCE_DEBUG
+//#if JUCE_DEBUG
     auto f = juce::File (__FILE__).getChildFile ("../../assets/layout.json");
 
     layout.setLayout ("layout.json", f);
-#else
-    layout.setLayout ("layout.json");
-#endif
+//#else
+//    layout.setLayout ("layout_json");
+//#endif
 }

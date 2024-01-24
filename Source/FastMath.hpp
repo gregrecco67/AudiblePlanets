@@ -164,6 +164,41 @@ template <class F> class FastMath {
 		return 0.0f;
 
 	}
+    
+    
+inline static float sineValueForPhaseAndTones(float phase, float tones) {
+        float fullTones{ 0.f }, value{ 0.0f };
+        float partialToneFraction = std::modf(tones, &fullTones);
+
+        value += FastMath<float>::minimaxSin(phase);
+
+        if (tones > 1.0f && tones < 2.0f)
+            value += FastMath<float>::minimaxSin(phase * 2.0f) * partialToneFraction * 0.5f;
+        else if (tones > 1.0f)
+            value += FastMath<float>::minimaxSin(phase * 2.0f) * 0.5f; // we're over 2, so add the max level of this partial
+
+        if (tones > 2.0f && tones < 3.0f)
+            value += FastMath<float>::minimaxSin(phase * 3.0f) * partialToneFraction * 0.33f;
+        else if (tones > 2.0f)
+            value += FastMath<float>::minimaxSin(phase * 3.0f) * 0.33f;
+
+        if (tones > 3.0f && tones < 4.0f)
+            value += FastMath<float>::minimaxSin(phase * 4.0f) * partialToneFraction * 0.25f;
+        else if (tones > 3.0f)
+            value += FastMath<float>::minimaxSin(phase * 4.0f) * 0.25f;
+
+        if (tones > 4.0f && tones < 5.0f)
+            value += FastMath<float>::minimaxSin(phase * 5.0f) * partialToneFraction * 0.2f;
+        else if (tones > 4.0f)
+            value += FastMath<float>::minimaxSin(phase * 5.0f) * 0.2f;
+
+        if (tones > 5.0f)
+            value += FastMath<float>::minimaxSin(phase * 6.0f) * partialToneFraction * 0.16f;
+
+        return value;
+    }
+
+
 
   private:
 
