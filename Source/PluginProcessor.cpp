@@ -469,7 +469,7 @@ void APAudioProcessor::updateParams (int newBlockSize)
     }
 
     // Output gain
-    //outputGain.setGain (modMatrix.getValue (globalParams.level));
+    outputGain.setGain (modMatrix.getValue (globalParams.level));
 }
 
 void APAudioProcessor::handleMidiEvent (const juce::MidiMessage& m)
