@@ -212,9 +212,9 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String num) //
     release = p.addExtParam(id + "release", id + "Release", "R", "s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
 	acurve = p.addExtParam(id + "acurve", id + "ACurve", "A Curve", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	drcurve = p.addExtParam(id + "drcurve", id + "DRCurve", "DR Curve", "", { -1.0, 1.0, 0.0, 1.0 }, -1.0f, 0.0f);
-	syncrepeat = p.addIntParam(id + "syncrepeat", id + "SyncRepeat", "Repeat", "", { 0.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, syncrepeatTextFunction);
+	syncrepeat = p.addExtParam(id + "syncrepeat", id + "SyncRepeat", "Repeat", "", { 0.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, syncrepeatTextFunction);
 	time = p.addExtParam(id + "time", id + "Time", "Time", "s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
-	duration = p.addIntParam(id + "beat", id + "Beat", "Beat", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
+	duration = p.addExtParam(id + "beat", id + "Beat", "Beat", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
 
     sustain->conversionFunction = [](float in) { return in / 100.0f; };
     velocityTracking->conversionFunction = [](float in) { return in / 100.0f; };

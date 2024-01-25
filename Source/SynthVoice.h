@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 #include "Oscillators.h"
+#include "Envelope.h"
 #include <numbers>
 class APAudioProcessor;
 
@@ -41,9 +42,12 @@ private:
     
     gin::LFO lfo1, lfo2, lfo3, lfo4;
 
-    gin::AnalogADSR env1, env2, env3, env4;
-	std::array<gin::AnalogADSR*, 4> envs{&env1, &env2, &env3, &env4};
+    //gin::AnalogADSR env1, env2, env3, env4;
+	//std::array<gin::AnalogADSR*, 4> envs{&env1, &env2, &env3, &env4};
 
+    Envelope env1, env2, env3, env4;
+    std::array<Envelope*, 4> envs{&env1, &env2, &env3, &env4};
+    
 	struct StereoPosition { float xL, yL, xR, yR; };
 	StereoPosition epi1{ 1.0f, 0.0f, 1.0f, 0.0f};
 	StereoPosition epi2{ 1.0, 0.0f, 1.0f, 0.0f };

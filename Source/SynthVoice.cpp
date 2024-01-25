@@ -53,13 +53,9 @@ void SynthVoice::noteStarted()
 	osc4.noteOn();
 
 
-	env1.reset();
 	env1.noteOn();
-	env2.reset();
 	env2.noteOn();
-	env3.reset();
 	env3.noteOn();
-	env4.reset();
 	env4.noteOn();
 
 }
@@ -139,10 +135,15 @@ void SynthVoice::setCurrentSampleRate(double newRate)
 	lfo4.setSampleRate(newRate);
 
 	noteSmoother.setSampleRate(newRate);
-	env1.setSampleRate(newRate);
+    Envelope::Params p;
+    env1.setSampleRate(newRate);
+    env1.setParameters(p);
 	env2.setSampleRate(newRate);
+    env2.setParameters(p);
 	env3.setSampleRate(newRate);
+    env3.setParameters(p);
 	env4.setSampleRate(newRate);
+    env4.setParameters(p);
 }
 
 void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
@@ -177,68 +178,64 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	osc4CosineBuffer.applyGain(osc4Vol);
 
 
-	// Run ADSR
-	envs[0]->processMultiplying(osc1SineBuffer);
-	envs[0]->processMultiplying(osc1CosineBuffer);
-	envs[1]->processMultiplying(osc2SineBuffer);
-	envs[1]->processMultiplying(osc2CosineBuffer);
-	envs[2]->processMultiplying(osc3SineBuffer);
-	envs[2]->processMultiplying(osc3CosineBuffer);
-	envs[3]->processMultiplying(osc4SineBuffer);
-	envs[3]->processMultiplying(osc4CosineBuffer);
+
 
 	// the whole enchilada
 	for (int i = 0; i < numSamples; i++)
 	{
 		// get bodies' position by algorithm
-
+        auto a = envs[0]->getNextSample();
+        auto b = envs[1]->getNextSample();
+        auto c = envs[2]->getNextSample();
+        auto d = envs[3]->getNextSample();
+        
 		epi1 = {
-			osc1SineBuffer.getSample(0, i), osc1CosineBuffer.getSample(0, i),
-			osc1SineBuffer.getSample(1, i), osc1CosineBuffer.getSample(1, i)
+			a * osc1SineBuffer.getSample(0, i), a * osc1CosineBuffer.getSample(0, i),
+			a * osc1SineBuffer.getSample(1, i), a * osc1CosineBuffer.getSample(1, i)
 		};
 		epi2 = {
-			epi1.xL + osc2SineBuffer.getSample(0, i), epi1.yL + osc2CosineBuffer.getSample(0, i),
-			epi1.xR + osc2SineBuffer.getSample(1, i), epi1.yR + osc2CosineBuffer.getSample(1, i)
+			epi1.xL + b * osc2SineBuffer.getSample(0, i), epi1.yL + b * osc2CosineBuffer.getSample(0, i),
+			epi1.xR + b * osc2SineBuffer.getSample(1, i), epi1.yR + b * osc2CosineBuffer.getSample(1, i)
 		};
 		if (algo == 0)
 		{
 			epi3 = {
-				epi2.xL + osc3SineBuffer.getSample(0, i), epi2.yL + osc3CosineBuffer.getSample(0, i),
-				epi2.xR + osc3SineBuffer.getSample(1, i), epi2.yR + osc3CosineBuffer.getSample(1, i)
+				epi2.xL + c * osc3SineBuffer.getSample(0, i), epi2.yL + c * osc3CosineBuffer.getSample(0, i),
+				epi2.xR + c * osc3SineBuffer.getSample(1, i), epi2.yR + c * osc3CosineBuffer.getSample(1, i)
 			};
 			epi4 = {
-				epi3.xL + osc4SineBuffer.getSample(0, i), epi3.yL + osc4CosineBuffer.getSample(0, i),
-				epi3.xR + osc4SineBuffer.getSample(1, i), epi3.yR + osc4CosineBuffer.getSample(1, i)
+				epi3.xL + d * osc4SineBuffer.getSample(0, i), epi3.yL + d * osc4CosineBuffer.getSample(0, i),
+				epi3.xR + d * osc4SineBuffer.getSample(1, i), epi3.yR + d * osc4CosineBuffer.getSample(1, i)
 			};
 		}
 		if (algo == 1) {
 			epi3 = {
-				epi2.xL + osc3SineBuffer.getSample(0, i), epi2.yL + osc3CosineBuffer.getSample(0, i),
-				epi2.xR + osc3SineBuffer.getSample(1, i), epi2.yR + osc3CosineBuffer.getSample(1, i)
+				epi2.xL + c * osc3SineBuffer.getSample(0, i), epi2.yL + c * osc3CosineBuffer.getSample(0, i),
+				epi2.xR + c * osc3SineBuffer.getSample(1, i), epi2.yR + c * osc3CosineBuffer.getSample(1, i)
 			};
 			epi4 = {
-				epi2.xL + osc4SineBuffer.getSample(0, i), epi2.yL + osc4CosineBuffer.getSample(0, i),
-				epi2.xR + osc4SineBuffer.getSample(1, i), epi2.yR + osc4CosineBuffer.getSample(1, i)
+				epi2.xL + d * osc4SineBuffer.getSample(0, i), epi2.yL + d * osc4CosineBuffer.getSample(0, i),
+				epi2.xR + d * osc4SineBuffer.getSample(1, i), epi2.yR + d * osc4CosineBuffer.getSample(1, i)
 			};
 		}
 		if (algo == 2) {
 			epi3 = {
-				epi1.xL + osc3SineBuffer.getSample(0, i), epi1.yL + osc3CosineBuffer.getSample(0, i),
-				epi1.xR + osc3SineBuffer.getSample(1, i), epi1.yR + osc3CosineBuffer.getSample(1, i)
+				epi1.xL + c * osc3SineBuffer.getSample(0, i), epi1.yL + c * osc3CosineBuffer.getSample(0, i),
+				epi1.xR + c * osc3SineBuffer.getSample(1, i), epi1.yR + c * osc3CosineBuffer.getSample(1, i)
 			};
 			epi4 = {
-				epi3.xL + osc4SineBuffer.getSample(0, i), epi3.yL + osc4CosineBuffer.getSample(0, i),
-				epi3.xR + osc4SineBuffer.getSample(1, i), epi3.yR + osc4CosineBuffer.getSample(1, i)
+				epi3.xL + d * osc4SineBuffer.getSample(0, i), epi3.yL + d * osc4CosineBuffer.getSample(0, i),
+				epi3.xR + d * osc4SineBuffer.getSample(1, i), epi3.yR + d * osc4CosineBuffer.getSample(1, i)
 			};
 		}
 		if (algo == 3) {
 			epi3 = {
-				epi1.xL + osc3SineBuffer.getSample(0, i), epi1.yL + osc3CosineBuffer.getSample(0, i),
-				epi1.xR + osc3SineBuffer.getSample(1, i), epi1.yR + osc3CosineBuffer.getSample(1, i)
+				epi1.xL + c * osc3SineBuffer.getSample(0, i), epi1.yL + c * osc3CosineBuffer.getSample(0, i),
+				epi1.xR + c * osc3SineBuffer.getSample(1, i), epi1.yR + c * osc3CosineBuffer.getSample(1, i)
 			};
 			epi4 = {
-				epi1.xL + osc4SineBuffer.getSample(0, i), epi1.yL + osc4CosineBuffer.getSample(0, i),
-				epi1.xR + osc4SineBuffer.getSample(1, i), epi1.yR + osc4CosineBuffer.getSample(1, i)
+				epi1.xL + d * osc4SineBuffer.getSample(0, i), epi1.yL + d * osc4CosineBuffer.getSample(0, i),
+				epi1.xR + d * osc4SineBuffer.getSample(1, i), epi1.yR + d * osc4CosineBuffer.getSample(1, i)
 			};
 		}
 
@@ -392,18 +389,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	if (proc.filterParams.enable->isOn())
 		filter.process(synthBuffer);
 
-	bool idle{ false }; // only turn off voice when relevant envelopes are idle
-
-	if (algo == 0)
-		idle = env4.getState() == gin::AnalogADSR::State::idle;
-	else if (algo == 1)
-		idle = (env3.getState() == gin::AnalogADSR::State::idle && env4.getState() == gin::AnalogADSR::State::idle);
-	else if (algo == 2)
-		idle = (env2.getState() == gin::AnalogADSR::State::idle && env4.getState() == gin::AnalogADSR::State::idle);
-	else
-		idle = (env2.getState() == gin::AnalogADSR::State::idle && env3.getState() == gin::AnalogADSR::State::idle && env4.getState() == gin::AnalogADSR::State::idle);
-
-	if (idle)
+    if (!(env1.isActive() || env2.isActive() || env3.isActive() || env4.isActive()))
 	{
 		clearCurrentNote();
 		stopVoice();
@@ -601,25 +587,80 @@ void SynthVoice::updateParams(int blockSize)
 
 	proc.modMatrix.setPolyValue(*this, proc.modSrcLFO1, lfo1.getOutput());
 
-	env1.setAttack(getValue(proc.env1Params.attack));
-	env1.setDecay(getValue(proc.env1Params.decay));
-	env1.setSustainLevel(getValue(proc.env1Params.sustain));
-	env1.setRelease(fastKill ? 0.01f : getValue(proc.env1Params.release));
+    Envelope::Params p;
+	p.attackTimeMs = getValue(proc.env1Params.attack);
+	p.decayTimeMs = getValue(proc.env1Params.decay);
+	p.sustainLevel = getValue(proc.env1Params.sustain);
+	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env1Params.release);
+	p.aCurve = getValue(proc.env1Params.acurve);
+	p.dRCurve = getValue(proc.env1Params.drcurve);
+	int mode = (int)getValue(proc.env1Params.syncrepeat);
+	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
+	if (mode == 1) {
+		p.sync = true;
+		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.env1Params.duration))].toSeconds(proc.playhead);
+	}
+	if (mode == 2) {
+		p.sync = true;
+		p.syncduration = getValue(proc.env1Params.time);
+	}
+	env1.setParameters(p);
 
-	env2.setAttack(getValue(proc.env2Params.attack));
-	env2.setDecay(getValue(proc.env2Params.decay));
-	env2.setSustainLevel(getValue(proc.env2Params.sustain));
-	env2.setRelease(fastKill ? 0.01f : getValue(proc.env2Params.release));
 
-	env3.setAttack(getValue(proc.env3Params.attack));
-	env3.setDecay(getValue(proc.env3Params.decay));
-	env3.setSustainLevel(getValue(proc.env3Params.sustain));
-	env3.setRelease(fastKill ? 0.01f : getValue(proc.env3Params.release));
+	p.attackTimeMs = getValue(proc.env2Params.attack);
+	p.decayTimeMs = getValue(proc.env2Params.decay);
+	p.sustainLevel = getValue(proc.env2Params.sustain);
+	p.releaseTimeMs =  fastKill ? 0.01f : getValue(proc.env2Params.release);
+	p.aCurve = getValue(proc.env2Params.acurve);
+	p.dRCurve = getValue(proc.env2Params.drcurve);
+	mode = (int)getValue(proc.env2Params.syncrepeat);
+	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
+	if (mode == 1) {
+		p.sync = true;
+		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.env2Params.duration))].toSeconds(proc.playhead);
+	}
+	if (mode == 2) {
+		p.sync = true;
+		p.syncduration = getValue(proc.env2Params.time);
+	}
+	env2.setParameters(p);
 
-	env4.setAttack(getValue(proc.env4Params.attack));
-	env4.setDecay(getValue(proc.env4Params.decay));
-	env4.setSustainLevel(getValue(proc.env4Params.sustain));
-	env4.setRelease(fastKill ? 0.01f : getValue(proc.env4Params.release));
+
+	p.attackTimeMs = getValue(proc.env3Params.attack);
+	p.decayTimeMs = getValue(proc.env3Params.decay);
+	p.sustainLevel = getValue(proc.env3Params.sustain);
+	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env3Params.release);
+	p.aCurve = getValue(proc.env3Params.acurve);
+	p.dRCurve = getValue(proc.env3Params.drcurve);
+	mode = (int)getValue(proc.env3Params.syncrepeat);
+	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
+	if (mode == 1) {
+		p.sync = true;
+		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.env3Params.duration))].toSeconds(proc.playhead);
+	}
+	if (mode == 2) {
+		p.sync = true;
+		p.syncduration = getValue(proc.env3Params.time);
+	}
+	env3.setParameters(p);
+
+	p.attackTimeMs = getValue(proc.env4Params.attack);
+	p.decayTimeMs = getValue(proc.env4Params.decay);
+	p.sustainLevel = getValue(proc.env4Params.sustain);
+	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env4Params.release);
+	p.aCurve = getValue(proc.env4Params.acurve);
+	p.dRCurve = getValue(proc.env4Params.drcurve);
+	mode = (int)getValue(proc.env4Params.syncrepeat);
+	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
+	if (mode == 1) {
+		p.sync = true;
+		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.env4Params.duration))].toSeconds(proc.playhead);
+	}
+	if (mode == 2) {
+		p.sync = true;
+		p.syncduration = getValue(proc.env4Params.time);
+	}
+	env4.setParameters(p);
 
 	proc.modMatrix.setPolyValue(*this, proc.modSrcEnv1, env1.getOutput());
 	proc.modMatrix.setPolyValue(*this, proc.modSrcEnv2, env2.getOutput());
