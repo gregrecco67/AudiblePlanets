@@ -125,7 +125,7 @@ public:
 		gin::Parameter::Ptr enable, drive, gain, type, dry, wet;
 
 		void setup(APAudioProcessor& p);
-
+        int pos{-1};
 		JUCE_DECLARE_NON_COPYABLE(WaveshaperParams)
 	};
 
@@ -136,7 +136,7 @@ public:
 		gin::Parameter::Ptr enable, threshold, ratio, attack, release, knee, input, output, type;
 
 		void setup(APAudioProcessor& p);
-
+        int pos{-1};
 		JUCE_DECLARE_NON_COPYABLE(CompressorParams)
 	};
 
@@ -147,7 +147,7 @@ public:
 		gin::Parameter::Ptr enable, timeleft, timeright, beatsleft, beatsright, temposync, freeze, pingpong, feedback, wet;
 
 		void setup(APAudioProcessor& p);
-
+        int pos{-1};
 		JUCE_DECLARE_NON_COPYABLE(StereoDelayParams)
 	};
 
@@ -158,7 +158,7 @@ public:
 		gin::Parameter::Ptr enable, rate, depth, delay, feedback, dry, wet;
 
 		void setup(APAudioProcessor& p);
-
+        int pos{-1};
 		JUCE_DECLARE_NON_COPYABLE(ChorusParams)
 	};
 
@@ -169,7 +169,7 @@ public:
 		gin::Parameter::Ptr enable, size, decay, damping, lowpass, predelay, dry, wet;
 
 		void setup(APAudioProcessor& p);
-
+        int pos{-1};
 		JUCE_DECLARE_NON_COPYABLE(ReverbParams)
 	};
 
@@ -180,7 +180,7 @@ public:
 		gin::Parameter::Ptr enable, lowshelffreq, lowshelfgain, lowshelfq, peakfreq, peakgain, peakq, highshelffreq, highshelfgain, highshelfq;
 
 		void setup(APAudioProcessor& p);
-
+        int pos{-1};
 		JUCE_DECLARE_NON_COPYABLE(MBFilterParams)
 	};
 
@@ -191,7 +191,7 @@ public:
 		gin::Parameter::Ptr enable, modfreq1, shape1, mix1, modfreq2, shape2, mix2, spread, lowcut, highcut;
 
 		void setup(APAudioProcessor& p);
-
+        int pos{-1};
 		JUCE_DECLARE_NON_COPYABLE(RingModParams)
 	};
 
@@ -204,10 +204,22 @@ public:
 		gin::Parameter::Ptr enable, gain;
 
 		void setup(APAudioProcessor& p);
-
+        int pos{-1};
 		JUCE_DECLARE_NON_COPYABLE(GainParams)
 	};
 
+    struct FXOrderParams
+    {
+        
+        FXOrderParams() = default;
+        
+        gin::Parameter::Ptr fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4;
+        
+        void setup(APAudioProcessor& p);
+        
+        JUCE_DECLARE_NON_COPYABLE(FXOrderParams)
+    };
+    
     //==============================================================================
     gin::ModSrcId modSrcPressure, modSrcTimbre, modScrPitchBend, modSrcNote, modSrcVelocity,
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,

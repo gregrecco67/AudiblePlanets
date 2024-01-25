@@ -120,6 +120,26 @@ static juce::String syncrepeatTextFunction(const gin::Parameter&, float v)
 	}
 }
 
+static juce::String fxListTextFunction(const gin::Parameter&, float v)
+{
+    switch (int (v))
+    {
+        case 0: return String("None");
+        case 1: return String("");
+        case 2: return String("");
+        case 3: return String("");
+        case 4: return String("");
+        case 5: return String("");
+        case 6: return String("");
+        case 7: return String("");
+        case 8: return String("");
+        default:
+            jassertfalse;
+            return {};
+    }
+}
+
+
 static juce::String algoTextFunction(const gin::Parameter&, float v)
 {
     switch (int (v))
@@ -368,6 +388,7 @@ void APAudioProcessor::RingModParams::setup(APAudioProcessor& p)
 	spread = p.addExtParam("spread", "Spread", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.03f, 0.0f);
 	lowcut = p.addExtParam("lowcut", "Low Cut", "", "", { 20.0, 20000.0, 0.0, 1.0 }, 20.0f, 0.0f);
 	highcut = p.addExtParam("highcut", "High Cut", "", "", { 20.0, 20000.0, 0.0, 1.0 }, 20000.0f, 0.0f);
+    
 }
 
 //==============================================================================
@@ -375,6 +396,20 @@ void APAudioProcessor::GainParams::setup(APAudioProcessor& p)
 {
 	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, enableTextFunction);
 	gain = p.addExtParam("gain", "Gain", "", "", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
+}
+
+//==============================================================================
+void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
+{
+    fxa1 = p.addExtParam("fxa1", "FX A1 choice", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa2 = p.addExtParam("fxa2", "FX A2 choice", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa3 = p.addExtParam("fxa3", "FX A3 choice", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa4 = p.addExtParam("fxa4", "FX A4 choice", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb1 = p.addExtParam("fxb1", "FX B1 choice", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb2 = p.addExtParam("fxb2", "FX B2 choice", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb3 = p.addExtParam("fxb3", "FX B3 choice", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb4 = p.addExtParam("fxb4", "FX B4 choice", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+
 }
 
 
@@ -622,82 +657,99 @@ void APAudioProcessor::updateParams (int newBlockSize)
 
 		modMatrix.setMonoValue(*(this->lfoIds[lfoparams->num - 1]), lfo->getOutput());
     }
+    
+    if (gainParams.enable->isOn())
+	{
+        effectGain.setGainLevel(modMatrix.getValue(gainParams.gain));
+    }
 
-	effectGain.setGainLevel(modMatrix.getValue(gainParams.gain));
-
-	waveshaper.setGain(modMatrix.getValue(waveshaperParams.drive), modMatrix.getValue(waveshaperParams.gain));
-	waveshaper.setDry(modMatrix.getValue(waveshaperParams.dry));
-	waveshaper.setWet(modMatrix.getValue(waveshaperParams.wet));
-	waveshaper.setFunctionToUse(int(modMatrix.getValue(waveshaperParams.type))); 
-
+    if (waveshaperParams.enable->isOn()) {
+        waveshaper.setGain(modMatrix.getValue(waveshaperParams.drive), modMatrix.getValue(waveshaperParams.gain));
+        waveshaper.setDry(modMatrix.getValue(waveshaperParams.dry));
+        waveshaper.setWet(modMatrix.getValue(waveshaperParams.wet));
+        waveshaper.setFunctionToUse(int(modMatrix.getValue(waveshaperParams.type)));
+    }
+    
 	//setParams (float attackS, float holdS, float releaseS, float thresh, float ratio, float kneeWidth);
-	compressor.setParams(
-		modMatrix.getValue(compressorParams.attack),
-		0.0f,
-		modMatrix.getValue(compressorParams.release),
-		modMatrix.getValue(compressorParams.threshold),
-		modMatrix.getValue(compressorParams.ratio),
-		modMatrix.getValue(compressorParams.knee)
-	);
-	compressor.setInputGain(modMatrix.getValue(compressorParams.input));
-	compressor.setOutputGain(modMatrix.getValue(compressorParams.output));
-	compressor.setMode((gin::Dynamics::Type)(int)modMatrix.getValue(compressorParams.type));
-
+    if (compressorParams.enable->isOn()) {
+        compressor.setParams(
+                             modMatrix.getValue(compressorParams.attack),
+                             0.0f,
+                             modMatrix.getValue(compressorParams.release),
+                             modMatrix.getValue(compressorParams.threshold),
+                             modMatrix.getValue(compressorParams.ratio),
+                             modMatrix.getValue(compressorParams.knee)
+                             );
+        compressor.setInputGain(modMatrix.getValue(compressorParams.input));
+        compressor.setOutputGain(modMatrix.getValue(compressorParams.output));
+        compressor.setMode((gin::Dynamics::Type)(int)modMatrix.getValue(compressorParams.type));
+    }
+    
 	auto notes = gin::NoteDuration::getNoteDurations();
-	bool tempoSync = stereoDelayParams.temposync->getProcValue() > 0.0f;
-	if (!tempoSync) {
-		stereoDelay.setTimeL(modMatrix.getValue(stereoDelayParams.timeleft));
-		stereoDelay.setTimeR(modMatrix.getValue(stereoDelayParams.timeright));
-	}
-	else {
-		stereoDelay.setTimeL(notes[size_t(stereoDelayParams.beatsleft->getProcValue())].toSeconds(playhead));
-		stereoDelay.setTimeR(notes[size_t(stereoDelayParams.beatsright->getProcValue())].toSeconds(playhead));
-	}
-	stereoDelay.setFB(modMatrix.getValue(stereoDelayParams.feedback));
-	stereoDelay.setWet(modMatrix.getValue(stereoDelayParams.wet));
-	stereoDelay.setDry(1.0f);
-	stereoDelay.setFreeze(stereoDelayParams.freeze->getProcValue() > 0.0f);
-	stereoDelay.setPing(stereoDelayParams.pingpong->getProcValue() > 0.0f);
+	
+    if (stereoDelayParams.enable->isOn()) {
+        bool tempoSync = stereoDelayParams.temposync->getProcValue() > 0.0f;
+        if (!tempoSync) {
+            stereoDelay.setTimeL(modMatrix.getValue(stereoDelayParams.timeleft));
+            stereoDelay.setTimeR(modMatrix.getValue(stereoDelayParams.timeright));
+        }
+        else {
+            stereoDelay.setTimeL(notes[size_t(stereoDelayParams.beatsleft->getProcValue())].toSeconds(playhead));
+            stereoDelay.setTimeR(notes[size_t(stereoDelayParams.beatsright->getProcValue())].toSeconds(playhead));
+        }
+        stereoDelay.setFB(modMatrix.getValue(stereoDelayParams.feedback));
+        stereoDelay.setWet(modMatrix.getValue(stereoDelayParams.wet));
+        stereoDelay.setDry(1.0f);
+        stereoDelay.setFreeze(stereoDelayParams.freeze->getProcValue() > 0.0f);
+        stereoDelay.setPing(stereoDelayParams.pingpong->getProcValue() > 0.0f);
+    }
+    
+    if (chorusParams.enable->isOn()) {
+        chorus.setRate(modMatrix.getValue(chorusParams.rate));
+        chorus.setDepth(modMatrix.getValue(chorusParams.depth));
+        chorus.setCentreDelay(modMatrix.getValue(chorusParams.delay));
+        chorus.setFeedback(modMatrix.getValue(chorusParams.feedback));
+        chorus.setWet(modMatrix.getValue(chorusParams.wet));
+        chorus.setDry(modMatrix.getValue(chorusParams.dry));
+    }
+    
+    if (reverbParams.enable->isOn()) {
+        reverb.setSize(modMatrix.getValue(reverbParams.size));
+        reverb.setDecay(modMatrix.getValue(reverbParams.decay));
+        reverb.setDamping(modMatrix.getValue(reverbParams.damping));
+        reverb.setLowpass(modMatrix.getValue(reverbParams.lowpass));
+        reverb.setPredelay(modMatrix.getValue(reverbParams.predelay));
+        reverb.setDry(modMatrix.getValue(reverbParams.dry));
+        reverb.setWet(modMatrix.getValue(reverbParams.wet));
+    }
+    
+    if (mbfilterParams.enable->isOn()) {
+        mbfilter.setParams(
+                           modMatrix.getValue(mbfilterParams.lowshelffreq),
+                           modMatrix.getValue(mbfilterParams.lowshelfgain),
+                           modMatrix.getValue(mbfilterParams.lowshelfq),
+                           modMatrix.getValue(mbfilterParams.peakfreq),
+                           modMatrix.getValue(mbfilterParams.peakgain),
+                           modMatrix.getValue(mbfilterParams.peakq),
+                           modMatrix.getValue(mbfilterParams.highshelffreq),
+                           modMatrix.getValue(mbfilterParams.highshelfgain),
+                           modMatrix.getValue(mbfilterParams.highshelfq)
+                           );
+    }
 
-	chorus.setRate(modMatrix.getValue(chorusParams.rate));
-	chorus.setDepth(modMatrix.getValue(chorusParams.depth));
-	chorus.setCentreDelay(modMatrix.getValue(chorusParams.delay));
-	chorus.setFeedback(modMatrix.getValue(chorusParams.feedback));
-	chorus.setWet(modMatrix.getValue(chorusParams.wet));
-	chorus.setDry(modMatrix.getValue(chorusParams.dry));
-
-	reverb.setSize(modMatrix.getValue(reverbParams.size));
-	reverb.setDecay(modMatrix.getValue(reverbParams.decay));
-	reverb.setDamping(modMatrix.getValue(reverbParams.damping));
-	reverb.setLowpass(modMatrix.getValue(reverbParams.lowpass));
-	reverb.setPredelay(modMatrix.getValue(reverbParams.predelay));
-	reverb.setDry(modMatrix.getValue(reverbParams.dry));
-	reverb.setWet(modMatrix.getValue(reverbParams.wet));
-
-	mbfilter.setParams(
-		modMatrix.getValue(mbfilterParams.lowshelffreq),
-		modMatrix.getValue(mbfilterParams.lowshelfgain),
-		modMatrix.getValue(mbfilterParams.lowshelfq),
-		modMatrix.getValue(mbfilterParams.peakfreq),
-		modMatrix.getValue(mbfilterParams.peakgain),
-		modMatrix.getValue(mbfilterParams.peakq),
-		modMatrix.getValue(mbfilterParams.highshelffreq),
-		modMatrix.getValue(mbfilterParams.highshelfgain),
-		modMatrix.getValue(mbfilterParams.highshelfq)
-	);
-
-	RingModulator::RingModParams rmparams;
-	rmparams.mod1freq = modMatrix.getValue(ringmodParams.modfreq1);
-	rmparams.shape1 = modMatrix.getValue(ringmodParams.shape1);
-	rmparams.mix1 = modMatrix.getValue(ringmodParams.mix1);
-	rmparams.mod2freq = modMatrix.getValue(ringmodParams.modfreq2);
-	rmparams.shape2 = modMatrix.getValue(ringmodParams.shape2);
-	rmparams.mix2 = modMatrix.getValue(ringmodParams.mix2);
-	rmparams.spread = modMatrix.getValue(ringmodParams.spread);
-	rmparams.lowcut = modMatrix.getValue(ringmodParams.lowcut);
-	rmparams.highcut = modMatrix.getValue(ringmodParams.highcut);
-	ringmod.setParams(rmparams);
-
+    if (ringmodParams.enable->isOn()) {
+        RingModulator::RingModParams rmparams;
+        rmparams.mod1freq = modMatrix.getValue(ringmodParams.modfreq1);
+        rmparams.shape1 = modMatrix.getValue(ringmodParams.shape1);
+        rmparams.mix1 = modMatrix.getValue(ringmodParams.mix1);
+        rmparams.mod2freq = modMatrix.getValue(ringmodParams.modfreq2);
+        rmparams.shape2 = modMatrix.getValue(ringmodParams.shape2);
+        rmparams.mix2 = modMatrix.getValue(ringmodParams.mix2);
+        rmparams.spread = modMatrix.getValue(ringmodParams.spread);
+        rmparams.lowcut = modMatrix.getValue(ringmodParams.lowcut);
+        rmparams.highcut = modMatrix.getValue(ringmodParams.highcut);
+        ringmod.setParams(rmparams);
+    }
 
     // Output gain
     outputGain.setGain (modMatrix.getValue (globalParams.level));
