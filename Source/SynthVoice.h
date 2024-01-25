@@ -53,7 +53,7 @@ private:
     float currentMidiNote = -1;
     APVoicedStereoOscillatorParams osc1Params, osc2Params, osc3Params, osc4Params;
 	float osc1Freq = 0.0f, osc2Freq = 0.0f, osc3Freq = 0.0f, osc4Freq = 0.0f;
-
+	float osc1Vol = 0.0f, osc2Vol = 0.0f, osc3Vol = 0.0f, osc4Vol = 0.0f;
 	int algo{ 0 };
 	float equant{ 0.f };
     

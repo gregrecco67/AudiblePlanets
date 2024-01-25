@@ -5,7 +5,7 @@
 APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
     : ProcessorEditor (p), wtProc (p)
 {
-    
+	addAndMakeVisible(meter);
     addAndMakeVisible(tabbed);
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
     tabbed.addTab("2. Mods", APColors::tabBkgd, &tab2, false, 1);
@@ -16,6 +16,7 @@ APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
     usage.panic.onClick = [this] { wtProc.presetLoaded = true; };
     addAndMakeVisible (usage);
     
+	meter.setBounds(1130, 5, 15, 30);
     usage.setBounds (45, 12, 80, 16);
     setSize (1186,725);
 

@@ -17,7 +17,7 @@ public:
 
         addControl (c = new gin::Knob (osc.coarse), 0, 0);
         addControl (f = new gin::Knob (osc.fine, true), 1, 0);
-        addControl (r = new gin::Knob (osc.radius), 2, 0);
+        addControl (r = new gin::Knob (osc.volume), 2, 0);
         addControl (new gin::Knob (osc.tones), 3, 0);
 		addControl(new gin::Switch(osc.saw), 4, 0);
 
@@ -138,7 +138,20 @@ public:
     {
         setName ( name );
 
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
+		switch (envparams.num) {
+		case 1:
+			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
+			break;
+		case 2:
+			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv2, true));
+			break;
+		case 3:
+			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv3, true));
+			break;
+		case 4:
+			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv4, true));
+			break;
+		}
 
         //auto& preset = envparams;
 

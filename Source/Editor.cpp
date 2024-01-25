@@ -59,10 +59,10 @@ void Editor::timerCallback() {
         vizEpi3Phase -= juce::MathConstants<float>::twoPi;
 
     orbitViz.setEquant(proc.timbreParams.equant->getUserValue());
-    orbitViz.setDefRad(proc.osc1Params.radius->getValue());
-    orbitViz.setEpi1Rad(proc.osc2Params.radius->getValue());
-    orbitViz.setEpi2Rad(proc.osc3Params.radius->getValue());
-    orbitViz.setEpi3Rad(proc.osc4Params.radius->getValue());
+    orbitViz.setDefRad(proc.osc1Params.volume->getValue());
+    orbitViz.setEpi1Rad(proc.osc2Params.volume->getValue());
+    orbitViz.setEpi2Rad(proc.osc3Params.volume->getValue());
+    orbitViz.setEpi3Rad(proc.osc4Params.volume->getValue());
     orbitViz.setAlgo(proc.timbreParams.algo->getUserValue());
     orbitViz.setDefPhase(vizDefPhase);
     orbitViz.setEpi1Phase(vizEpi1Phase);

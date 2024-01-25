@@ -167,14 +167,14 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 	// Apply velocity
 	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat() * baseAmplitude;
-	//osc1SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	//osc1CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	//osc2SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	//osc2CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	//osc3SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	//osc3CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	//osc4SineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
-	//osc4CosineBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	osc1SineBuffer.applyGain  (osc1Vol);
+	osc1CosineBuffer.applyGain(osc1Vol);
+	osc2SineBuffer.applyGain  (osc2Vol);
+	osc2CosineBuffer.applyGain(osc2Vol);
+	osc3SineBuffer.applyGain  (osc3Vol);
+	osc3CosineBuffer.applyGain(osc3Vol);
+	osc4SineBuffer.applyGain  (osc4Vol);
+	osc4CosineBuffer.applyGain(osc4Vol);
 
 
 	// Run ADSR
@@ -338,7 +338,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		float modSample4L{ sample4L }, demodSample4L{ sample4L }, modSample4R{ sample4R }, demodSample4R{ sample4R };
 
 		// demodulate by considering not just angle, but also magnitude of planet vector
-		// this will be the same for both channels, so we can calculate it once
 		auto atanDistance2L = (float)std::sqrt(epi2.xL * epi2.xL + (epi2.yL + equant) * (epi2.yL + equant));
 		auto atanDistance2R = (float)std::sqrt(epi2.xR * epi2.xR + (epi2.yR + equant) * (epi2.yR + equant));
 		auto atanDistance3L = (float)std::sqrt(epi3.xL * epi3.xL + (epi3.yL + equant) * (epi3.yL + equant));
@@ -393,7 +392,18 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	if (proc.filterParams.enable->isOn())
 		filter.process(synthBuffer);
 
-	if (env1.getState() == gin::AnalogADSR::State::idle)
+	bool idle{ false }; // only turn off voice when relevant envelopes are idle
+
+	if (algo == 0)
+		idle = env4.getState() == gin::AnalogADSR::State::idle;
+	else if (algo == 1)
+		idle = (env3.getState() == gin::AnalogADSR::State::idle && env4.getState() == gin::AnalogADSR::State::idle);
+	else if (algo == 2)
+		idle = (env2.getState() == gin::AnalogADSR::State::idle && env4.getState() == gin::AnalogADSR::State::idle);
+	else
+		idle = (env2.getState() == gin::AnalogADSR::State::idle && env3.getState() == gin::AnalogADSR::State::idle && env4.getState() == gin::AnalogADSR::State::idle);
+
+	if (idle)
 	{
 		clearCurrentNote();
 		stopVoice();
@@ -421,17 +431,19 @@ void SynthVoice::updateParams(int blockSize)
 	currentMidiNote += float(note.totalPitchbendInSemitones);
 	//currentMidiNote += getValue(proc.osc1Params.coarse) + getValue(proc.osc1Params.fine);
 
-	osc1Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc1Params.coarse) + getValue(proc.osc1Params.fine));
-	osc2Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc2Params.coarse) + getValue(proc.osc2Params.fine));
-	osc3Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc3Params.coarse) + getValue(proc.osc3Params.fine));
-	osc4Freq = gin::getMidiNoteInHertz(currentMidiNote) * (getValue(proc.osc4Params.coarse) + getValue(proc.osc4Params.fine));
+	float baseFreq = gin::getMidiNoteInHertz(currentMidiNote);
+	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
+	osc1Freq = baseFreq * ((int)getValue(proc.osc1Params.coarse) + getValue(proc.osc1Params.fine));
+	osc2Freq = baseFreq * ((int)getValue(proc.osc2Params.coarse) + getValue(proc.osc2Params.fine));
+	osc3Freq = baseFreq * ((int)getValue(proc.osc3Params.coarse) + getValue(proc.osc3Params.fine));
+	osc4Freq = baseFreq * ((int)getValue(proc.osc4Params.coarse) + getValue(proc.osc4Params.fine));
 
 	osc1Params.wave = getValue(proc.osc1Params.saw) ? Wave::sawUp : Wave::cosine;
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
 	osc1Params.detune = getValue(proc.osc1Params.detune);
-	osc1Params.gain = getValue(proc.osc1Params.radius);
+	osc1Vol = getValue(proc.osc1Params.volume);
 	switch ((int)getValue(proc.osc1Params.env))
 	{
 	case 0:
@@ -453,7 +465,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc2Params.pan = getValue(proc.osc2Params.pan);
 	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
 	osc2Params.detune = getValue(proc.osc2Params.detune);
-	osc2Params.gain = getValue(proc.osc2Params.radius);
+	osc2Vol = getValue(proc.osc2Params.volume);
 	switch ((int)getValue(proc.osc2Params.env))
 	{
 	case 0:
@@ -475,7 +487,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc3Params.pan = getValue(proc.osc3Params.pan);
 	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
 	osc3Params.detune = getValue(proc.osc3Params.detune);
-	osc3Params.gain = getValue(proc.osc3Params.radius);
+	osc3Vol = getValue(proc.osc3Params.volume);
 	switch ((int)getValue(proc.osc3Params.env))
 	{
 	case 0:
@@ -497,7 +509,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc4Params.pan = getValue(proc.osc4Params.pan);
 	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;
 	osc4Params.detune = getValue(proc.osc4Params.detune);
-	osc4Params.gain = getValue(proc.osc4Params.radius);
+	osc4Vol = getValue(proc.osc4Params.volume);
 	switch ((int)getValue(proc.osc4Params.env))
 	{
 	case 0:

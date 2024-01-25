@@ -24,6 +24,7 @@ private:
 
     
     gin::SynthesiserUsage usage { wtProc };
+	gin::LevelMeter meter { wtProc.levelTracker };
     
     juce::TabbedComponent tabbed{juce::TabbedButtonBar::TabsAtBottom };
     juce::Component tab1, tab2, tab3;

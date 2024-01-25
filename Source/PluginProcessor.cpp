@@ -147,7 +147,7 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String num) /
 	else {
 		fine = p.addExtParam(id + "fine", nm + "Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
 	}
-	radius    = p.addExtParam (id + "radius",     nm + "Radius",      "Radius",    "", { 0.0, 1.0, 0.0, 1.0 }, 0.3, 0.0f);
+	volume    = p.addExtParam (id + "volume",     nm + "Volume",      "Volume",    "", { 0.0, 1.0, 0.01, 1.0 }, 0.3, 0.0f);
     tones     = p.addExtParam (id + "tones",      nm + "Tones",       "Tones",     "", { 1.0, 5.9, 0.001, 1.0 }, 1.0, 0.0f);
     detune    = p.addExtParam (id + "detune",     nm + "Detune",      "Detune",    "", { 0.0, 0.5, 0.0, 1.0 }, 0.0, 0.0f);
     spread    = p.addExtParam (id + "spread",     nm + "Spread",      "Spread",    "%", { -100.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
@@ -218,6 +218,7 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String num) //
 
     sustain->conversionFunction = [](float in) { return in / 100.0f; };
     velocityTracking->conversionFunction = [](float in) { return in / 100.0f; };
+	this->num = num.getIntValue();
 }
 
 
@@ -228,7 +229,7 @@ void APAudioProcessor::GlobalParams::setup (APAudioProcessor& p)
     glideMode   = p.addIntParam ("gMode",   "Glide Mode", "Glide", "",   { 0.0, 2.0, 0.0, 1.0 }, 0.0f, 0.0f, glideModeTextFunction);
     glideRate   = p.addExtParam ("gRate",   "Glide Rate", "Rate",  "s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
     legato      = p.addIntParam ("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
-    level       = p.addExtParam ("level",   "Level",      "",      "db", { -100.0, 0.0, 1.0, 4.0f }, 0.0, 0.0f);
+    level       = p.addExtParam ("level",   "Level",      "",      "db", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
     voices      = p.addIntParam ("voices",  "Voices",     "",      "",   { 2.0, 40.0, 1.0, 1.0 }, 40.0f, 0.0f);
     mpe         = p.addIntParam ("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 
@@ -410,6 +411,8 @@ void APAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mid
     }
 
     playhead = nullptr;
+
+	levelTracker.trackBuffer(buffer);
 
     endBlock (buffer.getNumSamples());
 }

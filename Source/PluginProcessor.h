@@ -42,7 +42,7 @@ public:
     {
         OSCParams() = default;
 
-        gin::Parameter::Ptr coarse, fine, radius, tones, detune, spread, pan, env, saw, fixed;
+        gin::Parameter::Ptr coarse, fine, volume, tones, detune, spread, pan, env, saw, fixed;
 
         void setup(APAudioProcessor& p, juce::String number);
 		int num;
@@ -79,7 +79,7 @@ public:
 			acurve, drcurve, syncrepeat, time, duration;
 
         void setup(APAudioProcessor& p, juce::String number);
-
+		int num;
         JUCE_DECLARE_NON_COPYABLE(ENVParams)
     };
 
@@ -147,6 +147,8 @@ public:
 	std::array<gin::ModSrcId*, 4> lfoIds{ &modSrcMonoLFO1, &modSrcMonoLFO2, &modSrcMonoLFO3, &modSrcMonoLFO4 };
     juce::AudioPlayHead* playhead = nullptr;
     bool presetLoaded = false;
+
+	gin::LevelTracker levelTracker;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)
