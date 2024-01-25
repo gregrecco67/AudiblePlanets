@@ -4,6 +4,7 @@
 #include <gin/gin.h>
 #include "SynthVoice.h"
 #include "Envelope.h"
+#include "Processors.h"
 
 //==============================================================================
 class APAudioProcessor : public gin::Processor,
@@ -117,6 +118,96 @@ public:
 		JUCE_DECLARE_NON_COPYABLE(OrbitParams)
 	};
 
+	struct WaveshaperParams
+	{
+		WaveshaperParams() = default;
+
+		gin::Parameter::Ptr enable, drive, gain, type, dry, wet;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(WaveshaperParams)
+	};
+
+	struct CompressorParams
+	{
+		CompressorParams() = default;
+
+		gin::Parameter::Ptr enable, threshold, ratio, attack, release, knee, input, output, type;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(CompressorParams)
+	};
+
+	struct StereoDelayParams
+	{
+		StereoDelayParams() = default;
+
+		gin::Parameter::Ptr enable, timeleft, timeright, beatsleft, beatsright, temposync, freeze, pingpong, feedback, wet;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(StereoDelayParams)
+	};
+
+	struct ChorusParams
+	{
+		ChorusParams() = default;
+
+		gin::Parameter::Ptr enable, rate, depth, delay, feedback, dry, wet;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(ChorusParams)
+	};
+
+	struct ReverbParams
+	{
+		ReverbParams() = default;
+
+		gin::Parameter::Ptr enable, size, decay, damping, lowpass, predelay, dry, wet;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(ReverbParams)
+	};
+
+	struct MBFilterParams
+	{
+		MBFilterParams() = default;
+
+		gin::Parameter::Ptr enable, lowshelffreq, lowshelfgain, lowshelfq, peakfreq, peakgain, peakq, highshelffreq, highshelfgain, highshelfq;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(MBFilterParams)
+	};
+
+	struct RingModParams
+	{
+		RingModParams() = default;
+
+		gin::Parameter::Ptr enable, modfreq1, shape1, mix1, modfreq2, shape2, mix2, spread, lowcut, highcut;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(RingModParams)
+	};
+
+
+	struct GainParams
+	{
+
+		GainParams() = default;
+
+		gin::Parameter::Ptr enable, gain;
+
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(GainParams)
+	};
+
     //==============================================================================
     gin::ModSrcId modSrcPressure, modSrcTimbre, modScrPitchBend, modSrcNote, modSrcVelocity,
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
@@ -132,9 +223,28 @@ public:
     FilterParams filterParams;
     GlobalParams globalParams;
 	OrbitParams orbitParams;
+	GainParams gainParams;
+	WaveshaperParams waveshaperParams;
+	CompressorParams compressorParams;
+	StereoDelayParams stereoDelayParams;
+	ChorusParams chorusParams;
+	ReverbParams reverbParams;
+	MBFilterParams mbfilterParams;
+	RingModParams ringmodParams;
+
 
     //==============================================================================
-    gin::StereoDelay stereoDelay{ 120.1 };
+    //gin::StereoDelay stereoDelay{ 120.1 };
+	GainProcessor effectGain;
+	WaveShaperProcessor waveshaper;
+	gin::Dynamics compressor;
+	StereoDelayProcessor stereoDelay;
+	Chorus2Processor chorus;
+	PlateReverb<float, uint32_t> reverb;
+	MBFilterProcessor mbfilter;
+	RingModulator ringmod;
+
+
     gin::GainProcessor outputGain;
 
     gin::BandLimitedLookupTables analogTables;

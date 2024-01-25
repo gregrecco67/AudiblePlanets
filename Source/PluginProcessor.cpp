@@ -16,6 +16,27 @@ static juce::String subTextFunction (const gin::Parameter&, float v)
     }
 }
 
+static juce::String waveshaperTypeTextFunction(const gin::Parameter&, float v)
+{
+	switch (int (v))
+	{
+		case 0: return "atan 2";
+		case 1: return "atan 4";
+		case 2: return "atan 6";
+		case 3: return "tanh 2";
+		case 4: return "tanh 4";
+		case 5: return "tanh 6";
+		case 6: return "cubic 3/2";
+		case 7: return "cubic mid";
+		case 8: return "cubic";
+		case 9: return "cheb 3";
+		case 10: return "cheb 5";
+		default:
+			jassertfalse;
+			return {};
+	}
+}
+
 static juce::String lfoTextFunction (const gin::Parameter&, float v)
 {
     switch ((gin::LFO::WaveShape)int (v))
@@ -253,6 +274,110 @@ void APAudioProcessor::OrbitParams::setup(APAudioProcessor& p)
 	scale = p.addIntParam("scale", "Scale", "", "", { 1.0, 6.0, 0.0, 1.0 }, 1.0f, 0.0f);
 }
 
+
+//==============================================================================
+void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor& p)
+{
+	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+	drive = p.addExtParam("drive", "Drive", "", "", { 1.0, 40.0, 0.0, 1.0 }, 1.0, 0.0f);
+	gain = p.addExtParam("gain", "Gain", "", "", { 0.03, 3.0, 0.0, 1.0 }, 1.0, 0.0f);
+	dry = p.addExtParam("dry", "Dry", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
+	wet = p.addExtParam("wet", "Wet", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f);
+	type = p.addExtParam("func", "Function", "", "", { 0.0, 10.0, 1.0, 1.0 }, 0.0f, 0.0f, waveshaperTypeTextFunction);
+}
+
+//==============================================================================
+void APAudioProcessor::CompressorParams::setup(APAudioProcessor& p)
+{
+	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+	threshold = p.addExtParam("threshold", "Threshold", "", "", { -60.0, 0.0, 0.0, 1.0 }, -12.0f, 0.0f);
+	ratio = p.addExtParam("ratio", "Ratio", "", "", { 1.0, 20.0, 0.0, 1.0 }, 2.0f, 0.0f);
+	attack = p.addExtParam("attack", "Attack", "", "", { 0.00002, 0.1, 0.001, 1.0 }, 0.0005f, 0.0f);
+	release = p.addExtParam("release", "Release", "", "", { 0.05, 1.0, 0.001, 1.0 }, 0.1f, 0.0f);
+	knee = p.addExtParam("knee", "Knee", "", "", { 0.0, 20.0, 0.01, 1.0 }, 0.0f, 0.0f);
+	input = p.addExtParam("input", "Input", "", "", { 0.0, 5.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	output = p.addExtParam("output", "Output", "", "", { 0.0, 5.0, 0.0, 1.0 }, 1.0f, 0.0f);
+}
+
+//==============================================================================
+void APAudioProcessor::StereoDelayParams::setup(APAudioProcessor& p)
+{
+	auto notes = gin::NoteDuration::getNoteDurations();
+	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+	timeleft = p.addExtParam("timeleft", "Time Left", "", "", { 0.001, 10.0, 0.0, 1.0 }, 0.5f, 0.0f);
+	timeright = p.addExtParam("timeright", "Time Right", "", "", { 0.001, 10.0, 0.0, 1.0 }, 0.5f, 0.0f);
+	beatsleft = p.addExtParam("beatsleft", "Beats Left", "BeatsL", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
+	beatsright = p.addExtParam("beatsright", "Beats Right", "BeatsR", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
+	temposync = p.addIntParam("temposync", "Tempo Sync", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, enableTextFunction);
+	freeze = p.addIntParam("freeze", "Freeze", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+	pingpong = p.addIntParam("pingpong", "Ping Pong", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+	feedback = p.addExtParam("feedback", "Feedback", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
+	wet = p.addExtParam("wet", "Wet", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f);
+}
+
+//==============================================================================
+void APAudioProcessor::ChorusParams::setup(APAudioProcessor& p)
+{
+	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+	rate = p.addExtParam("rate", "Rate", "", "Hz", { 0.005f, 20.0f, 0.05, 1.0 }, 0.05f, 0.0f);
+	depth = p.addExtParam("depth", "Depth", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
+	delay = p.addExtParam("delay", "Delay", "", "ms", { 10.0f, 40.0f, 0.0, 1.0 }, 20.0f, 0.0f);
+	feedback = p.addExtParam("feedback", "Feedback", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25f, 0.0f);
+	dry = p.addExtParam("dry", "Dry", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	wet = p.addExtParam("wet", "Wet", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25f, 0.0f);
+
+}
+
+//==============================================================================
+void APAudioProcessor::ReverbParams::setup(APAudioProcessor& p)
+{
+	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+	size = p.addExtParam("size", "Size", "", "", { 0.0, 3.0, 0.0, 1.0 }, 1.f, 0.0f);
+	decay = p.addExtParam("decay", "Decay", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
+	damping = p.addExtParam("damping", "Damping", "", "", { 0.0, 0.999f, 0.0, 1.0 }, 0.5f, 0.0f);
+	predelay = p.addExtParam("predelay", "Predelay", "", "", { 0.0, 0.1f, 0.0, 1.0 }, 0.002f, 0.0f);
+	dry = p.addExtParam("dry", "Dry", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	wet = p.addExtParam("wet", "Wet", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.08f, 0.0f);
+}
+
+//==============================================================================
+void APAudioProcessor::MBFilterParams::setup(APAudioProcessor& p)
+{
+	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, enableTextFunction);
+	lowshelffreq = p.addExtParam("lowshelffreq", "Low Shelf Freq", "", "", { 20.0, 20000.0, 1.0, 1.0 }, 20000.0f, 0.0f);
+	lowshelfgain = p.addExtParam("lowshelfgain", "Low Shelf Gain", "", "", { 0.01, 4.0, 0.01, 1.0 }, 1.0f, 0.0f);
+	lowshelfq = p.addExtParam("lowshelfq", "Low Shelf Q", "", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	peakfreq = p.addExtParam("peakfreq", "Peak Freq", "", "", { 20.0, 20000.0, 1.0, 1.0 }, 1000.0f, 0.0f);
+	peakgain = p.addExtParam("peakgain", "Peak Gain", "", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	peakq = p.addExtParam("peakq", "Peak Q", "", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	highshelffreq = p.addExtParam("highshelffreq", "High Shelf Freq", "", "", { 20.0, 20000.0, 1.0, 1.0 }, 20.0f, 0.0f);
+	highshelfgain = p.addExtParam("highshelfgain", "High Shelf Gain", "", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	highshelfq = p.addExtParam("highshelfq", "High Shelf Q", "", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
+}
+
+//==============================================================================
+void APAudioProcessor::RingModParams::setup(APAudioProcessor& p)
+{
+	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, enableTextFunction);
+	modfreq1 = p.addExtParam("modfreq1", "Mod Freq 1", "", "", { 1.0, 12000.0, 0.0, 1.0 }, 40.0f, 0.0f);
+	shape1 = p.addExtParam("shape1", "Shape 1", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	mix1 = p.addExtParam("mix1", "Mix 1", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	modfreq2 = p.addExtParam("modfreq2", "Mod Freq 2", "", "", { 1.0, 12000.0, 0.0, 1.0 }, 40.0f, 0.0f);
+	shape2 = p.addExtParam("shape2", "Shape 2", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	mix2 = p.addExtParam("mix2", "Mix 2", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	spread = p.addExtParam("spread", "Spread", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.03f, 0.0f);
+	lowcut = p.addExtParam("lowcut", "Low Cut", "", "", { 20.0, 20000.0, 0.0, 1.0 }, 20.0f, 0.0f);
+	highcut = p.addExtParam("highcut", "High Cut", "", "", { 20.0, 20000.0, 0.0, 1.0 }, 20000.0f, 0.0f);
+}
+
+//==============================================================================
+void APAudioProcessor::GainParams::setup(APAudioProcessor& p)
+{
+	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, enableTextFunction);
+	gain = p.addExtParam("gain", "Gain", "", "", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
+}
+
+
 //==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true), false)
 {
@@ -286,6 +411,15 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutp
 	filterParams.setup(*this);
 	timbreParams.setup(*this);
 	orbitParams.setup(*this);
+
+	gainParams.setup(*this);
+	waveshaperParams.setup(*this);
+	compressorParams.setup(*this);
+	stereoDelayParams.setup(*this);
+	chorusParams.setup(*this);
+	reverbParams.setup(*this);
+	mbfilterParams.setup(*this);
+	ringmodParams.setup(*this);
 
     setupModMatrix();
     init();
@@ -343,17 +477,36 @@ void APAudioProcessor::reset()
 	lfo2.reset();
 	lfo3.reset();
 	lfo4.reset();
+
+	waveshaper.reset();
+	compressor.reset();
 }
 
 void APAudioProcessor::prepareToPlay (double newSampleRate, int newSamplesPerBlock)
 {
     Processor::prepareToPlay (newSampleRate, newSamplesPerBlock);
 
+	juce::dsp::ProcessSpec spec;
+	spec.sampleRate = newSampleRate;
+	spec.maximumBlockSize = newSamplesPerBlock;
+	spec.numChannels = 2;
+
     setCurrentPlaybackSampleRate (newSampleRate);
 
     modMatrix.setSampleRate (newSampleRate);
 
-    stereoDelay.setSampleRate (newSampleRate);
+    stereoDelay.prepare(spec);
+	effectGain.prepare(spec);
+	waveshaper.prepare(spec);
+	compressor.setSampleRate(newSampleRate);
+	compressor.setNumChannels(2);
+	chorus.prepare(spec);
+	reverb.prepare(spec);
+	mbfilter.prepare(spec);
+	ringmod.prepare(spec);
+
+
+
 	lfo1.setSampleRate(newSampleRate);
 	lfo2.setSampleRate(newSampleRate);
 	lfo3.setSampleRate(newSampleRate);
@@ -434,11 +587,10 @@ juce::Array<float> APAudioProcessor::getLiveFilterCutoff()
 
 void APAudioProcessor::applyEffects (juce::AudioSampleBuffer& buffer)
 {
-    // Apply Delay
-    //if (delayParams.enable->isOn())
-    //    stereoDelay.process (buffer);
+    
 
-    // Output gain
+
+
     outputGain.process (buffer);
 }
 
@@ -470,6 +622,82 @@ void APAudioProcessor::updateParams (int newBlockSize)
 
 		modMatrix.setMonoValue(*(this->lfoIds[lfoparams->num - 1]), lfo->getOutput());
     }
+
+	effectGain.setGainLevel(modMatrix.getValue(gainParams.gain));
+
+	waveshaper.setGain(modMatrix.getValue(waveshaperParams.drive), modMatrix.getValue(waveshaperParams.gain));
+	waveshaper.setDry(modMatrix.getValue(waveshaperParams.dry));
+	waveshaper.setWet(modMatrix.getValue(waveshaperParams.wet));
+	waveshaper.setFunctionToUse(int(modMatrix.getValue(waveshaperParams.type))); 
+
+	//setParams (float attackS, float holdS, float releaseS, float thresh, float ratio, float kneeWidth);
+	compressor.setParams(
+		modMatrix.getValue(compressorParams.attack),
+		0.0f,
+		modMatrix.getValue(compressorParams.release),
+		modMatrix.getValue(compressorParams.threshold),
+		modMatrix.getValue(compressorParams.ratio),
+		modMatrix.getValue(compressorParams.knee)
+	);
+	compressor.setInputGain(modMatrix.getValue(compressorParams.input));
+	compressor.setOutputGain(modMatrix.getValue(compressorParams.output));
+	compressor.setMode((gin::Dynamics::Type)(int)modMatrix.getValue(compressorParams.type));
+
+	auto notes = gin::NoteDuration::getNoteDurations();
+	bool tempoSync = stereoDelayParams.temposync->getProcValue() > 0.0f;
+	if (!tempoSync) {
+		stereoDelay.setTimeL(modMatrix.getValue(stereoDelayParams.timeleft));
+		stereoDelay.setTimeR(modMatrix.getValue(stereoDelayParams.timeright));
+	}
+	else {
+		stereoDelay.setTimeL(notes[size_t(stereoDelayParams.beatsleft->getProcValue())].toSeconds(playhead));
+		stereoDelay.setTimeR(notes[size_t(stereoDelayParams.beatsright->getProcValue())].toSeconds(playhead));
+	}
+	stereoDelay.setFB(modMatrix.getValue(stereoDelayParams.feedback));
+	stereoDelay.setWet(modMatrix.getValue(stereoDelayParams.wet));
+	stereoDelay.setDry(1.0f);
+	stereoDelay.setFreeze(stereoDelayParams.freeze->getProcValue() > 0.0f);
+	stereoDelay.setPing(stereoDelayParams.pingpong->getProcValue() > 0.0f);
+
+	chorus.setRate(modMatrix.getValue(chorusParams.rate));
+	chorus.setDepth(modMatrix.getValue(chorusParams.depth));
+	chorus.setCentreDelay(modMatrix.getValue(chorusParams.delay));
+	chorus.setFeedback(modMatrix.getValue(chorusParams.feedback));
+	chorus.setWet(modMatrix.getValue(chorusParams.wet));
+	chorus.setDry(modMatrix.getValue(chorusParams.dry));
+
+	reverb.setSize(modMatrix.getValue(reverbParams.size));
+	reverb.setDecay(modMatrix.getValue(reverbParams.decay));
+	reverb.setDamping(modMatrix.getValue(reverbParams.damping));
+	reverb.setLowpass(modMatrix.getValue(reverbParams.lowpass));
+	reverb.setPredelay(modMatrix.getValue(reverbParams.predelay));
+	reverb.setDry(modMatrix.getValue(reverbParams.dry));
+	reverb.setWet(modMatrix.getValue(reverbParams.wet));
+
+	mbfilter.setParams(
+		modMatrix.getValue(mbfilterParams.lowshelffreq),
+		modMatrix.getValue(mbfilterParams.lowshelfgain),
+		modMatrix.getValue(mbfilterParams.lowshelfq),
+		modMatrix.getValue(mbfilterParams.peakfreq),
+		modMatrix.getValue(mbfilterParams.peakgain),
+		modMatrix.getValue(mbfilterParams.peakq),
+		modMatrix.getValue(mbfilterParams.highshelffreq),
+		modMatrix.getValue(mbfilterParams.highshelfgain),
+		modMatrix.getValue(mbfilterParams.highshelfq)
+	);
+
+	RingModulator::RingModParams rmparams;
+	rmparams.mod1freq = modMatrix.getValue(ringmodParams.modfreq1);
+	rmparams.shape1 = modMatrix.getValue(ringmodParams.shape1);
+	rmparams.mix1 = modMatrix.getValue(ringmodParams.mix1);
+	rmparams.mod2freq = modMatrix.getValue(ringmodParams.modfreq2);
+	rmparams.shape2 = modMatrix.getValue(ringmodParams.shape2);
+	rmparams.mix2 = modMatrix.getValue(ringmodParams.mix2);
+	rmparams.spread = modMatrix.getValue(ringmodParams.spread);
+	rmparams.lowcut = modMatrix.getValue(ringmodParams.lowcut);
+	rmparams.highcut = modMatrix.getValue(ringmodParams.highcut);
+	ringmod.setParams(rmparams);
+
 
     // Output gain
     outputGain.setGain (modMatrix.getValue (globalParams.level));
