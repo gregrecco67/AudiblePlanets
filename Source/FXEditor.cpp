@@ -21,7 +21,7 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
     proc.fxOrderParams.fxb2->addListener(this);
     proc.fxOrderParams.fxb3->addListener(this);
     proc.fxOrderParams.fxb4->addListener(this);
-    addAndMakeVisible(hello);
+    
 	addAndMakeVisible(fxa1Selector);
 	addAndMakeVisible(fxa2Selector);
 	addAndMakeVisible(fxa3Selector);
@@ -30,6 +30,7 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(fxb2Selector);
 	addAndMakeVisible(fxb3Selector);
 	addAndMakeVisible(fxb4Selector);
+    addAndMakeVisible(mod);
 }
 
 
@@ -45,8 +46,10 @@ void FXEditor::resized()
 	fxb3Box.setBounds(606, 323, 168, 233);
 	fxb4Box.setBounds(834, 323, 168, 233);
 	chainSetting.setBounds(15, 7, 120, 35);
-	hello.setBounds(15, 50, 120, 35);
-
+	
+    mod.setBounds(1011, 50, 168, 303);
+    
+    
 	fxa1Selector.setBounds(150, 7, 168, 35); // place these above, adjust the panels' size
 	fxa2Selector.setBounds(378, 7, 168, 35);
 	fxa3Selector.setBounds(606, 7, 168, 35);
@@ -56,12 +59,18 @@ void FXEditor::resized()
 	fxb3Selector.setBounds(606, 290, 168, 35);
 	fxb4Selector.setBounds(834, 290, 168, 35);
 
+    
 }
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
 {
     if (param == proc.fxOrderParams.fxa1) {
-        fxa1Box.setControls(param->getUserValueInt());
+        auto fxa1Choice = param->getUserValueInt();
+        fxa1Box.setControls(fxa1Choice);
+        if (proc.fxOrderParams.fxa2->getUserValueInt() == fxa1Choice) { // abstract this...
+            fxa2Box.setControls(0);
+            proc.fxOrderParams.fxa2->setValue(0);
+        }
     }
     if (param == proc.fxOrderParams.fxa2) {
         fxa2Box.setControls(param->getUserValueInt());

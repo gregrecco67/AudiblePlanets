@@ -11,18 +11,8 @@ class FXEditor : public juce::Component, public gin::Parameter::ParameterListene
 public:
 	FXEditor(APAudioProcessor& proc_);
 	void resized() override;
-	void valueUpdated(gin::Parameter* param);
-	juce::Label hello{ "Hello", "Hello" };
-	void sayHello(bool shouldSayHello) {
-		if (shouldSayHello)
-		{
-			hello.setText("Hello", juce::dontSendNotification);
-		}
-		else
-		{
-			hello.setText("Goodbye", juce::dontSendNotification);
-		}
-	}
+	void valueUpdated(gin::Parameter* param) override;
+	
 private:
 	APAudioProcessor& proc;
 	FXBox fxa1Box{ "A1", proc, proc.fxOrderParams.fxa1 },
@@ -42,5 +32,6 @@ private:
 		fxb2Selector{ proc.fxOrderParams.fxb2 },
 		fxb3Selector{ proc.fxOrderParams.fxb3 },
 		fxb4Selector{ proc.fxOrderParams.fxb4 };
+    FXModBox mod{"mod", proc};
 	//gin::Layout layout{ *this };
 };

@@ -262,3 +262,18 @@ public:
     gin::Parameter::Ptr box;
         
 };
+
+//==============================================================================
+class FXModBox : public gin::ParamBox
+{
+public:
+    FXModBox (const juce::String& name, APAudioProcessor& proc_)
+        : gin::ParamBox (name), proc (proc_)
+    {
+        setName ("mod");
+        setTitle("mod sources");
+        addControl (new gin::ModSrcListBox (proc.modMatrix), 0, 0, 3, 4);
+    }
+
+    APAudioProcessor& proc;
+};
