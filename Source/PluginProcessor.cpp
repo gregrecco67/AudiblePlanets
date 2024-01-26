@@ -353,26 +353,27 @@ void APAudioProcessor::ReverbParams::setup(APAudioProcessor& p)
 {
 	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 	size = p.addExtParam("size", "Size", "", "", { 0.0, 3.0, 0.0, 1.0 }, 1.f, 0.0f);
-	decay = p.addExtParam("decay", "Decay", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
+	decay = p.addExtParam("decay", "Decay", "", "s", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
 	damping = p.addExtParam("damping", "Damping", "", "", { 0.0, 0.999f, 0.0, 1.0 }, 0.5f, 0.0f);
-	predelay = p.addExtParam("predelay", "Predelay", "", "", { 0.0, 0.1f, 0.0, 1.0 }, 0.002f, 0.0f);
-	dry = p.addExtParam("dry", "Dry", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
-	wet = p.addExtParam("wet", "Wet", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.08f, 0.0f);
+	lowpass = p.addExtParam("lowpass", "Lowpass", "", "Hz", { 20.0, 20000.0, 0.0, 1.0 }, 20000.0f, 0.0f);
+	predelay = p.addExtParam("predelay", "Predelay", "", "s", { 0.0, 0.1f, 0.0, 1.0 }, 0.002f, 0.0f);
+	dry = p.addExtParam("dry", "Dry", "", "%", { 0.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	wet = p.addExtParam("wet", "Wet", "", "%", { 0.0, 1.0, 0.0, 1.0 }, 0.08f, 0.0f);
 }
 
 //==============================================================================
 void APAudioProcessor::MBFilterParams::setup(APAudioProcessor& p)
 {
 	enable = p.addIntParam("enable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, enableTextFunction);
-	lowshelffreq = p.addExtParam("lowshelffreq", "Low Shelf Freq", "", "", { 20.0, 20000.0, 1.0, 1.0 }, 20000.0f, 0.0f);
-	lowshelfgain = p.addExtParam("lowshelfgain", "Low Shelf Gain", "", "", { 0.01, 4.0, 0.01, 1.0 }, 1.0f, 0.0f);
-	lowshelfq = p.addExtParam("lowshelfq", "Low Shelf Q", "", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	lowshelffreq = p.addExtParam("lowshelffreq", "LS Freq", "", "", { 20.0, 20000.0, 1.0, 1.0 }, 20000.0f, 0.0f);
+	lowshelfgain = p.addExtParam("lowshelfgain", "LS Gain", "", "", { 0.01, 4.0, 0.01, 1.0 }, 1.0f, 0.0f);
+	lowshelfq = p.addExtParam("lowshelfq", "LS Q", "", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	peakfreq = p.addExtParam("peakfreq", "Peak Freq", "", "", { 20.0, 20000.0, 1.0, 1.0 }, 1000.0f, 0.0f);
 	peakgain = p.addExtParam("peakgain", "Peak Gain", "", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	peakq = p.addExtParam("peakq", "Peak Q", "", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
-	highshelffreq = p.addExtParam("highshelffreq", "High Shelf Freq", "", "", { 20.0, 20000.0, 1.0, 1.0 }, 20.0f, 0.0f);
-	highshelfgain = p.addExtParam("highshelfgain", "High Shelf Gain", "", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
-	highshelfq = p.addExtParam("highshelfq", "High Shelf Q", "", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	highshelffreq = p.addExtParam("highshelffreq", "HS Freq", "", "", { 20.0, 20000.0, 1.0, 1.0 }, 20.0f, 0.0f);
+	highshelfgain = p.addExtParam("highshelfgain", "HS Gain", "", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	highshelfq = p.addExtParam("highshelfq", "HS Q", "", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
 }
 
 //==============================================================================

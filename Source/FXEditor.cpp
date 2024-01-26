@@ -60,13 +60,6 @@ void FXEditor::resized()
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
 {
-//    if (param->getUserValueInt() == 0) {
-//        sayHello(false);
-//    }
-//    else {
-//        sayHello(true);
-//    }
-    // cycle through all the selectors, whichever is not equal to this and has the same effect selected, set to "None"
     if (param == proc.fxOrderParams.fxa1) {
         fxa1Box.setControls(param->getUserValueInt());
     }
@@ -91,7 +84,5 @@ void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any 
     if (param == proc.fxOrderParams.fxb4) {
         fxb4Box.setControls(param->getUserValueInt());
     }
-
-	// testing
 }
 
