@@ -12,7 +12,8 @@ public:
 	FXEditor(APAudioProcessor& proc_);
 	void resized() override;
 	void valueUpdated(gin::Parameter* param) override;
-	
+	void removeDuplicates(int effect, int componentToSkip);
+
 private:
 	APAudioProcessor& proc;
 	FXBox fxa1Box{ "A1", proc, proc.fxOrderParams.fxa1 },

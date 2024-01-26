@@ -11,7 +11,10 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(fxb2Box);
 	addAndMakeVisible(fxb3Box);
 	addAndMakeVisible(fxb4Box);
+	
 	addAndMakeVisible(chainSetting);
+    addAndMakeVisible(mod);
+
 	proc.fxOrderParams.chainAtoB->addListener(this);
     proc.fxOrderParams.fxa1->addListener(this);
     proc.fxOrderParams.fxa2->addListener(this);
@@ -30,7 +33,6 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(fxb2Selector);
 	addAndMakeVisible(fxb3Selector);
 	addAndMakeVisible(fxb4Selector);
-    addAndMakeVisible(mod);
 }
 
 
@@ -49,7 +51,6 @@ void FXEditor::resized()
 	
     mod.setBounds(1011, 50, 168, 303);
     
-    
 	fxa1Selector.setBounds(150, 7, 168, 35); // place these above, adjust the panels' size
 	fxa2Selector.setBounds(378, 7, 168, 35);
 	fxa3Selector.setBounds(606, 7, 168, 35);
@@ -58,8 +59,6 @@ void FXEditor::resized()
 	fxb2Selector.setBounds(378, 290, 168, 35);
 	fxb3Selector.setBounds(606, 290, 168, 35);
 	fxb4Selector.setBounds(834, 290, 168, 35);
-
-    
 }
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
@@ -67,31 +66,94 @@ void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any 
     if (param == proc.fxOrderParams.fxa1) {
         auto fxa1Choice = param->getUserValueInt();
         fxa1Box.setControls(fxa1Choice);
-        if (proc.fxOrderParams.fxa2->getUserValueInt() == fxa1Choice) { // abstract this...
-            fxa2Box.setControls(0);
-            proc.fxOrderParams.fxa2->setValue(0);
-        }
+		removeDuplicates(fxa1Choice, 1);
     }
-    if (param == proc.fxOrderParams.fxa2) {
-        fxa2Box.setControls(param->getUserValueInt());
+	if (param == proc.fxOrderParams.fxa2) {
+		auto fxa2Choice = param->getUserValueInt();
+		fxa2Box.setControls(fxa2Choice);
+		removeDuplicates(fxa2Choice, 2);
     }
-    if (param == proc.fxOrderParams.fxa3) {
-        fxa3Box.setControls(param->getUserValueInt());
+	if (param == proc.fxOrderParams.fxa3) {
+		auto fxa3Choice = param->getUserValueInt();
+		fxa3Box.setControls(fxa3Choice);
+		removeDuplicates(fxa3Choice, 3);
     }
-    if (param == proc.fxOrderParams.fxa4) {
-        fxa4Box.setControls(param->getUserValueInt());
-    }
-    if (param == proc.fxOrderParams.fxb1) {
-        fxb1Box.setControls(param->getUserValueInt());
-    }
-    if (param == proc.fxOrderParams.fxb2) {
-        fxb2Box.setControls(param->getUserValueInt());
-    }
-    if (param == proc.fxOrderParams.fxb3) {
-        fxb3Box.setControls(param->getUserValueInt());
-    }
-    if (param == proc.fxOrderParams.fxb4) {
-        fxb4Box.setControls(param->getUserValueInt());
-    }
+	if (param == proc.fxOrderParams.fxa4) {
+		auto fxa4Choice = param->getUserValueInt();
+		fxa4Box.setControls(fxa4Choice);
+		removeDuplicates(fxa4Choice, 4);
+	}
+	if (param == proc.fxOrderParams.fxb1) {
+		auto fxb1Choice = param->getUserValueInt();
+		fxb1Box.setControls(fxb1Choice);
+		removeDuplicates(fxb1Choice, 5);
+	}
+	if (param == proc.fxOrderParams.fxb2) {
+		auto fxb2Choice = param->getUserValueInt();
+		fxb2Box.setControls(fxb2Choice);
+		removeDuplicates(fxb2Choice, 6);
+	}
+	if (param == proc.fxOrderParams.fxb3) {
+		auto fxb3Choice = param->getUserValueInt();
+		fxb3Box.setControls(fxb3Choice);
+		removeDuplicates(fxb3Choice, 7);
+	}
+	if (param == proc.fxOrderParams.fxb4) {
+		auto fxb4Choice = param->getUserValueInt();
+		fxb4Box.setControls(fxb4Choice);
+		removeDuplicates(fxb4Choice, 8);
+	}
+}
+
+void FXEditor::removeDuplicates(int effect, int componentToSkip)
+{
+	if (proc.fxOrderParams.fxa1->getUserValueInt() == effect) { // abstract this...
+		if (componentToSkip != 1) {
+			fxa1Box.setControls(0);
+			proc.fxOrderParams.fxa1->setValue(0);
+		}
+	}
+	if (proc.fxOrderParams.fxa2->getUserValueInt() == effect) { // abstract this...
+		if (componentToSkip != 2) {
+			fxa2Box.setControls(0);
+			proc.fxOrderParams.fxa2->setValue(0);
+		}
+	}
+	if (proc.fxOrderParams.fxa3->getUserValueInt() == effect) { // abstract this...
+		if (componentToSkip != 3) {
+			fxa3Box.setControls(0);
+			proc.fxOrderParams.fxa3->setValue(0);
+		}
+	}
+	if (proc.fxOrderParams.fxa4->getUserValueInt() == effect) { // abstract this...
+		if (componentToSkip != 4) {
+			fxa4Box.setControls(0);
+			proc.fxOrderParams.fxa4->setValue(0);
+		}
+	}
+	if (proc.fxOrderParams.fxb1->getUserValueInt() == effect) { // abstract this...
+		if (componentToSkip != 5) {
+			fxb1Box.setControls(0);
+			proc.fxOrderParams.fxb1->setValue(0);
+		}
+	}
+	if (proc.fxOrderParams.fxb2->getUserValueInt() == effect) { // abstract this...
+		if (componentToSkip != 6) {
+			fxb2Box.setControls(0);
+			proc.fxOrderParams.fxb2->setValue(0);
+		}
+	}
+	if (proc.fxOrderParams.fxb3->getUserValueInt() == effect) { // abstract this...
+		if (componentToSkip != 7) {
+			fxb3Box.setControls(0);
+			proc.fxOrderParams.fxb3->setValue(0);
+		}
+	}
+	if (proc.fxOrderParams.fxb4->getUserValueInt() == effect) { // abstract this...
+		if (componentToSkip != 8) {
+			fxb4Box.setControls(0);
+			proc.fxOrderParams.fxb4->setValue(0);
+		}
+	}
 }
 
