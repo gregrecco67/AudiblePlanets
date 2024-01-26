@@ -13,7 +13,15 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(fxb4Box);
 	addAndMakeVisible(chainSetting);
 	proc.fxOrderParams.chainAtoB->addListener(this);
-	addAndMakeVisible(hello);
+    proc.fxOrderParams.fxa1->addListener(this);
+    proc.fxOrderParams.fxa2->addListener(this);
+    proc.fxOrderParams.fxa3->addListener(this);
+    proc.fxOrderParams.fxa4->addListener(this);
+    proc.fxOrderParams.fxb1->addListener(this);
+    proc.fxOrderParams.fxb2->addListener(this);
+    proc.fxOrderParams.fxb3->addListener(this);
+    proc.fxOrderParams.fxb4->addListener(this);
+    addAndMakeVisible(hello);
 	addAndMakeVisible(fxa1Selector);
 	addAndMakeVisible(fxa2Selector);
 	addAndMakeVisible(fxa3Selector);
@@ -52,19 +60,38 @@ void FXEditor::resized()
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
 {
-	// cycle through all the selectors, whichever is not equal to this and has the same effect selected, set to "None"
+//    if (param->getUserValueInt() == 0) {
+//        sayHello(false);
+//    }
+//    else {
+//        sayHello(true);
+//    }
+    // cycle through all the selectors, whichever is not equal to this and has the same effect selected, set to "None"
+    if (param == proc.fxOrderParams.fxa1) {
+        fxa1Box.setControls(param->getUserValueInt());
+    }
+    if (param == proc.fxOrderParams.fxa2) {
+        fxa2Box.setControls(param->getUserValueInt());
+    }
+    if (param == proc.fxOrderParams.fxa3) {
+        fxa3Box.setControls(param->getUserValueInt());
+    }
+    if (param == proc.fxOrderParams.fxa4) {
+        fxa4Box.setControls(param->getUserValueInt());
+    }
+    if (param == proc.fxOrderParams.fxb1) {
+        fxb1Box.setControls(param->getUserValueInt());
+    }
+    if (param == proc.fxOrderParams.fxb2) {
+        fxb2Box.setControls(param->getUserValueInt());
+    }
+    if (param == proc.fxOrderParams.fxb3) {
+        fxb3Box.setControls(param->getUserValueInt());
+    }
+    if (param == proc.fxOrderParams.fxb4) {
+        fxb4Box.setControls(param->getUserValueInt());
+    }
 
 	// testing
-	if (param == proc.fxOrderParams.chainAtoB)
-	{
-		if (param->getUserValue() == 0.0f)
-		{
-			fxa1Box.box->setUserValue(3.0f);
-		}
-		else
-		{
-			fxa1Box.box->setUserValue(4.0f);
-		}
-	}
 }
 
