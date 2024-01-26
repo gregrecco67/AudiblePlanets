@@ -419,10 +419,11 @@ void SynthVoice::updateParams(int blockSize)
 
 	float baseFreq = gin::getMidiNoteInHertz(currentMidiNote);
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
-	osc1Freq = baseFreq * ((int)getValue(proc.osc1Params.coarse) + getValue(proc.osc1Params.fine));
-	osc2Freq = baseFreq * ((int)getValue(proc.osc2Params.coarse) + getValue(proc.osc2Params.fine));
-	osc3Freq = baseFreq * ((int)getValue(proc.osc3Params.coarse) + getValue(proc.osc3Params.fine));
-	osc4Freq = baseFreq * ((int)getValue(proc.osc4Params.coarse) + getValue(proc.osc4Params.fine));
+	//auto coarse1 = getValue(proc.osc1Params.coarse);
+	osc1Freq = baseFreq * ((int)(getValue(proc.osc1Params.coarse) + 0.0001f) + getValue(proc.osc1Params.fine));
+	osc2Freq = baseFreq * ((int)(getValue(proc.osc2Params.coarse) + 0.0001f) + getValue(proc.osc2Params.fine));
+	osc3Freq = baseFreq * ((int)(getValue(proc.osc3Params.coarse) + 0.0001f) + getValue(proc.osc3Params.fine));
+	osc4Freq = baseFreq * ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine));
 
 	osc1Params.wave = getValue(proc.osc1Params.saw) ? Wave::sawUp : Wave::cosine;
 	osc1Params.tones = getValue(proc.osc1Params.tones);

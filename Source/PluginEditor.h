@@ -4,6 +4,7 @@
 #include "PluginProcessor.h"
 #include "Panels.h"
 #include "Editor.h"
+#include "FXEditor.h"
 #include "APColors.h"
 
 //==============================================================================
@@ -30,6 +31,7 @@ private:
     juce::Component tab1, tab2, tab3;
 
     Editor editor { wtProc };
+	FXEditor fxEditor{ wtProc};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessorEditor)
 };

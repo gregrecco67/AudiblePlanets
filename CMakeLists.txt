@@ -98,7 +98,7 @@ if (APPLE)
 endif()
 
 if (WIN32)
-	target_compile_options(${PROJECT_NAME} PRIVATE -wd4996 -wd4458)
+	target_compile_options(${PROJECT_NAME} PRIVATE -wd4996 -wd4458 -wd26495)
 endif()
 
 juce_generate_juce_header (${PROJECT_NAME})

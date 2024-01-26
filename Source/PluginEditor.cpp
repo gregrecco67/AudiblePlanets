@@ -12,6 +12,7 @@ APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
     tabbed.addTab("3. FX",   APColors::tabBkgd, &tab3, false, 2);
 
     tab1.addAndMakeVisible (editor);
+	tab2.addAndMakeVisible(fxEditor);
     
     usage.panic.onClick = [this] { wtProc.presetLoaded = true; };
     addAndMakeVisible (usage);
@@ -47,6 +48,7 @@ void APAudioProcessorEditor::resized()
     editorArea.removeFromBottom(tabbed.getTabBarDepth());
     editor.setBounds(editorArea);
     patchBrowser.setBounds (rc);
+	fxEditor.setBounds(editorArea);
 }
 
 void APAudioProcessorEditor::addMenuItems (juce::PopupMenu& m)

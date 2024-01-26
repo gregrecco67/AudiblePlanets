@@ -213,7 +213,7 @@ public:
         
         FXOrderParams() = default;
         
-        gin::Parameter::Ptr fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4;
+        gin::Parameter::Ptr fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4, chainAtoB;
         
         void setup(APAudioProcessor& p);
         
@@ -243,7 +243,7 @@ public:
 	ReverbParams reverbParams;
 	MBFilterParams mbfilterParams;
 	RingModParams ringmodParams;
-
+	FXOrderParams fxOrderParams;
 
     //==============================================================================
     //gin::StereoDelay stereoDelay{ 120.1 };
