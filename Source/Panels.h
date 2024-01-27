@@ -313,22 +313,6 @@ public:
 };
 
 //==============================================================================
-class MatrixBox : public gin::ParamBox
-{
-public:
-    MatrixBox (const juce::String& name, APAudioProcessor& proc_)
-        : gin::ParamBox (name), proc (proc_)
-    {
-        setName ("mtx");
-		setTitle("mod matrix");
-
-        addControl (new gin::ModMatrixBox (proc, proc.modMatrix), 0, 0, 3, 2);
-    }
-
-    APAudioProcessor& proc;
-};
-
-//==============================================================================
 class GlobalBox : public gin::ParamBox
 {
 public:

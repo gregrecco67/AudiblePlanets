@@ -14,6 +14,7 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	
 	addAndMakeVisible(chainSetting);
     addAndMakeVisible(mod);
+	addAndMakeVisible(matrix);
 
 	proc.fxOrderParams.chainAtoB->addListener(this);
     proc.fxOrderParams.fxa1->addListener(this);
@@ -50,6 +51,7 @@ void FXEditor::resized()
 	chainSetting.setBounds(15, 7, 120, 35);
 	
     mod.setBounds(1011, 50, 168, 303);
+	matrix.setBounds(1011, 360, 168, 200);
     
 	fxa1Selector.setBounds(150, 7, 168, 35); // place these above, adjust the panels' size
 	fxa2Selector.setBounds(378, 7, 168, 35);

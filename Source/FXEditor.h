@@ -34,5 +34,6 @@ private:
 		fxb3Selector{ proc.fxOrderParams.fxb3 },
 		fxb4Selector{ proc.fxOrderParams.fxb4 };
     FXModBox mod{"mod", proc};
+	MatrixBox matrix{"matrix", proc};
 	//gin::Layout layout{ *this };
 };

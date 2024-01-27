@@ -256,9 +256,7 @@ public:
 	MBFilterProcessor mbfilter;
 	RingModulator ringmod;
 
-
     gin::GainProcessor outputGain;
-
     gin::BandLimitedLookupTables analogTables;
 
     //==============================================================================
@@ -271,7 +269,7 @@ public:
     bool presetLoaded = false;
 
 	gin::LevelTracker levelTracker;
-
+	
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)
 };

@@ -36,7 +36,6 @@ private:
 	LFOBox lfo3{ "lfo3", proc, proc.lfo3Params, proc.modSrcLFO3, proc.modSrcMonoLFO3, proc.lfo3 };
 	LFOBox lfo4{ "lfo4", proc, proc.lfo4Params, proc.modSrcLFO4, proc.modSrcMonoLFO4, proc.lfo4 };
     ModBox mod                              { "mod", proc };
-    MatrixBox mtx                           { "mtx", proc };
     GlobalBox global                        { "global", proc };
 	TimbreBox timbre						{ "timbre", proc };
 	OrbitBox orbit							{ "orbit", proc };

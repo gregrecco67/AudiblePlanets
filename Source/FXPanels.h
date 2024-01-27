@@ -25,6 +25,7 @@ public:
 		addControl(cpknee = new gin::Knob(proc.compressorParams.knee), 1, 1);
 		addControl(cpinput = new gin::Knob(proc.compressorParams.input), 2, 0);
 		addControl(cpoutput = new gin::Knob(proc.compressorParams.output), 2, 1);
+		addControl(cptype = new gin::Select(proc.compressorParams.type), 2, 2);
 
 		// DL = 3
 		addControl(dltimeleft = new gin::Knob(proc.stereoDelayParams.timeleft), 0, 0);
@@ -123,6 +124,7 @@ public:
 			cpknee->setVisible(true);
 			cpinput->setVisible(true);
 			cpoutput->setVisible(true);
+			cptype->setVisible(true);
 			break;
 		case 3:
 			if (!proc.stereoDelayParams.temposync->getUserValueBool()) {
@@ -199,6 +201,7 @@ public:
 		cpknee->setVisible(false);
 		cpinput->setVisible(false);
 		cpoutput->setVisible(false);
+		cptype->setVisible(false);
 		// DL = 3
 		dltimeleft->setVisible(false);
 		dltimeright->setVisible(false);
@@ -252,7 +255,7 @@ public:
     gin::ParamComponent::Ptr rmmodfreq1, rmmodfreq2, rmshape1, rmshape2, rmmix1, rmmix2, rmspread, rmlowcut, rmhighcut;
 	gin::ParamComponent::Ptr wsdrive, wsgain, wsdry, wswet, wstype;
 	gin::ParamComponent::Ptr gngain;
-	gin::ParamComponent::Ptr cpthreshold, cpratio, cpattack, cprelease, cpknee, cpinput, cpoutput;
+	gin::ParamComponent::Ptr cpthreshold, cpratio, cpattack, cprelease, cpknee, cpinput, cpoutput, cptype;
 	gin::ParamComponent::Ptr dltimeleft, dltimeright, dlbeatsleft, dlbeatsright, dltemposync, dlfeedback, dlwet, dlpingpong, dlfreeze;
 	gin::ParamComponent::Ptr chrate, chdepth, chdelay, chfeedback, chdry, chwet;
 	gin::ParamComponent::Ptr rvsize, rvdecay, rvdamping, rvlowpass, rvpredelay, rvdry, rvwet;
@@ -276,4 +279,18 @@ public:
     }
 
     APAudioProcessor& proc;
+};
+
+class MatrixBox : public gin::ParamBox
+{
+public:
+	MatrixBox(const juce::String& name, APAudioProcessor& proc_)
+		: gin::ParamBox(name), proc(proc_)
+	{
+		setName("mtx");
+
+		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 3, 2);
+	}
+
+	APAudioProcessor& proc;
 };
