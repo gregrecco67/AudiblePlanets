@@ -242,7 +242,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 		// interpret bodies' positions by algorithm
 		// 1. get angles
-		float atanAngle2L, atanAngle2R, atanAngle3L, atanAngle3R, atanAngle4L, atanAngle4R;
+        float atanAngle2L{0}, atanAngle2R{0}, atanAngle3L{0}, atanAngle3R{0}, atanAngle4L, atanAngle4R;
 
 		atanAngle4L = FastMath<float>::fastAtan2(epi4.yL + equant, epi4.xL);
 		atanAngle4R = FastMath<float>::fastAtan2(epi4.yR + equant, epi4.xR);

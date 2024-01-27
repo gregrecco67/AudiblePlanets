@@ -202,7 +202,7 @@ public:
                 p.leftGain  = params.gain * (1.0f - pan) / float (std::sqrt (params.voices));
                 p.rightGain = params.gain * (1.0f + pan) / float (std::sqrt (params.voices));
 
-                oscillators[i]->processAdding (baseFreq * std::pow(freqFactor, i), p, mainPhaseBuffer, quarterPhaseBuffer);
+                oscillators[i]->processAdding (baseFreq * (float)std::pow(freqFactor, i), p, mainPhaseBuffer, quarterPhaseBuffer);
             }
         }
     }

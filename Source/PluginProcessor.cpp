@@ -2,20 +2,6 @@
 #include "PluginEditor.h"
 #include "SynthVoice.h"
 
-static juce::String subTextFunction (const gin::Parameter&, float v)
-{
-    switch (int (v))
-    {
-        case 0: return "Sine";
-        case 1: return "Triangle";
-        case 2: return "Saw";
-        case 3: return "Pulse";
-        default:
-            jassertfalse;
-            return {};
-    }
-}
-
 static juce::String waveshaperTypeTextFunction(const gin::Parameter&, float v)
 {
 	switch (int (v))

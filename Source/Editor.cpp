@@ -63,7 +63,7 @@ void Editor::timerCallback() {
     orbitViz.setEpi1Rad(proc.osc2Params.volume->getValue());
     orbitViz.setEpi2Rad(proc.osc3Params.volume->getValue());
     orbitViz.setEpi3Rad(proc.osc4Params.volume->getValue());
-    orbitViz.setAlgo(proc.timbreParams.algo->getUserValue());
+    orbitViz.setAlgo(proc.timbreParams.algo->getUserValueInt());
     orbitViz.setDefPhase(vizDefPhase);
     orbitViz.setEpi1Phase(vizEpi1Phase);
     orbitViz.setEpi2Phase(vizEpi2Phase);
@@ -75,9 +75,8 @@ void Editor::timerCallback() {
 void Editor::resized()
 {
     auto area = getLocalBounds();
-    auto width = area.getWidth();
     auto height = area.getHeight();
-    orbitViz.setBounds(area.getRight() - (394), height * 0.5, 394, height * 0.5);
+    orbitViz.setBounds(area.getRight() - (394), (int)(height * 0.5f), 394, (int)(height * 0.5f));
     
 //#if JUCE_DEBUG
     auto f = juce::File (__FILE__).getChildFile ("../../assets/layout.json");

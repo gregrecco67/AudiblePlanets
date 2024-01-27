@@ -76,10 +76,10 @@ public:
 	float minimaxSin(float x1) {
 		//x1 += M_PI;
 		while (x1 > M_PI) {
-			x1 -= 2.0f * M_PI;
+			x1 -= 2.0f * (float)M_PI;
 		}
 		while (x1 < -M_PI) {
-			x1 += 2.0f * M_PI;
+			x1 += 2.0f * (float)M_PI;
 		}
 		double x2 = x1 * x1;
 		return x1 * (0.99999999997884898600402426033768998 + x2 * (-0.166666666088260696413164261885310067 + x2 * (0.00833333072055773645376566203656709979 + x2 * (-0.000198408328232619552901560108010257242 + x2 * (2.75239710746326498401791551303359689e-6 - 2.3868346521031027639830001794722295e-8 * x2)))));
@@ -231,8 +231,8 @@ private:
 	LFOValuesByPhase values;
 	float frequency{ 1.f }, sampleRate{ 44100.f };
 	int waveShape{ 0 };
-	bool tsync{ false };
-	float tsyncDuration{ 1.f };
+	//bool tsync{ false };
+	//float tsyncDuration{ 1.f };
 
 	float phaseIncrement{ 0.f };
 	float currentRandomMain{ 0.f }, currentRandomQuarter{ 0.f }, currentRandomHalf{ 0.f }, currentRandomMinusQuarter{ 0.f };

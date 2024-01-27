@@ -42,9 +42,9 @@ template <class F> class FastMath {
     // https://www.desmos.com/calculator/f0eryaepsl
     static inline F fastSin(F x) {
         
-        static constexpr F B = 4 / M_PI;
-        static constexpr F C = -4 / (M_PI * M_PI);
-        static constexpr F P = 0.225;
+        static constexpr F B = 4 / (float)M_PI;
+        static constexpr F C = -4 / (float)(M_PI * M_PI);
+        static constexpr F P = 0.225f;
 
         F y = B * x + C * x * std::abs(x);
 

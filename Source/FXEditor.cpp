@@ -39,7 +39,6 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 
 void FXEditor::resized()
 {
-	auto area = getLocalBounds();
 	fxa1Box.setBounds(150, 50, 168, 233);
 	fxa2Box.setBounds(378, 50, 168, 233);
 	fxa3Box.setBounds(606, 50, 168, 233);

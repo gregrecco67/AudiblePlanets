@@ -123,10 +123,11 @@ public:
 	APLookAndFeel2 lnf2;
 	APLookAndFeel3 lnf3;
 	APLookAndFeel4 lnf4;
-	APAudioProcessor::OSCParams& osc;
+    APAudioProcessor& proc;
+    APAudioProcessor::OSCParams& osc;
 	gin::ParamComponent::Ptr c = nullptr, f = nullptr, r = nullptr;
 	Label fixedHz;
-    APAudioProcessor& proc;
+    
 };
 
 //==============================================================================
