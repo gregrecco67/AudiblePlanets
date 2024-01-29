@@ -129,7 +129,7 @@ public:
 
     float getNextSample() noexcept
     {
-        timeSinceStart += (float)inverseSampleRate;
+        timeSinceStart += inverseSampleRate;
         switch (state)
         {
             case State::idle:
@@ -327,7 +327,7 @@ public:
         auto outLeft = buffer.getWritePointer(0);
         auto outRight = buffer.getWritePointer(1);
         for (int i = 0; i < numSamples; i++) {
-            timeSinceStart += (float)inverseSampleRate;
+            timeSinceStart += inverseSampleRate;
             switch (state)
             {
                 case State::idle:

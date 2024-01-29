@@ -230,7 +230,7 @@ void APAudioProcessor::LFOParams::setup (APAudioProcessor& p, String num) // mos
     sync             = p.addIntParam (id + "sync",    id + "Sync",    "Sync",   "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
     wave             = p.addIntParam (id + "wave",    id + "Wave",    "Wave",   "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
     rate             = p.addExtParam (id + "rate",    id + "Rate",    "Rate",   "Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
-    beat             = p.addIntParam (id + "beat",    id + "Beat",    "Beat",   "", { 0.0, float (notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
+    beat             = p.addExtParam (id + "beat",    id + "Beat",    "Beat",   "", { 0.0, float (notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
     depth            = p.addExtParam (id + "depth",   id + "Depth",   "Depth",  "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
     phase            = p.addExtParam (id + "phase",   id + "Phase",   "Phase",  "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
     offset           = p.addExtParam (id + "offset",  id + "Offset",  "Offset", "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
@@ -271,7 +271,7 @@ void APAudioProcessor::GlobalParams::setup (APAudioProcessor& p)
     glideRate   = p.addExtParam ("gRate",   "Glide Rate", "Rate",  "s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
     legato      = p.addIntParam ("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
     level       = p.addExtParam ("level",   "Level",      "",      "db", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
-    voices      = p.addIntParam ("voices",  "Voices",     "",      "",   { 2.0, 40.0, 1.0, 1.0 }, 40.0f, 0.0f);
+    voices      = p.addIntParam ("voices",  "Voices",     "",      "",   { 2.0, 10.0, 1.0, 1.0 }, 8.0f, 0.0f);
     mpe         = p.addIntParam ("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 
     level->conversionFunction     = [] (float in) { return juce::Decibels::decibelsToGain (in); };
@@ -426,7 +426,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutp
     enableLegacyMode();
     setVoiceStealingEnabled (true);
 
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < 10; i++)
     {
         auto voice = new SynthVoice (*this);
         modMatrix.addVoice (voice);
@@ -511,6 +511,16 @@ void APAudioProcessor::setupModMatrix()
     }
 
     modMatrix.build();
+}
+
+void APAudioProcessor::stateUpdated()
+{
+	//modMatrix.stateUpdated(state);
+}
+
+void APAudioProcessor::updateState()
+{
+	//modMatrix.updateState(state);
 }
 
 void APAudioProcessor::reset()

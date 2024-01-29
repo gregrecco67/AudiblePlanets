@@ -31,6 +31,9 @@ public:
     void updateParams(int blockSize);
     void setupModMatrix();
 
+	void stateUpdated() override;
+	void updateState() override;
+
     //==============================================================================
     void handleMidiEvent(const juce::MidiMessage& m) override;
     //==============================================================================
