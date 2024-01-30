@@ -115,9 +115,9 @@ public:
         {
             if (parameters.releaseTimeMs > 0.0f && !parameters.repeat)
             {
+                state = State::release;
                 linearIdxVal = 1.0;
                 releaseStart = finalOut;
-                state = State::release;
             }
 			else
             {
@@ -129,7 +129,7 @@ public:
 
     float getNextSample() noexcept
     {
-        timeSinceStart += inverseSampleRate;
+        timeSinceStart += (float)inverseSampleRate;
         switch (state)
         {
             case State::idle:
@@ -327,7 +327,7 @@ public:
         auto outLeft = buffer.getWritePointer(0);
         auto outRight = buffer.getWritePointer(1);
         for (int i = 0; i < numSamples; i++) {
-            timeSinceStart += inverseSampleRate;
+            timeSinceStart += (float)inverseSampleRate;
             switch (state)
             {
                 case State::idle:

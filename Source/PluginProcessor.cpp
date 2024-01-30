@@ -423,7 +423,7 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 //==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true), false)
 {
-    enableLegacyMode();
+    enableLegacyMode(0);
     setVoiceStealingEnabled (true);
 
     for (int i = 0; i < 10; i++)
@@ -432,7 +432,6 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutp
         modMatrix.addVoice (voice);
         addVoice (voice);
     }
-
 
 	osc1Params.setup(*this, String{ "1" });
 	osc2Params.setup(*this, String{ "2" });

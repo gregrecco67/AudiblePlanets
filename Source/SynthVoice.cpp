@@ -10,11 +10,12 @@ SynthVoice::SynthVoice(APAudioProcessor& p)
 	osc2Params.voices = 4;
 	osc3Params.voices = 4;
 	osc4Params.voices = 4;
+    setFastKill();
 }
 
 void SynthVoice::noteStarted()
 {
-	fastKill = false;
+	//fastKill = true;
 	startVoice();
 
 	auto note = getCurrentlyPlayingNote();
@@ -98,12 +99,11 @@ void SynthVoice::noteStopped(bool allowTailOff)
 	env2.noteOff();
 	env3.noteOff();
 	env4.noteOff();
+    if (!allowTailOff) {
+        clearCurrentNote();
+        stopVoice();
+    }
 
-	if (!allowTailOff)
-	{
-		clearCurrentNote();
-		stopVoice();
-	}
 }
 
 void SynthVoice::notePressureChanged()
@@ -177,17 +177,18 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	osc4SineBuffer.applyGain  (osc4Vol);
 	osc4CosineBuffer.applyGain(osc4Vol);
 
-
-
-
 	// the whole enchilada
 	for (int i = 0; i < numSamples; i++)
 	{
-		// get bodies' position by algorithm
-        auto a = envs[0]->getNextSample();
-        auto b = envs[1]->getNextSample();
-        auto c = envs[2]->getNextSample();
-        auto d = envs[3]->getNextSample();
+        env1.getNextSample();
+        env2.getNextSample();
+        env3.getNextSample();
+        env4.getNextSample();
+        // get bodies' position by algorithm
+        auto a = envs[0]->getOutput(); // whoops! might be double counting or undercounting
+        auto b = envs[1]->getOutput(); // load ALL FOUR env vals once per loop, then look them up
+        auto c = envs[2]->getOutput(); // in an envVals array
+        auto d = envs[3]->getOutput();
         
 		epi1 = {
 			a * osc1SineBuffer.getSample(0, i), a * osc1CosineBuffer.getSample(0, i),
@@ -389,6 +390,8 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	if (proc.filterParams.enable->isOn())
 		filter.process(synthBuffer);
 
+    
+    
     if (!(env1.isActive() || env2.isActive() || env3.isActive() || env4.isActive()))
 	{
 		clearCurrentNote();
@@ -611,7 +614,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.attackTimeMs = getValue(proc.env2Params.attack);
 	p.decayTimeMs = getValue(proc.env2Params.decay);
 	p.sustainLevel = getValue(proc.env2Params.sustain);
-	p.releaseTimeMs =  fastKill ? 0.01f : getValue(proc.env2Params.release);
+	p.releaseTimeMs = getValue(proc.env2Params.release);
 	p.aCurve = getValue(proc.env2Params.acurve);
 	p.dRCurve = getValue(proc.env2Params.drcurve);
 	mode = (int)getValue(proc.env2Params.syncrepeat);
@@ -630,7 +633,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.attackTimeMs = getValue(proc.env3Params.attack);
 	p.decayTimeMs = getValue(proc.env3Params.decay);
 	p.sustainLevel = getValue(proc.env3Params.sustain);
-	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env3Params.release);
+	p.releaseTimeMs = getValue(proc.env3Params.release);
 	p.aCurve = getValue(proc.env3Params.acurve);
 	p.dRCurve = getValue(proc.env3Params.drcurve);
 	mode = (int)getValue(proc.env3Params.syncrepeat);
@@ -648,7 +651,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.attackTimeMs = getValue(proc.env4Params.attack);
 	p.decayTimeMs = getValue(proc.env4Params.decay);
 	p.sustainLevel = getValue(proc.env4Params.sustain);
-	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env4Params.release);
+	p.releaseTimeMs = getValue(proc.env4Params.release);
 	p.aCurve = getValue(proc.env4Params.acurve);
 	p.dRCurve = getValue(proc.env4Params.drcurve);
 	mode = (int)getValue(proc.env4Params.syncrepeat);
