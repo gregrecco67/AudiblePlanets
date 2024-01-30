@@ -771,7 +771,7 @@ void APAudioProcessor::applyEffects (juce::AudioSampleBuffer& fxALaneBuffer)
 	}
 
 
-    //outputGain.process (buffer);
+    outputGain.process (fxALaneBuffer);
 }
 
 

@@ -10,12 +10,11 @@ SynthVoice::SynthVoice(APAudioProcessor& p)
 	osc2Params.voices = 4;
 	osc3Params.voices = 4;
 	osc4Params.voices = 4;
-    setFastKill();
 }
 
 void SynthVoice::noteStarted()
 {
-	//fastKill = true;
+	fastKill = false;
 	startVoice();
 
 	auto note = getCurrentlyPlayingNote();
@@ -390,9 +389,26 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	if (proc.filterParams.enable->isOn())
 		filter.process(synthBuffer);
 
-    
-    
-    if (!(env1.isActive() || env2.isActive() || env3.isActive() || env4.isActive()))
+    bool voiceShouldStop = false;
+	switch(algo) {
+	case 0:
+		if (!envs[3]->isActive()) // 1-2-3-(4)
+			voiceShouldStop = true;
+		break;
+	case 1:
+		if (!envs[2]->isActive() && !envs[3]->isActive()) // 1-2-(3), 2-(4)
+			voiceShouldStop = true;
+		break;
+	case 2:
+		if (!envs[1]->isActive() && !envs[3]->isActive()) // 1-(2), 1-3-(4)
+			voiceShouldStop = true;
+		break;
+	case 3:
+		if (!envs[1]->isActive() && !envs[2]->isActive() && !envs[3]->isActive()) // 1-(2), 1-(3), 1-(4)
+			voiceShouldStop = true;
+		break;
+	}
+    if (voiceShouldStop)
 	{
 		clearCurrentNote();
 		stopVoice();
@@ -614,7 +630,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.attackTimeMs = getValue(proc.env2Params.attack);
 	p.decayTimeMs = getValue(proc.env2Params.decay);
 	p.sustainLevel = getValue(proc.env2Params.sustain);
-	p.releaseTimeMs = getValue(proc.env2Params.release);
+	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env2Params.release);
 	p.aCurve = getValue(proc.env2Params.acurve);
 	p.dRCurve = getValue(proc.env2Params.drcurve);
 	mode = (int)getValue(proc.env2Params.syncrepeat);
@@ -633,7 +649,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.attackTimeMs = getValue(proc.env3Params.attack);
 	p.decayTimeMs = getValue(proc.env3Params.decay);
 	p.sustainLevel = getValue(proc.env3Params.sustain);
-	p.releaseTimeMs = getValue(proc.env3Params.release);
+	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env3Params.release);
 	p.aCurve = getValue(proc.env3Params.acurve);
 	p.dRCurve = getValue(proc.env3Params.drcurve);
 	mode = (int)getValue(proc.env3Params.syncrepeat);
@@ -651,7 +667,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.attackTimeMs = getValue(proc.env4Params.attack);
 	p.decayTimeMs = getValue(proc.env4Params.decay);
 	p.sustainLevel = getValue(proc.env4Params.sustain);
-	p.releaseTimeMs = getValue(proc.env4Params.release);
+	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env4Params.release);
 	p.aCurve = getValue(proc.env4Params.acurve);
 	p.dRCurve = getValue(proc.env4Params.drcurve);
 	mode = (int)getValue(proc.env4Params.syncrepeat);

@@ -105,8 +105,6 @@ public:
             state = State::ADRattack;
         else 
 			state = State::attack;
-		
-        
     }
 
     void noteOff() noexcept
@@ -342,11 +340,11 @@ public:
                     linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
                     if (parameters.aCurve > 0.0f) {
-                        curveVal = convex[(int)(linearIdxVal * 2000.)];
+                        curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
                         finalOut = std::clamp((1.0 - parameters.aCurve) * linearIdxVal + parameters.aCurve * curveVal, 0.0, 1.0);
                     }
                     else {
-                        curveVal = concave[(int)(linearIdxVal * 2000.)];
+                        curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
                         finalOut = std::clamp((1.0 + parameters.aCurve) * linearIdxVal - parameters.aCurve * curveVal, 0.0, 1.0);
                     }
 
@@ -368,11 +366,11 @@ public:
                     linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
                     if (parameters.aCurve > 0.0f) {
-                        curveVal = convex[(int)(linearIdxVal * 2000.)];
+						curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
                         finalOut = std::clamp((1.0 - parameters.aCurve) * linearIdxVal + parameters.aCurve * curveVal, 0.0, 1.0);
                     }
                     else {
-                        curveVal = concave[(int)(linearIdxVal * 2000.)];
+                        curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
                         finalOut = std::clamp((1.0 + parameters.aCurve) * linearIdxVal - parameters.aCurve * curveVal, 0.0, 1.0);
                     }
 
