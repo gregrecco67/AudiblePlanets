@@ -539,7 +539,7 @@ void SynthVoice::updateParams(int blockSize)
 	if (proc.filterParams.enable->isOn())
 	{
 		float n = getValue(proc.filterParams.frequency);
-		n += (currentlyPlayingNote.initialNote - 60) * getValue(proc.filterParams.keyTracking);
+		n += (currentlyPlayingNote.initialNote - 50) * getValue(proc.filterParams.keyTracking);
 
 		float f = gin::getMidiNoteInHertz(n);
 		float maxFreq = std::min(20000.0f, float(getSampleRate() / 2));
@@ -589,23 +589,71 @@ void SynthVoice::updateParams(int blockSize)
 	gin::LFO::Parameters params;
 
 	float freq = 0;
+	
+	// lfo 1
 	if (proc.lfo1Params.sync->getProcValue() > 0.0f)
 		freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(proc.lfo1Params.beat->getProcValue())].toSeconds(proc.playhead);
 	else
 		freq = getValue(proc.lfo1Params.rate);
-
-	params.waveShape = (gin::LFO::WaveShape) int(proc.lfo1Params.wave->getProcValue());
+		params.waveShape = (gin::LFO::WaveShape) int(proc.lfo1Params.wave->getProcValue());
 	params.frequency = freq;
 	params.phase = getValue(proc.lfo1Params.phase);
 	params.offset = getValue(proc.lfo1Params.offset);
 	params.depth = getValue(proc.lfo1Params.depth);
 	params.delay = getValue(proc.lfo1Params.delay);
 	params.fade = getValue(proc.lfo1Params.fade);
-
 	lfo1.setParameters(params);
 	lfo1.process(blockSize);
-
 	proc.modMatrix.setPolyValue(*this, proc.modSrcLFO1, lfo1.getOutput());
+
+	// lfo 2
+	if (proc.lfo2Params.sync->getProcValue() > 0.0f)
+		freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(proc.lfo2Params.beat->getProcValue())].toSeconds(proc.playhead);
+	else
+		freq = getValue(proc.lfo2Params.rate);
+	params.waveShape = (gin::LFO::WaveShape) int(proc.lfo2Params.wave->getProcValue());
+	params.frequency = freq;
+	params.phase = getValue(proc.lfo2Params.phase);
+	params.offset = getValue(proc.lfo2Params.offset);
+	params.depth = getValue(proc.lfo2Params.depth);
+	params.delay = getValue(proc.lfo2Params.delay);
+	params.fade = getValue(proc.lfo2Params.fade);
+	lfo2.setParameters(params);
+	lfo2.process(blockSize);
+	proc.modMatrix.setPolyValue(*this, proc.modSrcLFO2, lfo2.getOutput());
+
+	// lfo 3
+	if (proc.lfo3Params.sync->getProcValue() > 0.0f)
+		freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(proc.lfo3Params.beat->getProcValue())].toSeconds(proc.playhead);
+	else
+		freq = getValue(proc.lfo3Params.rate);
+	params.waveShape = (gin::LFO::WaveShape) int(proc.lfo3Params.wave->getProcValue());
+	params.frequency = freq;
+	params.phase = getValue(proc.lfo3Params.phase);
+	params.offset = getValue(proc.lfo3Params.offset);
+	params.depth = getValue(proc.lfo3Params.depth);
+	params.delay = getValue(proc.lfo3Params.delay);
+	params.fade = getValue(proc.lfo3Params.fade);
+	lfo3.setParameters(params);
+	lfo3.process(blockSize);
+	proc.modMatrix.setPolyValue(*this, proc.modSrcLFO3, lfo3.getOutput());
+
+	// lfo 4
+	if (proc.lfo4Params.sync->getProcValue() > 0.0f)
+		freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(proc.lfo4Params.beat->getProcValue())].toSeconds(proc.playhead);
+	else
+		freq = getValue(proc.lfo4Params.rate);
+	params.waveShape = (gin::LFO::WaveShape) int(proc.lfo4Params.wave->getProcValue());
+	params.frequency = freq;
+	params.phase = getValue(proc.lfo4Params.phase);
+	params.offset = getValue(proc.lfo4Params.offset);
+	params.depth = getValue(proc.lfo4Params.depth);
+	params.delay = getValue(proc.lfo4Params.delay);
+	params.fade = getValue(proc.lfo4Params.fade);
+	lfo4.setParameters(params);
+	lfo4.process(blockSize);
+	proc.modMatrix.setPolyValue(*this, proc.modSrcLFO4, lfo4.getOutput());
+
 
     Envelope::Params p;
 	p.attackTimeMs = getValue(proc.env1Params.attack);

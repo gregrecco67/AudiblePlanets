@@ -111,7 +111,7 @@ public:
     {
         if (state != State::idle)
         {
-            if (parameters.releaseTimeMs > 0.0f && !parameters.repeat)
+            if (parameters.releaseTimeMs > 0.0f) // && !parameters.repeat)
             {
                 state = State::release;
                 linearIdxVal = 1.0;
@@ -464,11 +464,11 @@ public:
                     linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
                     if (parameters.dRCurve > 0.0) {
-                        curveVal = convex[(int)(linearIdxVal * 2000.)];
+                        curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
                         unmappedVal = std::clamp((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal, 0.0, 1.0);
                     }
                     else if (parameters.dRCurve <= 0.0) {
-                        curveVal = concave[(int)(linearIdxVal * 2000.)];
+                        curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
                         unmappedVal = std::clamp((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal, 0.0, 1.0);
                     }
 
@@ -485,11 +485,11 @@ public:
                     linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
                     if (parameters.dRCurve > 0.0) {
-                        curveVal = convex[(int)(linearIdxVal * 2000.)];
+                        curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
                         unmappedVal = std::clamp((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal, 0.0, 1.0);
                     }
                     else if (parameters.dRCurve <= 0.0) {
-                        curveVal = concave[(int)(linearIdxVal * 2000.)];
+                        curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
                         unmappedVal = std::clamp((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal, 0.0, 1.0);
                     }
 

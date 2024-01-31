@@ -34,6 +34,15 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(fxb2Selector);
 	addAndMakeVisible(fxb3Selector);
 	addAndMakeVisible(fxb4Selector);
+
+	valueUpdated(proc.fxOrderParams.fxa1);
+	valueUpdated(proc.fxOrderParams.fxa2);
+	valueUpdated(proc.fxOrderParams.fxa3);
+	valueUpdated(proc.fxOrderParams.fxa4);
+	valueUpdated(proc.fxOrderParams.fxb1);
+	valueUpdated(proc.fxOrderParams.fxb2);
+	valueUpdated(proc.fxOrderParams.fxb3);
+	valueUpdated(proc.fxOrderParams.fxb4);
 }
 
 

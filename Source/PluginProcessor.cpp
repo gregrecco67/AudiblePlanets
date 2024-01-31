@@ -514,12 +514,12 @@ void APAudioProcessor::setupModMatrix()
 
 void APAudioProcessor::stateUpdated()
 {
-	//modMatrix.stateUpdated(state);
+	modMatrix.stateUpdated(state);
 }
 
 void APAudioProcessor::updateState()
 {
-	//modMatrix.updateState(state);
+	modMatrix.updateState(state);
 }
 
 void APAudioProcessor::reset()
