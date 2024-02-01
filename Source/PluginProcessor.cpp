@@ -477,7 +477,7 @@ void APAudioProcessor::setupModMatrix()
 {
     modSrcPressure  = modMatrix.addPolyModSource ("mpep", "MPE Pressure", false);
     modSrcTimbre    = modMatrix.addPolyModSource ("mpet", "MPE Timbre", false);
-
+	modSrcModwheel  = modMatrix.addMonoModSource ("mw", "Mod Wheel", false);
     modScrPitchBend = modMatrix.addMonoModSource ("pb", "Pitch Bend", true);
 
     modSrcNote      = modMatrix.addPolyModSource ("note", "MIDI Note Number", false);
@@ -497,6 +497,8 @@ void APAudioProcessor::setupModMatrix()
 	modSrcEnv2 = modMatrix.addPolyModSource("env2", "Env2", true);
 	modSrcEnv3 = modMatrix.addPolyModSource("env3", "Env3", true);
 	modSrcEnv4 = modMatrix.addPolyModSource("env4", "Env4", true);
+
+
     
     auto firstMonoParam = globalParams.mono;
     bool polyParam = true;
@@ -799,6 +801,8 @@ void APAudioProcessor::updateParams (int newBlockSize)
 		modMatrix.setMonoValue(*(this->lfoIds[lfoparams->num - 1]), lfo->getOutput());
 	}
 
+	
+
 	effectGain.setGainLevel(modMatrix.getValue(gainParams.gain));
 
 	waveshaper.setGain(modMatrix.getValue(waveshaperParams.drive), modMatrix.getValue(waveshaperParams.gain));
@@ -882,6 +886,8 @@ void APAudioProcessor::handleMidiEvent (const juce::MidiMessage& m)
 {
     MPESynthesiser::handleMidiEvent (m);
 
+	if (m.getControllerNumber() == 1)
+		modMatrix.setMonoValue(modSrcModwheel, float(m.getControllerValue()) / 127.0f);
     if (m.isPitchWheel())
         modMatrix.setMonoValue (modScrPitchBend, float (m.getPitchWheelValue()) / 0x2000 - 1.0f);
 }

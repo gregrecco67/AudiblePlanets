@@ -227,7 +227,8 @@ public:
     gin::ModSrcId modSrcPressure, modSrcTimbre, modScrPitchBend, modSrcNote, modSrcVelocity,
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
 		modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4,
-        modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4;
+        modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4,
+		modSrcModwheel;
 
     //==============================================================================
 

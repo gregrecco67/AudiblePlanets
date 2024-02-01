@@ -433,8 +433,6 @@ void SynthVoice::updateParams(int blockSize)
 
 	currentMidiNote = noteSmoother.getCurrentValue() * 127.0f;
 	if (glideInfo.glissando) currentMidiNote = (float)juce::roundToInt(currentMidiNote);
-	currentMidiNote += float(note.totalPitchbendInSemitones);
-	//currentMidiNote += getValue(proc.osc1Params.coarse) + getValue(proc.osc1Params.fine);
 
 	float baseFreq = gin::getMidiNoteInHertz(currentMidiNote);
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
