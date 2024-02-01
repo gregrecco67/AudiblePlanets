@@ -11,8 +11,9 @@ APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
     tabbed.addTab("2. FX", APColors::tabBkgd, &tab2, false, 1);
     tabbed.addTab("3. Rand",   APColors::tabBkgd, &tab3, false, 2);
 
-    tab1.addAndMakeVisible (editor);
+    tab1.addAndMakeVisible(editor);
 	tab2.addAndMakeVisible(fxEditor);
+	tab3.addAndMakeVisible(randEditor);
     
     usage.panic.onClick = [this] { wtProc.presetLoaded = true; };
     addAndMakeVisible (usage);
@@ -20,7 +21,6 @@ APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
 	meter.setBounds(1130, 5, 15, 30);
     usage.setBounds (45, 12, 80, 16);
     setSize (1186,725);
-
 }
 
 APAudioProcessorEditor::~APAudioProcessorEditor()
@@ -49,6 +49,7 @@ void APAudioProcessorEditor::resized()
     editor.setBounds(editorArea);
     patchBrowser.setBounds (rc);
 	fxEditor.setBounds(editorArea);
+	randEditor.setBounds(editorArea);
 }
 
 void APAudioProcessorEditor::addMenuItems (juce::PopupMenu& m)

@@ -5,6 +5,7 @@
 #include "Panels.h"
 #include "Editor.h"
 #include "FXEditor.h"
+#include "RandEditor.h"
 #include "APColors.h"
 
 //==============================================================================
@@ -32,6 +33,7 @@ private:
 
     Editor editor { wtProc };
 	FXEditor fxEditor{ wtProc};
+	RandEditor randEditor{ wtProc };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessorEditor)
 };
