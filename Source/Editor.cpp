@@ -2,7 +2,7 @@
 #include "BinaryData.h"
 
 Editor::Editor (APAudioProcessor& proc_)
-    : proc ( proc_ ), algoSelector (proc.timbreParams.algo)
+    : proc ( proc_ )
 {
     addAndMakeVisible(osc1);
 	addAndMakeVisible(osc2);
@@ -22,8 +22,7 @@ Editor::Editor (APAudioProcessor& proc_)
 	addAndMakeVisible(timbre);
     addAndMakeVisible(orbitViz);
     addAndMakeVisible(orbit);
-	
-	//orbit.addAndMakeVisible(algoSelector);
+    
 	setupCallbacks();
     startTimerHz(frameRate);
 }

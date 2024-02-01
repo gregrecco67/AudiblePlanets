@@ -329,8 +329,6 @@ public:
         addControl (new gin::Knob (proc.globalParams.voices), 0, 1);
         addControl (new gin::Switch (proc.globalParams.legato), 1, 1);
         addControl (new gin::Switch (proc.globalParams.mono), 2, 1);
-
-        //setSize (168, 163);
     }
 
     APAudioProcessor& proc;
@@ -353,42 +351,4 @@ public:
 	APAudioProcessor& proc;
 };
 
-////==============================================================================
-//class DelayBox : public gin::ParamBox
-//{
-//public:
-//    DelayBox (APAudioProcessor& proc_)
-//        : gin::ParamBox ("Delay"), proc (proc_)
-//    {
-//        setName ("delay");
-//
-//        addEnable (proc.delayParams.enable);
-//
-//        addControl (t = new gin::Knob (proc.delayParams.time), 0, 0);
-//        addControl (b = new gin::Select (proc.delayParams.beat), 0, 0);
-//        addControl (new gin::Knob (proc.delayParams.fb), 1, 0);
-//        addControl (new gin::Knob (proc.delayParams.cf), 2, 0);
-//
-//        addControl (new gin::Switch (proc.delayParams.sync), 0, 1);
-//        addControl (new gin::Knob (proc.delayParams.mix), 1.5f, 1.0f);
-//
-//        t->setName ("Delay1");
-//        b->setName ("Delay2");
-//
-//        watchParam (proc.delayParams.sync);
-//
-//        setSize (168, 163);
-//    }
-//
-//    void paramChanged () override
-//    {
-//        gin::ParamBox::paramChanged();
-//
-//        t->setVisible (! proc.delayParams.sync->isOn());
-//        b->setVisible (proc.delayParams.sync->isOn());
-//    }
-//
-//    APAudioProcessor& proc;
-//    gin::ParamComponent::Ptr t, b;
-//};
 
