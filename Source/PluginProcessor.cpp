@@ -545,7 +545,6 @@ void APAudioProcessor::prepareToPlay (double newSampleRate, int newSamplesPerBlo
 	spec.numChannels = 2;
 
     setCurrentPlaybackSampleRate (newSampleRate);
-
     modMatrix.setSampleRate (newSampleRate);
 
     stereoDelay.prepare(spec);
@@ -557,8 +556,6 @@ void APAudioProcessor::prepareToPlay (double newSampleRate, int newSamplesPerBlo
 	reverb.prepare(spec);
 	mbfilter.prepare(spec);
 	ringmod.prepare(spec);
-
-
 
 	lfo1.setSampleRate(newSampleRate);
 	lfo2.setSampleRate(newSampleRate);
@@ -770,8 +767,7 @@ void APAudioProcessor::applyEffects (juce::AudioSampleBuffer& fxALaneBuffer)
 		fxALaneBuffer.addFrom(1, 0, fxBLaneBuffer, 1, 0, fxALaneBuffer.getNumSamples());
 	}
 
-
-    outputGain.process (fxALaneBuffer);
+	outputGain.process (fxALaneBuffer);
 }
 
 

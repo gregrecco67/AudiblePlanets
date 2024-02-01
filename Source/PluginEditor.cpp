@@ -8,8 +8,8 @@ APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
 	addAndMakeVisible(meter);
     addAndMakeVisible(tabbed);
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
-    tabbed.addTab("2. Mods", APColors::tabBkgd, &tab2, false, 1);
-    tabbed.addTab("3. FX",   APColors::tabBkgd, &tab3, false, 2);
+    tabbed.addTab("2. FX", APColors::tabBkgd, &tab2, false, 1);
+    tabbed.addTab("3. Rand",   APColors::tabBkgd, &tab3, false, 2);
 
     tab1.addAndMakeVisible (editor);
 	tab2.addAndMakeVisible(fxEditor);
