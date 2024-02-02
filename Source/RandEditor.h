@@ -20,4 +20,5 @@ private:
 	juce::TextButton randomizeButton{ "Randomize" };
 	std::random_device rd;
 	juce::Label hello{"hello", "hello"};
+    juce::Slider randNumber, randAmount;
 };

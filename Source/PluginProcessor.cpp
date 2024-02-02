@@ -344,7 +344,7 @@ void APAudioProcessor::ChorusParams::setup(APAudioProcessor& p)
 {
 	String name = "Chorus ";
 	String pfx = "ch";
-	rate = p.addExtParam    (pfx + "rate",     name + "Rate", "Rate", "Hz", { 0.005f, 20.0f, 0.05, 1.0 }, 0.05f, 0.0f);
+	rate = p.addExtParam    (pfx + "rate",     name + "Rate", "Rate", "Hz", { 0.005f, 20.0f, 0.05f, 1.0f }, 0.05f, 0.0f);
 	depth = p.addExtParam   (pfx + "depth",    name + "Depth", "Depth", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
 	delay = p.addExtParam   (pfx + "delay",    name + "Delay", "Delay", "ms", { 10.0f, 40.0f, 0.0, 1.0 }, 20.0f, 0.0f);
 	feedback = p.addExtParam(pfx + "feedback", name + "Feedback", "Feedback", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25f, 0.0f);
@@ -361,7 +361,7 @@ void APAudioProcessor::ReverbParams::setup(APAudioProcessor& p)
 	size = p.addExtParam    (pfx + "size",     name + "Size", "Size", "", { 0.0, 3.0, 0.0, 1.0 }, 1.f, 0.0f);
 	decay = p.addExtParam   (pfx + "decay",    name + "Decay", "Decay", "s", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
 	damping = p.addExtParam (pfx + "damping",  name + "Damping", "Damping", "", { 0.0, 0.999f, 0.0, 1.0 }, 0.5f, 0.0f);
-	lowpass = p.addExtParam (pfx + "lowpass",  name + "Lowpass", "Lowpass", "Hz", { 20.0, 20000.0, 0.0, 1.0 }, 20000.0f, 0.0f);
+	lowpass = p.addExtParam (pfx + "lowpass",  name + "Lowpass", "Lowpass", "Hz", { 20.0, 20000.0, 0.0, 0.3 }, 20000.0f, 0.0f);
 	predelay = p.addExtParam(pfx + "predelay", name +  "Predelay", "Predelay", "s", { 0.0, 0.1f, 0.0, 1.0 }, 0.002f, 0.0f);
 	dry = p.addExtParam     (pfx + "dry",      name +  "Dry", "Dry", "%", { 0.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	wet = p.addExtParam     (pfx + "wet",      name +  "Wet", "Wet", "%", { 0.0, 1.0, 0.0, 1.0 }, 0.08f, 0.0f);
@@ -372,13 +372,13 @@ void APAudioProcessor::MBFilterParams::setup(APAudioProcessor& p)
 {
 	String pfx = "mb";
 	String name = "MB Filter ";
-	lowshelffreq = p.addExtParam (pfx + "lowshelffreq",  name + "LS Freq", "LS Freq", "", { 20.0, 20000.0, 1.0, 1.0 }, 20000.0f, 0.0f);
+	lowshelffreq = p.addExtParam (pfx + "lowshelffreq",  name + "LS Freq", "LS Freq", "", { 20.0, 20000.0, 1.0, 0.3 }, 20000.0f, 0.0f);
 	lowshelfgain = p.addExtParam (pfx + "lowshelfgain",  name + "LS Gain", "LS Gain", "", { 0.01, 4.0, 0.01, 1.0 }, 1.0f, 0.0f);
 	lowshelfq = p.addExtParam    (pfx + "lowshelfq",     name + "LS Q", "LS Q", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
-	peakfreq = p.addExtParam     (pfx + "peakfreq",      name + "Peak Freq", "Peak Freq", "", { 20.0, 20000.0, 1.0, 1.0 }, 1000.0f, 0.0f);
+	peakfreq = p.addExtParam     (pfx + "peakfreq",      name + "Peak Freq", "Peak Freq", "", { 20.0, 20000.0, 1.0, 0.3 }, 1000.0f, 0.0f);
 	peakgain = p.addExtParam     (pfx + "peakgain",      name + "Peak Gain", "Peak Gain", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	peakq = p.addExtParam        (pfx + "peakq",         name + "Peak Q", "Peak Q", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
-	highshelffreq = p.addExtParam(pfx + "highshelffreq", name + "HS Freq", "HS Freq", "", { 20.0, 20000.0, 1.0, 1.0 }, 20.0f, 0.0f);
+	highshelffreq = p.addExtParam(pfx + "highshelffreq", name + "HS Freq", "HS Freq", "", { 20.0, 20000.0, 1.0, 0.3 }, 20.0f, 0.0f);
 	highshelfgain = p.addExtParam(pfx + "highshelfgain", name + "HS Gain", "HS Gain", "", { 0.01, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	highshelfq = p.addExtParam   (pfx + "highshelfq",    name + "HS Q", "HS Q", "", { 0.1, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
 }
@@ -388,10 +388,10 @@ void APAudioProcessor::RingModParams::setup(APAudioProcessor& p)
 {
 	String pfx = "rm";
 	String name = "Ring Mod ";
-	modfreq1 = p.addExtParam(pfx + "modfreq1", name + "Mod Freq 1", "Mod Freq 1", "", { 1.0, 12000.0, 0.0, 1.0 }, 40.0f, 0.0f);
+	modfreq1 = p.addExtParam(pfx + "modfreq1", name + "Mod Freq 1", "Mod Freq 1", "", { 1.0, 12000.0, 0.0, 0.3 }, 40.0f, 0.0f);
 	shape1 = p.addExtParam  (pfx + "shape1",   name + "Shape 1", "Shape 1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
 	mix1 = p.addExtParam    (pfx + "mix1",     name + "Mix 1", "Mix 1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
-	modfreq2 = p.addExtParam(pfx + "modfreq2", name + "Mod Freq 2", "Mod Freq 2", "", { 1.0, 12000.0, 0.0, 1.0 }, 40.0f, 0.0f);
+	modfreq2 = p.addExtParam(pfx + "modfreq2", name + "Mod Freq 2", "Mod Freq 2", "", { 1.0, 12000.0, 0.0, 0.3 }, 40.0f, 0.0f);
 	shape2 = p.addExtParam  (pfx + "shape2",   name + "Shape 2", "Shape 2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
 	mix2 = p.addExtParam    (pfx + "mix2",     name + "Mix 2", "Mix 2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
 	spread = p.addExtParam  (pfx + "spread",   name + "Spread", "Spread", "", { 0.0, 1.0, 0.0, 1.0 }, 0.03f, 0.0f);
