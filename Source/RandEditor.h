@@ -13,12 +13,12 @@ public:
 	RandEditor(APAudioProcessor& proc_);
 	void resized() override;
 	void randomize();
+	void clearAll();
 
 private:
 	APAudioProcessor& proc;
 	RandMatrixBox matrix{ "matrix", proc };
-	juce::TextButton randomizeButton{ "Randomize" };
+	juce::TextButton randomizeButton{ "Randomize" }, clearAllButton{ "Clear All" };
 	std::random_device rd;
-	juce::Label hello{"hello", "hello"};
     juce::Slider randNumber, randAmount;
 };

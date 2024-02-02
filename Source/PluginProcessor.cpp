@@ -886,8 +886,10 @@ void APAudioProcessor::handleMidiEvent (const juce::MidiMessage& m)
 {
     MPESynthesiser::handleMidiEvent (m);
 
-	if (m.getControllerNumber() == 1)
-		modMatrix.setMonoValue(modSrcModwheel, float(m.getControllerValue()) / 127.0f);
+	if (m.isController()) {
+		if (m.getControllerNumber() == 1)
+			modMatrix.setMonoValue(modSrcModwheel, float(m.getControllerValue()) / 127.0f);
+	}
     if (m.isPitchWheel())
         modMatrix.setMonoValue (modScrPitchBend, float (m.getPitchWheelValue()) / 0x2000 - 1.0f);
 }
