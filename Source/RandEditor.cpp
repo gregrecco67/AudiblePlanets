@@ -10,7 +10,7 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_)
     addAndMakeVisible(randNumber);
     addAndMakeVisible(randAmount);
     randNumber.setNormalisableRange({1.0, 5.0, 1.0});
-    randAmount.setRange(0.0, 0.2);
+    randAmount.setRange(0.05, 0.5);
 }
 
 void RandEditor::randomize()
@@ -27,7 +27,8 @@ void RandEditor::randomize()
         auto modSrc = gin::ModSrcId(srcsDist(gen));
         auto modDst = gin::ModDstId(paramsDist(gen));
 		auto depth = proc.modMatrix.getModDepth(modSrc, modDst);
-        proc.modMatrix.setModDepth(modSrc, modDst, depth + modDist(gen) * randAmount.getValue());
+		auto sign = modDist(gen) >= 0 ? 1 : -1;
+		proc.modMatrix.setModDepth(modSrc, modDst, std::clamp(depth + sign * randAmount.getValue(), -1., 1.));
     }
 }
 

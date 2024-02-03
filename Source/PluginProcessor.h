@@ -259,6 +259,7 @@ public:
 	PlateReverb<float, uint32_t> reverb;
 	MBFilterProcessor mbfilter;
 	RingModulator ringmod;
+	juce::dsp::Limiter<float> limiter;
 
     gin::GainProcessor outputGain;
     gin::BandLimitedLookupTables analogTables;

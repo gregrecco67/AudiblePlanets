@@ -558,6 +558,9 @@ void APAudioProcessor::prepareToPlay (double newSampleRate, int newSamplesPerBlo
 	reverb.prepare(spec);
 	mbfilter.prepare(spec);
 	ringmod.prepare(spec);
+	limiter.prepare(spec);
+	limiter.setThreshold(-0.3f);
+	limiter.setRelease(0.05f);
 
 	lfo1.setSampleRate(newSampleRate);
 	lfo2.setSampleRate(newSampleRate);
@@ -770,6 +773,9 @@ void APAudioProcessor::applyEffects (juce::AudioSampleBuffer& fxALaneBuffer)
 	}
 
 	outputGain.process (fxALaneBuffer);
+	auto ABlock = juce::dsp::AudioBlock<float>(fxALaneBuffer);
+	auto AContext = juce::dsp::ProcessContextReplacing<float>(ABlock);
+	limiter.process(AContext);
 }
 
 
