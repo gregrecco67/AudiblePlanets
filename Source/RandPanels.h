@@ -9,7 +9,7 @@ public:
 	{
 		setName("mtx");
 
-		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 5);
+		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 8);
 	}
 
 	APAudioProcessor& proc;

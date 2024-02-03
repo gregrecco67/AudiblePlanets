@@ -208,7 +208,7 @@ void APAudioProcessor::FilterParams::setup (APAudioProcessor& p) // each osc has
     float maxFreq = float (gin::getMidiNoteFromHertz (20000.0));
 
     enable           = p.addIntParam (id + "enable",  nm + "Enable",  "",      "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f);
-    type             = p.addIntParam (id + "type",    nm + "Type",    "Type",  "", { 0.0, 7.0, 1.0, 1.0 }, 0.0, 0.0f, filterTextFunction);
+    type             = p.addExtParam (id + "type",    nm + "Type",    "Type",  "", { 0.0, 7.0, 1.0, 1.0 }, 0.0, 0.0f, filterTextFunction);
     keyTracking      = p.addExtParam (id + "key",     nm + "Key",     "Key",   "%", { 0.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
     frequency        = p.addExtParam (id + "freq",    nm + "Freq",    "Freq",  "Hz", { 0.0, maxFreq, 0.0, 1.0 }, 64.0, 0.0f, freqTextFunction);
     resonance        = p.addExtParam (id + "res",     nm + "Res",     "Res",   "", { 0.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
@@ -227,8 +227,8 @@ void APAudioProcessor::LFOParams::setup (APAudioProcessor& p, String num) // mos
 
 	enable = p.addIntParam(id + "enable", id + "Enable", "Enable", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 
-    sync             = p.addIntParam (id + "sync",    id + "Sync",    "Sync",   "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
-    wave             = p.addIntParam (id + "wave",    id + "Wave",    "Wave",   "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
+    sync             = p.addExtParam (id + "sync",    id + "Sync",    "Sync",   "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
+    wave             = p.addExtParam (id + "wave",    id + "Wave",    "Wave",   "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
     rate             = p.addExtParam (id + "rate",    id + "Rate",    "Rate",   "Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
     beat             = p.addExtParam (id + "beat",    id + "Beat",    "Beat",   "", { 0.0, float (notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
     depth            = p.addExtParam (id + "depth",   id + "Depth",   "Depth",  "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
@@ -478,7 +478,7 @@ void APAudioProcessor::setupModMatrix()
     modSrcPressure  = modMatrix.addPolyModSource ("mpep", "MPE Pressure", false);
     modSrcTimbre    = modMatrix.addPolyModSource ("mpet", "MPE Timbre", false);
 	modSrcModwheel  = modMatrix.addMonoModSource ("mw", "Mod Wheel", false);
-    modScrPitchBend = modMatrix.addMonoModSource ("pb", "Pitch Bend", true);
+    modSrcPitchBend = modMatrix.addMonoModSource ("pb", "Pitch Bend", true);
 
     modSrcNote      = modMatrix.addPolyModSource ("note", "MIDI Note Number", false);
     modSrcVelocity  = modMatrix.addPolyModSource ("vel", "MIDI Velocity", false);
@@ -897,7 +897,7 @@ void APAudioProcessor::handleMidiEvent (const juce::MidiMessage& m)
 			modMatrix.setMonoValue(modSrcModwheel, float(m.getControllerValue()) / 127.0f);
 	}
     if (m.isPitchWheel())
-        modMatrix.setMonoValue (modScrPitchBend, float (m.getPitchWheelValue()) / 0x2000 - 1.0f);
+        modMatrix.setMonoValue (modSrcPitchBend, float (m.getPitchWheelValue()) / 0x2000 - 1.0f);
 }
 
 //==============================================================================
