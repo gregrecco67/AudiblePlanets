@@ -80,8 +80,10 @@ public:
 	
 
 	void randomizeFXMods(); void clearFXMods();
-	void randomizeFXSelect();
+	void randomizeFXSelect(); void clearFXSelect();
 	void randomizeInharmonic(); void resetInharmonic();
+
+	void increaseAll(); void decreaseAll();
 
 private:
 	APAudioProcessor& proc;
@@ -108,15 +110,16 @@ private:
 		randKeysToENVButton{ "Keys -> ENV" }, clearKeysToENVButton{ "Clear Keys -> ENV" },
 
 		randFXModsButton{ "Randomize FX Mods" }, clearFXModsButton{ "Clear FX Mods" },
-		randFXSelectButton{ "Randomize FX Choice" }, clearFXSelectButton{ "Clear FX Choice" };
+		randFXSelectButton{ "Randomize FX Choice" }, clearFXSelectButton{ "Clear All FX Choice" },
+		
+		increaseAllButton{ "Increase All" }, decreaseAllButton{ "Decrease All" };
 
 	std::random_device rd;
 	juce::Slider randNumber, randAmount;
 	juce::Label randNumberLabel{ "", "# of Mods" }, randAmountLabel{"", "Rand. Chance/Amount" };
-    juce::Label test{"", "test"};
+    //juce::Label test{"", "test"};
     juce::ToggleButton inharmonic{"Inharmonic"};
 
-	// std::array<gin::ModSrcId, 8> 
 	juce::Array<gin::ModSrcId> lfoSrcs{ proc.modSrcMonoLFO1, proc.modSrcMonoLFO2, proc.modSrcMonoLFO3, proc.modSrcMonoLFO4,
 		proc.modSrcLFO1, proc.modSrcLFO2, proc.modSrcLFO3, proc.modSrcLFO4 };
 	juce::Array<gin::ModSrcId> envSrcs{ proc.modSrcEnv1, proc.modSrcEnv2, proc.modSrcEnv3, proc.modSrcEnv4 };

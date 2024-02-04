@@ -22,7 +22,7 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_)
 
     addAndMakeVisible(randOSCsButton);
     randOSCsButton.onClick = [this] { randomizeOSCs(); };
-    addAndMakeVisible(test);
+    //addAndMakeVisible(test);
     addAndMakeVisible(inharmonic);
 	inharmonic.setLookAndFeel(&laf);
 	
@@ -98,7 +98,15 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_)
 	addAndMakeVisible(clearFXModsButton);
 	clearFXModsButton.onClick = [this] { clearFXMods(); };
 
+	addAndMakeVisible(randFXSelectButton);
+	randFXSelectButton.onClick = [this] { randomizeFXSelect(); };
+	addAndMakeVisible(clearFXSelectButton);
+	clearFXSelectButton.onClick = [this] { clearFXSelect(); };
 
+	addAndMakeVisible(increaseAllButton);
+	increaseAllButton.onClick = [this] { increaseAll(); };
+	addAndMakeVisible(decreaseAllButton);
+	decreaseAllButton.onClick = [this] { decreaseAll(); };
 
 }
 
@@ -183,10 +191,48 @@ void RandEditor::randomizeInharmonic()
 }
 
 void RandEditor::resetInharmonic() {
-    proc.osc1Params.fine->setValue(0.5);
+    proc.osc1Params.fine->setValue(0.);
     proc.osc2Params.fine->setValue(0.5);
     proc.osc3Params.fine->setValue(0.5);
     proc.osc4Params.fine->setValue(0.5);
+}
+
+void RandEditor::increaseAll()
+{
+	auto& params = proc.getPluginParameters();
+	for (auto* param : params) {
+		if (param->getModIndex() == -1) continue;
+		if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
+			auto modSrcs = proc.modMatrix.getModSources(param);
+			for (auto modSrc : modSrcs) {
+				auto depth = proc.modMatrix.getModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+				auto sign = depth >= 0 ? 1 : -1;
+				proc.modMatrix.setModDepth(modSrc, 
+					gin::ModDstId(param->getModIndex()), 
+					std::clamp(depth + (1. - std::abs(depth)) * randAmount.getValue() * sign,
+						-1., 1.));
+			}
+		}
+	}
+}
+
+void RandEditor::decreaseAll()
+{
+	auto& params = proc.getPluginParameters();
+	for (auto* param : params) {
+		if (param->getModIndex() == -1) continue;
+		if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
+			auto modSrcs = proc.modMatrix.getModSources(param);
+			for (auto modSrc : modSrcs) {
+				auto depth = proc.modMatrix.getModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+				proc.modMatrix.setModDepth(
+					modSrc, 
+					gin::ModDstId(param->getModIndex()),
+					std::clamp(depth * (1. - randAmount.getValue()), -1., 1.)
+				);
+			}
+		}
+	}
 }
 
 
@@ -717,19 +763,22 @@ void RandEditor::randomizeFXMods()
 			break;
 		}
 	}
-	auto& params = proc.getPluginParameters();
-	std::uniform_int_distribution<> paramsDist{ 0, params.size() - 25 };
+	std::uniform_int_distribution<> fxParamsDist{ 0, fxParams.size() - 1 };
 	auto numSrcs = proc.modMatrix.getNumModSources();
 	std::uniform_int_distribution<> srcsDist{ 0, numSrcs - 1 };
 	std::uniform_real_distribution<> modDist(-1.f, 1.f);
-	for (gin::Parameter::Ptr param : fxParams) {
-		if (std::abs(fullDist(gen) * 0.5) < randVal) {
-			auto modSrc = gin::ModSrcId(srcsDist(gen));
-			auto modDst = gin::ModDstId(param->getModIndex());
-			auto depth = proc.modMatrix.getModDepth(modSrc, modDst);
-			auto sign = modDist(gen) >= 0 ? 1 : -1;
-			proc.modMatrix.setModDepth(modSrc, modDst, std::clamp(depth + sign * randAmount.getValue(), -1., 1.));
-		}
+	auto numMods = randNumber.getValue();
+	int i = 0;
+	while (i < numMods) {
+		auto srcId = srcsDist(gen);
+		auto modSrc = gin::ModSrcId(srcId);
+		auto fxParamId = fxParamsDist(gen);
+		auto fxParam = fxParams[fxParamId];
+		auto modDst = gin::ModDstId(fxParam->getModIndex());
+		auto depth = proc.modMatrix.getModDepth(modSrc, modDst);
+		auto sign = modDist(gen) >= 0 ? 1 : -1;
+		proc.modMatrix.setModDepth(modSrc, modDst, std::clamp(depth + sign * randAmount.getValue(), -1., 1.));
+		i++;
 	}
 }
 
@@ -793,6 +842,28 @@ void RandEditor::clearFXMods()
 
 void RandEditor::randomizeFXSelect()
 {
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> fxDist(0, 7);
+	std::array<gin::Parameter::Ptr, 8> fxParams{ proc.fxOrderParams.fxa1, proc.fxOrderParams.fxa2, proc.fxOrderParams.fxa3, proc.fxOrderParams.fxa4,
+			proc.fxOrderParams.fxb1, proc.fxOrderParams.fxb2, proc.fxOrderParams.fxb3, proc.fxOrderParams.fxb4 };
+	std::uniform_real_distribution<> fullDist(0.f, 1.f);
+	auto randNum = randNumber.getValue();
+	for (int i = 0; i < randNum; i++) {
+		auto fxParam = fxParams[fxDist(gen)];
+		fxParam->setUserValue(fxDist(gen));
+	}
+}
+
+void RandEditor::clearFXSelect()
+{
+	proc.fxOrderParams.fxa1->setUserValue(0);
+	proc.fxOrderParams.fxa2->setUserValue(0);
+	proc.fxOrderParams.fxa3->setUserValue(0);
+	proc.fxOrderParams.fxa4->setUserValue(0);
+	proc.fxOrderParams.fxb1->setUserValue(0);
+	proc.fxOrderParams.fxb2->setUserValue(0);
+	proc.fxOrderParams.fxb3->setUserValue(0);
+	proc.fxOrderParams.fxb4->setUserValue(0);
 }
 
 void RandEditor::resized()
@@ -855,10 +926,14 @@ void RandEditor::resized()
 	randKeysToLFOButton.setBounds(5 * 56 + 5, 480, 3*56, 20);
 	clearKeysToLFOButton.setBounds(5 * 56 + 5 + 173, 480, 3*56, 20);
 
-
-
 	randFXModsButton.setBounds(5 * 56 + 5, 505, 3*56, 20);
 	clearFXModsButton.setBounds(5 * 56 + 5 + 173, 505, 3*56, 20);
 
-    test.setBounds(800, 23, 55, 20);
+	randFXSelectButton.setBounds(5 * 56 + 5, 530, 3*56, 20);
+	clearFXSelectButton.setBounds(5 * 56 + 5 + 173, 530, 3*56, 20);
+
+	increaseAllButton.setBounds(5 * 56 + 5, 570, 3*56, 20);
+	decreaseAllButton.setBounds(5 * 56 + 5 + 173, 570, 3*56, 20);
+    
+	//test.setBounds(800, 23, 55, 20);
 }
