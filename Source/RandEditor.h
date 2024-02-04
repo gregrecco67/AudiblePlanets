@@ -4,6 +4,7 @@
 #include "PluginProcessor.h"
 #include "RandPanels.h"
 #include <random>
+#include "EnvelopeComponent.h"
 
 
 class APLookAndFeel6 : public gin::CopperLookAndFeel
@@ -167,6 +168,10 @@ private:
 	};
 
 	APLookAndFeel6 laf;
+	//EnvelopeComponent env1, env2, env3, env4;
+	RandENVBox env1Box{ "ENV1", proc, proc.env1Params }, env2Box{"ENV2", proc, proc.env2Params}, 
+		env3Box{ "ENV3", proc, proc.env3Params }, env4Box{"ENV4", proc, proc.env4Params };
+
 
 };
 

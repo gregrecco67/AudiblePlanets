@@ -249,7 +249,7 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String num) //
     velocityTracking = p.addExtParam(id + "vel", id + "Vel", "Vel", "", { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
     attack = p.addExtParam(id + "attack", id + "Attack", "A", "s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
     decay = p.addExtParam(id + "decay", id + "Decay", "D", "s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
-    sustain = p.addExtParam(id + "sustain", id + "Sustain", "S", "%", { 0.0, 100.0, 0.0, 1.0 }, 80.0f, 0.0f);
+    sustain = p.addExtParam(id + "sustain", id + "Sustain", "S", "%", { 0.0, 100.0, 0.0, 1.0 }, 50.0f, 0.0f);
     release = p.addExtParam(id + "release", id + "Release", "R", "s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
 	acurve = p.addExtParam(id + "acurve", id + "ACurve", "A Curve", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	drcurve = p.addExtParam(id + "drcurve", id + "DRCurve", "DR Curve", "", { -1.0, 1.0, 0.0, 1.0 }, -1.0f, 0.0f);
