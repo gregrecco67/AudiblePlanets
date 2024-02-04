@@ -171,7 +171,8 @@ private:
 	//EnvelopeComponent env1, env2, env3, env4;
 	RandENVBox env1Box{ "ENV1", proc, proc.env1Params }, env2Box{"ENV2", proc, proc.env2Params}, 
 		env3Box{ "ENV3", proc, proc.env3Params }, env4Box{"ENV4", proc, proc.env4Params };
-
+	RandOSCBox osc1Box{ "OSC1", proc, proc.osc1Params }, osc2Box{ "OSC2", proc, proc.osc2Params },
+		osc3Box{ "OSC3", proc, proc.osc3Params }, osc4Box{ "OSC4", proc, proc.osc4Params };
 
 };
 

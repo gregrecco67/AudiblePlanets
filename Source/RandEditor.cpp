@@ -118,6 +118,10 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
 	addAndMakeVisible(env3Box);
 	addAndMakeVisible(env4Box);
 
+	addAndMakeVisible(osc1Box);
+	addAndMakeVisible(osc2Box);
+	addAndMakeVisible(osc3Box);
+	addAndMakeVisible(osc4Box);
 }
 
 RandEditor::~RandEditor()
@@ -878,81 +882,87 @@ void RandEditor::clearFXSelect()
 
 void RandEditor::resized()
 {
-	matrix.setBounds(5, 5, 5*56, 8*70+23);
+	matrix.setBounds(0, 5, 5*56, 8*70+23);
 
-	randomizeButton.setBounds(5*56 + 5, 5, 3*56, 20);
-	clearAllButton.setBounds(5 * 56 + 5 + 173, 5, 3*56, 20);
+	randomizeButton.setBounds(5*56 , 5, 3*56, 20);
+	clearAllButton.setBounds(5 * 56 + 173, 5, 3*56, 20);
 
-    randNumber.setBounds(5 * 56 + 5, 40, 3*56, 20);
-	randNumberLabel.setBounds(5* 56 + 5 + 173, 40, 2*56, 20);
-    randAmount.setBounds(5 * 56 + 5, 65, 3*56, 20);
-	randAmountLabel.setBounds(5 * 56 + 5 + 173, 65, 2*56, 20);
+    randNumber.setBounds(5 * 56 , 40, 3*56, 20);
+	randNumberLabel.setBounds(5* 56 + 173, 40, 2*56, 20);
+    randAmount.setBounds(5 * 56 , 65, 3*56, 20);
+	randAmountLabel.setBounds(5 * 56 + 173, 65, 2*56, 20);
 
-    randOSCsButton.setBounds(5 * 56 + 5, 105, 3*56, 20);
-	inharmonic.setBounds(5 * 56 + 5 + 173 + 40, 105, 2 * 56, 20);
+    randOSCsButton.setBounds(5 * 56 , 105, 3*56, 20);
+	inharmonic.setBounds(5 * 56 + 173 + 40, 105, 2 * 56, 20);
 	
-    randInharmonicButton.setBounds(5 * 56 + 5, 130, 3*56, 20);
-	resetInharmonicButton.setBounds(5 * 56 + 5 + 173, 130, 3 * 56, 20);
+    randInharmonicButton.setBounds(5 * 56 , 130, 3*56, 20);
+	resetInharmonicButton.setBounds(5 * 56 + 173, 130, 3 * 56, 20);
 
-    randENVsButton.setBounds(5 * 56 + 5, 155, 3*56, 20);
-	resetENVsButton.setBounds(5 * 56 + 5 + 173, 155, 3*56, 20);
+    randENVsButton.setBounds(5 * 56 , 155, 3*56, 20);
+	resetENVsButton.setBounds(5 * 56 + 173, 155, 3*56, 20);
 	
-	randLFOsButton.setBounds(5 * 56 + 5, 180, 3*56, 20);
-	resetLFOsButton.setBounds(5 * 56 + 5 + 173, 180, 3*56, 20);
+	randLFOsButton.setBounds(5 * 56 , 180, 3*56, 20);
+	resetLFOsButton.setBounds(5 * 56 + 173, 180, 3*56, 20);
 
-	randLFOToOSCButton.setBounds(5 * 56 + 5, 205, 3*56, 20);
-	clearLFOToOSCButton.setBounds(5 * 56 + 5 + 173, 205, 3*56, 20);
+	randLFOToOSCButton.setBounds(5 * 56 , 205, 3*56, 20);
+	clearLFOToOSCButton.setBounds(5 * 56 + 173, 205, 3*56, 20);
 
-	randENVToOSCButton.setBounds(5 * 56 + 5, 230, 3*56, 20);
-	clearENVToOSCButton.setBounds(5 * 56 + 5 + 173, 230, 3*56, 20);
+	randENVToOSCButton.setBounds(5 * 56 , 230, 3*56, 20);
+	clearENVToOSCButton.setBounds(5 * 56 + 173, 230, 3*56, 20);
 
-	randKeysToOSCButton.setBounds(5 * 56 + 5, 255, 3*56, 20);
-	clearKeysToOSCButton.setBounds(5 * 56 + 5 + 173, 255, 3*56, 20);
+	randKeysToOSCButton.setBounds(5 * 56 , 255, 3*56, 20);
+	clearKeysToOSCButton.setBounds(5 * 56 + 173, 255, 3*56, 20);
 
-	randLFOToTimbreButton.setBounds(5 * 56 + 5, 280, 3*56, 20);
-	clearLFOToTimbreButton.setBounds(5 * 56 + 5 + 173, 280, 3*56, 20);
+	randLFOToTimbreButton.setBounds(5 * 56, 280, 3*56, 20);
+	clearLFOToTimbreButton.setBounds(5 * 56 + 173, 280, 3*56, 20);
 
-	randENVToTimbreButton.setBounds(5 * 56 + 5, 305, 3*56, 20);
-	clearENVToTimbreButton.setBounds(5 * 56 + 5 + 173, 305, 3*56, 20);
+	randENVToTimbreButton.setBounds(5 * 56 , 305, 3*56, 20);
+	clearENVToTimbreButton.setBounds(5 * 56 + 173, 305, 3*56, 20);
 
-	randKeysToTimbreButton.setBounds(5 * 56 + 5, 330, 3*56, 20);
-	clearKeysToTimbreButton.setBounds(5 * 56 + 5 + 173, 330, 3*56, 20);
+	randKeysToTimbreButton.setBounds(5 * 56 , 330, 3*56, 20);
+	clearKeysToTimbreButton.setBounds(5 * 56 + 173, 330, 3*56, 20);
 
-	randLFOToENVButton.setBounds(5 * 56 + 5, 355, 3*56, 20);
-	clearLFOToENVButton.setBounds(5 * 56 + 5 + 173, 355, 3*56, 20);
+	randLFOToENVButton.setBounds(5 * 56 , 355, 3*56, 20);
+	clearLFOToENVButton.setBounds(5 * 56 + 173, 355, 3*56, 20);
 
-	randENVToENVButton.setBounds(5 * 56 + 5, 380, 3*56, 20);
-	clearENVToENVButton.setBounds(5 * 56 + 5 + 173, 380, 3*56, 20);
+	randENVToENVButton.setBounds(5 * 56 , 380, 3*56, 20);
+	clearENVToENVButton.setBounds(5 * 56 + 173, 380, 3*56, 20);
 
-	randKeysToENVButton.setBounds(5 * 56 + 5, 405, 3*56, 20);
-	clearKeysToENVButton.setBounds(5 * 56 + 5 + 173, 405, 3*56, 20);
+	randKeysToENVButton.setBounds(5 * 56 , 405, 3*56, 20);
+	clearKeysToENVButton.setBounds(5 * 56 + 173, 405, 3*56, 20);
 
-	randLFOToLfoButton.setBounds(5 * 56 + 5, 430, 3*56, 20);
-	clearLFOToLFOButton.setBounds(5 * 56 + 5 + 173, 430, 3*56, 20);
+	randLFOToLfoButton.setBounds(5 * 56 , 430, 3*56, 20);
+	clearLFOToLFOButton.setBounds(5 * 56 + 173, 430, 3*56, 20);
 
-	randENVToLFOButton.setBounds(5 * 56 + 5, 455, 3*56, 20);
-	clearENVToLFOButton.setBounds(5 * 56 + 5 + 173, 455, 3*56, 20);
+	randENVToLFOButton.setBounds(5 * 56 , 455, 3*56, 20);
+	clearENVToLFOButton.setBounds(5 * 56 + 173, 455, 3*56, 20);
 
-	randKeysToLFOButton.setBounds(5 * 56 + 5, 480, 3*56, 20);
-	clearKeysToLFOButton.setBounds(5 * 56 + 5 + 173, 480, 3*56, 20);
+	randKeysToLFOButton.setBounds(5 * 56 , 480, 3*56, 20);
+	clearKeysToLFOButton.setBounds(5 * 56 + 173, 480, 3*56, 20);
 
-	randFXModsButton.setBounds(5 * 56 + 5, 505, 3*56, 20);
-	clearFXModsButton.setBounds(5 * 56 + 5 + 173, 505, 3*56, 20);
+	randFXModsButton.setBounds(5 * 56 , 505, 3*56, 20);
+	clearFXModsButton.setBounds(5 * 56 + 173, 505, 3*56, 20);
 
-	randFXSelectButton.setBounds(5 * 56 + 5, 530, 3*56, 20);
-	clearFXSelectButton.setBounds(5 * 56 + 5 + 173, 530, 3*56, 20);
+	randFXSelectButton.setBounds(5 * 56, 530, 3*56, 20);
+	clearFXSelectButton.setBounds(5 * 56 + 173, 530, 3*56, 20);
 
-	increaseAllButton.setBounds(5 * 56 + 5, 570, 3*56, 20);
-	decreaseAllButton.setBounds(5 * 56 + 5 + 173, 570, 3*56, 20);
+	increaseAllButton.setBounds(5 * 56 , 570, 3*56, 20);
+	decreaseAllButton.setBounds(5 * 56 + 173, 570, 3*56, 20);
     
 	//env1.setBounds(631, 40, 200, 80); env1Box.setBounds(836, 0, 56 * 3, 70 * 2 + 23);
 	//env2.setBounds(631, 204, 200, 80); env2Box.setBounds(836, 164, 56 * 3, 70 * 2 + 23);
 	//env3.setBounds(631, 368, 200, 80); env3Box.setBounds(836, 328, 56 * 3, 70 * 2 + 23);
 	//env4.setBounds(631, 532, 200, 80); env4Box.setBounds(836, 492, 56 * 3, 70 * 2 + 23);
 
-	env1Box.setBounds(631, 0,   56 * 6, 70 * 2 + 23);
-	env2Box.setBounds(631, 163, 56 * 6, 70 * 2 + 23);
-	env3Box.setBounds(631, 326, 56 * 6, 70 * 2 + 23);
-	env4Box.setBounds(631, 489, 56 * 6, 70 * 2 + 23);
+	env1Box.setBounds(624, 0,   56 * 6, 70 * 2 + 23);
+	env2Box.setBounds(624, 163, 56 * 6, 70 * 2 + 23);
+	env3Box.setBounds(624, 326, 56 * 6, 70 * 2 + 23);
+	env4Box.setBounds(624, 489, 56 * 6, 70 * 2 + 23);
 	//test.setBounds(800, 23, 55, 20);
+
+	osc1Box.setBounds(626 + 56 * 6, 0, 56 * 4, 70 * 2 + 23);
+	osc2Box.setBounds(626 + 56 * 6, 163, 56 * 4, 70 * 2 + 23);
+	osc3Box.setBounds(626 + 56 * 6, 326, 56 * 4, 70 * 2 + 23);
+	osc4Box.setBounds(626 + 56 * 6, 489, 56 * 4, 70 * 2 + 23);
+
 }
