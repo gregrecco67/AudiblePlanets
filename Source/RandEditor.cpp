@@ -24,6 +24,8 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_)
     randOSCsButton.onClick = [this] { randomizeOSCs(); };
     addAndMakeVisible(test);
     addAndMakeVisible(inharmonic);
+	inharmonic.setLookAndFeel(&laf);
+	
 	
 	addAndMakeVisible(randInharmonicButton);
 	randInharmonicButton.onClick = [this] { randomizeInharmonic(); };
@@ -98,6 +100,11 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_)
 
 
 
+}
+
+RandEditor::~RandEditor()
+{
+	inharmonic.setLookAndFeel(nullptr);
 }
 
 void RandEditor::randomize()
@@ -468,21 +475,90 @@ void RandEditor::resetKeystoOSC()
 }
 void RandEditor::randKeystoTimbre()
 {
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> fullDist(-1.f, 1.f);
+	auto randVal = randAmount.getValue();
+	auto randNum = randNumber.getValue();
+	std::uniform_int_distribution<> keyDist(0, keySrcs.size() - 1);
+	std::vector<gin::Parameter::Ptr> timbreBasic{
+		proc.timbreParams.algo, proc.timbreParams.demodmix, proc.timbreParams.blend, proc.timbreParams.equant, proc.filterParams.frequency, proc.filterParams.resonance
+	};
+	if (inharmonic.getToggleState()) {
+		timbreBasic.push_back(proc.timbreParams.pitch);
+	}
+	std::uniform_int_distribution<> timbreDist(0, timbreBasic.size() - 1);
+	for (int i = 0; i < randNum; i++) {
+		auto keySrc = keySrcs[keyDist(gen)];
+		auto timbreDst = gin::ModDstId(timbreBasic[timbreDist(gen)]->getModIndex());
+		auto depth = proc.modMatrix.getModDepth(keySrc, timbreDst);
+		auto sign = fullDist(gen) >= 0 ? 1 : -1;
+		proc.modMatrix.setModDepth(keySrc, timbreDst, std::clamp(depth + sign * randVal, -1., 1.));
+	}
 }
 void RandEditor::resetKeystoTimbre()
 {
+	for (gin::Parameter::Ptr param : timbreDstsPlus) {
+		auto modSrcs = proc.modMatrix.getModSources(param);
+		if (modSrcs.size() == 0) continue;
+		for (auto modSrc : modSrcs) {
+			if (keySrcs.contains(modSrc))
+				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+		}
+	}
 }
 void RandEditor::randKeystoLFO()
 {
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> fullDist(-1.f, 1.f);
+	auto randVal = randAmount.getValue();
+	auto randNum = randNumber.getValue();
+	std::uniform_int_distribution<> keyDist(0, keySrcs.size() - 1);
+	std::uniform_int_distribution<> lfoDist(0, lfoDsts.size() - 1);
+	for (int i = 0; i < randNum; i++) {
+		auto keySrc = keySrcs[keyDist(gen)];
+		auto lfoDst = gin::ModDstId(lfoDsts[lfoDist(gen)]->getModIndex());
+		auto depth = proc.modMatrix.getModDepth(keySrc, lfoDst);
+		auto sign = fullDist(gen) >= 0 ? 1 : -1;
+		proc.modMatrix.setModDepth(keySrc, lfoDst, std::clamp(depth + sign * randVal, -1., 1.));
+	}
 }
 void RandEditor::resetKeystoLFO()
 {
+	for (gin::Parameter::Ptr param : lfoDsts) {
+		auto modSrcs = proc.modMatrix.getModSources(param);
+		if (modSrcs.size() == 0) continue;
+		for (auto modSrc : modSrcs) {
+			if (keySrcs.contains(modSrc))
+				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+		}
+	}
 }
 void RandEditor::randKeystoENV()
 {
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> fullDist(-1.f, 1.f);
+	auto randVal = randAmount.getValue();
+	auto randNum = randNumber.getValue();
+	std::uniform_int_distribution<> keyDist(0, keySrcs.size() - 1);
+	std::uniform_int_distribution<> envDist(0, envDsts.size() - 1);
+	for (int i = 0; i < randNum; i++) {
+		auto keySrc = keySrcs[keyDist(gen)];
+		auto envDst = gin::ModDstId(envDsts[envDist(gen)]->getModIndex());
+		auto depth = proc.modMatrix.getModDepth(keySrc, envDst);
+		auto sign = fullDist(gen) >= 0 ? 1 : -1;
+		proc.modMatrix.setModDepth(keySrc, envDst, std::clamp(depth + sign * randVal, -1., 1.));
+	}
 }
 void RandEditor::resetKeystoENV()
 {
+	for (gin::Parameter::Ptr param : envDsts) {
+		auto modSrcs = proc.modMatrix.getModSources(param);
+		if (modSrcs.size() == 0) continue;
+		for (auto modSrc : modSrcs) {
+			if (keySrcs.contains(modSrc))
+				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+		}
+	}
 }
 void RandEditor::randENVtoTimbre() {
 	std::mt19937 gen(rd());
@@ -509,30 +585,210 @@ void RandEditor::randENVtoTimbre() {
 
 void RandEditor::resetENVtoTimbre()
 {
+	for (gin::Parameter::Ptr param : timbreDstsPlus) {
+		auto modSrcs = proc.modMatrix.getModSources(param);
+		if (modSrcs.size() == 0) continue;
+		for (auto modSrc : modSrcs) {
+			if (envSrcs.contains(modSrc))
+				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+		}
+	}
 }
 
 void RandEditor::randENVtoLFO()
 {
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> fullDist(-1.f, 1.f);
+	auto randVal = randAmount.getValue();
+	auto randNum = randNumber.getValue();
+	std::array<gin::ModSrcId, 4> envs{ proc.modSrcEnv1, proc.modSrcEnv2, proc.modSrcEnv3, proc.modSrcEnv4 };
+	std::uniform_int_distribution<> envDist(0, 3);
+	std::uniform_int_distribution<> lfoDist(0, lfoDsts.size() - 1);
+	for (int i = 0; i < randNum; i++) {
+		auto envSrc = envs[envDist(gen)];
+		auto lfoDst = gin::ModDstId(lfoDsts[lfoDist(gen)]->getModIndex());
+		auto depth = proc.modMatrix.getModDepth(envSrc, lfoDst);
+		auto sign = fullDist(gen) >= 0 ? 1 : -1;
+		proc.modMatrix.setModDepth(envSrc, lfoDst, std::clamp(depth + sign * randVal, -1., 1.));
+	}
+
 }
 
 void RandEditor::resetENVtoLFO()
 {
+	for (gin::Parameter::Ptr param : lfoDsts) {
+		auto modSrcs = proc.modMatrix.getModSources(param);
+		if (modSrcs.size() == 0) continue;
+		for (auto modSrc : modSrcs) {
+			if (envSrcs.contains(modSrc))
+				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+		}
+	}
 }
 
 void RandEditor::randENVtoENV()
 {
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> fullDist(-1.f, 1.f);
+	auto randVal = randAmount.getValue();
+	auto randNum = randNumber.getValue();
+	std::array<gin::ModSrcId, 4> envs{ proc.modSrcEnv1, proc.modSrcEnv2, proc.modSrcEnv3, proc.modSrcEnv4 };
+	std::uniform_int_distribution<> envDist(0, 3);
+	std::vector<gin::Parameter::Ptr> envsBasic{
+		proc.env1Params.attack, proc.env1Params.decay, proc.env1Params.sustain, proc.env1Params.release,
+		proc.env1Params.acurve, proc.env1Params.drcurve,
+		proc.env2Params.attack, proc.env2Params.decay, proc.env2Params.sustain, proc.env2Params.release,
+		proc.env2Params.acurve, proc.env2Params.drcurve,
+		proc.env3Params.attack, proc.env3Params.decay, proc.env3Params.sustain, proc.env3Params.release,
+		proc.env3Params.acurve, proc.env3Params.drcurve,
+		proc.env4Params.attack, proc.env4Params.decay, proc.env4Params.sustain, proc.env4Params.release,
+		proc.env4Params.acurve, proc.env4Params.drcurve
+	};
+	std::uniform_int_distribution<> envsBasicDist(0, envsBasic.size() - 1);
+	for (int i = 0; i < randNum; i++) {
+		auto envSrc = envs[envDist(gen)];
+		auto envDst = gin::ModDstId(envsBasic[envsBasicDist(gen)]->getModIndex());
+		auto depth = proc.modMatrix.getModDepth(envSrc, envDst);
+		auto sign = fullDist(gen) >= 0 ? 1 : -1;
+		proc.modMatrix.setModDepth(envSrc, envDst, std::clamp(depth + sign * randVal, -1., 1.));
+	}
 }
 
 void RandEditor::resetENVtoENV()
 {
+	for (gin::Parameter::Ptr param : envDsts) {
+		auto modSrcs = proc.modMatrix.getModSources(param);
+		if (modSrcs.size() == 0) continue;
+		for (auto modSrc : modSrcs) {
+			if (envSrcs.contains(modSrc))
+				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+		}
+	}
 }
 
 void RandEditor::randomizeFXMods()
 {
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> fullDist(-1.f, 1.f);
+	auto randVal = randAmount.getValue();
+	auto randNum = randNumber.getValue();
+	juce::Array<gin::Parameter::Ptr> fxParams;
+	auto fxa1 = proc.fxOrderParams.fxa1->getUserValueInt();
+	auto fxa2 = proc.fxOrderParams.fxa2->getUserValueInt();
+	auto fxa3 = proc.fxOrderParams.fxa3->getUserValueInt();
+	auto fxa4 = proc.fxOrderParams.fxa4->getUserValueInt();
+	auto fxb1 = proc.fxOrderParams.fxb1->getUserValueInt();
+	auto fxb2 = proc.fxOrderParams.fxb2->getUserValueInt();
+	auto fxb3 = proc.fxOrderParams.fxb3->getUserValueInt();
+	auto fxb4 = proc.fxOrderParams.fxb4->getUserValueInt();
+	auto& a = proc.compressorParams;
+	auto& b = proc.stereoDelayParams;
+	auto& c = proc.chorusParams;
+	auto& d = proc.reverbParams;
+	auto& e = proc.mbfilterParams;
+	auto& f = proc.ringmodParams;
+	for (int fx : {fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4}) {
+		switch (fx) {
+		case 0:
+			break;
+		case 1:
+			fxParams.addArray({ proc.waveshaperParams.drive, proc.waveshaperParams.gain, proc.waveshaperParams.dry, proc.waveshaperParams.wet });
+			break;
+		case 2:
+			fxParams.addArray({ a.attack, a.release, a.ratio, a.threshold, a.input, a.output, a.knee});
+			break;
+		case 3:
+			fxParams.addArray({ b.beatsleft, b.beatsright, b.feedback, b.timeleft, b.timeright, b.wet });
+			break;
+		case 4:
+			fxParams.addArray({ c.delay, c.depth, c.dry, c.feedback, c.rate, c.wet});
+			break;
+		case 5:
+			fxParams.addArray({ e.highshelffreq, e.highshelfgain, e.highshelfq, e.lowshelffreq, e.lowshelfgain, e.lowshelfq,
+				e.peakfreq, e.peakgain, e.peakq});
+			break;
+		case 6:
+			fxParams.addArray({ d.damping, d.decay, d.dry, d.lowpass, d.predelay, d.size, d.wet });
+			break;
+		case 7:
+			fxParams.addArray({ f.highcut, f.lowcut, f.mix1, f.mix2, f.modfreq1, f.modfreq2, f.shape1, f.shape2, f.spread});
+			break;
+		case 8:
+			break;
+		}
+	}
+	auto& params = proc.getPluginParameters();
+	std::uniform_int_distribution<> paramsDist{ 0, params.size() - 25 };
+	auto numSrcs = proc.modMatrix.getNumModSources();
+	std::uniform_int_distribution<> srcsDist{ 0, numSrcs - 1 };
+	std::uniform_real_distribution<> modDist(-1.f, 1.f);
+	for (gin::Parameter::Ptr param : fxParams) {
+		if (std::abs(fullDist(gen) * 0.5) < randVal) {
+			auto modSrc = gin::ModSrcId(srcsDist(gen));
+			auto modDst = gin::ModDstId(param->getModIndex());
+			auto depth = proc.modMatrix.getModDepth(modSrc, modDst);
+			auto sign = modDist(gen) >= 0 ? 1 : -1;
+			proc.modMatrix.setModDepth(modSrc, modDst, std::clamp(depth + sign * randAmount.getValue(), -1., 1.));
+		}
+	}
 }
 
 void RandEditor::clearFXMods()
 {
+	juce::Array<gin::Parameter::Ptr> fxParams;
+	auto fxa1 = proc.fxOrderParams.fxa1->getUserValueInt();
+	auto fxa2 = proc.fxOrderParams.fxa2->getUserValueInt();
+	auto fxa3 = proc.fxOrderParams.fxa3->getUserValueInt();
+	auto fxa4 = proc.fxOrderParams.fxa4->getUserValueInt();
+	auto fxb1 = proc.fxOrderParams.fxb1->getUserValueInt();
+	auto fxb2 = proc.fxOrderParams.fxb2->getUserValueInt();
+	auto fxb3 = proc.fxOrderParams.fxb3->getUserValueInt();
+	auto fxb4 = proc.fxOrderParams.fxb4->getUserValueInt();
+	auto& a = proc.compressorParams;
+	auto& b = proc.stereoDelayParams;
+	auto& c = proc.chorusParams;
+	auto& d = proc.reverbParams;
+	auto& e = proc.mbfilterParams;
+	auto& f = proc.ringmodParams;
+	for (int fx : {fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4}) {
+		switch (fx) {
+		case 0:
+			break;
+		case 1:
+			fxParams.addArray({ proc.waveshaperParams.drive, proc.waveshaperParams.gain, proc.waveshaperParams.dry, proc.waveshaperParams.wet });
+			break;
+		case 2:
+			fxParams.addArray({ a.attack, a.release, a.ratio, a.threshold, a.input, a.output, a.knee });
+			break;
+		case 3:
+			fxParams.addArray({ b.beatsleft, b.beatsright, b.feedback, b.timeleft, b.timeright, b.wet });
+			break;
+		case 4:
+			fxParams.addArray({ c.delay, c.depth, c.dry, c.feedback, c.rate, c.wet });
+			break;
+		case 5:
+			fxParams.addArray({ e.highshelffreq, e.highshelfgain, e.highshelfq, e.lowshelffreq, e.lowshelfgain, e.lowshelfq,
+				e.peakfreq, e.peakgain, e.peakq });
+			break;
+		case 6:
+			fxParams.addArray({ d.damping, d.decay, d.dry, d.lowpass, d.predelay, d.size, d.wet });
+			break;
+		case 7:
+			fxParams.addArray({ f.highcut, f.lowcut, f.mix1, f.mix2, f.modfreq1, f.modfreq2, f.shape1, f.shape2, f.spread });
+			break;
+		case 8:
+			break;
+		}
+	}
+
+	for (gin::Parameter::Ptr param : fxParams) {
+		auto modSrcs = proc.modMatrix.getModSources(param);
+		if (modSrcs.size() == 0) continue;
+		for (auto modSrc : modSrcs) {
+			if (envSrcs.contains(modSrc) || keySrcs.contains(modSrc) || lfoSrcs.contains(modSrc))
+				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+		}
+	}
 }
 
 void RandEditor::randomizeFXSelect()
@@ -544,17 +800,16 @@ void RandEditor::resized()
 	matrix.setBounds(5, 5, 5*56, 8*70+23);
 
 	randomizeButton.setBounds(5*56 + 5, 5, 3*56, 20);
-	clearAllButton.setBounds(5 * 56 + 5, 30, 3*56, 20);
-    randNumber.setBounds(5 * 56 + 5, 55, 3*56, 20);
-	randNumberLabel.setBounds(5* 56 + 5 + 173, 55, 2*56, 20);
-    randAmount.setBounds(5 * 56 + 5, 80, 3*56, 20);
-	randAmountLabel.setBounds(5 * 56 + 5 + 173, 80, 2*56, 20);
+	clearAllButton.setBounds(5 * 56 + 5 + 173, 5, 3*56, 20);
+
+    randNumber.setBounds(5 * 56 + 5, 40, 3*56, 20);
+	randNumberLabel.setBounds(5* 56 + 5 + 173, 40, 2*56, 20);
+    randAmount.setBounds(5 * 56 + 5, 65, 3*56, 20);
+	randAmountLabel.setBounds(5 * 56 + 5 + 173, 65, 2*56, 20);
 
     randOSCsButton.setBounds(5 * 56 + 5, 105, 3*56, 20);
-    inharmonic.setBounds(5 * 56 + 5 + 173, 105, 2*56, 20);
+	inharmonic.setBounds(5 * 56 + 5 + 173 + 40, 105, 2 * 56, 20);
 	
-
-
     randInharmonicButton.setBounds(5 * 56 + 5, 130, 3*56, 20);
 	resetInharmonicButton.setBounds(5 * 56 + 5 + 173, 130, 3 * 56, 20);
 

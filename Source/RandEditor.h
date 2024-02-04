@@ -6,11 +6,56 @@
 #include <random>
 
 
+class APLookAndFeel6 : public gin::CopperLookAndFeel
+{
+public:
+	APLookAndFeel6() {
+
+	}
+
+	void drawToggleButton(Graphics& g, ToggleButton& button,
+		bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
+	{
+		auto fontSize = jmin(15.0f, (float)button.getHeight() * 0.75f);
+		auto tickWidth = fontSize * 1.1f;
+
+		drawTickBox(g, button, 4.0f, ((float)button.getHeight() - tickWidth) * 0.5f,
+			tickWidth, tickWidth,
+			button.getToggleState(),
+			button.isEnabled(),
+			shouldDrawButtonAsHighlighted,
+			shouldDrawButtonAsDown);
+
+		//g.setColour(button.findColour(ToggleButton::textColourId));
+
+		auto c = button.findColour(button.getToggleState() ? juce::TextButton::textColourOnId : juce::TextButton::textColourOffId).withMultipliedAlpha(button.isEnabled() ? 1.0f : 0.5f);
+
+		if (button.isMouseOver() && button.isEnabled())
+			c = c.brighter();
+
+		g.setColour(c);
+
+
+		g.setFont(juce::Font(12.0f, juce::Font::plain ));
+
+		if (!button.isEnabled())
+			g.setOpacity(0.5f);
+
+		g.drawFittedText(button.getButtonText(),
+			button.getLocalBounds().withTrimmedLeft(roundToInt(tickWidth) + 10)
+			.withTrimmedRight(2),
+			Justification::centredLeft, 10);
+	}
+};
+
+
 //==============================================================================
 class RandEditor : public juce::Component
 {
 public:
 	RandEditor(APAudioProcessor& proc_);
+	~RandEditor() override;
+
 	void resized() override;
 	void randomize();
 	void clearAll();
@@ -43,7 +88,7 @@ private:
 	RandMatrixBox matrix{ "matrix", proc };
 	juce::TextButton randomizeButton{ "Randomize All" }, clearAllButton{ "Clear All" },
 		randOSCsButton{ "Randomize OSCs" }, // toggle button here for inharmonic
-		randInharmonicButton{ "Randomize Inharm." }, resetInharmonicButton{ "Reset inharmonic" },
+		randInharmonicButton{ "Randomize Inharm." }, resetInharmonicButton{ "Reset Inharmonic" },
 		randLFOsButton{ "Randomize LFOs" }, resetLFOsButton{ "Reset LFOs" },
 		randENVsButton{ "Randomize ENVs" }, resetENVsButton{ "Reset ENVs" },
 
@@ -69,7 +114,7 @@ private:
 	juce::Slider randNumber, randAmount;
 	juce::Label randNumberLabel{ "", "# of Mods" }, randAmountLabel{"", "Rand. Chance/Amount" };
     juce::Label test{"", "test"};
-    juce::ToggleButton inharmonic{"inharmonic"};
+    juce::ToggleButton inharmonic{"Inharmonic"};
 
 	// std::array<gin::ModSrcId, 8> 
 	juce::Array<gin::ModSrcId> lfoSrcs{ proc.modSrcMonoLFO1, proc.modSrcMonoLFO2, proc.modSrcMonoLFO3, proc.modSrcMonoLFO4,
@@ -118,7 +163,7 @@ private:
 		proc.lfo4Params.rate, proc.lfo4Params.depth, proc.lfo4Params.phase, proc.lfo4Params.delay, proc.lfo4Params.fade, proc.lfo4Params.offset
 	};
 
-
+	APLookAndFeel6 laf;
 
 };
 
