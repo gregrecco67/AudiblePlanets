@@ -103,7 +103,7 @@ public:
     {
         GlobalParams() = default;
 
-        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe;
+        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens;
 
         void setup(APAudioProcessor& p);
 

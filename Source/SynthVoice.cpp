@@ -42,6 +42,11 @@ void SynthVoice::noteStarted()
 	lfo3.reset();
 	lfo4.reset();
 
+	lfo1.noteOn();
+	lfo2.noteOn();
+	lfo3.noteOn();
+	lfo4.noteOn();
+
 	updateParams(0);
 	snapParams();
 	updateParams(0);
@@ -385,7 +390,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 	synthBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
 	
-	// Apply filter -- we'll do this after orbital processing
 	if (proc.filterParams.enable->isOn())
 		filter.process(synthBuffer);
 
@@ -552,7 +556,7 @@ void SynthVoice::updateParams(int blockSize)
 
 
 
-	//ampKeyTrack = getValue (proc.env1Params.velocityTracking);
+	ampKeyTrack = getValue(proc.globalParams.velSens);
 
 	if (proc.filterParams.enable->isOn())
 	{

@@ -322,11 +322,11 @@ public:
     {
         setName ("global");
 
-        addControl (new gin::Knob (proc.globalParams.level), 0, 0);
+        addControl (new gin::Knob (proc.globalParams.level), 2, 1);
         addControl (new gin::Select (proc.globalParams.glideMode), 1, 0);
         addControl (new gin::Knob (proc.globalParams.glideRate), 2, 0);
 
-        addControl (new gin::Knob (proc.globalParams.voices), 0, 1);
+        addControl (new gin::Knob (proc.globalParams.velSens), 1, 1);
         addControl (new gin::Switch (proc.globalParams.legato), 1, 1);
         addControl (new gin::Switch (proc.globalParams.mono), 2, 1);
     }
