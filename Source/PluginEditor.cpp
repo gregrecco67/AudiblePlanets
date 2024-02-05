@@ -21,6 +21,25 @@ APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
 	meter.setBounds(1130, 5, 15, 30);
     usage.setBounds (45, 12, 80, 16);
     setSize (1186,725);
+    
+    addKeyListener(this);
+    this->setWantsKeyboardFocus(true);
+}
+
+bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*originatingComponent*/) {
+        if (key.isKeyCode(49) || key.isKeyCode(juce::KeyPress::numberPad1)) {
+            tabbed.setCurrentTabIndex(0);
+            return true;
+        }
+        if (key.isKeyCode(50) || key.isKeyCode(juce::KeyPress::numberPad2)) {
+            tabbed.setCurrentTabIndex(1);
+            return true;
+        }
+        if (key.isKeyCode(51) || key.isKeyCode(juce::KeyPress::numberPad3)) {
+            tabbed.setCurrentTabIndex(2);
+            return true;
+        }
+        return false;
 }
 
 APAudioProcessorEditor::~APAudioProcessorEditor()
