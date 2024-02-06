@@ -3,7 +3,7 @@
 
 //==============================================================================
 APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
-    : ProcessorEditor (p), wtProc (p)
+    : ProcessorEditor (p), proc (p)
 {
 	addAndMakeVisible(meter);
     addAndMakeVisible(tabbed);
@@ -15,7 +15,7 @@ APAudioProcessorEditor::APAudioProcessorEditor (APAudioProcessor& p)
 	tab2.addAndMakeVisible(fxEditor);
 	tab3.addAndMakeVisible(randEditor);
     
-    usage.panic.onClick = [this] { wtProc.presetLoaded = true; };
+    usage.panic.onClick = [this] { proc.presetLoaded = true; };
     addAndMakeVisible (usage);
     
 	meter.setBounds(1130, 5, 15, 30);
@@ -74,9 +74,9 @@ void APAudioProcessorEditor::resized()
 void APAudioProcessorEditor::addMenuItems (juce::PopupMenu& m)
 {
     m.addSeparator();
-    m.addItem ("MPE", true, wtProc.globalParams.mpe->getUserValueBool(), [this]
+    m.addItem ("MPE", true, proc.globalParams.mpe->getUserValueBool(), [this]
     {
-        wtProc.globalParams.mpe->setUserValue (wtProc.globalParams.mpe->getUserValueBool() ? 0.0f : 1.0f);
+        proc.globalParams.mpe->setUserValue (proc.globalParams.mpe->getUserValueBool() ? 0.0f : 1.0f);
     });
 
     auto setSize = [this] (float scale)

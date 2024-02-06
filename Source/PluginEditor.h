@@ -23,18 +23,18 @@ public:
     bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
 private:
-    APAudioProcessor& wtProc;
+    APAudioProcessor& proc;
 
     
-    gin::SynthesiserUsage usage { wtProc };
-	gin::LevelMeter meter { wtProc.levelTracker };
+    gin::SynthesiserUsage usage { proc };
+	gin::LevelMeter meter { proc.levelTracker };
     
     juce::TabbedComponent tabbed{juce::TabbedButtonBar::TabsAtBottom };
     juce::Component tab1, tab2, tab3;
 
-    Editor editor { wtProc };
-	FXEditor fxEditor{ wtProc};
-	RandEditor randEditor{ wtProc };
+    Editor editor { proc };
+	FXEditor fxEditor{ proc};
+	RandEditor randEditor{ proc };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessorEditor)
 };

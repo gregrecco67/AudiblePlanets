@@ -39,11 +39,7 @@ private:
     APBLLTVoicedStereoOscillator osc1, osc2, osc3, osc4;
 
     gin::Filter filter;
-    
     gin::LFO lfo1, lfo2, lfo3, lfo4;
-
-    //gin::AnalogADSR env1, env2, env3, env4;
-	//std::array<gin::AnalogADSR*, 4> envs{&env1, &env2, &env3, &env4};
 
     Envelope env1, env2, env3, env4;
     std::array<Envelope*, 4> envs{&env1, &env2, &env3, &env4};

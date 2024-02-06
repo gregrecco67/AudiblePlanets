@@ -628,7 +628,7 @@ void APAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mid
     {
         int thisBlock = std::min (todo, 32);
 
-        updateParams (thisBlock);
+        updateParams (thisBlock); 
 
         renderNextBlock (buffer, midi, pos, thisBlock);
 
