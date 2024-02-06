@@ -8,11 +8,29 @@ An expressive, quasi-Ptolemaic semi-modular synthesizer.
 
 ## Features
 
-- *Orbital Modulation (OM)* synthesis
+- "Orbital Modulation" (OM) synthesis
 - Randomizable modulation matrix
 - Built-in effects chain
 
+## *Raison d'être*
+
+I wanted to know what Ptolemy's "equant" would sound like. More on that below.
+
+## Overview
+
+Four bodies revolve with uniform circular motion, each around a center defined by one of the others or around a fixed central point. Each body around which no other body revolves serves as an oscillator, producing sound. The interpretation of these terminal bodies as oscillators depends on their positions as viewed from a point that is either at the fixed center of revolution or nearby, at a point called the "equant," more in honor of Ptolemy than in strict adherence to his system (hence "*quasi*-Ptolemaic"). In the engine's fully modulated state (i.e., with the "Demodulate" knob turned all the way down), only the angle formed by a reference line and the line connecting the equant to the terminal body matters to the sound, just as, in Ptolemy's system, the distances of the heavenly bodies are unknown. I call this the engine's "modulated" state because it quickly became apparent that this system of sound generation closely resembles frequency modulation (FM) synthesis. The relative speeds of revolution of the various bodies correspond to the frequencies of so-called "carrier" and "modulator" waves in traditional FM synthesis. Like FM synths, this one allows both ("coarse") whole-number and ("fine") fractional variation of these relative frequencies, producing a variety of timbres, from the pure and simple to the densely inharmonic. Myriad mutually modulatable parameters are configurable by the user, and a robust system of randomization facilitates sonic exploration and discovery.
+
+### Gratitude
+
+I'll speak later about some of the sources of inspiration for this project, but don't want to go any further without acknowledging that none of this would have been possible for someone like me&mdash;a humanist with an idea, not a software engineer&mdash;without the wealth of open-source tools, instruction, and advice provided by the community of enthusiasts. I'm especially grateful for the existence of the [JUCE](https://github.com/juce-framework/JUCE) framework and for the many helpful extensions provided by [Gin](https://github.com/FigBug/Gin) and the visualization tools in [Melatonin Blur](https://github.com/sudara/melatonin_blur). Early prototypes were built in [VCV RACK](https://vcvrack.com/), which was a relatively easy way to get started. As someone who needs a lot spelled out, I got quite a lot out [Will Pirkle](https://www.willpirkle.com/)'s books. Finally, mostly by lurking and poring over old posts, but sometimes by posing ill-formed questions and follow-ups of my own, I learned a lot on the Discord server for [The Audio Programmer](https://www.theaudioprogrammer.com/).
+
+# Installation
+
+The plugin is available in VST3 (Windows, Mac OS, Linux) and AU (Mac OS only) formats. The default install locations are as follows: On Windows, place the VST3 file in /Program Files/Common Files/VST3. On Mac OS, place the VST3 file in /Library/Audio/Plug-Ins/VST3 and the AU file in /Library/Audio/Plug-Ins/Components. On Linux, place the VST3 file in /usr/lib/vst3.
+
 # Operation
+
+Enough of that. How does this work? The synth has three main pages: "Main," "FX," and "Rand." The "Main" page contains the main controls for sound generation. The "FX" page contains the built-in effects arranged in one or two chains.
 
 ## Main Page
 
