@@ -6,7 +6,7 @@ class FXBox : public gin::ParamBox
 {
 public:
 	FXBox(const juce::String& name, APAudioProcessor& proc_, gin::Parameter::Ptr box_)
-		: gin::ParamBox(name), proc(proc_), box(box_)
+		: gin::ParamBox(name), proc(proc_), box(box_), dynamicsMeter(proc.compressor)
 	{
 		setName(name);
 		 
@@ -80,9 +80,13 @@ public:
 		// GN = 8
 		addControl(gngain = new gin::Knob(proc.gainParams.gain), 1, 1);
 		
+        
+        addAndMakeVisible(dynamicsMeter);
+        addAndMakeVisible(funcImage);
+        
 		watchParam(proc.stereoDelayParams.temposync);
-		
-
+        watchParam(proc.waveshaperParams.type);
+        
 		setSize(300, 233);
 		hideAll();
 	}
@@ -99,8 +103,54 @@ public:
 			dltimeleft->setVisible(!choice);
 			dltimeright->setVisible(!choice);
 		}
+        
+        if (currentEffect == 1)
+        {
+            switch(proc.waveshaperParams.type->getUserValueInt())
+            {
+                case 0:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan2_png, BinaryData::atan2_pngSize));
+                    break;
+                case 1:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan4_png, BinaryData::atan4_pngSize));
+                    break;
+                case 2:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan6_png, BinaryData::atan6_pngSize));
+                    break;
+                case 3:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::tanh2_png, BinaryData::tanh2_pngSize));
+                    break;
+                case 4:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::tanh4_png, BinaryData::tanh4_pngSize));
+                    break;
+                case 5:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::tanh6_png, BinaryData::tanh6_pngSize));
+                    break;
+                case 6:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cubic32_png, BinaryData::cubic32_pngSize));
+                    break;
+                case 7:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cubicmid_png, BinaryData::cubicmid_pngSize));
+                    break;
+                case 8:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cubic_png, BinaryData::cubic_pngSize));
+                    break;
+                case 9:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb3_png, BinaryData::cheb3_pngSize));
+                    break;
+                case 10:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
+                    break;
+                
+            }
+        }
+        
 	}
 
+    void resized() override {
+        dynamicsMeter.setBounds(56, 163, 56, 70);
+        funcImage.setBounds(56*2, 23 + 140, 55, 55);
+    }
 
 	void setControls(int effect) {
 		currentEffect = effect;
@@ -115,6 +165,7 @@ public:
 			wsdry->setVisible(true);
 			wswet->setVisible(true);
 			wstype->setVisible(true);
+            funcImage.setVisible(true);
 			break;
 		case 2:
 			cpthreshold->setVisible(true);
@@ -125,6 +176,7 @@ public:
 			cpinput->setVisible(true);
 			cpoutput->setVisible(true);
 			cptype->setVisible(true);
+            dynamicsMeter.setVisible(true);
 			break;
 		case 3:
 			if (!proc.stereoDelayParams.temposync->getUserValueBool()) {
@@ -193,6 +245,7 @@ public:
 		wsdry->setVisible(false);
 		wswet->setVisible(false);
 		wstype->setVisible(false);
+        funcImage.setVisible(false);
 		// CP = 2
 		cpthreshold->setVisible(false);
 		cpratio->setVisible(false);
@@ -202,6 +255,7 @@ public:
 		cpinput->setVisible(false);
 		cpoutput->setVisible(false);
 		cptype->setVisible(false);
+        dynamicsMeter.setVisible(false);
 		// DL = 3
 		dltimeleft->setVisible(false);
 		dltimeright->setVisible(false);
@@ -260,7 +314,8 @@ public:
 	gin::ParamComponent::Ptr chrate, chdepth, chdelay, chfeedback, chdry, chwet;
 	gin::ParamComponent::Ptr rvsize, rvdecay, rvdamping, rvlowpass, rvpredelay, rvdry, rvwet;
 	gin::ParamComponent::Ptr mbfilterlowshelffreq, mbfilterlowshelfgain, mbfilterlowshelfq, mbfilterpeakfreq, mbfilterpeakgain, mbfilterpeakq, mbfilterhighshelffreq, mbfilterhighshelfgain, mbfilterhighshelfq;
-
+    gin::DynamicsMeter dynamicsMeter;
+    juce::ImageComponent funcImage{"function"};
 	int currentEffect = 0;
     gin::Parameter::Ptr box;
         
