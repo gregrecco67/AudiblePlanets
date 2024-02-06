@@ -313,7 +313,7 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::OrbitParams::setup(APAudioProcessor& p)
 {
-	speed = p.addIntParam("speed", "Speed", "", "", { 0.0, 0.2, 0.0, 1.0 }, 0.03f, 0.0f);
+	speed = p.addIntParam("speed", "Speed", "", "", { 0.0, 0.4, 0.0, 1.0 }, 0.03f, 0.0f);
 	scale = p.addIntParam("scale", "Scale", "", "", { 1.0, 6.0, 0.0, 1.0 }, 1.0f, 0.0f);
 }
 
@@ -418,8 +418,8 @@ void APAudioProcessor::RingModParams::setup(APAudioProcessor& p)
 	shape2 = p.addExtParam  (pfx + "shape2",   name + "Shape 2", "Shape 2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
 	mix2 = p.addExtParam    (pfx + "mix2",     name + "Mix 2", "Mix 2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
 	spread = p.addExtParam  (pfx + "spread",   name + "Spread", "Spread", "", { 0.0, 1.0, 0.0, 1.0 }, 0.03f, 0.0f);
-	lowcut = p.addExtParam  (pfx + "lowcut",   name + "Low Cut", "Low Cut", "", { 20.0, 20000.0, 0.0, 1.0 }, 20.0f, 0.0f);
-	highcut = p.addExtParam (pfx + "highcut",  name + "High Cut", "High Cut", "", { 20.0, 20000.0, 0.0, 1.0 }, 20000.0f, 0.0f);
+	lowcut = p.addExtParam  (pfx + "lowcut",   name + "Low Cut", "Low Cut", "", { 20.0, 20000.0, 0.0, 0.3 }, 20.0f, 0.0f);
+	highcut = p.addExtParam (pfx + "highcut",  name + "High Cut", "High Cut", "", { 20.0, 20000.0, 0.0, 0.3 }, 20000.0f, 0.0f);
 }
 
 //==============================================================================
