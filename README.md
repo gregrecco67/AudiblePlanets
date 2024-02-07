@@ -13,7 +13,7 @@ An expressive, quasi-Ptolemaic semi-modular synthesizer.
 - Randomizable modulation matrix
 - Built-in effects chain
 
-## *Raison d'être*
+## *Raison d'Ãªtre*
 
 I wanted to know what Ptolemy's "equant" would sound like. More on that below.
 
@@ -66,8 +66,11 @@ The question that started me on this path was "If the sine wave is the projectio
 
 In the pictures below, you can see the effect of the position of the equant. The first picture shows a simple sine wave: I've turned all but oscillator 1's volumes to zero. The second shows the sound with the equant above the center, the third with it below. In both cases, the wave has lost its symmetry, one side is a steep ascent, the other a correspondingly lengthened decline.
 
-/// pictures
+![sine](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/daa2e90c-5b87-4bd2-9122-d1f0cbca5a28)
 
+![equant plus](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/3adc426e-da6a-4cf4-91db-f10f24eeae05)
+
+![equant minus](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/9bc5d903-082e-401c-856b-aa52b171c021)
 
 A competing inspiration is the world of FM synthesis. I didn't set out to create a synth that works via frequency modulation or phase modulation, but that's what interpreting the orbits as sound waves has led to. I joked with some friends that "Orbital Modulation" could be a marketing-friendly term for this "innovative new form of synthesis." In truth, you could probably make most of the sounds possible here (and many more) with any capable FM synth.
 
