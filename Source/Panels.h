@@ -214,7 +214,7 @@ public:
 		addControl(new gin::Knob(timbreparams.equant, true), 0, 0);
 		addControl(new gin::Knob(timbreparams.pitch, true), 0, 1);
 		addControl(new gin::Knob(timbreparams.blend), 1, 1);
-        addControl(new gin::Select (timbreparams.algo), 1, 0);
+        addControl(new gin::Knob(timbreparams.algo), 1, 0);
 		addControl(new gin::Knob(timbreparams.demodmix, true), 1, 2);
 	}
 };

@@ -223,6 +223,10 @@ void RandEditor::resetInharmonic() {
     proc.osc2Params.fine->setValue(0.5);
     proc.osc3Params.fine->setValue(0.5);
     proc.osc4Params.fine->setValue(0.5);
+	auto modSrcs = proc.modMatrix.getModSources(proc.timbreParams.pitch);
+	for (auto src : modSrcs) {
+		proc.modMatrix.clearModDepth(src, gin::ModDstId(proc.timbreParams.pitch->getModIndex()));
+	}
 }
 
 void RandEditor::increaseAll()

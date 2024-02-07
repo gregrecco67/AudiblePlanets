@@ -131,7 +131,7 @@ private:
 
 	std::random_device rd;
 	juce::Slider randNumber, randAmount;
-	juce::Label randNumberLabel{ "", "# of Mods" }, randAmountLabel{"", "Rand. Chance/Amount" };
+	juce::Label randNumberLabel{ "", "Number of Mods" }, randAmountLabel{"", "Rand. Chance/Amount" };
     //juce::Label test{"", "test"};
     juce::ToggleButton inharmonic{"Inharmonic"};
 
