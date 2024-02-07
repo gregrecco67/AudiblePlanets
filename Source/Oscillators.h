@@ -10,6 +10,11 @@
  *
  * All source for Audible Planets is available at
  * https://github.com/gregrecco67/AudiblePlanets
+ 
+ *
+ *
+ * adapted from ../modules/gin/modules/gin_dsp/dsp/gin_oscillators.h
+ 
  */
 
 #pragma once
@@ -33,6 +38,7 @@ enum class Wave
 
 //==============================================================================
 /** Stereo oscillator. L & R can be at different pitches
+
 */
 class APStereoOscillator
 {
