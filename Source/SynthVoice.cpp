@@ -291,37 +291,37 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		sine4R = FastMath<float>::minimaxSin(atanAngle4R);
 		square4L = (atanAngle4L > 0.f) ? 1.0f : -1.0f;
 		square4R = (atanAngle4R > 0.f) ? 1.0f : -1.0f;
-		saw4L = (atanAngle4L * inv_pi) * 2.0f - 1.0f;
-		saw4R = (atanAngle4R * inv_pi) * 2.0f - 1.0f;
+		saw4L = (atanAngle4L * (float)inv_pi) * 2.0f - 1.0f;
+		saw4R = (atanAngle4R * (float)inv_pi) * 2.0f - 1.0f;
 		if (algo == 1) {
 			sine3L = FastMath<float>::minimaxSin(atanAngle3L);
 			sine3R = FastMath<float>::minimaxSin(atanAngle3R);
 			square3L = (atanAngle3L > 0.f) ? 1.0f : -1.0f;
 			square3R = (atanAngle3R > 0.f) ? 1.0f : -1.0f;
-			saw3L = (atanAngle3L * inv_pi) * 2.0f - 1.0f;
-			saw3R = (atanAngle3R * inv_pi) * 2.0f - 1.0f;
+			saw3L = (atanAngle3L * (float)inv_pi) * 2.0f - 1.0f;
+			saw3R = (atanAngle3R * (float)inv_pi) * 2.0f - 1.0f;
 		}
 		if (algo == 2) {
 			sine2L = FastMath<float>::minimaxSin(atanAngle2L);
 			sine2R = FastMath<float>::minimaxSin(atanAngle2R);
 			square2L = (atanAngle2L > 0.f) ? 1.0f : -1.0f;
 			square2R = (atanAngle2R > 0.f) ? 1.0f : -1.0f;
-			saw2L = (atanAngle2L * inv_pi) * 2.0f - 1.0f;
-			saw2R = (atanAngle2R * inv_pi) * 2.0f - 1.0f;
+			saw2L = (atanAngle2L * (float)inv_pi) * 2.0f - 1.0f;
+			saw2R = (atanAngle2R * (float)inv_pi) * 2.0f - 1.0f;
 		}
 		if (algo == 3) {
 			sine2L = FastMath<float>::minimaxSin(atanAngle2L);
 			sine2R = FastMath<float>::minimaxSin(atanAngle2R);
 			square2L = (atanAngle2L > 0.f) ? 1.0f : -1.0f;
 			square2R = (atanAngle2R > 0.f) ? 1.0f : -1.0f;
-			saw2L = (atanAngle2L * inv_pi) * 2.0f - 1.0f;
-			saw2R = (atanAngle2R * inv_pi) * 2.0f - 1.0f;
+			saw2L = (atanAngle2L * (float)inv_pi) * 2.0f - 1.0f;
+			saw2R = (atanAngle2R * (float)inv_pi) * 2.0f - 1.0f;
 			sine3L = FastMath<float>::minimaxSin(atanAngle3L);
 			sine3R = FastMath<float>::minimaxSin(atanAngle3R);
 			square3L = (atanAngle3L > 0.f) ? 1.0f : -1.0f;
 			square3R = (atanAngle3R > 0.f) ? 1.0f : -1.0f;
-			saw3L = (atanAngle3L * inv_pi) * 2.0f - 1.0f;
-			saw3R = (atanAngle3R * inv_pi) * 2.0f - 1.0f;
+			saw3L = (atanAngle3L * (float)inv_pi) * 2.0f - 1.0f;
+			saw3R = (atanAngle3R * (float)inv_pi) * 2.0f - 1.0f;
 		}
 
 
@@ -480,7 +480,7 @@ void SynthVoice::updateParams(int blockSize)
 		osc4Freq = baseFreq * ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine));
 	}
 
-	osc1Params.wave = getValue(proc.osc1Params.saw) ? Wave::sawUp : Wave::cosine;
+	osc1Params.wave = (bool)getValue(proc.osc1Params.saw) ? Wave::sawUp : Wave::cosine;
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
@@ -502,7 +502,7 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc2Params.wave = getValue(proc.osc2Params.saw) ? Wave::sawUp : Wave::sine;
+	osc2Params.wave = (bool)getValue(proc.osc2Params.saw) ? Wave::sawUp : Wave::sine;
 	osc2Params.tones = getValue(proc.osc2Params.tones);
 	osc2Params.pan = getValue(proc.osc2Params.pan);
 	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
@@ -524,7 +524,7 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc3Params.wave = getValue(proc.osc3Params.saw) ? Wave::sawUp : Wave::sine;
+	osc3Params.wave = (bool)getValue(proc.osc3Params.saw) ? Wave::sawUp : Wave::sine;
 	osc3Params.tones = getValue(proc.osc3Params.tones);
 	osc3Params.pan = getValue(proc.osc3Params.pan);
 	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
@@ -546,7 +546,7 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc4Params.wave = getValue(proc.osc4Params.saw) ? Wave::sawUp : Wave::sine;
+	osc4Params.wave = (bool)getValue(proc.osc4Params.saw) ? Wave::sawUp : Wave::sine;
 	osc4Params.tones = getValue(proc.osc4Params.tones);
 	osc4Params.pan = getValue(proc.osc4Params.pan);
 	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;

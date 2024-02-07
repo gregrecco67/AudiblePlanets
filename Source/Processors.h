@@ -20,9 +20,6 @@
 #include "LFO.h"
 #include "FastMath.hpp"
 
-
-#define M_PI 3.14159265358979323846
-
 #pragma once
 
 
@@ -45,7 +42,7 @@ inline double doLinearInterpolation(double y1, double y2, double fractional_X)
 inline double doLinearInterpolation(double x1, double x2, double y1, double y2, double x)
 {
     double denom = x2 - x1;
-    if (denom == 0)
+    if (juce::exactlyEqual(denom, 0.0))
         return y1; // --- should not ever happen
 
     // --- calculate decimal position of x
@@ -665,7 +662,7 @@ private:
         F z = 0;
 
         void recalc() {
-            b = std::exp(-2 * (float)M_PI * cutoff / sampleRate);
+            b = std::exp(-2 * juce::MathConstants<float>::pi * cutoff / sampleRate);
             a = 1 - b;
         }
     };
@@ -792,8 +789,8 @@ private:
             F out = -FastMath<F>::fastSin(phase);
 
             phase += phaseInc;
-            if (phase > M_PI) {
-                phase = -M_PI;
+            if (phase > juce::MathConstants<float>::pi) {
+                phase = -juce::MathConstants<float>::pi;
             }
 
             return out;
@@ -805,11 +802,11 @@ private:
         F freq = 0;
 
         F phaseInc = 0;
-        F phase = (float)-M_PI;
+        F phase = (float)-juce::MathConstants<float>::pi;
 
         void recalc() {
             phaseInc = freq / sampleRate;
-            phaseInc *= 2 * M_PI;
+            phaseInc *= 2 * juce::MathConstants<float>::pi;
         }
     };
 
@@ -847,7 +844,7 @@ private:
 
         void setDecay(F decayRate_) {
             decayRate = decayRate_;
-            apf2->setGain(clamp(decayRate + 0.15, 0.25, 0.5));
+            apf2->setGain(clamp(decayRate + 0.15f, 0.25f, 0.5f));
         }
 
         void setSizeRatio(F sizeRatio_) {
@@ -1291,7 +1288,7 @@ public:
     void process(juce::dsp::ProcessContextReplacing<float> context) {
         auto numSamples = context.getOutputBlock().getNumSamples();
         auto oversampledBlock = oversampler->processSamplesUp(context.getOutputBlock());
-        auto oversampledContext = juce::dsp::ProcessContextReplacing<float>(oversampledBlock);
+        // auto oversampledContext = juce::dsp::ProcessContextReplacing<float>(oversampledBlock);
         // do processing in oversampledBuffer
 
         // 1. prepare derived parameters
@@ -1304,11 +1301,11 @@ public:
         mod1freqs = mod1freqs * (unity + spread * semitones);
         mod2freqs = mod2freqs * (unity + spread * semitones);
 
-        mod1PhaseIncs = mod1freqs * dsp::SIMDRegister<float>(2.0f * (float)M_PI * inverseOversampledSampleRate);
-        mod2PhaseIncs = mod2freqs * dsp::SIMDRegister<float>(2.0f * (float)M_PI * inverseOversampledSampleRate);
+        mod1PhaseIncs = mod1freqs * dsp::SIMDRegister<float>(2.0f * juce::MathConstants<float>::pi * (float)inverseOversampledSampleRate);
+        mod2PhaseIncs = mod2freqs * dsp::SIMDRegister<float>(2.0f * juce::MathConstants<float>::pi * (float)inverseOversampledSampleRate);
 
-        mod1LPCutoff.skip(numSamples);
-        mod2LPCutoff.skip(numSamples);
+        mod1LPCutoff.skip((int)numSamples);
+        mod2LPCutoff.skip((int)numSamples);
         
         mod1LPCutoff.setTargetValue(std::clamp(params.mod1freq * 8.f, 20.f, 20000.f)); // a rough 4 octaves above fundamental
 		mod2LPCutoff.setTargetValue(std::clamp(params.mod2freq * 8.f, 20.f, 20000.f));
@@ -1325,7 +1322,7 @@ public:
 
         auto oversampledNumSamples = oversampledBlock.getNumSamples();
 
-        for (int i = 0; i < oversampledNumSamples; i++) {
+        for (int i = 0; i < (int)oversampledNumSamples; i++) {
             auto sin1 = FastMath<float>::simdSin(mod1Phases);
 			auto sin2 = FastMath<float>::simdSin(mod2Phases);
 			auto square1 = simdSquare(mod1Phases);
@@ -1421,10 +1418,10 @@ public:
             mod2Phases += mod2PhaseIncs;
 
             for (int k = 0; k < 4; k++) {
-				if (mod1Phases[k] > (float)M_PI)
-					mod1Phases[k] = mod1Phases[k] - 2.f * (float)M_PI;
-				if (mod2Phases[k] > (float)M_PI)
-					mod2Phases[k] = mod2Phases[k] - 2.f * (float)M_PI;
+				if (mod1Phases[k] > juce::MathConstants<float>::pi)
+					mod1Phases[k] = mod1Phases[k] - 2.f * juce::MathConstants<float>::pi;
+				if (mod2Phases[k] > juce::MathConstants<float>::pi)
+					mod2Phases[k] = mod2Phases[k] - 2.f * juce::MathConstants<float>::pi;
 			}
         }
 
@@ -1471,7 +1468,7 @@ private:
     }
     
     // internal params
-    float lowpass1Freq{ 2000.f }, lowpass2Freq{ 2000.f };
+    // float lowpass1Freq{ 2000.f }, lowpass2Freq{ 2000.f };
     
     // internal storage / utility
     std::unique_ptr<juce::dsp::Oversampling<float>> oversampler;
@@ -1485,6 +1482,4 @@ private:
     juce::dsp::SIMDRegister<float> mod1PhaseIncs{ 0.0f }, mod2PhaseIncs{ 0.0f };
 
     juce::SmoothedValue<float> mod1LPCutoff, mod2LPCutoff;
-    float testPhase{ 0.f };
-
 };

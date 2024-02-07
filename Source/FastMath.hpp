@@ -13,7 +13,7 @@
  */
  
  
-// LICENSE for FastMath class, fastSin, and fastTanh:
+// LICENSE for FastMath class and its members fastSin, and fastTanh:
 //------------------------------------------------------------------------------
 /*
 MIT License
@@ -43,7 +43,6 @@ SOFTWARE.
 
 #define _USE_MATH_DEFINES
 #include <cmath>
-#define M_PI 3.14159265358979323846
 
 //------------------------------------------------------------------------------
 // FastMath contains some fast approximations for trigonometric functions.
@@ -59,8 +58,8 @@ template <class F> class FastMath {
     // https://www.desmos.com/calculator/f0eryaepsl
     static inline F fastSin(F x) {
         
-        static constexpr F B = 4 / (float)M_PI;
-        static constexpr F C = -4 / (float)(M_PI * M_PI);
+        static constexpr F B = 4 / juce::MathConstants<float>::pi;
+        static constexpr F C = -4 / (juce::MathConstants<float>::pi * juce::MathConstants<float>::pi);
         static constexpr F P = 0.225f;
 
         F y = B * x + C * x * std::abs(x);
@@ -86,11 +85,11 @@ template <class F> class FastMath {
     }
 
     static inline float normalizePhase(float x1) { // set anything to [-pi, pi]
-        while (x1 > M_PI) {
-            x1 -= 2.0f * (float)M_PI;
+        while (x1 > juce::MathConstants<float>::pi) {
+            x1 -= 2.0f * juce::MathConstants<float>::pi;
         }
-        while (x1 < -M_PI) {
-            x1 += 2.0f * (float)M_PI;
+        while (x1 < -juce::MathConstants<float>::pi) {
+            x1 += 2.0f * juce::MathConstants<float>::pi;
         }
         return x1;
     }
@@ -144,12 +143,12 @@ template <class F> class FastMath {
 				else if (y >= 0.0)
 				{
 					// atan2(y,x) = atan(y/x) + PI if x < 0, y >= 0
-					return minimaxAtan(z) + (float)M_PI;
+					return minimaxAtan(z) + juce::MathConstants<float>::pi;
 				}
 				else
 				{
 					// atan2(y,x) = atan(y/x) - PI if x < 0, y < 0
-					return minimaxAtan(z) - (float)M_PI;
+					return minimaxAtan(z) - juce::MathConstants<float>::pi;
 				}
 			}
 			else // Use property atan(y/x) = PI/2 - atan(x/y) if |y/x| > 1.
@@ -158,12 +157,12 @@ template <class F> class FastMath {
 				if (y > 0.0)
 				{
 					// atan2(y,x) = PI/2 - atan(x/y) if |y/x| > 1, y > 0
-					return -minimaxAtan(z) + (float)M_PI * 0.5f;
+					return -minimaxAtan(z) + juce::MathConstants<float>::pi * 0.5f;
 				}
 				else
 				{
 					// atan2(y,x) = -PI/2 - atan(x/y) if |y/x| > 1, y < 0
-					return -minimaxAtan(z) - (float)M_PI * 0.5f;
+					return -minimaxAtan(z) - juce::MathConstants<float>::pi * 0.5f;
 				}
 			}
 		}
@@ -171,11 +170,11 @@ template <class F> class FastMath {
 		{
 			if (y > 0.0f) // x = 0, y > 0
 			{
-				return (float)M_PI * 0.5f;
+				return juce::MathConstants<float>::pi * 0.5f;
 			}
 			else if (y < 0.0f) // x = 0, y < 0
 			{
-				return (float)-M_PI * 0.5f;
+				return -juce::MathConstants<float>::pi * 0.5f;
 			}
 		}
 		return 0.0f;

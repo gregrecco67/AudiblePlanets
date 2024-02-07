@@ -158,9 +158,6 @@ private:
 		proc.osc4Params.env, proc.osc4Params.pan, proc.osc4Params.spread, proc.osc4Params.fine
 	};
 
-	std::array<gin::Parameter::Ptr, 6> timbreDstsBasic{
-		proc.timbreParams.algo, proc.timbreParams.demodmix, proc.timbreParams.blend, proc.timbreParams.equant, proc.filterParams.frequency, proc.filterParams.resonance
-	};
 
 	std::array<gin::Parameter::Ptr, 7> timbreDstsPlus{
 		proc.timbreParams.algo, proc.timbreParams.demodmix, proc.timbreParams.blend, proc.timbreParams.equant, proc.filterParams.frequency, proc.filterParams.resonance, proc.timbreParams.pitch

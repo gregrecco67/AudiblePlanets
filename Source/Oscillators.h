@@ -48,7 +48,18 @@ public:
     };
 
     void setSampleRate (double sr)  { sampleRate = sr; }
-    void noteOn (float phase = -1);
+    void noteOn (float phase_ = -1)
+    {
+        if (phase_ >= 0) {
+            return;
+        }
+        if (internalParams.wave == Wave::sine) {
+            phase = 0;
+        }
+        if (internalParams.wave == Wave::cosine) {
+            phase = juce::MathConstants<float>::halfPi;
+        }
+    }
 
     void process (float freq, const Params& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
     {
@@ -58,34 +69,34 @@ public:
         processAdding (freq, params, mainPhaseBuffer, quarterPhaseBuffer);
     }
 
-	float sineValueForPhaseAndTones(float phase, float tones) {
+	float sineValueForPhaseAndTones(float phase_, float tones) {
 		float fullTones{ 0.f }, value{ 0.0f };
 		float partialToneFraction = std::modf(tones, &fullTones);
 
-		value += FastMath<float>::minimaxSin(phase);
+		value += FastMath<float>::minimaxSin(phase_);
 
 		if (tones > 1.0f && tones < 2.0f)
-			value += FastMath<float>::minimaxSin(phase * 2.0f) * partialToneFraction * 0.5f;
+			value += FastMath<float>::minimaxSin(phase_ * 2.0f) * partialToneFraction * 0.5f;
 		else if (tones > 1.0f)
-			value += FastMath<float>::minimaxSin(phase * 2.0f) * 0.5f; // we're over 2, so add the max level of this partial
+			value += FastMath<float>::minimaxSin(phase_ * 2.0f) * 0.5f; // we're over 2, so add the max level of this partial
 
 		if (tones > 2.0f && tones < 3.0f)
-			value += FastMath<float>::minimaxSin(phase * 3.0f) * partialToneFraction * 0.33f;
+			value += FastMath<float>::minimaxSin(phase_ * 3.0f) * partialToneFraction * 0.33f;
 		else if (tones > 2.0f)
-			value += FastMath<float>::minimaxSin(phase * 3.0f) * 0.33f;
+			value += FastMath<float>::minimaxSin(phase_ * 3.0f) * 0.33f;
 
 		if (tones > 3.0f && tones < 4.0f)
-			value += FastMath<float>::minimaxSin(phase * 4.0f) * partialToneFraction * 0.25f;
+			value += FastMath<float>::minimaxSin(phase_ * 4.0f) * partialToneFraction * 0.25f;
 		else if (tones > 3.0f)
-			value += FastMath<float>::minimaxSin(phase * 4.0f) * 0.25f;
+			value += FastMath<float>::minimaxSin(phase_ * 4.0f) * 0.25f;
 
 		if (tones > 4.0f && tones < 5.0f)
-			value += FastMath<float>::minimaxSin(phase * 5.0f) * partialToneFraction * 0.2f;
+			value += FastMath<float>::minimaxSin(phase_ * 5.0f) * partialToneFraction * 0.2f;
 		else if (tones > 4.0f)
-			value += FastMath<float>::minimaxSin(phase * 5.0f) * 0.2f;
+			value += FastMath<float>::minimaxSin(phase_ * 5.0f) * 0.2f;
 
 		if (tones > 5.0f)
-			value += FastMath<float>::minimaxSin(phase * 6.0f) * partialToneFraction * 0.16f;
+			value += FastMath<float>::minimaxSin(phase_ * 6.0f) * partialToneFraction * 0.16f;
 
 		return value;
 	}
