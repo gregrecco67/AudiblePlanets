@@ -45,10 +45,10 @@ private:
 
     FilterBox filter                        { "flt", proc };
 
-	LFOBox lfo1{ "lfo1", proc, proc.lfo1Params, proc.modSrcLFO1, proc.modSrcMonoLFO1, proc.lfo1 };
-	LFOBox lfo2{ "lfo2", proc, proc.lfo2Params, proc.modSrcLFO2, proc.modSrcMonoLFO2, proc.lfo2 };
-	LFOBox lfo3{ "lfo3", proc, proc.lfo3Params, proc.modSrcLFO3, proc.modSrcMonoLFO3, proc.lfo3 };
-	LFOBox lfo4{ "lfo4", proc, proc.lfo4Params, proc.modSrcLFO4, proc.modSrcMonoLFO4, proc.lfo4 };
+	LFOBox lfo1{ "lfo1", proc, proc.lfo1Params, proc.modSrcLFO1, proc.modSrcMonoLFO1};
+	LFOBox lfo2{ "lfo2", proc, proc.lfo2Params, proc.modSrcLFO2, proc.modSrcMonoLFO2};
+	LFOBox lfo3{ "lfo3", proc, proc.lfo3Params, proc.modSrcLFO3, proc.modSrcMonoLFO3};
+	LFOBox lfo4{ "lfo4", proc, proc.lfo4Params, proc.modSrcLFO4, proc.modSrcMonoLFO4};
     ModBox mod                              { "mod", proc };
     GlobalBox global                        { "global", proc };
 	TimbreBox timbre						{ "timbre", proc };

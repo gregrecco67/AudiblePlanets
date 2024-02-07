@@ -255,8 +255,8 @@ public:
 class LFOBox : public gin::ParamBox
 {
 public:
-    LFOBox (const juce::String& num, APAudioProcessor& proc_, APAudioProcessor::LFOParams& lfoparams_, gin::ModSrcId& modsrcID, gin::ModSrcId& monoID, gin::LFO modLFO)
-        : gin::ParamBox(num), proc(proc_), lfoparams(lfoparams_), lfo(&modLFO)
+    LFOBox (const juce::String& num, APAudioProcessor& proc_, APAudioProcessor::LFOParams& lfoparams_, gin::ModSrcId& modsrcID, gin::ModSrcId& monoID)
+        : gin::ParamBox(num), proc(proc_), lfoparams(lfoparams_)
     {
         setName(num);
 
@@ -309,7 +309,6 @@ public:
     gin::ParamComponent::Ptr r = nullptr;
     gin::ParamComponent::Ptr b = nullptr;
     APAudioProcessor::LFOParams& lfoparams;
-	gin::LFO* lfo;
 };
 
 //==============================================================================

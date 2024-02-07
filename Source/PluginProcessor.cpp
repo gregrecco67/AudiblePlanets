@@ -140,7 +140,7 @@ static juce::String fxListTextFunction(const gin::Parameter&, float v)
     {
         case 0: return String("None");
         case 1: return String("Waveshaper");
-        case 2: return String("Compressor");
+        case 2: return String("Dynamics");
         case 3: return String("Delay");
         case 4: return String("Chorus");
         case 5: return String("Multiband Filter");
@@ -188,15 +188,15 @@ static juce::String glideModeTextFunction (const gin::Parameter&, float v)
 
 
 //==============================================================================
-void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String num) // we've got 4
+void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr) // we've got 4
 {
-    juce::String id = "osc" + num;
-    juce::String nm = "OSC" + num;
+    juce::String id = "osc" + numStr;
+    juce::String nm = "OSC" + numStr;
 
 	NormalisableRange<float> osc1FineRange{ 0.0, 4.0, 0.0, 1.0 };
 	NormalisableRange<float> defaultFineRange{ -2.0, 2.0, 0.0, 1.0 };
     
-	switch (num.getIntValue()) {
+	switch (numStr.getIntValue()) {
 	case 1:
 		coarse		= p.addExtParam (id + "coarse",     nm + "Coarse",      "Coarse",    "", { 1.0, 24.0, 1.0, 1.0 }, 1.0, 0.0f);
 		fine		= p.addExtParam(id + "fine", nm + "Fine", "Fine", "", osc1FineRange, 0.0, 0.0f);
@@ -223,10 +223,10 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String num) /
     detune    = p.addExtParam (id + "detune",     nm + "Detune",      "Detune",    "", { 0.0, 0.5, 0.0, 1.0 }, 0.0, 0.0f);
     spread    = p.addExtParam (id + "spread",     nm + "Spread",      "Spread",    "%", { -100.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
     pan       = p.addExtParam (id + "pan",        nm + "Pan",         "Pan",       "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-    env       = p.addExtParam (id + "env",        nm + "Env",         "Env",       "", { 0.0, 3.0, 1.0, 1.0 }, (float)(num.getIntValue() - 1), 0.0f, envSelectTextFunction);
+    env       = p.addExtParam (id + "env",        nm + "Env",         "Env",       "", { 0.0, 3.0, 1.0, 1.0 }, (float)(numStr.getIntValue() - 1), 0.0f, envSelectTextFunction);
 	saw       = p.addExtParam (id + "saw",        nm + "Saw",         "Saw",       "", { 0.0, 1.0, 1.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
 	fixed     = p.addExtParam (id + "fixed",      nm + "Fixed",       "Fixed",     "", { 0.0, 1.0, 1.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
-	this->num = num.getIntValue();
+	this->num = numStr.getIntValue();
 }
 
 //==============================================================================
