@@ -32,7 +32,19 @@ Enough of that. How to use this thing?
 
 ## Installation
 
-The plugin is available in VST3 (Windows, Mac OS, Linux) and AU (Mac OS only) formats. The default install locations are as follows: On Windows, place the VST3 file in /Program Files/Common Files/VST3. On Mac OS, place the VST3 file in ~/Library/Audio/Plug-Ins/VST3 and/or the AU file in ~/Library/Audio/Plug-Ins/Components. (You will need the AU component if you plan to run the synth in Logic.) On Linux, place the VST3 file in /usr/lib/vst3.
+The plugin is available in VST3 (Windows, Mac OS, Linux) and AU (Mac OS only) formats. The default install locations are as follows: On Windows, place the VST3 file in /Program Files/Common Files/VST3. On Mac OS, place the VST3 file in ~/Library/Audio/Plug-Ins/VST3 and/or the AU file in ~/Library/Audio/Plug-Ins/Components. (You will need the AU component if you plan to run the synth in Logic.) On Linux, place the VST3 file wherever your DAW looks for it. On my distro, it was ~/.vst3.
+
+Or build from source:
+```
+git clone https://github.com/gregrecco67/AudiblePlanets.git
+cd AudiblePlanets
+git submodule update --init --recursive
+```
+Then, if on Mac OS:
+```
+cmake -B build -G Xcode
+```
+If using Visual Studio, just open the folder. If you're on Linux, you probably know what to do...
 
 ## Pages
 
