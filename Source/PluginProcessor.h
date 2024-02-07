@@ -237,6 +237,8 @@ public:
         JUCE_DECLARE_NON_COPYABLE(FXOrderParams)
     };
     
+	gin::ProcessorOptions getOptions();
+
     //==============================================================================
     gin::ModSrcId modSrcPressure, modSrcTimbre, modSrcPitchBend, modSrcNote, modSrcVelocity,
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,

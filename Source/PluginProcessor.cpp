@@ -458,7 +458,11 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 
 
 //==============================================================================
-APAudioProcessor::APAudioProcessor() : gin::Processor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true), false)
+APAudioProcessor::APAudioProcessor() : gin::Processor(
+	BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true), 
+	false, 
+	getOptions()
+)
 {
     enableLegacyMode(0);
     setVoiceStealingEnabled (true);
@@ -813,6 +817,15 @@ void APAudioProcessor::applyEffects (juce::AudioSampleBuffer& fxALaneBuffer)
 	auto ABlock = juce::dsp::AudioBlock<float>(fxALaneBuffer);
 	auto AContext = juce::dsp::ProcessContextReplacing<float>(ABlock);
 	limiter.process(AContext);
+}
+
+gin::ProcessorOptions APAudioProcessor::getOptions()
+{
+	gin::ProcessorOptions options;
+	options.programmingCredits = { "Greg Recco" };
+	options.url = "https://github.com/gregrecco67/AudiblePlanets";
+	options.urlTitle = "Visit https://github.com/gregrecco67/AudiblePlanets";
+	return options;
 }
 
 
