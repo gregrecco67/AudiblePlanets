@@ -32,7 +32,7 @@ Enough of that. How to use this thing?
 
 ## Installation
 
-The plugin is available in VST3 (Windows, Mac OS, Linux) and AU (Mac OS only) formats. The default install locations are as follows: On Windows, place the VST3 file in /Program Files/Common Files/VST3. On Mac OS, place the VST3 file in /Library/Audio/Plug-Ins/VST3 and/or the AU file in /Library/Audio/Plug-Ins/Components. (You will need the AU component if you plan to run the synth in Logic.) On Linux, place the VST3 file in /usr/lib/vst3.
+The plugin is available in VST3 (Windows, Mac OS, Linux) and AU (Mac OS only) formats. The default install locations are as follows: On Windows, place the VST3 file in /Program Files/Common Files/VST3. On Mac OS, place the VST3 file in ~/Library/Audio/Plug-Ins/VST3 and/or the AU file in ~/Library/Audio/Plug-Ins/Components. (You will need the AU component if you plan to run the synth in Logic.) On Linux, place the VST3 file in /usr/lib/vst3.
 
 ## Pages
 
