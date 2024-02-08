@@ -464,7 +464,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	getOptions()
 )
 {
-    enableLegacyMode(0);
+    enableLegacyMode(12);
     setVoiceStealingEnabled (true);
 
     for (int i = 0; i < 10; i++)

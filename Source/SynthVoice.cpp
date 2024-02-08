@@ -133,8 +133,13 @@ void SynthVoice::notePressureChanged()
 void SynthVoice::noteTimbreChanged()
 {
 	auto note = getCurrentlyPlayingNote();
-	proc.modMatrix.setPolyValue(*this, proc.modSrcTimbre, note.initialTimbre.asUnsignedFloat());
+	proc.modMatrix.setPolyValue(*this, proc.modSrcTimbre, note.timbre.asUnsignedFloat());
 }
+
+void SynthVoice::notePitchbendChanged() {
+    
+}
+
 
 void SynthVoice::setCurrentSampleRate(double newRate)
 {
@@ -452,7 +457,7 @@ void SynthVoice::updateParams(int blockSize)
 	currentMidiNote = noteSmoother.getCurrentValue() * 127.0f;
 	if (glideInfo.glissando) currentMidiNote = (float)juce::roundToInt(currentMidiNote);
 
-	float baseFreq = gin::getMidiNoteInHertz(currentMidiNote);
+    float baseFreq =  gin::getMidiNoteInHertz(currentMidiNote + currentlyPlayingNote.totalPitchbendInSemitones);
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
 	//auto coarse1 = getValue(proc.osc1Params.coarse);
 	if (proc.osc1Params.fixed->isOn()) {
