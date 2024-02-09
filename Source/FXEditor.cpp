@@ -57,6 +57,8 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	valueUpdated(proc.fxOrderParams.fxb2);
 	valueUpdated(proc.fxOrderParams.fxb3);
 	valueUpdated(proc.fxOrderParams.fxb4);
+    
+    addAndMakeVisible(pbBox);
 }
 
 
@@ -83,49 +85,63 @@ void FXEditor::resized()
 	fxb2Selector.setBounds(378, 290, 168, 35);
 	fxb3Selector.setBounds(606, 290, 168, 35);
 	fxb4Selector.setBounds(834, 290, 168, 35);
+    
+    pbBox.setBounds(1123, 565, 56*2, 93);
 }
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
 {
+    if (param == proc.globalParams.pitchbendRange) {
+        proc.updatePitchbend();
+        return;
+    }
     if (param == proc.fxOrderParams.fxa1) {
         auto fxa1Choice = param->getUserValueInt();
         fxa1Box.setControls(fxa1Choice);
 		removeDuplicates(fxa1Choice, 1);
+        return;
     }
 	if (param == proc.fxOrderParams.fxa2) {
 		auto fxa2Choice = param->getUserValueInt();
 		fxa2Box.setControls(fxa2Choice);
 		removeDuplicates(fxa2Choice, 2);
+        return;
     }
 	if (param == proc.fxOrderParams.fxa3) {
 		auto fxa3Choice = param->getUserValueInt();
 		fxa3Box.setControls(fxa3Choice);
 		removeDuplicates(fxa3Choice, 3);
+        return;
     }
 	if (param == proc.fxOrderParams.fxa4) {
 		auto fxa4Choice = param->getUserValueInt();
 		fxa4Box.setControls(fxa4Choice);
 		removeDuplicates(fxa4Choice, 4);
+        return;
 	}
 	if (param == proc.fxOrderParams.fxb1) {
 		auto fxb1Choice = param->getUserValueInt();
 		fxb1Box.setControls(fxb1Choice);
 		removeDuplicates(fxb1Choice, 5);
+        return;
 	}
 	if (param == proc.fxOrderParams.fxb2) {
 		auto fxb2Choice = param->getUserValueInt();
 		fxb2Box.setControls(fxb2Choice);
 		removeDuplicates(fxb2Choice, 6);
+        return;
 	}
 	if (param == proc.fxOrderParams.fxb3) {
 		auto fxb3Choice = param->getUserValueInt();
 		fxb3Box.setControls(fxb3Choice);
 		removeDuplicates(fxb3Choice, 7);
+        return;
 	}
 	if (param == proc.fxOrderParams.fxb4) {
 		auto fxb4Choice = param->getUserValueInt();
 		fxb4Box.setControls(fxb4Choice);
 		removeDuplicates(fxb4Choice, 8);
+        return;
 	}
 }
 

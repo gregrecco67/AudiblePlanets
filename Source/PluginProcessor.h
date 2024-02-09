@@ -48,6 +48,8 @@ public:
 	void stateUpdated() override;
 	void updateState() override;
 
+    void updatePitchbend();
+    
     //==============================================================================
     void handleMidiEvent(const juce::MidiMessage& m) override;
     //==============================================================================
@@ -117,7 +119,7 @@ public:
     {
         GlobalParams() = default;
 
-        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens;
+        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange;
 
         void setup(APAudioProcessor& p);
 

@@ -309,6 +309,7 @@ void APAudioProcessor::GlobalParams::setup (APAudioProcessor& p)
 	velSens     = p.addExtParam ("velSens", "Vel. Sens.",   "",      "",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
     voices      = p.addIntParam ("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
     mpe         = p.addIntParam ("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+    pitchbendRange = p.addIntParam("pbrange", "Pitchbend Range", "", "", {0.0, 96.0, 1.0, 1.0}, 12.0, 0.0f);
 
     level->conversionFunction     = [] (float in) { return juce::Decibels::decibelsToGain (in); };
 	velSens->conversionFunction   = [] (float in) { return in / 100.0f; };
@@ -454,6 +455,10 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
     fxb3 = p.addExtParam("fxb3", "FX B3", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
     fxb4 = p.addExtParam("fxb4", "FX B4", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
 	chainAtoB = p.addIntParam("chainAtoB", "A -> B", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, enableTextFunction);
+}
+
+void APAudioProcessor::updatePitchbend() {
+    setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
 

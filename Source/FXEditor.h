@@ -49,5 +49,5 @@ private:
 		fxb4Selector{ proc.fxOrderParams.fxb4 };
     FXModBox mod{"mod", proc};
 	MatrixBox matrix{"matrix", proc};
-	//gin::Layout layout{ *this };
+    PBBox pbBox{"Pitchbend", proc};
 };
