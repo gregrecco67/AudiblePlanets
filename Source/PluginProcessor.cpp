@@ -519,8 +519,8 @@ void APAudioProcessor::setupModMatrix()
     modSrcPressure  = modMatrix.addPolyModSource ("mpep", "MPE Pressure", false);
     modSrcTimbre    = modMatrix.addPolyModSource ("mpet", "MPE Timbre", false);
 	modSrcModwheel  = modMatrix.addMonoModSource ("mw", "Mod Wheel", false);
-    modSrcPitchBend = modMatrix.addMonoModSource ("pb", "Pitch Bend", true);
-
+    modSrcMonoPitchbend = modMatrix.addMonoModSource ("pb", "Mono Pitchbend", true);
+	
     modSrcNote      = modMatrix.addPolyModSource ("note", "MIDI Note Number", false);
     modSrcVelocity  = modMatrix.addPolyModSource ("vel", "MIDI Velocity", false);
 
@@ -557,6 +557,7 @@ void APAudioProcessor::setupModMatrix()
 
 void APAudioProcessor::stateUpdated()
 {
+	stereoDelay.resetBuffers();
 	modMatrix.stateUpdated(state);
 }
 
@@ -947,7 +948,7 @@ void APAudioProcessor::handleMidiEvent (const juce::MidiMessage& m)
 			modMatrix.setMonoValue(modSrcModwheel, float(m.getControllerValue()) / 127.0f);
 	}
     if (m.isPitchWheel())
-        modMatrix.setMonoValue (modSrcPitchBend, float (m.getPitchWheelValue()) / 0x2000 - 1.0f);
+        modMatrix.setMonoValue (modSrcMonoPitchbend, float (m.getPitchWheelValue()) / 0x2000 - 1.0f);
 }
 
 //==============================================================================

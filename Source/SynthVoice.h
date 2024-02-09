@@ -34,8 +34,8 @@ public:
 
     void notePressureChanged() override;
     void noteTimbreChanged() override;
-    void notePitchbendChanged() override;
-    void noteKeyStateChanged() override     {}
+	void notePitchbendChanged() override {}
+    void noteKeyStateChanged() override {}
     
     void setCurrentSampleRate (double newRate) override;
 
@@ -71,7 +71,7 @@ private:
 	int algo{ 0 };
 	float equant{ 0.f };
     
-	float baseAmplitude = 0.25f;
+	float baseAmplitude = 0.16f; // roughly so that 0 dB = 6 voices at full volume
     gin::EasedValueSmoother<float> noteSmoother;
     
     float ampKeyTrack = 1.0f;

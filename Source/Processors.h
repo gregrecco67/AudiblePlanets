@@ -360,6 +360,11 @@ public:
 		ping = _ping;
 	}
 
+	void resetBuffers() {
+		delayBuffer_L.flushBuffer();
+		delayBuffer_R.flushBuffer();
+	}
+
 private:
     juce::AudioBuffer<float> inBuffer;
     float delayDry{ 0.5f }, delayWet{ 0.5f }, delayFB{ 0.5f }, mySampleRate{ 44100.f };

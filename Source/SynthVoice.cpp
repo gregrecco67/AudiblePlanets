@@ -136,11 +136,6 @@ void SynthVoice::noteTimbreChanged()
 	proc.modMatrix.setPolyValue(*this, proc.modSrcTimbre, note.timbre.asUnsignedFloat());
 }
 
-void SynthVoice::notePitchbendChanged() {
-    
-}
-
-
 void SynthVoice::setCurrentSampleRate(double newRate)
 {
 	MPESynthesiserVoice::setCurrentSampleRate(newRate);
@@ -190,7 +185,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	osc4.processAdding(osc4Freq, osc4Params, osc4SineBuffer, osc4CosineBuffer);
 
 	// Apply velocity
-	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat() * baseAmplitude;
+	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
 	osc1SineBuffer.applyGain  (osc1Vol);
 	osc1CosineBuffer.applyGain(osc1Vol);
 	osc2SineBuffer.applyGain  (osc2Vol);
@@ -407,7 +402,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		synthBuffer.setSample(1, i, sampleR);
 	}
 
-	synthBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack));
+	synthBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack) * baseAmplitude);
 	
 	if (proc.filterParams.enable->isOn())
 		filter.process(synthBuffer);
@@ -457,7 +452,7 @@ void SynthVoice::updateParams(int blockSize)
 	currentMidiNote = noteSmoother.getCurrentValue() * 127.0f;
 	if (glideInfo.glissando) currentMidiNote = (float)juce::roundToInt(currentMidiNote);
 
-    float baseFreq =  gin::getMidiNoteInHertz(currentMidiNote + currentlyPlayingNote.totalPitchbendInSemitones);
+    float baseFreq =  gin::getMidiNoteInHertz(currentMidiNote + note.totalPitchbendInSemitones);
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
 	//auto coarse1 = getValue(proc.osc1Params.coarse);
 	if (proc.osc1Params.fixed->isOn()) {
@@ -573,8 +568,6 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-
-
 	ampKeyTrack = getValue(proc.globalParams.velSens);
 
 	if (proc.filterParams.enable->isOn())
@@ -628,7 +621,6 @@ void SynthVoice::updateParams(int blockSize)
 	}
 
 	gin::LFO::Parameters params;
-
 	float freq = 0;
 	
 	// lfo 1

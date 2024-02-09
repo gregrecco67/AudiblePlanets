@@ -240,7 +240,7 @@ public:
 	gin::ProcessorOptions getOptions();
 
     //==============================================================================
-    gin::ModSrcId modSrcPressure, modSrcTimbre, modSrcPitchBend, modSrcNote, modSrcVelocity,
+    gin::ModSrcId modSrcPressure, modSrcTimbre, modSrcMonoPitchbend, modSrcNote, modSrcVelocity,
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
 		modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4,
         modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4,

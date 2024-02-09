@@ -132,13 +132,12 @@ private:
 	std::random_device rd;
 	juce::Slider randNumber, randAmount;
 	juce::Label randNumberLabel{ "", "Number of Mods" }, randAmountLabel{"", "Rand. Chance/Amount" };
-    //juce::Label test{"", "test"};
     juce::ToggleButton inharmonic{"Inharmonic"};
 
 	juce::Array<gin::ModSrcId> lfoSrcs{ proc.modSrcMonoLFO1, proc.modSrcMonoLFO2, proc.modSrcMonoLFO3, proc.modSrcMonoLFO4,
 		proc.modSrcLFO1, proc.modSrcLFO2, proc.modSrcLFO3, proc.modSrcLFO4 };
 	juce::Array<gin::ModSrcId> envSrcs{ proc.modSrcEnv1, proc.modSrcEnv2, proc.modSrcEnv3, proc.modSrcEnv4 };
-	juce::Array<gin::ModSrcId> keySrcs{ proc.modSrcPressure, proc.modSrcModwheel, proc.modSrcPitchBend, proc.modSrcVelocity,
+	juce::Array<gin::ModSrcId> keySrcs{ proc.modSrcPressure, proc.modSrcModwheel, proc.modSrcMonoPitchbend, proc.modSrcVelocity,
 		proc.modSrcNote, proc.modSrcTimbre, proc.modSrcModwheel };
 	
 	std::array<gin::Parameter::Ptr, 28> oscDstsBasic{

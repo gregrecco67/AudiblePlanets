@@ -97,10 +97,6 @@ if (APPLE)
 	set_target_properties(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO")
 endif()
 
-if (WIN32)
-	target_compile_options(${PROJECT_NAME} PRIVATE -wd4996 -wd4458 -wd26495)
-endif()
-
 juce_generate_juce_header (${PROJECT_NAME})
 
 get_property (debug_configs GLOBAL PROPERTY DEBUG_CONFIGURATIONS)
