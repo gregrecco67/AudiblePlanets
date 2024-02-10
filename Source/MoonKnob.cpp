@@ -125,9 +125,7 @@ void MoonKnob::resized()
 	name.setBounds(rc);
 	value.setBounds(rc);
 	knob.setBounds(r);
-	auto modDepthSliderBounds = knob.getBounds().removeFromTop(13).removeFromRight(13);
-	DBG(modDepthSliderBounds.toString());
-	modDepthSlider.setBounds(modDepthSliderBounds);
+	modDepthSlider.setBounds(knob.getBounds().removeFromTop(13).removeFromRight(13));
 }
 
 void MoonKnob::mouseEnter(const juce::MouseEvent&)
