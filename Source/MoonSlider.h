@@ -44,8 +44,8 @@ private:
 	void paint(juce::Graphics& g) override
 	{
 		if (filmStrip.isValid()) {
-			int value = std::clamp((int)((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFrames_ - 1)), 0, 125);
-			g.drawImage(filmStrip, 0, 0, getWidth(), getHeight(), value * frameWidth, 0, 128, 128);
+			int sliderVal = std::clamp((int)((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFrames_ - 1)), 0, 125);
+			g.drawImage(filmStrip, 0, 0, getWidth(), getHeight(), sliderVal * frameWidth, 0, 128, 128);
 		}
 	}
 	juce::Image filmStrip;
