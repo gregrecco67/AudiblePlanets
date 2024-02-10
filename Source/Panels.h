@@ -135,7 +135,7 @@ public:
 		gin::ParamBox::resized();
 
 		fixedHz.setBounds(56, 76+23, 56, 35);
-		phaseKnob->setBounds(56*4, 23, 56, 56);
+		phaseKnob->setBounds(56*4, 23, 56, 70);
 	}
 	APLookAndFeel1 lnf1;
 	APLookAndFeel2 lnf2;
