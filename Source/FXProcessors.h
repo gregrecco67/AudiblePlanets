@@ -22,142 +22,6 @@
 
 #pragma once
 
-
-// Bunch of FX Objects stuff here below
-
-inline float raw2dB(float raw)
-{
-    return 20.0f * log10(raw);
-}
-
-inline double doLinearInterpolation(double y1, double y2, double fractional_X)
-{
-    // --- check invalid condition
-    if (fractional_X >= 1.0) return y2;
-
-    // --- use weighted sum method of interpolating
-    return fractional_X * y2 + (1.0 - fractional_X) * y1;
-}
-
-inline double doLinearInterpolation(double x1, double x2, double y1, double y2, double x)
-{
-    double denom = x2 - x1;
-    if (juce::exactlyEqual(denom, 0.0))
-        return y1; // --- should not ever happen
-
-    // --- calculate decimal position of x
-    double dx = (x - x1) / (x2 - x1);
-
-    // --- use weighted sum method of interpolating
-    return dx * y2 + (1 - dx) * y1;
-}
-
-/**
-\class CircularBuffer
-\ingroup FX-Objects
-\brief
-The CircularBuffer object implements a simple circular buffer. It uses a wrap mask to wrap the read or write index quickly.
-
-\author Will Pirkle http://www.willpirkle.com
-\remark This object is included in Designing Audio Effects Plugins in C++ 2nd Ed. by Will Pirkle
-\version Revision : 1.0
-\date Date : 2018 / 09 / 7
-*/
-/** A simple cyclic buffer: NOTE - this is NOT an IAudioSignalProcessor or IAudioSignalGenerator
-    S must be a power of 2.
-*/
-template <typename T>
-class CircularBuffer
-{
-public:
-    CircularBuffer() {}		/* C-TOR */
-    ~CircularBuffer() {}	/* D-TOR */
-
-    /** flush buffer by resetting all values to 0.0 */
-    void flushBuffer() { memset(&buffer[0], 0, bufferLength * sizeof(T)); }
-
-    /** Create a buffer based on a target maximum in SAMPLES
-    //	   do NOT call from realtime audio thread; do this prior to any processing */
-    void createCircularBuffer(unsigned int _bufferLength)
-    {
-        // --- find nearest power of 2 for buffer, and create
-        createCircularBufferPowerOfTwo((unsigned int)(pow(2, ceil(log(_bufferLength) / log(2)))));
-    }
-
-    /** Create a buffer based on a target maximum in SAMPLESwhere the size is
-        pre-calculated as a power of two */
-    void createCircularBufferPowerOfTwo(unsigned int _bufferLengthPowerOfTwo)
-    {
-        // --- reset to top
-        writeIndex = 0;
-
-        // --- find nearest power of 2 for buffer, save it as bufferLength
-        bufferLength = _bufferLengthPowerOfTwo;
-
-        // --- save (bufferLength - 1) for use as wrapping mask
-        wrapMask = bufferLength - 1;
-
-        // --- create new buffer
-        buffer.reset(new T[bufferLength]);
-
-        // --- flush buffer
-        flushBuffer();
-    }
-
-    /** write a value into the buffer; this overwrites the previous oldest value in the buffer */
-    void writeBuffer(T input)
-    {
-        // --- write and increment index counter
-        buffer[writeIndex++] = input;
-
-        // --- wrap if index > bufferlength - 1
-        writeIndex &= wrapMask;
-    }
-
-    /** read an arbitrary location that is delayInSamples old */
-    T readBuffer(int delayInSamples)//, bool readBeforeWrite = true)
-    {
-        // --- subtract to make read index
-        //     note: -1 here is because we read-before-write,
-        //           so the *last* write location is what we use for the calculation
-        int readIndex = (writeIndex - 1) - delayInSamples;
-
-        // --- autowrap index
-        readIndex &= wrapMask;
-
-        // --- read it
-        return buffer[readIndex];
-    }
-
-    /** read an arbitrary location that includes a fractional sample */
-    T readBuffer(double delayInFractionalSamples)
-    {
-        // --- truncate delayInFractionalSamples and read the int part
-        T y1 = readBuffer((int)delayInFractionalSamples);
-
-        // --- if no interpolation, just return value
-        
-
-        // --- else do interpolation
-        //
-        // --- read the sample at n+1 (one sample OLDER)
-        T y2 = readBuffer((int)delayInFractionalSamples + 1);
-
-        // --- get fractional part
-        double fraction = delayInFractionalSamples - (int)delayInFractionalSamples;
-
-        // --- do the interpolation (you could try different types here)
-        return doLinearInterpolation(y1, y2, fraction);
-    }
-
-private:
-    std::unique_ptr<T[]> buffer = nullptr;	///< smart pointer will auto-delete
-    unsigned int writeIndex = 0;		///> write index
-    unsigned int bufferLength = 1024;	///< must be nearest power of 2
-    unsigned int wrapMask = 1023;		///< must be (bufferLength - 1)
-    
-};
-
 template<typename SampleType>
 juce::AudioBuffer<SampleType> fromAudioBlock(const juce::dsp::AudioBlock<SampleType>& block)
 {
@@ -186,18 +50,18 @@ private:
 
 
 
-class Chorus2Processor : public ProcessorBase
+class ChorusProcessor : public ProcessorBase
 {
 public:
-    Chorus2Processor() {}		
-    ~Chorus2Processor() {}
+    ChorusProcessor() {}		
+    ~ChorusProcessor() {}
 
 public:
     void prepareToPlay(double sampleRate, int /*samplesPerBlock*/) {
         currentSampleRate = (float)sampleRate;
-        centerDelayBuffer.createCircularBuffer(1920000);
-        leftDelayBuffer.createCircularBuffer(1920000);
-        rightDelayBuffer.createCircularBuffer(1920000);
+        centerDelayBuffer.setSize(1, 1.0, sampleRate);
+        leftDelayBuffer  .setSize(1, 1.0, sampleRate);
+        rightDelayBuffer .setSize(1, 1.0, sampleRate);
         lfo.setSampleRate(currentSampleRate);
         lfo.setFrequency(15.0f);
         lfo.setWaveShape(LFO::WaveShapes::Sine);
@@ -225,12 +89,15 @@ public:
             // left delay
             auto leftIn = inLeft[i];
             auto rightIn = inRight[i];
-            auto leftChorusOut = leftDelayBuffer.readBuffer(leftDelayTime_ms * currentSampleRate / 1000.0f);
-            auto centerChorusOut = centerDelayBuffer.readBuffer(centerDelayTime_ms * currentSampleRate / 1000.0f);
-            auto rightChorusOut = rightDelayBuffer.readBuffer(rightDelayTime_ms * currentSampleRate / 1000.0f);
-            leftDelayBuffer.writeBuffer(leftIn + leftChorusOut * feedback);
-            centerDelayBuffer.writeBuffer(rightIn*0.5f + leftIn*0.5f + centerChorusOut * feedback);
-            rightDelayBuffer.writeBuffer(rightIn + rightChorusOut * feedback);
+            auto leftChorusOut = leftDelayBuffer    .readLagrange(0, leftDelayTime_ms / 1000.0f);
+            auto centerChorusOut = centerDelayBuffer.readLagrange(0, centerDelayTime_ms / 1000.0f);
+            auto rightChorusOut = rightDelayBuffer  .readLagrange(0, rightDelayTime_ms / 1000.0f);
+            leftDelayBuffer  .write(0, leftIn + leftChorusOut * feedback);
+            centerDelayBuffer.write(0, rightIn*0.5f + leftIn*0.5f + centerChorusOut * feedback);
+            rightDelayBuffer .write(0, rightIn + rightChorusOut * feedback);
+			leftDelayBuffer.writeFinished();
+			centerDelayBuffer.writeFinished();
+			rightDelayBuffer.writeFinished();
             auto ynL = (leftChorusOut + centerChorusOut) * wet + dry * leftIn;
             auto ynR = (centerChorusOut + rightChorusOut) * wet + dry * rightIn;
             outLeft[i] = ynL;
@@ -271,7 +138,7 @@ private:
     float lfoRate{ 0.05f }, depth{ 0.5f }, feedback{ 0.0f }, dry{ 0.5f }, wet{ 0.5f }, delayTime{ 15.f };
     LFO lfo;			///< the modulator
     float currentSampleRate = 44100.f;	///< current sample rate
-    CircularBuffer<float> centerDelayBuffer, leftDelayBuffer, rightDelayBuffer;
+	gin::DelayLine centerDelayBuffer{ 1 }, leftDelayBuffer{ 1 }, rightDelayBuffer{ 1 };
 
 };
 
@@ -281,11 +148,10 @@ public:
     ~StereoDelayProcessor() = default;
 
     void prepareToPlay(double sampleRate, int /*samplesPerBlock*/) {
-        delayBuffer_L.createCircularBuffer(1920000); // 48kHz * 4x oversampling * max delay of 10s
-        delayBuffer_R.createCircularBuffer(1920000);
-        mySampleRate = (float)sampleRate;
         delayTimeL.reset(sampleRate, 4.005f);
         delayTimeR.reset(sampleRate, 4.005f);
+		delayBuffer_L.setSize(1, 65.0, sampleRate);
+		delayBuffer_R.setSize(1, 65.0, sampleRate);
     }
     void prepare(juce::dsp::ProcessSpec spec)
     {
@@ -301,34 +167,38 @@ public:
         delayFB = freeze ? 1.f : delayFB;
         if (ping) {
             for (int i = 0; i < numSamples; i++) {
-                auto dTimeL = delayTimeL.getNextValue();
-                auto dTimeR = delayTimeR.getNextValue();
+                auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
+                auto dTimeR = std::min(delayTimeR.getNextValue(), 64.0f);
 
-                float delayedSample_L = delayBuffer_L.readBuffer(dTimeL * mySampleRate);
-                float delayedSample_R = delayBuffer_R.readBuffer(dTimeR * mySampleRate);
+                float delayedSample_L = delayBuffer_L.readLagrange(0, dTimeL);
+                float delayedSample_R = delayBuffer_R.readLagrange(0, dTimeR);
                 float inDelay_L = leftSamples[i] * freezeFactor + delayedSample_R * delayFB;
                 float inDelay_R = rightSamples[i] * freezeFactor + delayedSample_L * delayFB;
 
                 leftSamples[i] = delayedSample_L * delayWet + leftSamples[i] * delayDry;
                 rightSamples[i] = delayedSample_R * delayWet + rightSamples[i] * delayDry;
-                delayBuffer_L.writeBuffer(inDelay_L);
-                delayBuffer_R.writeBuffer(inDelay_R);
+                delayBuffer_L.write(0, inDelay_L);
+                delayBuffer_R.write(0, inDelay_R);
+				delayBuffer_L.writeFinished();
+				delayBuffer_R.writeFinished();
             }
         }
         else {
             for (int i = 0; i < numSamples; i++) {
-				auto dTimeL = delayTimeL.getNextValue();
-				auto dTimeR = delayTimeR.getNextValue();
+				auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
+				auto dTimeR = std::min(delayTimeR.getNextValue(), 64.0f);
 
-				float delayedSample_L = delayBuffer_L.readBuffer(dTimeL * mySampleRate);
-				float delayedSample_R = delayBuffer_R.readBuffer(dTimeR * mySampleRate);
+				float delayedSample_L = delayBuffer_L.readLagrange(0, dTimeL);
+				float delayedSample_R = delayBuffer_R.readLagrange(0, dTimeR);
 				float inDelay_L = leftSamples[i] * freezeFactor + delayedSample_L * delayFB;
 				float inDelay_R = rightSamples[i] * freezeFactor + delayedSample_R * delayFB;
 
 				leftSamples[i] = delayedSample_L * delayWet + leftSamples[i] * delayDry;
 				rightSamples[i] = delayedSample_R * delayWet + rightSamples[i] * delayDry;
-				delayBuffer_L.writeBuffer(inDelay_L);
-				delayBuffer_R.writeBuffer(inDelay_R);
+				delayBuffer_L.write(0, inDelay_L);
+				delayBuffer_R.write(0, inDelay_R);
+				delayBuffer_L.writeFinished();
+				delayBuffer_R.writeFinished();
 			}
         }
     }
@@ -361,16 +231,15 @@ public:
 	}
 
 	void resetBuffers() {
-		delayBuffer_L.flushBuffer();
-		delayBuffer_R.flushBuffer();
+		delayBuffer_L.clear();
+		delayBuffer_R.clear();
 	}
 
 private:
     juce::AudioBuffer<float> inBuffer;
     float delayDry{ 0.5f }, delayWet{ 0.5f }, delayFB{ 0.5f }, mySampleRate{ 44100.f };
     juce::LinearSmoothedValue<float> delayTimeL{ .40f }, delayTimeR{ .40f };
-    CircularBuffer<float> delayBuffer_L; // { 7680000 };
-    CircularBuffer<float> delayBuffer_R; // { 7680000 };
+	gin::DelayLine delayBuffer_L{ 1 }, delayBuffer_R{ 1 };
     bool freeze{ false }, ping{ true };
 };
 
@@ -1205,22 +1074,6 @@ private:
     juce::dsp::Gain<float> postGain;
 };
 
-//
-//class ProcessorBase
-//{
-//
-//public:
-//    //==============================================================================
-//    void prepareToPlay(double, int) {}
-//
-//    void processBlock(juce::AudioSampleBuffer&, juce::MidiBuffer&) {}
-//    void process(juce::dsp::ProcessContextReplacing<float>) {}
-//
-//private:
-//    //==============================================================================
-//
-//};
-
 class RingModulator : public ProcessorBase
 {
 public:
@@ -1471,9 +1324,6 @@ private:
 		square[3] = phases[3] > 0.f ? 1.f : -1.f;
         return square;
     }
-    
-    // internal params
-    // float lowpass1Freq{ 2000.f }, lowpass2Freq{ 2000.f };
     
     // internal storage / utility
     std::unique_ptr<juce::dsp::Oversampling<float>> oversampler;

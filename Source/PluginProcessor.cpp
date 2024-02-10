@@ -366,8 +366,8 @@ void APAudioProcessor::StereoDelayParams::setup(APAudioProcessor& p)
 	String name = "Delay ";
 	String pfx = "dl";
 	auto notes = gin::NoteDuration::getNoteDurations();
-	timeleft = p.addExtParam  (pfx + "timeleft",   name + "Time Left", "Time L", "", { 0.001f, 10.0, 0.0, 1.0 }, 0.5f, 0.0f);
-	timeright = p.addExtParam (pfx + "timeright",  name + "Time Right", "Time R", "", { 0.001f, 10.0, 0.0, 1.0 }, 0.5f, 0.0f);
+	timeleft = p.addExtParam  (pfx + "timeleft",   name + "Time Left", "Time L", "", { 0.001f, 10.0, 0.0, 0.5 }, 0.5f, 0.0f);
+	timeright = p.addExtParam (pfx + "timeright",  name + "Time Right", "Time R", "", { 0.001f, 10.0, 0.0, 0.5 }, 0.5f, 0.0f);
 	beatsleft = p.addExtParam (pfx + "beatsleft",  name + "Beats Left", "Beats L", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
 	beatsright = p.addExtParam(pfx + "beatsright", name + "Beats Right", "Beats R", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
 	temposync = p.addIntParam (pfx + "temposync",  name + "Tempo Sync", "Tempo Sync", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, enableTextFunction);
@@ -382,7 +382,7 @@ void APAudioProcessor::ChorusParams::setup(APAudioProcessor& p)
 {
 	String name = "Chorus ";
 	String pfx = "ch";
-	rate = p.addExtParam    (pfx + "rate",     name + "Rate", "Rate", "Hz", { 0.005f, 20.0f, 0.05f, 1.0f }, 0.05f, 0.0f);
+	rate = p.addExtParam    (pfx + "rate",     name + "Rate", "Rate", "Hz", { 0.005f, 20.0f, 0.0f, 0.3f }, 0.05f, 0.0f);
 	depth = p.addExtParam   (pfx + "depth",    name + "Depth", "Depth", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
 	delay = p.addExtParam   (pfx + "delay",    name + "Delay", "Delay", "ms", { 10.0f, 40.0f, 0.0, 1.0 }, 20.0f, 0.0f);
 	feedback = p.addExtParam(pfx + "feedback", name + "Feedback", "Feedback", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25f, 0.0f);
@@ -396,9 +396,9 @@ void APAudioProcessor::ReverbParams::setup(APAudioProcessor& p)
 {
 	String pfx = "rv";
 	String name = "Reverb ";
-	size = p.addExtParam    (pfx + "size",     name + "Size", "Size", "", { 0.0, 3.0, 0.0, 1.0 }, 1.f, 0.0f);
-	decay = p.addExtParam   (pfx + "decay",    name + "Decay", "Decay", "s", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
-	damping = p.addExtParam (pfx + "damping",  name + "Damping", "Damping", "", { 0.0, 0.999f, 0.0, 1.0 }, 0.5f, 0.0f);
+	size = p.addExtParam    (pfx + "size",     name + "Size", "Size", "", { 0.0, 2.0, 0.0, 1.0 }, 1.f, 0.0f);
+	decay = p.addExtParam   (pfx + "decay",    name + "Decay", "Decay", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
+	damping = p.addExtParam (pfx + "damping",  name + "Damping", "Damping", "", { 20.0f, 20000.0f, 0.0, 1.0 }, 10000.0f, 0.0f);
 	lowpass = p.addExtParam (pfx + "lowpass",  name + "Lowpass", "Lowpass", "Hz", { 20.0f, 20000.0f, 0.0, 0.3f }, 20000.0f, 0.0f);
 	predelay = p.addExtParam(pfx + "predelay", name +  "Predelay", "Predelay", "s", { 0.0, 0.1f, 0.0, 1.0 }, 0.002f, 0.0f);
 	dry = p.addExtParam     (pfx + "dry",      name +  "Dry", "Dry", "%", { 0.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
@@ -562,7 +562,7 @@ void APAudioProcessor::setupModMatrix()
 
 void APAudioProcessor::stateUpdated()
 {
-	stereoDelay.resetBuffers();
+	//stereoDelay.resetBuffers();
 	modMatrix.stateUpdated(state);
 }
 

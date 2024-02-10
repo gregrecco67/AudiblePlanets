@@ -18,7 +18,7 @@
 #include <gin/gin.h>
 #include "SynthVoice.h"
 #include "Envelope.h"
-#include "Processors.h"
+#include "FXProcessors.h"
 
 //==============================================================================
 class APAudioProcessor : public gin::Processor,
@@ -273,7 +273,7 @@ public:
 	WaveShaperProcessor waveshaper;
 	gin::Dynamics compressor;
 	StereoDelayProcessor stereoDelay;
-	Chorus2Processor chorus;
+	ChorusProcessor chorus;
 	PlateReverb<float, uint32_t> reverb;
 	MBFilterProcessor mbfilter;
 	RingModulator ringmod;
