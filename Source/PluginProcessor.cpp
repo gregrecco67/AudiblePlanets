@@ -219,6 +219,7 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
 		break;
 	}
 	
+	phase     = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.3f, 0.0f);
     tones     = p.addExtParam (id + "tones",      nm + "Tones",       "Tones",     "", { 1.0, 5.9f, 0.001f, 1.0 }, 1.0, 0.0f);
     detune    = p.addExtParam (id + "detune",     nm + "Detune",      "Detune",    "", { 0.0, 0.5, 0.0f, 1.0 }, 0.0, 0.0f);
     spread    = p.addExtParam (id + "spread",     nm + "Spread",      "Spread",    "%", { -100.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
@@ -301,15 +302,15 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
 //==============================================================================
 void APAudioProcessor::GlobalParams::setup (APAudioProcessor& p)
 {
-    mono        = p.addIntParam ("mono",    "Mono",       "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
-    glideMode   = p.addIntParam ("gMode",   "Glide Mode", "Glide", "",   { 0.0, 2.0, 0.0, 1.0 }, 0.0f, 0.0f, glideModeTextFunction);
-    glideRate   = p.addExtParam ("gRate",   "Glide Rate", "Rate",  "s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
-    legato      = p.addIntParam ("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
-    level       = p.addExtParam ("level",   "Level",      "",      "db", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
-	velSens     = p.addExtParam ("velSens", "Vel. Sens.",   "",      "",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
-    voices      = p.addIntParam ("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
-    mpe         = p.addIntParam ("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-    pitchbendRange = p.addIntParam("pbrange", "Pitchbend Range", "", "", {0.0, 96.0, 1.0, 1.0}, 12.0, 0.0f);
+    mono           = p.addIntParam ("mono",    "Mono",       "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
+    glideMode      = p.addIntParam ("gMode",   "Glide Mode", "Glide", "",   { 0.0, 2.0, 0.0, 1.0 }, 0.0f, 0.0f, glideModeTextFunction);
+    glideRate      = p.addExtParam ("gRate",   "Glide Rate", "Rate",  "s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
+    legato         = p.addIntParam ("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
+    level          = p.addExtParam ("level",   "Level",      "",      "db", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
+	velSens        = p.addExtParam ("velSens", "Vel. Sens.",   "",      "",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
+    voices         = p.addIntParam ("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
+    mpe            = p.addIntParam ("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+    pitchbendRange = p.addIntParam("pbrange", "Range", "", "", {0.0, 96.0, 1.0, 1.0}, 12.0, 0.0f);
 
     level->conversionFunction     = [] (float in) { return juce::Decibels::decibelsToGain (in); };
 	velSens->conversionFunction   = [] (float in) { return in / 100.0f; };

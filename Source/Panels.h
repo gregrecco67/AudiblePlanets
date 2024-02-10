@@ -17,6 +17,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "APColors.h"
+#include "MoonKnob.h"
 
 
 
@@ -34,6 +35,7 @@ public:
         addControl (r = new gin::Knob (osc.volume), 2, 0);
         addControl (new gin::Knob (osc.tones), 3, 0);
 		addControl(new gin::Switch(osc.saw), 4, 0);
+		addControl(phaseKnob = new MoonKnob(osc.phase), 5, 0);
 
 		
 		switch (osc.num) {
@@ -72,6 +74,7 @@ public:
 		watchParam(osc.fine);
 
 		addAndMakeVisible(fixedHz);
+		//addAndMakeVisible(phaseKnob);
 
 		fixedHz.setJustificationType(Justification::centred);
     }
@@ -132,6 +135,7 @@ public:
 		gin::ParamBox::resized();
 
 		fixedHz.setBounds(56, 76+23, 56, 35);
+		phaseKnob->setBounds(56*4, 23, 56, 56);
 	}
 	APLookAndFeel1 lnf1;
 	APLookAndFeel2 lnf2;
@@ -141,7 +145,7 @@ public:
     APAudioProcessor::OSCParams& osc;
 	gin::ParamComponent::Ptr c = nullptr, f = nullptr, r = nullptr;
 	Label fixedHz;
-    
+	MoonKnob* phaseKnob;
 };
 
 //==============================================================================

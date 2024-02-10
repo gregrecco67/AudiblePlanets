@@ -15,6 +15,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
+
 //==============================================================================
 class FXBox : public gin::ParamBox
 {
@@ -357,7 +358,8 @@ public:
     {
         setName("MPE PB");
         addControl(new gin::Knob(proc.globalParams.pitchbendRange), 0, 0);
-    }
+	}
+
     APAudioProcessor& proc;
 };
 

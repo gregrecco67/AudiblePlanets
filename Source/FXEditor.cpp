@@ -75,7 +75,7 @@ void FXEditor::resized()
 	chainSetting.setBounds(15, 7, 120, 35);
 	
     mod.setBounds(1011, 50, 168, 303);
-	matrix.setBounds(1011, 360, 168, 200);
+	matrix.setBounds(1011, 360, 168, 197);
     
 	fxa1Selector.setBounds(150, 7, 168, 35); // place these above, adjust the panels' size
 	fxa2Selector.setBounds(378, 7, 168, 35);
@@ -86,7 +86,7 @@ void FXEditor::resized()
 	fxb3Selector.setBounds(606, 290, 168, 35);
 	fxb4Selector.setBounds(834, 290, 168, 35);
     
-    pbBox.setBounds(1123, 565, 56*2, 93);
+    pbBox.setBounds(1011, 562, 56*2, 90);
 }
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"

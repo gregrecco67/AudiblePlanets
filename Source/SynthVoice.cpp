@@ -66,10 +66,10 @@ void SynthVoice::noteStarted()
 	updateParams(0);
 	snapParams();
 	//
-	osc1.noteOn();
-	osc2.noteOn();
-	osc3.noteOn();
-	osc4.noteOn();
+	osc1.noteOn(proc.osc1Params.phase->getUserValue());
+	osc2.noteOn(proc.osc2Params.phase->getUserValue());
+	osc3.noteOn(proc.osc3Params.phase->getUserValue());
+	osc4.noteOn(proc.osc4Params.phase->getUserValue());
 
 
 	env1.noteOn();
@@ -485,6 +485,8 @@ void SynthVoice::updateParams(int blockSize)
 	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
 	osc1Params.detune = getValue(proc.osc1Params.detune);
+	osc1Params.phaseShift = getValue(proc.osc1Params.phase);
+	DBG(osc1Params.phaseShift);
 	osc1Vol = getValue(proc.osc1Params.volume);
 	switch ((int)getValue(proc.osc1Params.env))
 	{
@@ -507,6 +509,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc2Params.pan = getValue(proc.osc2Params.pan);
 	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
 	osc2Params.detune = getValue(proc.osc2Params.detune);
+	osc2Params.phaseShift = getValue(proc.osc2Params.phase);
 	osc2Vol = getValue(proc.osc2Params.volume);
 	switch ((int)getValue(proc.osc2Params.env))
 	{
@@ -529,6 +532,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc3Params.pan = getValue(proc.osc3Params.pan);
 	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
 	osc3Params.detune = getValue(proc.osc3Params.detune);
+	osc3Params.phaseShift = getValue(proc.osc3Params.phase);
 	osc3Vol = getValue(proc.osc3Params.volume);
 	switch ((int)getValue(proc.osc3Params.env))
 	{
@@ -551,6 +555,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc4Params.pan = getValue(proc.osc4Params.pan);
 	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;
 	osc4Params.detune = getValue(proc.osc4Params.detune);
+	osc4Params.phaseShift = getValue(proc.osc4Params.phase);
 	osc4Vol = getValue(proc.osc4Params.volume);
 	switch ((int)getValue(proc.osc4Params.env))
 	{

@@ -51,6 +51,7 @@ public:
         float leftGain = 1.0;
         float rightGain = 1.0;
 		float tones = 1.0;
+		
     };
 
     void setSampleRate (double sr)  { sampleRate = sr; }
@@ -67,13 +68,13 @@ public:
         }
     }
 
-    void process (float freq, const Params& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
-    {
-        mainPhaseBuffer.clear();
+	/*void process(float freq, const Params& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
+	{
+		mainPhaseBuffer.clear();
 		quarterPhaseBuffer.clear();
 		internalParams = params;
-        processAdding (freq, params, mainPhaseBuffer, quarterPhaseBuffer);
-    }
+		processAdding(freq, params, mainPhaseBuffer, quarterPhaseBuffer);
+	}*/
 
 	float sineValueForPhaseAndTones(float phase_, float tones) {
 		float fullTones{ 0.f }, value{ 0.0f };
@@ -107,7 +108,7 @@ public:
 		return value;
 	}
 
-    void processAdding (float freq, const Params& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
+    void processAdding (float freq, const Params& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer, float phaseShift)
     {
 		internalParams = params;
         freq = float (std::min((float)sampleRate / 2.0f, freq));
@@ -124,11 +125,11 @@ public:
 		{
 			for (int i = 0; i < samps; i++)
 			{
-				auto s1 = sineValueForPhaseAndTones(phase*juce::MathConstants<float>::twoPi, params.tones);
+				auto s1 = sineValueForPhaseAndTones((phase + phaseShift) * juce::MathConstants<float>::twoPi, params.tones);
 				*mainl++ += s1 * params.leftGain;
 				*mainr++ += s1 * params.rightGain;
 
-				auto s2 = sineValueForPhaseAndTones(phase * juce::MathConstants<float>::twoPi + juce::MathConstants<float>::halfPi, params.tones);
+				auto s2 = sineValueForPhaseAndTones((phase + phaseShift) * juce::MathConstants<float>::twoPi + juce::MathConstants<float>::halfPi, params.tones);
 				*quarterl++ += s2 * params.leftGain;
 				*quarterr++ += s2 * params.rightGain;
 
@@ -145,7 +146,7 @@ public:
 				*mainl++ += s1 * params.leftGain;
 				*mainr++ += s1 * params.rightGain;
 
-				auto s2 = (phase + 0.25f) * 2.0f - 1.0f;
+				auto s2 = std::fmod(phase + 0.25f, 1.0f) * 2.0f - 1.0f;
 				*quarterl++ += s2 * params.leftGain;
 				*quarterr++ += s2 * params.rightGain;
 
@@ -170,6 +171,7 @@ struct APVoicedOscillatorParams
     float detune = 0.0f;
     float gain = 1.0f;
 	float tones = 1.0f;
+	float phaseShift = 0.0f;
 };
 
 //==============================================================================
@@ -216,7 +218,7 @@ public:
             p.leftGain  = params.gain * (1.0f - params.pan);
             p.rightGain = params.gain * (1.0f + params.pan);
 
-            oscillators[0]->processAdding (freq, p, mainPhaseBuffer, quarterPhaseBuffer);
+            oscillators[0]->processAdding (freq, p, mainPhaseBuffer, quarterPhaseBuffer, params.phaseShift);
         }
         else
         {
@@ -233,7 +235,7 @@ public:
                 p.leftGain  = params.gain * (1.0f - pan) / float (std::sqrt (params.voices));
                 p.rightGain = params.gain * (1.0f + pan) / float (std::sqrt (params.voices));
 
-                oscillators[i]->processAdding (baseFreq * (float)std::pow(freqFactor, i), p, mainPhaseBuffer, quarterPhaseBuffer);
+                oscillators[i]->processAdding (baseFreq * (float)std::pow(freqFactor, i), p, mainPhaseBuffer, quarterPhaseBuffer, params.phaseShift);
             }
         }
     }
