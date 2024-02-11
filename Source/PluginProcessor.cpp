@@ -614,8 +614,6 @@ void APAudioProcessor::prepareToPlay (double newSampleRate, int newSamplesPerBlo
 	lfo2.setSampleRate(newSampleRate);
 	lfo3.setSampleRate(newSampleRate);
 	lfo4.setSampleRate(newSampleRate);
-
-    analogTables.setSampleRate (newSampleRate);
 }
 
 void APAudioProcessor::releaseResources()

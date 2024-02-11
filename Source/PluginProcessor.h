@@ -280,7 +280,6 @@ public:
 	juce::dsp::Limiter<float> limiter;
 
     gin::GainProcessor outputGain;
-    gin::BandLimitedLookupTables analogTables;
 
     //==============================================================================
     gin::ModMatrix modMatrix;
