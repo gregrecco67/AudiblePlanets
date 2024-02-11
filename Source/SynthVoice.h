@@ -26,27 +26,27 @@ class SynthVoice : public gin::SynthesiserVoice,
                    public gin::ModVoice
 {
 public:
-    SynthVoice (APAudioProcessor& p);
+    SynthVoice(APAudioProcessor& p);
     
     void noteStarted() override;
     void noteRetriggered() override;
-    void noteStopped (bool allowTailOff) override;
+    void noteStopped(bool allowTailOff) override;
 
     void notePressureChanged() override;
     void noteTimbreChanged() override;
 	void notePitchbendChanged() override {}
     void noteKeyStateChanged() override {}
     
-    void setCurrentSampleRate (double newRate) override;
+    void setCurrentSampleRate(double newRate) override;
 
-    void renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override;
+    void renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override;
 
     bool isVoiceActive() override;
 
     float getFilterCutoffNormalized();
   
 private:
-    void updateParams (int blockSize);
+    void updateParams(int blockSize);
 
     APAudioProcessor& proc;
 

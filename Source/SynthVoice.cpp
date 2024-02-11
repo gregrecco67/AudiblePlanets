@@ -186,13 +186,13 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 	// Apply velocity
 	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
-	osc1SineBuffer.applyGain  (osc1Vol);
+	osc1SineBuffer.applyGain(osc1Vol);
 	osc1CosineBuffer.applyGain(osc1Vol);
-	osc2SineBuffer.applyGain  (osc2Vol);
+	osc2SineBuffer.applyGain(osc2Vol);
 	osc2CosineBuffer.applyGain(osc2Vol);
-	osc3SineBuffer.applyGain  (osc3Vol);
+	osc3SineBuffer.applyGain(osc3Vol);
 	osc3CosineBuffer.applyGain(osc3Vol);
-	osc4SineBuffer.applyGain  (osc4Vol);
+	osc4SineBuffer.applyGain(osc4Vol);
 	osc4CosineBuffer.applyGain(osc4Vol);
 
 	// the whole enchilada
@@ -487,7 +487,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc1Params.detune = getValue(proc.osc1Params.detune);
 	osc1Params.phaseShift = getValue(proc.osc1Params.phase);
 	osc1Vol = getValue(proc.osc1Params.volume);
-	switch ((int)getValue(proc.osc1Params.env))
+	switch((int)getValue(proc.osc1Params.env))
 	{
 	case 0:
 		envs[0] = &env1;
@@ -510,7 +510,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc2Params.detune = getValue(proc.osc2Params.detune);
 	osc2Params.phaseShift = getValue(proc.osc2Params.phase);
 	osc2Vol = getValue(proc.osc2Params.volume);
-	switch ((int)getValue(proc.osc2Params.env))
+	switch((int)getValue(proc.osc2Params.env))
 	{
 	case 0:
 		envs[1] = &env1;
@@ -533,7 +533,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc3Params.detune = getValue(proc.osc3Params.detune);
 	osc3Params.phaseShift = getValue(proc.osc3Params.phase);
 	osc3Vol = getValue(proc.osc3Params.volume);
-	switch ((int)getValue(proc.osc3Params.env))
+	switch((int)getValue(proc.osc3Params.env))
 	{
 	case 0:
 		envs[2] = &env1;
@@ -556,7 +556,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc4Params.detune = getValue(proc.osc4Params.detune);
 	osc4Params.phaseShift = getValue(proc.osc4Params.phase);
 	osc4Vol = getValue(proc.osc4Params.volume);
-	switch ((int)getValue(proc.osc4Params.env))
+	switch((int)getValue(proc.osc4Params.env))
 	{
 	case 0:
 		envs[3] = &env1;
@@ -585,7 +585,7 @@ void SynthVoice::updateParams(int blockSize)
 
 		float q = gin::Q / (1.0f - (getValue(proc.filterParams.resonance) / 100.0f) * 0.99f);
 
-		switch (int(proc.filterParams.type->getProcValue()))
+		switch(int(proc.filterParams.type->getProcValue()))
 		{
 		case 0:
 			filter.setType(gin::Filter::lowpass);
@@ -719,7 +719,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.aCurve = getValue(proc.env2Params.acurve);
 	p.dRCurve = getValue(proc.env2Params.drcurve);
 	mode = (int)getValue(proc.env2Params.syncrepeat);
-	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
+	p.sync = (mode != 0); p.repeat = (mode != 0);
 	if (mode == 1) {
 		p.sync = true;
 		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.env2Params.duration))].toSeconds(proc.playhead);

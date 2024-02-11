@@ -49,7 +49,7 @@ public:
 	void updateState() override;
 
     void updatePitchbend();
-	void setPitchBendRange(int newPB) override;
+	//void setPitchBendRange(int newPB) override;
     
     //==============================================================================
     void handleMidiEvent(const juce::MidiMessage& m) override;
@@ -96,7 +96,7 @@ public:
     {
         ENVParams() = default;
 
-        gin::Parameter::Ptr attack, decay, sustain, release, velocityTracking,
+        gin::Parameter::Ptr attack, decay, sustain, release, //velocityTracking,
 			acurve, drcurve, syncrepeat, time, duration;
 
         void setup(APAudioProcessor& p, juce::String number);

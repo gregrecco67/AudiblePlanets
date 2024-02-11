@@ -15,8 +15,8 @@
 #include "Editor.h"
 #include "BinaryData.h"
 
-Editor::Editor (APAudioProcessor& proc_)
-    : proc ( proc_ )
+Editor::Editor(APAudioProcessor& proc_)
+    : proc(proc_)
 {
     addAndMakeVisible(osc1);
 	addAndMakeVisible(osc2);
@@ -91,11 +91,7 @@ void Editor::resized()
     auto height = area.getHeight();
     orbitViz.setBounds(area.getRight() - (394), (int)(height * 0.5f), 394, (int)(height * 0.5f));
     
-//#if JUCE_DEBUG
-    auto f = juce::File (__FILE__).getChildFile ("../../assets/layout.json");
+    auto f = juce::File (__FILE__).getChildFile("../../assets/layout.json");
 
-    layout.setLayout ("layout.json", f);
-//#else
-//    layout.setLayout ("layout_json");
-//#endif
+    layout.setLayout("layout.json", f);
 }

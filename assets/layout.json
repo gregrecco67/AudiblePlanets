@@ -7,7 +7,7 @@
                 { "id": "D", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "S", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "R", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Vel", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                
                 { "id": "A Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
                 { "id": "DR Curve", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "Repeat", "x":  "prevR()", "y": "prevY()", "w": 56, "h": 70 },
@@ -21,7 +21,7 @@
                 { "id": "D", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "S", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "R", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Vel", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                
                 { "id": "A Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
                 { "id": "DR Curve", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "Repeat", "x":  "prevR()", "y": "prevY()", "w": 56, "h": 70 },
@@ -35,7 +35,7 @@
                 { "id": "D", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "S", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "R", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Vel", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                
                 { "id": "A Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
                 { "id": "DR Curve", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "Repeat", "x":  "prevR()", "y": "prevY()", "w": 56, "h": 70 },
@@ -49,7 +49,7 @@
                 { "id": "D", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "S", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "R", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "Vel", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                
                 { "id": "A Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
                 { "id": "DR Curve", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "Repeat", "x":  "prevR()", "y": "prevY()", "w": 56, "h": 70 },

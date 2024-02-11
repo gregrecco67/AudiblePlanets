@@ -209,5 +209,5 @@ public:
 private:
     APAudioProcessor& proc;
 	int envelopeNumber;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EnvelopeComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EnvelopeComponent)
 };

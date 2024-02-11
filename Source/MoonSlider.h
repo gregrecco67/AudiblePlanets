@@ -33,7 +33,7 @@ public:
 		juce::SettableTooltipClient::setTooltip(newTooltip);
 
 		for (auto c : getChildren())
-			if (auto stc = dynamic_cast<juce::SettableTooltipClient*> (c))
+			if (auto stc = dynamic_cast<juce::SettableTooltipClient*>(c))
 				stc->setTooltip(newTooltip);
 	}
 

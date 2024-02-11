@@ -1096,7 +1096,7 @@ public:
     {
         sampleRate = spec.sampleRate;
         oversampledSampleRate = sampleRate * oversampleRatio;
-        juce::dsp::ProcessSpec oversampledSpec{ oversampledSampleRate, static_cast<juce::uint32> (spec.maximumBlockSize * oversampleRatio), 2 };
+        juce::dsp::ProcessSpec oversampledSpec{ oversampledSampleRate, static_cast<juce::uint32>(spec.maximumBlockSize * oversampleRatio), 2 };
         auto samplesPerBlock = spec.maximumBlockSize * oversampleRatio;
         constexpr auto filterType = juce::dsp::Oversampling<float>::filterHalfBandFIREquiripple;
         oversampler = std::make_unique<juce::dsp::Oversampling<float>>(spec.numChannels, oversampleOrder, filterType);

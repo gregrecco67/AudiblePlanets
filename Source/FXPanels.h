@@ -341,12 +341,12 @@ public:
 class FXModBox : public gin::ParamBox
 {
 public:
-    FXModBox (const juce::String& name, APAudioProcessor& proc_)
-        : gin::ParamBox (name), proc (proc_)
+    FXModBox(const juce::String& name, APAudioProcessor& proc_)
+        : gin::ParamBox(name), proc(proc_)
     {
-        setName ("mod");
+        setName("mod");
         setTitle("mod sources");
-        addControl (new gin::ModSrcListBox (proc.modMatrix), 0, 0, 3, 4);
+        addControl(new gin::ModSrcListBox(proc.modMatrix), 0, 0, 3, 4);
     }
 
     APAudioProcessor& proc;
@@ -354,7 +354,7 @@ public:
 
 class PBBox : public gin::ParamBox {
 public:
-    PBBox (const juce::String& name, APAudioProcessor& proc_) : gin::ParamBox(name), proc(proc_)
+    PBBox(const juce::String& name, APAudioProcessor& proc_) : gin::ParamBox(name), proc(proc_)
     {
         setName("MPE PB");
         addControl(new gin::Knob(proc.globalParams.pitchbendRange), 0, 0);

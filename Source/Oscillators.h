@@ -43,7 +43,7 @@ enum class Wave
 class APStereoOscillator
 {
 public:
-    APStereoOscillator () {}
+    APStereoOscillator() {}
 
     struct Params
     {
@@ -54,8 +54,8 @@ public:
 		
     };
 
-    void setSampleRate (double sr)  { sampleRate = sr; }
-    void noteOn (float phase_ = -1)
+    void setSampleRate(double sr)  { sampleRate = sr; }
+    void noteOn(float phase_ = -1)
     {
         if (phase_ >= 0) {
             return;
@@ -108,15 +108,15 @@ public:
 		return value;
 	}
 
-    void processAdding (float freq, const Params& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer, float phaseShift)
+    void processAdding(float freq, const Params& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer, float phaseShift)
     {
 		internalParams = params;
-        freq = float (std::min((float)sampleRate / 2.0f, freq));
-        float delta = 1.0f / (float ((1.0f / freq) * sampleRate));
+        freq = float(std::min((float)sampleRate / 2.0f, freq));
+        float delta = 1.0f / (float((1.0f / freq) * sampleRate));
 
         int samps = mainPhaseBuffer.getNumSamples();
 		jassert(samps == quarterPhaseBuffer.getNumSamples());
-        auto mainl = mainPhaseBuffer.getWritePointer (0);
+        auto mainl = mainPhaseBuffer.getWritePointer(0);
 		auto mainr = mainPhaseBuffer.getWritePointer(1);
 		auto quarterl = quarterPhaseBuffer.getWritePointer(0);
 		auto quarterr = quarterPhaseBuffer.getWritePointer(1);
@@ -183,42 +183,42 @@ class APVoicedStereoOscillator
 public:
     APVoicedStereoOscillator() = default;
 
-    void setSampleRate (double sr)
+    void setSampleRate(double sr)
     {
         for (auto o : oscillators)
-            o->setSampleRate (sr);
+            o->setSampleRate(sr);
     }
 
-    void noteOn (float phase = -1)
+    void noteOn(float phase = -1)
     {
         for (auto o : oscillators)
-            o->noteOn (phase);
+            o->noteOn(phase);
     }
 
-    void noteOn (float phases[])
+    void noteOn(float phases[])
     {
         for (auto idx = 0; auto o : oscillators)
-            o->noteOn (phases[idx++]);
+            o->noteOn(phases[idx++]);
     }
 
-    void process (float freq, const P& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
+    void process(float freq, const P& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
 	{
 		mainPhaseBuffer.clear();
 		quarterPhaseBuffer.clear();
 		processAdding(freq, params, mainPhaseBuffer, quarterPhaseBuffer);
     }
 
-    void processAdding (float freq, const P& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
+    void processAdding(float freq, const P& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
     {
         typename O::Params p;
-        params.init (p);
+        params.init(p);
 
         if (params.voices == 1)
         {
             p.leftGain  = params.gain * (1.0f - params.pan);
             p.rightGain = params.gain * (1.0f + params.pan);
 
-            oscillators[0]->processAdding (freq, p, mainPhaseBuffer, quarterPhaseBuffer, params.phaseShift);
+            oscillators[0]->processAdding(freq, p, mainPhaseBuffer, quarterPhaseBuffer, params.phaseShift);
         }
         else
         {
@@ -230,12 +230,12 @@ public:
 
             for (int i = 0; i < params.voices; i++)
             {
-                float pan = juce::jlimit (-1.0f, 1.0f, basePan + panDelta * i);
+                float pan = juce::jlimit(-1.0f, 1.0f, basePan + panDelta * i);
 
-                p.leftGain  = params.gain * (1.0f - pan) / float (std::sqrt (params.voices));
-                p.rightGain = params.gain * (1.0f + pan) / float (std::sqrt (params.voices));
+                p.leftGain  = params.gain * (1.0f - pan) / float(std::sqrt (params.voices));
+                p.rightGain = params.gain * (1.0f + pan) / float(std::sqrt (params.voices));
 
-                oscillators[i]->processAdding (baseFreq * (float)std::pow(freqFactor, i), p, mainPhaseBuffer, quarterPhaseBuffer, params.phaseShift);
+                oscillators[i]->processAdding(baseFreq * (float)std::pow(freqFactor, i), p, mainPhaseBuffer, quarterPhaseBuffer, params.phaseShift);
             }
         }
     }
@@ -248,7 +248,7 @@ struct APVoicedStereoOscillatorParams : public APVoicedOscillatorParams
 {
     Wave wave = Wave::sine;
 
-    inline void init (APStereoOscillator::Params& p) const
+    inline void init(APStereoOscillator::Params& p) const
     {
         p.wave = wave;
 		p.tones = tones;
@@ -261,9 +261,9 @@ struct APVoicedStereoOscillatorParams : public APVoicedOscillatorParams
 class APBLLTVoicedStereoOscillator : public APVoicedStereoOscillator<APStereoOscillator, APVoicedStereoOscillatorParams>
 {
 public:
-    APBLLTVoicedStereoOscillator ()
+    APBLLTVoicedStereoOscillator()
     {
         for (int i = 0; i < 4; i++)
-            oscillators.add (new APStereoOscillator());
+            oscillators.add(new APStereoOscillator());
     }
 };

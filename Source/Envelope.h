@@ -334,7 +334,7 @@ public:
         return out; // envelopeVal;
     }
 
-    void processMultiplying (juce::AudioSampleBuffer& buffer) {
+    void processMultiplying(juce::AudioSampleBuffer& buffer) {
         auto numSamples = buffer.getNumSamples();
         auto outLeft = buffer.getWritePointer(0);
         auto outRight = buffer.getWritePointer(1);

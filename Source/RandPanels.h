@@ -16,6 +16,7 @@
 #include "PluginProcessor.h"
 #include "EnvelopeComponent.h"
 #include "APColors.h"
+#include "MoonKnob.h"
 
 class RandMatrixBox : public gin::ParamBox
 {
@@ -89,7 +90,7 @@ public:
 		addControl(f = new gin::Knob(osc.fine, true), 1, 0);
 		addControl(r = new gin::Knob(osc.volume), 2, 0);
 		addControl(new gin::Knob(osc.tones), 3, 0);
-		
+		addControl(new MoonKnob(osc.phase), 1, 1);
 
 
 		switch (osc.num) {
@@ -118,17 +119,8 @@ public:
 		addControl(new gin::Knob(osc.detune), 2, 1);
 		addControl(new gin::Knob(osc.spread), 3, 1);
 
-		addControl(new gin::Select(osc.env), 0, 1);
+		addControl(env = new gin::Select(osc.env), 0, 1);
 		addControl(fixed = new gin::Switch(osc.fixed));
-
-		watchParam(osc.fixed);
-		watchParam(osc.saw);
-		watchParam(osc.coarse);
-		watchParam(osc.fine);
-
-		addAndMakeVisible(fixedHz);
-
-		fixedHz.setJustificationType(Justification::centred);
 	}
 
 	~RandOSCBox() override
@@ -172,22 +164,10 @@ public:
 	};
 
 
-	void paramChanged() override {
-		gin::ParamBox::paramChanged();
-		if (osc.fixed->isOn()) {
-			fixedHz.setVisible(true);
-			fixedHz.setText(String((osc.coarse->getUserValue() + osc.fine->getUserValue()) * 100) + String(" Hz"), juce::dontSendNotification);
-		}
-		else {
-			fixedHz.setVisible(false);
-		}
-	}
-
 	void resized() override {
 		gin::ParamBox::resized();
-
-		fixedHz.setBounds(56, 76 + 23, 56, 35);
-		fixed->setBounds(56, 70 + 35 + 23, 56, 35);
+		env->setBounds(0, 70 + 23 + 35, 56, 35);
+		fixed->setBounds(0, 70 + 23, 56, 35);
 	}
 	rAPLookAndFeel1 lnf1;
 	rAPLookAndFeel2 lnf2;
@@ -195,6 +175,5 @@ public:
 	rAPLookAndFeel4 lnf4;
 	APAudioProcessor& proc;
 	APAudioProcessor::OSCParams& osc;
-	gin::ParamComponent::Ptr c = nullptr, f = nullptr, r = nullptr, fixed = nullptr;
-	Label fixedHz;
+	gin::ParamComponent::Ptr c = nullptr, f = nullptr, r = nullptr, fixed = nullptr, env = nullptr;
 };
