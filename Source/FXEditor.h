@@ -49,5 +49,5 @@ private:
 		fxb4Selector{ proc.fxOrderParams.fxb4 };
     FXModBox mod{"mod", proc};
 	MatrixBox matrix{"matrix", proc};
-    PBBox pbBox{"Pitchbend", proc};
+    PBBox pbBox{"Pitchwheel", proc};
 };

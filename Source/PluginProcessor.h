@@ -49,6 +49,7 @@ public:
 	void updateState() override;
 
     void updatePitchbend();
+	void setPitchBendRange(int newPB) override;
     
     //==============================================================================
     void handleMidiEvent(const juce::MidiMessage& m) override;

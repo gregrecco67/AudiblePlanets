@@ -486,7 +486,6 @@ void SynthVoice::updateParams(int blockSize)
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
 	osc1Params.detune = getValue(proc.osc1Params.detune);
 	osc1Params.phaseShift = getValue(proc.osc1Params.phase);
-	DBG(osc1Params.phaseShift);
 	osc1Vol = getValue(proc.osc1Params.volume);
 	switch ((int)getValue(proc.osc1Params.env))
 	{

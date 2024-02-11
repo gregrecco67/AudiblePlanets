@@ -306,7 +306,7 @@ void APAudioProcessor::GlobalParams::setup (APAudioProcessor& p)
     glideRate      = p.addExtParam ("gRate",   "Glide Rate", "Rate",  "s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
     legato         = p.addIntParam ("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
     level          = p.addExtParam ("level",   "Level",      "",      "db", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
-	velSens        = p.addExtParam ("velSens", "Vel. Sens.",   "",      "",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
+	velSens        = p.addExtParam ("velSens", "Vel. Sens.",   "",      "%",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
     voices         = p.addIntParam ("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
     mpe            = p.addIntParam ("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
     pitchbendRange = p.addIntParam("pbrange", "Range", "", "", {0.0, 96.0, 1.0, 1.0}, 12.0, 0.0f);
@@ -458,7 +458,6 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 }
 
 void APAudioProcessor::updatePitchbend() {
-	DBG("updatePitchbend");
     setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
