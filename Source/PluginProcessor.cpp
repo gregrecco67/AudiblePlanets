@@ -14,7 +14,6 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "SynthVoice.h"
 
 static juce::String waveshaperTypeTextFunction(const gin::Parameter&, float v)
 {
@@ -459,6 +458,7 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 }
 
 void APAudioProcessor::updatePitchbend() {
+	DBG("updatePitchbend");
     setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
@@ -473,7 +473,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     enableLegacyMode(12);
     setVoiceStealingEnabled (true);
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 8; i++)
     {
         auto voice = new SynthVoice (*this);
         modMatrix.addVoice (voice);
