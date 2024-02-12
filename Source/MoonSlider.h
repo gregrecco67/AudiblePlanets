@@ -44,8 +44,36 @@ private:
 	void paint(juce::Graphics& g) override
 	{
 		if (filmStrip.isValid()) {
-			int sliderVal = std::clamp((int)((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFrames_ - 1)), 0, 125);
+			double val = getValue();
+			double min = getMinimum();
+			double max = getMaximum();
+			double height = getHeight();
+			double width = getWidth();
+			int sliderVal = std::clamp((int)((val - min) / (max - min) * (numFrames_ - 1)), 0, 125);
 			g.drawImage(filmStrip, 0, 0, getWidth(), getHeight(), sliderVal * frameWidth, 0, 128, 128);
+			g.setColour(juce::Colours::white.withAlpha(0.9f));
+
+
+			if (getProperties().contains("modValues") && isEnabled())
+			{
+				auto mainVal = -val * (max - min) + min + 1;
+				auto mainX = mainVal * getWidth();
+				g.fillEllipse(mainX, height - 4, 4.0f, 4.0f); // show slider value as dot on bottom
+
+				auto varArray = getProperties()["modValues"];
+				if (varArray.isArray())
+				{
+					for (auto value : *varArray.getArray())
+					{
+						float modVal = -float(value) * (getMaximum() - getMinimum()) + getMinimum() + 1;
+
+						float modX = modVal * getWidth();
+						
+						g.fillEllipse(modX, 0, 4.0f, 4.0f); // show mod values as dots on top
+					}
+				}
+			}
+
 		}
 	}
 	juce::Image filmStrip;

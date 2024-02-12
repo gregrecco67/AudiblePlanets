@@ -47,7 +47,7 @@ private:
     juce::Component tab1, tab2, tab3;
 
     Editor editor { proc };
-	FXEditor fxEditor{ proc};
+	FXEditor fxEditor{ proc };
 	RandEditor randEditor{ proc };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessorEditor)

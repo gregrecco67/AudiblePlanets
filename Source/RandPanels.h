@@ -45,9 +45,9 @@ public:
 		addControl(new gin::Knob(envparams.sustain), 2, 0);
 		addControl(new gin::Knob(envparams.release), 3, 0);
 		addControl(new gin::Knob(envparams.acurve, true), 4, 0);
-		addControl(new gin::Knob(envparams.drcurve), 5, 0);
+		addControl(new gin::Knob(envparams.drcurve, true), 5, 0);
 		addControl(new gin::Select(envparams.syncrepeat), 0, 1);
-		addControl(r = new gin::Knob(envparams.time, true), 1, 1);
+		addControl(r = new gin::Knob(envparams.time), 1, 1);
 		addControl(b = new gin::Select(envparams.duration), 1, 1);
 		watchParam(envparams.syncrepeat);
 		addAndMakeVisible(display);
@@ -88,7 +88,12 @@ public:
 		setName(name);
 
 		addControl(c = new gin::Knob(osc.coarse), 0, 0);
-		addControl(f = new gin::Knob(osc.fine, true), 1, 0);
+		if (osc.num == 1) {
+			addControl(f = new gin::Knob(osc.fine), 1, 0);
+		}
+		else {
+			addControl(f = new gin::Knob(osc.fine, true), 1, 0);
+		}
 		addControl(r = new gin::Knob(osc.volume), 2, 0);
 		addControl(new gin::Knob(osc.tones), 3, 0);
 		addControl(new MoonKnob(osc.phase), 1, 1);
@@ -118,7 +123,7 @@ public:
 		}
 
 		addControl(new gin::Knob(osc.detune), 2, 1);
-		addControl(new gin::Knob(osc.spread), 3, 1);
+		addControl(new gin::Knob(osc.spread, true), 3, 1);
 
 		addControl(env = new gin::Select(osc.env), 0, 1);
 		addControl(fixed = new gin::Switch(osc.fixed));

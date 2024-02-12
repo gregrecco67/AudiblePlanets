@@ -31,7 +31,12 @@ public:
         setName( name );
 
         addControl(c = new gin::Knob(osc.coarse), 0, 0);
-        addControl(f = new gin::Knob(osc.fine, true), 1, 0);
+		if (osc.num == 1) {
+			addControl(f = new gin::Knob(osc.fine), 1, 0);
+		}
+		else {
+	        addControl(f = new gin::Knob(osc.fine, true), 1, 0);
+		}
         addControl(r = new gin::Knob(osc.volume), 2, 0);
         addControl(new gin::Knob(osc.tones), 3, 0);
 		addControl(new gin::Switch(osc.saw), 4, 0);
@@ -62,7 +67,7 @@ public:
 		}
 
         addControl(new gin::Knob(osc.detune), 2, 2);
-        addControl(new gin::Knob(osc.spread), 3, 2);
+        addControl(new gin::Knob(osc.spread, true), 3, 2);
         addControl(new gin::Knob(osc.pan, true), 4, 2);
 
         addControl(new gin::Select(osc.env));
@@ -179,8 +184,8 @@ public:
         addControl(new gin::Knob(envparams.sustain), 2, 1);
         addControl(new gin::Knob(envparams.release), 3, 1);
 		addControl(new gin::Knob(envparams.acurve, true), 0, 2);
-		addControl(new gin::Knob(envparams.drcurve), 1, 2);
-		addControl(r = new gin::Knob(envparams.time, true), 2, 2);
+		addControl(new gin::Knob(envparams.drcurve, true), 1, 2);
+		addControl(r = new gin::Knob(envparams.time), 2, 2);
 		addControl(b =new gin::Select(envparams.duration), 3, 2);
 		addControl(new gin::Select(envparams.syncrepeat), 4, 2);
 		watchParam(envparams.syncrepeat);
@@ -215,7 +220,7 @@ public:
 
 		auto& timbreparams = proc.timbreParams;
 		addControl(new gin::Knob(timbreparams.equant, true), 0, 0);
-		addControl(new gin::Knob(timbreparams.pitch, true), 0, 1);
+		addControl(new gin::Knob(timbreparams.pitch), 0, 1);
 		addControl(new gin::Knob(timbreparams.blend), 1, 1);
         addControl(new gin::Knob(timbreparams.algo), 1, 0);
 		addControl(new gin::Knob(timbreparams.demodmix, true), 1, 2);
