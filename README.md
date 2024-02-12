@@ -47,6 +47,10 @@ cmake -B build -G Xcode
 ```
 If using Visual Studio, just open the folder. If you're on Linux, you probably know what to do. The CMake project defaults to producing a standalone version of the plugin, too, but on Windows at least, the performance is poor. If you don't want it or any other particular format built, just remove the entry from the `FORMAT` line in `juce_add_plugin` in `CMakeLists.txt`. The project is configured to copy the plugin to the right place after building it.
 
+## Installing Presets
+
+A few example presets are located [here](https://github.com/gregrecco67/Audible-Planets-Presets) and can be installed (manually). On Windows, the install location should be ```%HOMEPATH%\AppData\Roaming\com.void-star\Audible Planets\programs```. On Mac OS, it should be ```~/Library/Application Support/com.void-star/Audible Planets/programs```.
+
 ## Pages
 
 The synth has three main pages: "Main," "FX," and "Rand." The Main page contains the main controls for sound generation. The FX page contains the built-in effects arranged in one or two chains. The Randomization page contains controls for randomizing the main parameters and modulation settings in a variety of groups, as well as a slightly different interface for the envelopes and oscillators.
