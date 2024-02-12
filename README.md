@@ -49,7 +49,7 @@ If using Visual Studio, just open the folder. If you're on Linux, you probably k
 
 ## Installing Presets
 
-A few example presets are located [here](https://github.com/gregrecco67/Audible-Planets-Presets) and can be installed (manually). On Windows, the install location should be ```%HOMEPATH%\AppData\Roaming\com.void-star\Audible Planets\programs```. On Mac OS, it should be ```~/Library/Application Support/com.void-star/Audible Planets/programs```.
+A few example presets are located [here](https://github.com/gregrecco67/Audible-Planets-Presets) and can be installed (manually). On Windows, the install location should be ```%HOMEPATH%\AppData\Roaming\com.void-star\Audible Planets\programs```. On Mac OS, it should be ```~/Library/Application Support/com.void-star/Audible Planets/programs```. On Linux, it should be ```~/.config/com.void-star/Audible Planets/programs```.
 
 ## Pages
 
