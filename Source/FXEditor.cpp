@@ -59,9 +59,12 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	valueUpdated(proc.fxOrderParams.fxb3);
 	valueUpdated(proc.fxOrderParams.fxb4);
     
-    addAndMakeVisible(pbBox);
+	addAndMakeVisible(outLevel);
+
 	addAndMakeVisible(laneAGain);
 	addAndMakeVisible(laneBGain);
+
+    //addAndMakeVisible(pbBox);
 }
 
 
@@ -90,12 +93,14 @@ void FXEditor::resized()
 	fxb3Box.setBounds(656, 343, 168, 233);
 	fxb4Box.setBounds(834, 343, 168, 233);
 	
+	outLevel.setBounds(1116, 7, 42, 57);
+
 	chainSetting.setBounds(1009, 289, 168, 35);
     
 	laneAGain.setBounds(1065, 113, 70, 87);
 	laneBGain.setBounds(1065, 426, 70, 87);
 
-    pbBox.setBounds(1124, 560, 56, 90);
+    //pbBox.setBounds(1124, 560, 56, 90);
 }
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
