@@ -53,7 +53,6 @@ private:
 			g.drawImage(filmStrip, 0, 0, getWidth(), getHeight(), sliderVal * frameWidth, 0, 128, 128);
 			g.setColour(juce::Colours::white.withAlpha(0.9f));
 
-
 			if (getProperties().contains("modValues") && isEnabled())
 			{
 				auto mainVal = -val * (max - min) + min + 1;
@@ -66,9 +65,7 @@ private:
 					for (auto value : *varArray.getArray())
 					{
 						float modVal = -float(value) * (getMaximum() - getMinimum()) + getMinimum() + 1;
-
 						float modX = modVal * getWidth();
-						
 						g.fillEllipse(modX, 0, 4.0f, 4.0f); // show mod values as dots on top
 					}
 				}

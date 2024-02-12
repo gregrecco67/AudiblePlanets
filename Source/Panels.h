@@ -79,7 +79,6 @@ public:
 		watchParam(osc.fine);
 
 		addAndMakeVisible(fixedHz);
-		//addAndMakeVisible(phaseKnob);
 
 		fixedHz.setJustificationType(Justification::centred);
     }
@@ -235,6 +234,7 @@ public:
         : gin::ParamBox(name), proc(proc_)
     {
         setName("flt");
+		setTitle("filter");
 
         auto& flt = proc.filterParams;
 
