@@ -30,14 +30,14 @@ public:
 
 private:
 	APAudioProcessor& proc;
-	FXBox fxa1Box{ "A1", proc, proc.fxOrderParams.fxa1 },
-		fxa2Box{ "A2", proc, proc.fxOrderParams.fxa2 },
-		fxa3Box{ "A3", proc, proc.fxOrderParams.fxa3 },
-		fxa4Box{ "A4", proc, proc.fxOrderParams.fxa4 },
-		fxb1Box{ "B1", proc, proc.fxOrderParams.fxb1 },
-		fxb2Box{ "B2", proc, proc.fxOrderParams.fxb2 },
-		fxb3Box{ "B3", proc, proc.fxOrderParams.fxb3 },
-		fxb4Box{ "B4", proc, proc.fxOrderParams.fxb4 };
+	FXBox fxa1Box{ "FX A1", proc, proc.fxOrderParams.fxa1 },
+		fxa2Box{ "FX A2", proc, proc.fxOrderParams.fxa2 },
+		fxa3Box{ "FX A3", proc, proc.fxOrderParams.fxa3 },
+		fxa4Box{ "FX A4", proc, proc.fxOrderParams.fxa4 },
+		fxb1Box{ "FX B1", proc, proc.fxOrderParams.fxb1 },
+		fxb2Box{ "FX B2", proc, proc.fxOrderParams.fxb2 },
+		fxb3Box{ "FX B3", proc, proc.fxOrderParams.fxb3 },
+		fxb4Box{ "FX B4", proc, proc.fxOrderParams.fxb4 };
 	gin::Select chainSetting{ proc.fxOrderParams.chainAtoB };
 	gin::Select fxa1Selector{proc.fxOrderParams.fxa1},
 		fxa2Selector{ proc.fxOrderParams.fxa2 },
@@ -49,5 +49,6 @@ private:
 		fxb4Selector{ proc.fxOrderParams.fxb4 };
     FXModBox mod{"mod", proc};
 	MatrixBox matrix{"matrix", proc};
-    PBBox pbBox{"Pitchwheel", proc};
+    PBBox pbBox{"Pchwhl", proc};
+	gin::Knob laneAGain{ proc.fxOrderParams.laneAGain }, laneBGain{ proc.fxOrderParams.laneBGain };
 };

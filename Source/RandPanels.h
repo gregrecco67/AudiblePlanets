@@ -30,6 +30,7 @@ public:
 	}
 
 	APAudioProcessor& proc;
+
 };
 
 class RandENVBox : public gin::ParamBox

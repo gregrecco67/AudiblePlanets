@@ -233,7 +233,7 @@ public:
         
         FXOrderParams() = default;
         
-        gin::Parameter::Ptr fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4, chainAtoB;
+        gin::Parameter::Ptr fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4, chainAtoB, laneAGain, laneBGain;
         
         void setup(APAudioProcessor& p);
         

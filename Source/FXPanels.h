@@ -346,7 +346,7 @@ public:
     {
         setName("mod");
         setTitle("mod sources");
-        addControl(new gin::ModSrcListBox(proc.modMatrix), 0, 0, 3, 4);
+        addControl(new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 4);
     }
 
     APAudioProcessor& proc;
@@ -371,7 +371,7 @@ public:
 	{
 		setName("mtx");
 
-		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 3, 2);
+		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.1);
 	}
 
 	APAudioProcessor& proc;

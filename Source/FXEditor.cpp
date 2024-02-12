@@ -60,34 +60,42 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	valueUpdated(proc.fxOrderParams.fxb4);
     
     addAndMakeVisible(pbBox);
+	addAndMakeVisible(laneAGain);
+	addAndMakeVisible(laneBGain);
 }
 
 
 void FXEditor::resized()
 {
-	fxa1Box.setBounds(150, 50, 168, 233);
-	fxa2Box.setBounds(378, 50, 168, 233);
-	fxa3Box.setBounds(606, 50, 168, 233);
-	fxa4Box.setBounds(834, 50, 168, 233);
-	fxb1Box.setBounds(150, 323, 168, 233);
-	fxb2Box.setBounds(378, 323, 168, 233);
-	fxb3Box.setBounds(606, 323, 168, 233);
-	fxb4Box.setBounds(834, 323, 168, 233);
-	chainSetting.setBounds(15, 7, 120, 35);
+    mod.setBounds(10, 7, 280, 303);
+	matrix.setBounds(10, 320, 280, 320);
 	
-    mod.setBounds(1011, 50, 168, 303);
-	matrix.setBounds(1011, 360, 168, 196);
-    
-	fxa1Selector.setBounds(150, 7, 168, 35); // place these above, adjust the panels' size
-	fxa2Selector.setBounds(378, 7, 168, 35);
-	fxa3Selector.setBounds(606, 7, 168, 35);
+	fxa1Selector.setBounds(300, 7, 168, 35); // place these above, adjust the panels' size
+	fxa2Selector.setBounds(478, 7, 168, 35);
+	fxa3Selector.setBounds(656, 7, 168, 35);
 	fxa4Selector.setBounds(834, 7, 168, 35);
-	fxb1Selector.setBounds(150, 290, 168, 35);
-	fxb2Selector.setBounds(378, 290, 168, 35);
-	fxb3Selector.setBounds(606, 290, 168, 35);
-	fxb4Selector.setBounds(834, 290, 168, 35);
+	
+	fxa1Box.setBounds(300, 30, 168, 233);
+	fxa2Box.setBounds(478, 30, 168, 233);
+	fxa3Box.setBounds(656, 30, 168, 233);
+	fxa4Box.setBounds(834, 30, 168, 233);
+	
+	fxb1Selector.setBounds(300, 320, 168, 35);
+	fxb2Selector.setBounds(478, 320, 168, 35);
+	fxb3Selector.setBounds(656, 320, 168, 35);
+	fxb4Selector.setBounds(834, 320, 168, 35);
+	
+	fxb1Box.setBounds(300, 343, 168, 233);
+	fxb2Box.setBounds(478, 343, 168, 233);
+	fxb3Box.setBounds(656, 343, 168, 233);
+	fxb4Box.setBounds(834, 343, 168, 233);
+	
+	chainSetting.setBounds(1009, 289, 168, 35);
     
-    pbBox.setBounds(1011, 562, 56*2, 90);
+	laneAGain.setBounds(1065, 113, 70, 87);
+	laneBGain.setBounds(1065, 426, 70, 87);
+
+    pbBox.setBounds(1124, 560, 56, 90);
 }
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
