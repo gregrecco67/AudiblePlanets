@@ -49,6 +49,5 @@ private:
 		fxb4Selector{ proc.fxOrderParams.fxb4 };
     FXModBox mod{"mod", proc};
 	MatrixBox matrix{"matrix", proc};
-    //PBBox pbBox{"Pchwhl", proc};
 	gin::Knob laneAGain{ proc.fxOrderParams.laneAGain }, laneBGain{ proc.fxOrderParams.laneBGain }, outLevel{ proc.globalParams.level };
 };

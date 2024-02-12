@@ -354,17 +354,6 @@ public:
     APAudioProcessor& proc;
 };
 
-class PBBox : public gin::ParamBox {
-public:
-    PBBox(const juce::String& name, APAudioProcessor& proc_) : gin::ParamBox(name), proc(proc_)
-    {
-        setName("MPE PB");
-        addControl(new gin::Knob(proc.globalParams.pitchbendRange), 0, 0);
-	}
-
-    APAudioProcessor& proc;
-};
-
 class MatrixBox : public gin::ParamBox
 {
 public:

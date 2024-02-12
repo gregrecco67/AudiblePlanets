@@ -63,8 +63,6 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 
 	addAndMakeVisible(laneAGain);
 	addAndMakeVisible(laneBGain);
-
-    //addAndMakeVisible(pbBox);
 }
 
 
@@ -99,8 +97,6 @@ void FXEditor::resized()
     
 	laneAGain.setBounds(1065, 113, 70, 87);
 	laneBGain.setBounds(1065, 426, 70, 87);
-
-    //pbBox.setBounds(1124, 560, 56, 90);
 }
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
