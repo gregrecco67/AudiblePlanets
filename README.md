@@ -2,6 +2,7 @@
 # Audible Planets
 
 An expressive, quasi-Ptolemaic semi-modular synthesizer.
+
 ![p1](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/537a7f4a-6a9f-4248-bd12-12896b3f5863)
 
 ![p2](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/7ae18ffb-5eb5-4ede-a289-a1dd21a3c9de)
