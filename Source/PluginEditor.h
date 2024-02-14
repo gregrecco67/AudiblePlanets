@@ -35,6 +35,7 @@ public:
     void resized() override;
     void addMenuItems(juce::PopupMenu& m) override;
     bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
+    using juce::Component::keyPressed; // above is overloaded
 
 private:
     APAudioProcessor& proc;

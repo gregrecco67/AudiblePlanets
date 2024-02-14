@@ -44,28 +44,28 @@ private:
 	void paint(juce::Graphics& g) override
 	{
 		if (filmStrip.isValid()) {
-			double val = getValue();
-			double min = getMinimum();
-			double max = getMaximum();
-			double height = getHeight();
-			double width = getWidth();
+			float val = (float)getValue();
+			float min = (float)getMinimum();
+			float max = (float)getMaximum();
+			auto height = (float)getHeight();
+			auto width = (float)getWidth();
 			int sliderVal = std::clamp((int)((val - min) / (max - min) * (numFrames_ - 1)), 0, 125);
-			g.drawImage(filmStrip, 0, 0, getWidth(), getHeight(), sliderVal * frameWidth, 0, 128, 128);
+			g.drawImage(filmStrip, 0, 0, (int)width, (int)height, sliderVal * frameWidth, 0, 128, 128);
 			g.setColour(juce::Colours::white.withAlpha(0.9f));
 
 			if (getProperties().contains("modValues") && isEnabled())
 			{
 				auto mainVal = -val * (max - min) + min + 1;
-				auto mainX = mainVal * getWidth();
+				auto mainX = mainVal * width;
 				g.fillEllipse(mainX-2, height - 4, 4.0f, 4.0f); // show slider value as dot on bottom
 
 				auto varArray = getProperties()["modValues"];
 				if (varArray.isArray())
 				{
-					for (auto value : *varArray.getArray())
+					for (auto value_ : *varArray.getArray())
 					{
-						float modVal = -float(value) * (getMaximum() - getMinimum()) + getMinimum() + 1;
-						float modX = modVal * getWidth();
+						float modVal = float(-float(value_) * (getMaximum() - getMinimum()) + getMinimum() + 1);
+						float modX = modVal * width;
 						g.fillEllipse(modX-2, 0, 4.0f, 4.0f); // show mod values as dots on top
 					}
 				}

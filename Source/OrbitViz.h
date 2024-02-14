@@ -27,7 +27,7 @@ public:
 		scale = input;
 		mouseScale = std::clamp(mouseScale + scale, 0.1f, 10.f) - scale;
 	}
-	void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override {
+	void mouseWheelMove(const juce::MouseEvent& /*event*/, const juce::MouseWheelDetails& wheel) override {
 		if (wheel.deltaY > 0) {
 			if (!wheel.isReversed)
 			{

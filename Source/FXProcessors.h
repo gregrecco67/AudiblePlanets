@@ -308,10 +308,10 @@ public:
 
         // Ratio of our sample rate to the sample rate that is used in
         // Dattorro's paper.
-        F r = sampleRate / 29761.0;
+        F r = sampleRate / 29761.0f;
 
         // Predelay
-        predelayLine.reset(new DelayLine(std::ceil(sampleRate * kMaxPredelay)));
+        predelayLine.reset(new DelayLine((uint32_t)std::ceil(sampleRate * kMaxPredelay)));
 
         // Lowpass filters
         lowpass.setSampleRate(sampleRate);
@@ -319,32 +319,32 @@ public:
         rightTank.damping.setSampleRate(sampleRate);
 
         // Diffusers
-        diffusers[0].reset(new DelayAllpass(std::ceil(142 * r), 0.75));
-        diffusers[1].reset(new DelayAllpass(std::ceil(107 * r), 0.75));
-        diffusers[2].reset(new DelayAllpass(std::ceil(379 * r), 0.625));
-        diffusers[3].reset(new DelayAllpass(std::ceil(277 * r), 0.625));
+        diffusers[0].reset(new DelayAllpass((uint32_t)std::ceil(142 * r), 0.75));
+        diffusers[1].reset(new DelayAllpass((uint32_t)std::ceil(107 * r), 0.75));
+        diffusers[2].reset(new DelayAllpass((uint32_t)std::ceil(379 * r), 0.625));
+        diffusers[3].reset(new DelayAllpass((uint32_t)std::ceil(277 * r), 0.625));
 
         // Tanks
-        F maxModDepth = 8.0 * kMaxSize * r;
+        F maxModDepth = 8.0f * kMaxSize * r;
         leftTank.resetDelayLines(
-            std::ceil(kMaxSize * 672 * r), -0.7, // apf1
+            (uint32_t)std::ceil(kMaxSize * 672 * r), -0.7f, // apf1
             maxModDepth,
-            std::ceil(kMaxSize * 4453 * r),      // del1
-            std::ceil(kMaxSize * 1800 * r), 0.5, // apf2
-            std::ceil(kMaxSize * 3720 * r)       // del2
+            (uint32_t)std::ceil(kMaxSize * 4453 * r),      // del1
+            (uint32_t)std::ceil(kMaxSize * 1800 * r), 0.5, // apf2
+            (uint32_t)std::ceil(kMaxSize * 3720 * r)       // del2
         );
         rightTank.resetDelayLines(
-            std::ceil(kMaxSize * 908 * r), -0.7, // apf1
+            (uint32_t)std::ceil(kMaxSize * 908 * r), -0.7f, // apf1
             maxModDepth,
-            std::ceil(kMaxSize * 4217 * r),      // del1
-            std::ceil(kMaxSize * 2656 * r), 0.5, // apf2
-            std::ceil(kMaxSize * 3163 * r)       // del2
+            (uint32_t)std::ceil(kMaxSize * 4217 * r),      // del1
+            (uint32_t)std::ceil(kMaxSize * 2656 * r), 0.5f, // apf2
+            (uint32_t)std::ceil(kMaxSize * 3163 * r)       // del2
         );
 
         leftTank.lfo.setSampleRate(sampleRate);
         rightTank.lfo.setSampleRate(sampleRate);
         leftTank.lfo.setFrequency(1.0);
-        rightTank.lfo.setFrequency(0.95);
+        rightTank.lfo.setFrequency(0.95f);
 
         // Tap points
         baseLeftTaps = {
@@ -573,7 +573,7 @@ private:
             // gets passed in here, without going past the original size.
             jassert(delay <= size);
 
-            I d = delay;
+            I d = (uint32_t)delay;
             F frac = 1 - (delay - d);
 
             I readIdx = (writeIdx - 1) - d;
@@ -705,7 +705,7 @@ private:
             apf1Size = apf1Size_;
             maxModDepth = maxModDepth_;
             F maxApf1Size = apf1Size + maxModDepth + 1;
-            apf1.reset(new DelayAllpass(maxApf1Size, apf1Gain_));
+            apf1.reset(new DelayAllpass((uint32_t)maxApf1Size, apf1Gain_));
 
             del1.reset(new DelayLine(delay1Size_));
             apf2.reset(new DelayAllpass(apf2Size_, apf2Gain_));

@@ -125,7 +125,7 @@ public:
 		juce::NormalisableRange<float> attackRange{ 0.0, 60.0, 0.0, 0.2f };
         auto attackLength = attackRange.convertTo0to1(attack) * width / 4.f;
 
-        float attackFirstControlX{ 0.f }, attackFirstControlY{ 0.f }, attackSecondControlX{ 0.f }, attackSecondControlY{ height };
+        float attackFirstControlX{ 0.f }, attackFirstControlY{ 0.f }, attackSecondControlX{ 0.f }, attackSecondControlY;
 
         float fudgeUIFactor = 0.75f;
 
@@ -144,7 +144,7 @@ public:
 
 
         auto decayLength = attackRange.convertTo0to1(decay) * width / 4.f;
-        float decayFirstControlX{ 0.f }, decayFirstControlY{ 0.f }, decaySecondControlX{ 0.f }, decaySecondControlY{ sustain * height };
+        float decayFirstControlX{ 0.f }, decayFirstControlY{ 0.f }, decaySecondControlX{ 0.f }, decaySecondControlY;
         float decayEndX = attackLength + decayLength;
         float decayEndY = sustain * height;
 
