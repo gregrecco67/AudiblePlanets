@@ -57,7 +57,7 @@ private:
 			{
 				auto mainVal = -val * (max - min) + min + 1;
 				auto mainX = mainVal * getWidth();
-				g.fillEllipse(mainX, height - 4, 4.0f, 4.0f); // show slider value as dot on bottom
+				g.fillEllipse(mainX-2, height - 4, 4.0f, 4.0f); // show slider value as dot on bottom
 
 				auto varArray = getProperties()["modValues"];
 				if (varArray.isArray())
@@ -66,7 +66,7 @@ private:
 					{
 						float modVal = -float(value) * (getMaximum() - getMinimum()) + getMinimum() + 1;
 						float modX = modVal * getWidth();
-						g.fillEllipse(modX, 0, 4.0f, 4.0f); // show mod values as dots on top
+						g.fillEllipse(modX-2, 0, 4.0f, 4.0f); // show mod values as dots on top
 					}
 				}
 			}

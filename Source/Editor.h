@@ -26,7 +26,7 @@ class Editor : public juce::Component, public juce::Timer
 public:
     Editor(APAudioProcessor& proc_);
 
-    void setupCallbacks();
+    //void setupCallbacks();
     void resized() override;
     void timerCallback() override;
 

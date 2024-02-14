@@ -37,13 +37,13 @@ Editor::Editor(APAudioProcessor& proc_)
     addAndMakeVisible(orbitViz);
     addAndMakeVisible(orbit);
     
-	setupCallbacks();
+	//setupCallbacks();
     startTimerHz(frameRate);
 }
 
-void Editor::setupCallbacks()
-{
-}
+//void Editor::setupCallbacks()
+//{
+//}
 
 void Editor::timerCallback() {
     auto speed = proc.orbitParams.speed->getUserValue();

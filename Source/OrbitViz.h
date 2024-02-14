@@ -13,16 +13,45 @@
  */
 
 #pragma once
+#include <JuceHeader.h>
 #include <juce_gui_basics/juce_gui_basics.h>
-//#include <melatonin_blur/melatonin_blur.h>
 
 
 class OrbitViz : public juce::Component {
 public:
+	OrbitViz() { addMouseListener(this, true); }
 	struct Position { float x; float y; };
 	Position epicycleCenter{ 1,0 };
 
-	void setScale(float input) { scale = input; }
+	void setScale(float input) { 
+		scale = input;
+		mouseScale = std::clamp(mouseScale + scale, 0.1f, 10.f) - scale;
+	}
+	void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override {
+		if (wheel.deltaY > 0) {
+			if (!wheel.isReversed)
+			{
+				mouseScale += 0.1f;
+			}
+			else
+			{
+				mouseScale -= 0.1f;
+			}
+		}
+		else {
+			if (!wheel.isReversed)
+			{
+				mouseScale -= 0.1f;
+			}
+			else
+			{
+				mouseScale += 0.1f;
+			}
+		}
+		mouseScale = std::clamp(mouseScale + scale, 0.1f, 10.f) - scale;
+
+		repaint();
+	}
 
 	void addCircle(juce::Path& path, juce::Point<float>& center, float size) {
 		path.addEllipse(center.getX() - size*0.5f, center.getY() -size*0.5f, size, size);
@@ -35,7 +64,7 @@ public:
 	void paint(juce::Graphics& g) override {
 		// redefine variables
 		juce::Rectangle<float> bounds = getLocalBounds().toFloat();
-		auto width = bounds.getWidth() * scale;
+		auto width = bounds.getWidth() * (scale + mouseScale);
 		auto equantPos = juce::Point<float>(bounds.getCentreX(), bounds.getCentreY() + equant * 0.5f * (width / 2.95f) );
 		auto r1 = defRad *  (width / 6.f);
 		auto r2 = epi1Rad * (width / 6.f);
@@ -196,6 +225,6 @@ public:
 private:
 	float equant{ 0.f }, defPhase{ 0.f }, epi1Phase{ 0.f }, epi2Phase{ 0.f }, epi3Phase{ 0.f }, defRad{ 1.f }, epi1Rad{ 0.5f }, epi2Rad{ 0.25f }, epi3Rad{ 0.2f };
 	int algo{ 0 };
-	float scale{ 1.f };
+	float scale{ 1.f }, mouseScale{ 0.f };
 
 };

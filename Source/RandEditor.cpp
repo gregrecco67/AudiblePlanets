@@ -168,7 +168,7 @@ void RandEditor::clearAll() {
 		if (param->getModIndex() == -1) continue;
 		if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
 			auto modSrcs = proc.modMatrix.getModSources(param);
-			for (auto modSrc : modSrcs) {
+			for (auto& modSrc : modSrcs) {
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 			}
 		}
@@ -180,13 +180,13 @@ void RandEditor::randomizeOSCs() {
     std::uniform_real_distribution<> fullDist(-1.f, 1.f);
     std::vector<gin::Parameter::Ptr> params{
         proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.pan,
-        proc.osc1Params.spread,
+        proc.osc1Params.spread, proc.osc1Params.phase, 
         proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.pan,
-        proc.osc2Params.spread,
+        proc.osc2Params.spread, proc.osc2Params.phase,
         proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.pan,
-        proc.osc3Params.spread,
+        proc.osc3Params.spread, proc.osc3Params.phase,
         proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.pan,
-        proc.osc4Params.spread
+        proc.osc4Params.spread, proc.osc4Params.phase
         };
     if (inharmonic.getToggleState()) {
         params.push_back(proc.osc1Params.fine);
@@ -224,7 +224,7 @@ void RandEditor::resetInharmonic() {
     proc.osc3Params.fine->setValue(0.5);
     proc.osc4Params.fine->setValue(0.5);
 	auto modSrcs = proc.modMatrix.getModSources(proc.timbreParams.pitch);
-	for (auto src : modSrcs) {
+	for (auto& src : modSrcs) {
 		proc.modMatrix.clearModDepth(src, gin::ModDstId(proc.timbreParams.pitch->getModIndex()));
 	}
 }
@@ -236,7 +236,7 @@ void RandEditor::increaseAll()
 		if (param->getModIndex() == -1) continue;
 		if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
 			auto modSrcs = proc.modMatrix.getModSources(param);
-			for (auto modSrc : modSrcs) {
+			for (auto& modSrc : modSrcs) {
 				auto depth = proc.modMatrix.getModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 				auto sign = depth >= 0 ? 1 : -1;
 				proc.modMatrix.setModDepth(modSrc, 
@@ -255,7 +255,7 @@ void RandEditor::decreaseAll()
 		if (param->getModIndex() == -1) continue;
 		if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
 			auto modSrcs = proc.modMatrix.getModSources(param);
-			for (auto modSrc : modSrcs) {
+			for (auto& modSrc : modSrcs) {
 				auto depth = proc.modMatrix.getModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 				proc.modMatrix.setModDepth(
 					modSrc, 
@@ -347,10 +347,14 @@ void RandEditor::randLFOtoOSC() {
 		proc.modSrcLFO1, proc.modSrcLFO2, proc.modSrcLFO3, proc.modSrcLFO4};
 	std::uniform_int_distribution<> lfoDist(0, 7);
 	std::vector<gin::Parameter::Ptr> oscsBasic{
-		proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, proc.osc1Params.env, proc.osc1Params.pan, proc.osc1Params.spread, 
-		proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, proc.osc2Params.env, proc.osc2Params.pan, proc.osc2Params.spread,
-		proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, proc.osc3Params.env, proc.osc3Params.pan, proc.osc3Params.spread,
-		proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, proc.osc4Params.env, proc.osc4Params.pan, proc.osc4Params.spread
+		proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, proc.osc1Params.env, 
+			proc.osc1Params.pan, proc.osc1Params.spread, proc.osc1Params.phase, 
+		proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, proc.osc2Params.env, 
+			proc.osc2Params.pan, proc.osc2Params.spread, proc.osc2Params.phase,
+		proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, proc.osc3Params.env, 
+			proc.osc3Params.pan, proc.osc3Params.spread, proc.osc3Params.phase,
+		proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, proc.osc4Params.env, 
+			proc.osc4Params.pan, proc.osc4Params.spread, proc.osc4Params.phase
 	};
 	if (inharmonic.getToggleState()) {
 		oscsBasic.push_back(proc.osc1Params.fine);
@@ -360,7 +364,7 @@ void RandEditor::randLFOtoOSC() {
 	}
 	std::uniform_int_distribution<> oscsBasicDist(0, (int)oscsBasic.size() - 1);
 	for (int i = 0; i < randNum; i++) {
-		auto lfoSrc = lfos[lfoDist(gen)];
+		auto& lfoSrc = lfos[lfoDist(gen)];
 		auto oscDst = gin::ModDstId(oscsBasic[oscsBasicDist(gen)]->getModIndex());
 		auto depth = proc.modMatrix.getModDepth(lfoSrc, oscDst);
 		auto sign = fullDist(gen) >= 0 ? 1 : -1;
@@ -371,7 +375,7 @@ void RandEditor::resetLFOtoOSC()
 {
 	for (gin::Parameter::Ptr param : oscDstsBasic) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (lfoSrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -386,10 +390,14 @@ void RandEditor::randENVtoOSC() {
 	std::array<gin::ModSrcId, 4> envs{ proc.modSrcEnv1, proc.modSrcEnv2, proc.modSrcEnv3, proc.modSrcEnv4 };
 	std::uniform_int_distribution<> envsDist(0, 3);
 	std::vector<gin::Parameter::Ptr> oscsBasic{
-		proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, proc.osc1Params.env, proc.osc1Params.pan, proc.osc1Params.spread,
-		proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, proc.osc2Params.env, proc.osc2Params.pan, proc.osc2Params.spread,
-		proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, proc.osc3Params.env, proc.osc3Params.pan, proc.osc3Params.spread,
-		proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, proc.osc4Params.env, proc.osc4Params.pan, proc.osc4Params.spread
+		proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, proc.osc1Params.env,
+			proc.osc1Params.pan, proc.osc1Params.spread, proc.osc1Params.phase,
+		proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, proc.osc2Params.env,
+			proc.osc2Params.pan, proc.osc2Params.spread, proc.osc2Params.phase,
+		proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, proc.osc3Params.env,
+			proc.osc3Params.pan, proc.osc3Params.spread, proc.osc3Params.phase,
+		proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, proc.osc4Params.env,
+			proc.osc4Params.pan, proc.osc4Params.spread, proc.osc4Params.phase
 	};
 	if (inharmonic.getToggleState()) {
 		oscsBasic.push_back(proc.osc1Params.fine);
@@ -399,7 +407,7 @@ void RandEditor::randENVtoOSC() {
 	}
 	std::uniform_int_distribution<> oscsBasicDist(0, (int)oscsBasic.size() - 1);
 	for (int i = 0; i < randNum; i++) {
-		auto envSrc = envs[envsDist(gen)];
+		auto& envSrc = envs[envsDist(gen)];
 		auto oscDst = gin::ModDstId(oscsBasic[oscsBasicDist(gen)]->getModIndex());
 		auto depth = proc.modMatrix.getModDepth(envSrc, oscDst);
 		auto sign = fullDist(gen) >= 0 ? 1 : -1;
@@ -410,7 +418,7 @@ void RandEditor::resetENVtoOSC()
 {
 	for (gin::Parameter::Ptr param : oscDstsPlus) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (envSrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -434,7 +442,7 @@ void RandEditor::randLFOtoTimbre() {
 	}
 	std::uniform_int_distribution<> timbreDist(0, (int)timbreBasic.size() - 1);
 	for (int i = 0; i < randNum; i++) {
-		auto lfoSrc = lfos[lfoDist(gen)];
+		auto& lfoSrc = lfos[lfoDist(gen)];
 		auto timbreDst = gin::ModDstId(timbreBasic[timbreDist(gen)]->getModIndex());
 		auto depth = proc.modMatrix.getModDepth(lfoSrc, timbreDst);
 		auto sign = fullDist(gen) >= 0 ? 1 : -1;
@@ -446,7 +454,7 @@ void RandEditor::resetLFOtoTimbre()
 	for (gin::Parameter::Ptr param : timbreDstsPlus) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (lfoSrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -475,7 +483,7 @@ void RandEditor::resetLFOtoLFO()
 	for (gin::Parameter::Ptr param : lfoDsts) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (lfoSrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -503,7 +511,7 @@ void RandEditor::resetLFOtoENV()
 	for (gin::Parameter::Ptr param : envDsts) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (lfoSrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -545,7 +553,7 @@ void RandEditor::resetKeystoOSC()
 	for (gin::Parameter::Ptr param : oscDstsPlus) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (keySrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -578,7 +586,7 @@ void RandEditor::resetKeystoTimbre()
 	for (gin::Parameter::Ptr param : timbreDstsPlus) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (keySrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -605,7 +613,7 @@ void RandEditor::resetKeystoLFO()
 	for (gin::Parameter::Ptr param : lfoDsts) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (keySrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -632,7 +640,7 @@ void RandEditor::resetKeystoENV()
 	for (gin::Parameter::Ptr param : envDsts) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (keySrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -653,7 +661,7 @@ void RandEditor::randENVtoTimbre() {
 	}
 	std::uniform_int_distribution<> timbreDist(0, (int)timbreBasic.size() - 1);
 	for (int i = 0; i < randNum; i++) {
-		auto envSrc = envs[envDist(gen)];
+		auto& envSrc = envs[envDist(gen)];
 		auto timbreDst = gin::ModDstId(timbreBasic[timbreDist(gen)]->getModIndex());
 		auto depth = proc.modMatrix.getModDepth(envSrc, timbreDst);
 		auto sign = fullDist(gen) >= 0 ? 1 : -1;
@@ -666,7 +674,7 @@ void RandEditor::resetENVtoTimbre()
 	for (gin::Parameter::Ptr param : timbreDstsPlus) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (envSrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -683,7 +691,7 @@ void RandEditor::randENVtoLFO()
 	std::uniform_int_distribution<> envDist(0, 3);
 	std::uniform_int_distribution<> lfoDist(0, (int)lfoDsts.size() - 1);
 	for (int i = 0; i < randNum; i++) {
-		auto envSrc = envs[envDist(gen)];
+		auto& envSrc = envs[envDist(gen)];
 		auto lfoDst = gin::ModDstId(lfoDsts[lfoDist(gen)]->getModIndex());
 		auto depth = proc.modMatrix.getModDepth(envSrc, lfoDst);
 		auto sign = fullDist(gen) >= 0 ? 1 : -1;
@@ -697,7 +705,7 @@ void RandEditor::resetENVtoLFO()
 	for (gin::Parameter::Ptr param : lfoDsts) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (envSrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -724,7 +732,7 @@ void RandEditor::randENVtoENV()
 	};
 	std::uniform_int_distribution<> envsBasicDist(0, (int)envsBasic.size() - 1);
 	for (int i = 0; i < randNum; i++) {
-		auto envSrc = envs[envDist(gen)];
+		auto& envSrc = envs[envDist(gen)];
 		auto envDst = gin::ModDstId(envsBasic[envsBasicDist(gen)]->getModIndex());
 		auto depth = proc.modMatrix.getModDepth(envSrc, envDst);
 		auto sign = fullDist(gen) >= 0 ? 1 : -1;
@@ -737,7 +745,7 @@ void RandEditor::resetENVtoENV()
 	for (gin::Parameter::Ptr param : envDsts) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (envSrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
@@ -863,7 +871,7 @@ void RandEditor::clearFXMods()
 	for (gin::Parameter::Ptr param : fxParams) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
-		for (auto modSrc : modSrcs) {
+		for (auto& modSrc : modSrcs) {
 			if (envSrcs.contains(modSrc) || keySrcs.contains(modSrc) || lfoSrcs.contains(modSrc))
 				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
