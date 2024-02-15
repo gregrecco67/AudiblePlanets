@@ -436,7 +436,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	outputBuffer.addFrom(0, startSample, synthBuffer, 0, 0, numSamples);
 	outputBuffer.addFrom(1, startSample, synthBuffer, 1, 0, numSamples);
 
-
 	finishBlock(numSamples);
 }
 
@@ -480,7 +479,7 @@ void SynthVoice::updateParams(int blockSize)
 		osc4Freq = baseFreq * ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine));
 	}
 
-	osc1Params.wave = (bool)getValue(proc.osc1Params.saw) ? Wave::sawUp : Wave::cosine;
+	osc1Params.wave = (bool)getValue(proc.osc1Params.saw) ? Wave::sawUp : Wave::sine;
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;

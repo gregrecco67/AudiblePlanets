@@ -253,7 +253,7 @@ void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr) // m
     juce::String id = "lfo" + numStr;
     juce::String nm = "LFO" + numStr;
 
-    auto notes = gin::NoteDuration::getNoteDurations();
+    auto& notes = gin::NoteDuration::getNoteDurations();
 
 	enable = p.addIntParam(id + "enable", id + "Enable", "Enable", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 
@@ -274,7 +274,7 @@ void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr) // m
 void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
 {
     String id = "env" + numStr;
-	auto notes = gin::NoteDuration::getNoteDurations();
+	auto& notes = gin::NoteDuration::getNoteDurations();
 
     
     attack = p.addExtParam(id + "attack", id + "Attack", "A", " s", { 0.0, 60.0, 0.0, 0.2f }, 0.01f, 0.0f);
@@ -364,7 +364,7 @@ void APAudioProcessor::StereoDelayParams::setup(APAudioProcessor& p)
 {
 	String name = "Delay ";
 	String pfx = "dl";
-	auto notes = gin::NoteDuration::getNoteDurations();
+	auto& notes = gin::NoteDuration::getNoteDurations();
 	timeleft = p.addExtParam(pfx + "timeleft",   name + "Time Left", "Time L", "", { 0.001f, 10.0, 0.0, 0.5 }, 0.5f, 0.0f);
 	timeright = p.addExtParam(pfx + "timeright",  name + "Time Right", "Time R", "", { 0.001f, 10.0, 0.0, 0.5 }, 0.5f, 0.0f);
 	beatsleft = p.addExtParam(pfx + "beatsleft",  name + "Beats Left", "Beats L", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
@@ -593,11 +593,7 @@ void APAudioProcessor::reset()
 void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBlock)
 {
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
-
-	juce::dsp::ProcessSpec spec;
-	spec.sampleRate = newSampleRate;
-	spec.maximumBlockSize = newSamplesPerBlock;
-	spec.numChannels = 2;
+	juce::dsp::ProcessSpec spec{newSampleRate, newSamplesPerBlock, 2};
 
     setCurrentPlaybackSampleRate(newSampleRate);
     modMatrix.setSampleRate(newSampleRate);
@@ -924,7 +920,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
 	compressor.setOutputGain(modMatrix.getValue(compressorParams.output));
 	compressor.setMode((gin::Dynamics::Type)(int)modMatrix.getValue(compressorParams.type));
 
-	auto notes = gin::NoteDuration::getNoteDurations();
+	auto& notes = gin::NoteDuration::getNoteDurations();
 
 	bool tempoSync = stereoDelayParams.temposync->getProcValue() > 0.0f;
 	if (!tempoSync) {

@@ -42,6 +42,12 @@ if (APPLE)
 		)
 endif ()
 
+if (MSVC)
+	target_compile_options(${PROJECT_NAME} PRIVATE 
+			/wd26495
+		)
+endif ()
+
 # Binary Data
 
 set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
