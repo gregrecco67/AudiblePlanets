@@ -71,11 +71,9 @@ private:
 	int algo{ 0 };
 	float equant{ 0.f };
     
-<<<<<<< Updated upstream
+
 	float baseAmplitude = 0.1f; 
-=======
-	float baseAmplitude = 0.1f; // taming output
->>>>>>> Stashed changes
+
     gin::EasedValueSmoother<float> noteSmoother;
     
     float ampKeyTrack = 1.0f;
