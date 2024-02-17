@@ -592,7 +592,7 @@ void APAudioProcessor::reset()
 void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBlock)
 {
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
-	juce::dsp::ProcessSpec spec{newSampleRate, newSamplesPerBlock, 2};
+	juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
 
     setCurrentPlaybackSampleRate(newSampleRate);
     modMatrix.setSampleRate(newSampleRate);
