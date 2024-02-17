@@ -49,7 +49,6 @@ public:
 	void updateState() override;
 
     void updatePitchbend();
-	//void setPitchBendRange(int newPB) override;
     
     //==============================================================================
     void handleMidiEvent(const juce::MidiMessage& m) override;
@@ -96,7 +95,7 @@ public:
     {
         ENVParams() = default;
 
-        gin::Parameter::Ptr attack, decay, sustain, release, //velocityTracking,
+        gin::Parameter::Ptr attack, decay, sustain, release,
 			acurve, drcurve, syncrepeat, time, duration;
 
         void setup(APAudioProcessor& p, juce::String number);
@@ -253,7 +252,7 @@ public:
 
 	OSCParams osc1Params, osc2Params, osc3Params, osc4Params;
     LFOParams lfo1Params, lfo2Params, lfo3Params, lfo4Params;
-    ENVParams env1Params, env2Params, env3Params, env4Params; //, env2Params, env3Params, env4Params;
+    ENVParams env1Params, env2Params, env3Params, env4Params; 
     TimbreParams timbreParams;
     FilterParams filterParams;
     GlobalParams globalParams;
@@ -269,7 +268,6 @@ public:
 	FXOrderParams fxOrderParams;
 
     //==============================================================================
-    //gin::StereoDelay stereoDelay{ 120.1 };
 	GainProcessor effectGain;
 	WaveShaperProcessor waveshaper;
 	gin::Dynamics compressor;

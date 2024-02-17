@@ -71,7 +71,7 @@ private:
 	int algo{ 0 };
 	float equant{ 0.f };
     
-	float baseAmplitude = 0.16f; // roughly so that 0 dB = 6 voices at full volume
+	float baseAmplitude = 0.1f; 
     gin::EasedValueSmoother<float> noteSmoother;
     
     float ampKeyTrack = 1.0f;

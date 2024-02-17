@@ -187,7 +187,7 @@ static juce::String glideModeTextFunction(const gin::Parameter&, float v)
 
 
 //==============================================================================
-void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr) // we've got 4
+void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr) 
 {
     juce::String id = "osc" + numStr;
     juce::String nm = "OSC" + numStr;
@@ -247,7 +247,7 @@ void APAudioProcessor::FilterParams::setup(APAudioProcessor& p)
 }
 
 //==============================================================================
-void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr) // most complicated
+void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr)
 {
     // we've got 4 in the processor as mono sources, and four for each voice as poly sources / dests
     juce::String id = "lfo" + numStr;
@@ -409,13 +409,13 @@ void APAudioProcessor::MBFilterParams::setup(APAudioProcessor& p)
 {
 	String pfx = "mb";
 	String name = "MB Filter ";
-	lowshelffreq = p.addExtParam (pfx + "lowshelffreq",  name + "LS Freq", "LS Freq", "", { 20.0, 20000.0, 1.0, 0.3f }, 20000.0f, 0.0f);
+	lowshelffreq = p.addExtParam (pfx + "lowshelffreq",  name + "LS Freq", "LS Freq", "", { 20.0, 20000.0, 1.0, 0.3f }, 20.0f, 0.0f);
 	lowshelfgain = p.addExtParam (pfx + "lowshelfgain",  name + "LS Gain", "LS Gain", "", { 0.01f, 4.0, 0.01f, 1.0 }, 1.0f, 0.0f);
 	lowshelfq = p.addExtParam    (pfx + "lowshelfq",     name + "LS Q", "LS Q", "", { 0.1f, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	peakfreq = p.addExtParam     (pfx + "peakfreq",      name + "Peak Freq", "Peak Freq", "", { 20.0, 20000.0, 1.0, 0.3f }, 1000.0f, 0.0f);
 	peakgain = p.addExtParam     (pfx + "peakgain",      name + "Peak Gain", "Peak Gain", "", { 0.01f, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	peakq = p.addExtParam        (pfx + "peakq",         name + "Peak Q", "Peak Q", "", { 0.1f, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
-	highshelffreq = p.addExtParam(pfx + "highshelffreq", name + "HS Freq", "HS Freq", "", { 20.0, 20000.0, 1.0, 0.3f }, 20.0f, 0.0f);
+	highshelffreq = p.addExtParam(pfx + "highshelffreq", name + "HS Freq", "HS Freq", "", { 20.0, 20000.0, 1.0, 0.3f }, 20000.0f, 0.0f);
 	highshelfgain = p.addExtParam(pfx + "highshelfgain", name + "HS Gain", "HS Gain", "", { 0.01f, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	highshelfq = p.addExtParam   (pfx + "highshelfq",    name + "HS Q", "HS Q", "", { 0.1f, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
 }
@@ -568,7 +568,6 @@ void APAudioProcessor::setupModMatrix()
 
 void APAudioProcessor::stateUpdated()
 {
-	//stereoDelay.resetBuffers();
 	modMatrix.stateUpdated(state);
 }
 

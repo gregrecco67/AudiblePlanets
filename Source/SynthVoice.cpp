@@ -203,9 +203,9 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
         env3.getNextSample();
         env4.getNextSample();
         // get bodies' position by algorithm
-        auto a = envs[0]->getOutput(); // whoops! might be double counting or undercounting
-        auto b = envs[1]->getOutput(); // load ALL FOUR env vals once per loop, then look them up
-        auto c = envs[2]->getOutput(); // in an envVals array
+        auto a = envs[0]->getOutput(); // load ALL FOUR env vals once per loop, then look them up
+		auto b = envs[1]->getOutput(); // in an envVals array
+        auto c = envs[2]->getOutput(); // 
         auto d = envs[3]->getOutput();
         
 		epi1 = {
@@ -453,7 +453,7 @@ void SynthVoice::updateParams(int blockSize)
 
     float baseFreq =  (float)gin::getMidiNoteInHertz(currentMidiNote + note.totalPitchbendInSemitones);
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
-	//auto coarse1 = getValue(proc.osc1Params.coarse);
+	
 	if (proc.osc1Params.fixed->isOn()) {
 		osc1Freq = ((int)(getValue(proc.osc1Params.coarse) + 0.0001f) + getValue(proc.osc1Params.fine)) * 100.f;
 	}
