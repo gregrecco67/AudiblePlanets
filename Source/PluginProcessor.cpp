@@ -467,26 +467,18 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 
 
 void APAudioProcessor::updatePitchbend() {
-    setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
+    synth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
 
 //==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(
-	BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true), 
+	BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true),
 	false, 
 	getOptions()
-)
+), synth(APSynth(*this))
 {
-    enableLegacyMode(12);
-    setVoiceStealingEnabled(true);
 
-    for (int i = 0; i < 10; i++)
-    {
-        auto voice = new SynthVoice(*this);
-        modMatrix.addVoice(voice);
-        addVoice(voice);
-    }
 
 	osc1Params.setup(*this, String{ "1" });
 	osc2Params.setup(*this, String{ "2" });
@@ -534,6 +526,7 @@ void APAudioProcessor::setupModMatrix()
     modSrcTimbre    = modMatrix.addPolyModSource("mpet", "MPE Timbre", false);
 	modSrcModwheel  = modMatrix.addMonoModSource("mw", "Mod Wheel", false);
     modSrcMonoPitchbend = modMatrix.addMonoModSource("pb", "Pitch Wheel", true);
+    modPolyAT = modMatrix.addPolyModSource("polyAT", "Poly Aftertouch", false);
 	
     modSrcNote      = modMatrix.addPolyModSource("note", "MIDI Note Number", false);
     modSrcVelocity  = modMatrix.addPolyModSource("vel", "MIDI Velocity", false);
@@ -597,7 +590,7 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
 	juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
 
-    setCurrentPlaybackSampleRate(newSampleRate);
+    synth.setCurrentPlaybackSampleRate(newSampleRate);
     modMatrix.setSampleRate(newSampleRate);
 
     stereoDelay.prepare(spec);
@@ -630,11 +623,11 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     if (presetLoaded)
     {
         presetLoaded = false;
-        turnOffAllVoices(false);
+        synth.turnOffAllVoices(false);
     }
 
-    startBlock();
-    setMPE(globalParams.mpe->isOn());
+    synth.startBlock();
+    synth.setMPE(globalParams.mpe->isOn());
 
     playhead = getPlayHead();
 
@@ -643,12 +636,12 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
     buffer.clear();
 
-    setMono(globalParams.mono->isOn());
-    setLegato(globalParams.legato->isOn());
-    setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
-    setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
-    setGlideRate(globalParams.glideRate->getProcValue());
-    setNumVoices(int (globalParams.voices->getProcValue()));
+    synth.setMono(globalParams.mono->isOn());
+    synth.setLegato(globalParams.legato->isOn());
+    synth.setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
+    synth.setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
+    synth.setGlideRate(globalParams.glideRate->getProcValue());
+    synth.setNumVoices(int (globalParams.voices->getProcValue()));
 
     while (todo > 0)
     {
@@ -656,7 +649,7 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
         updateParams(thisBlock); 
 
-        renderNextBlock(buffer, midi, pos, thisBlock);
+        synth.renderNextBlock(buffer, midi, pos, thisBlock);
 
         auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);
         applyEffects(bufferSlice);
@@ -671,22 +664,12 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
 	levelTracker.trackBuffer(buffer);
 
-    endBlock(buffer.getNumSamples());
+    synth.endBlock(buffer.getNumSamples());
 }
 
 juce::Array<float> APAudioProcessor::getLiveFilterCutoff()
 {
-    juce::Array<float> values;
-
-    for (auto v : voices)
-    {
-        if (v->isActive())
-        {
-            auto vav = dynamic_cast<SynthVoice*>(v);
-            values.add (vav->getFilterCutoffNormalized());
-        }
-    }
-    return values;
+    return synth.getLiveFilterCutoff();
 }
 
 void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
@@ -980,18 +963,6 @@ void APAudioProcessor::updateParams(int newBlockSize)
 
     // Output gain
     outputGain.setGain(modMatrix.getValue(globalParams.level));
-}
-
-void APAudioProcessor::handleMidiEvent(const juce::MidiMessage& m)
-{
-    MPESynthesiser::handleMidiEvent(m);
-
-	if (m.isController()) {
-		if (m.getControllerNumber() == 1)
-			modMatrix.setMonoValue(modSrcModwheel, float(m.getControllerValue()) / 127.0f);
-	}
-    if (m.isPitchWheel())
-        modMatrix.setMonoValue(modSrcMonoPitchbend, float(m.getPitchWheelValue()) / 0x2000 - 1.0f);
 }
 
 //==============================================================================

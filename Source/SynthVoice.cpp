@@ -28,6 +28,7 @@ SynthVoice::SynthVoice(APAudioProcessor& p)
 
 void SynthVoice::noteStarted()
 {
+    curNote = getCurrentlyPlayingNote();
 	fastKill = false;
 	startVoice();
 
@@ -82,6 +83,7 @@ void SynthVoice::noteStarted()
 void SynthVoice::noteRetriggered()
 {
 	auto note = getCurrentlyPlayingNote();
+    curNote = getCurrentlyPlayingNote();
 
 	if (glideInfo.fromNote != -1 && (glideInfo.glissando || glideInfo.portamento))
 	{

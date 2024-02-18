@@ -19,10 +19,10 @@
 #include "SynthVoice.h"
 #include "Envelope.h"
 #include "FXProcessors.h"
+#include "Synth.h"
 
 //==============================================================================
-class APAudioProcessor : public gin::Processor,
-    public gin::Synthesiser
+class APAudioProcessor : public gin::Processor
 {
 public:
     //==============================================================================
@@ -51,7 +51,7 @@ public:
     void updatePitchbend();
     
     //==============================================================================
-    void handleMidiEvent(const juce::MidiMessage& m) override;
+    
     //==============================================================================
     juce::Array<float> getLiveFilterCutoff();
 
@@ -246,7 +246,7 @@ public:
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
 		modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4,
         modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4,
-		modSrcModwheel;
+		modSrcModwheel, modPolyAT;
 
     //==============================================================================
 
@@ -290,6 +290,7 @@ public:
     bool presetLoaded = false;
 
 	gin::LevelTracker levelTracker;
+    APSynth synth;
 	
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)
