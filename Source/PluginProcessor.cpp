@@ -200,25 +200,28 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
 		coarse		= p.addExtParam(id + "coarse",     nm + "Coarse",      "Coarse",    "", { 1.0, 24.0, 1.0, 1.0 }, 1.0, 0.0f);
 		fine		= p.addExtParam(id + "fine", nm + "Fine", "Fine", "", osc1FineRange, 0.0, 0.0f);
 		volume		= p.addExtParam(id + "volume",     nm + "Volume",      "Volume",    "", { 0.0, 1.0, 0.01f, 1.0 }, 0.5, 0.0f);
+		phase = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.15f, 0.0f);
 		break;
 	case 2:
 		coarse		= p.addExtParam(id + "coarse", nm + "Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 2.0, 0.0f);
 		fine		= p.addExtParam(id + "fine", nm + "Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
 		volume		= p.addExtParam(id + "volume", nm + "Volume", "Volume", "", { 0.0, 1.0, 0.01f, 1.0 }, 0.5, 0.0f);
+		phase = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.3f, 0.0f);
 		break;
 	case 3:
 		coarse		= p.addExtParam(id + "coarse", nm + "Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 3.0, 0.0f);
 		fine		= p.addExtParam(id + "fine", nm + "Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
 		volume		= p.addExtParam(id + "volume", nm + "Volume", "Volume", "", { 0.0, 1.0, 0.01f, 1.0 }, 0.35f, 0.0f);
+		phase = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.65f, 0.0f);
 		break;
 	case 4:
 		coarse		= p.addExtParam(id + "coarse", nm + "Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 4.0, 0.0f);
 		fine		= p.addExtParam(id + "fine", nm + "Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
 		volume		= p.addExtParam(id + "volume", nm + "Volume", "Volume", "", { 0.0, 1.0, 0.01f, 1.0 }, 0.2f, 0.0f);
+		phase = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.85f, 0.0f);
 		break;
 	}
 	
-	phase     = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.3f, 0.0f);
     tones     = p.addExtParam(id + "tones",      nm + "Tones",       "Tones",     "", { 1.0, 5.9f, 0.001f, 1.0 }, 1.0, 0.0f);
     detune    = p.addExtParam(id + "detune",     nm + "Detune",      "Detune",    "", { 0.0, 0.5, 0.0f, 1.0 }, 0.0, 0.0f);
     spread    = p.addExtParam(id + "spread",     nm + "Spread",      "Spread",    "%", { -100.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
@@ -308,7 +311,7 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
 	velSens        = p.addExtParam("velSens", "Vel. Sens.",   "",      "%",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
     voices         = p.addIntParam("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-    pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 12.0, 0.0f);
+    pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
 
     level->conversionFunction     = [](float in) { return juce::Decibels::decibelsToGain (in); };
 	velSens->conversionFunction   = [](float in) { return in / 100.0f; };
