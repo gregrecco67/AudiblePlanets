@@ -42,7 +42,7 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
         for (auto& voice : voices) {
             SynthVoice* svoice = static_cast<SynthVoice*>(voice);
             if (svoice->curNote.initialNote == m.getNoteNumber()) {
-                proc.modMatrix.setPolyValue(*svoice, proc.modPolyAT, m.getAfterTouchValue());
+                proc.modMatrix.setPolyValue(*svoice, proc.modPolyAT, m.getAfterTouchValue() / 127.0f);
             }
         }
         
