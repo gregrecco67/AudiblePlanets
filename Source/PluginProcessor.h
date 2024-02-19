@@ -119,7 +119,7 @@ public:
     {
         GlobalParams() = default;
 
-        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange;
+        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange, sidechainEnable;
 
         void setup(APAudioProcessor& p);
 
@@ -291,6 +291,7 @@ public:
 
 	gin::LevelTracker levelTracker;
     APSynth synth;
+	juce::AudioBuffer<float> sidechainBuffer;
 	
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)

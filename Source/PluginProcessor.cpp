@@ -312,6 +312,7 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
     voices         = p.addIntParam("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
     pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
+	sidechainEnable = p.addIntParam("sidechain", "Sidechain", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 
     level->conversionFunction     = [](float in) { return juce::Decibels::decibelsToGain (in); };
 	velSens->conversionFunction   = [](float in) { return in / 100.0f; };
@@ -473,7 +474,10 @@ void APAudioProcessor::updatePitchbend() {
 
 //==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(
-	BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true),
+	BusesProperties()
+	.withOutput("Output", juce::AudioChannelSet::stereo(), true)
+	.withInput("Sidechain", juce::AudioChannelSet::stereo(), true)
+	,
 	false, 
 	getOptions()
 ), synth(APSynth(*this))
@@ -634,6 +638,10 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     int pos = 0;
     int todo = buffer.getNumSamples();
 
+	sidechainBuffer.setSize(buffer.getNumChannels(), buffer.getNumSamples(), false, false, true);
+	
+	sidechainBuffer.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
+	sidechainBuffer.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples());
     buffer.clear();
 
     synth.setMono(globalParams.mono->isOn());

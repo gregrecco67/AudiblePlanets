@@ -142,11 +142,11 @@ public:
 		{
 			for (int i = 0; i < samps; i++)
 			{
-				auto s1 = phase * 2.0f - 1.0f;
-				*mainl++ += s1 * params.leftGain;
-				*mainr++ += s1 * params.rightGain;
+				auto s1 = phase * 2.0f * .707f - 1.0f; // for saw to move diagonally in orbit model
+				*mainl++ += s1 * params.leftGain;		//  we use the same phase in both
+				*mainr++ += s1 * params.rightGain;		// and scale by root 2
 
-				auto s2 = std::fmod(phase + 0.25f, 1.0f) * 2.0f - 1.0f;
+				auto s2 = phase * 2.0f * .707f - 1.0f;
 				*quarterl++ += s2 * params.leftGain;
 				*quarterr++ += s2 * params.rightGain;
 
