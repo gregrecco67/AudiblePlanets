@@ -32,12 +32,13 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
     MPESynthesiser::handleMidiEvent(m);
 
     if (m.isController()) {
-        if (m.getControllerNumber() == 1)
-            proc.modMatrix.setMonoValue(proc.modSrcModwheel, float(m.getControllerValue()) / 127.0f);
-        if (m.isPitchWheel()) {
-            proc.modMatrix.setMonoValue(proc.modSrcMonoPitchbend, float(m.getPitchWheelValue()) / 0x2000 - 1.0f);
-        }
+		if (m.getControllerNumber() == 1) {
+			proc.modMatrix.setMonoValue(proc.modSrcModwheel, float(m.getControllerValue()) / 127.0f);
+		}
     }
+	if (m.isPitchWheel()) {
+		proc.modMatrix.setMonoValue(proc.modSrcMonoPitchbend, float(m.getPitchWheelValue()) / 0x2000 - 1.0f);
+	}
     if (m.isAftertouch()) {
         for (auto& voice : voices) {
             SynthVoice* svoice = static_cast<SynthVoice*>(voice);
