@@ -185,17 +185,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	osc1.processAdding(osc1Freq, osc1Params, osc1SineBuffer, osc1CosineBuffer);
 	osc2.processAdding(osc2Freq, osc2Params, osc2SineBuffer, osc2CosineBuffer);
 	osc3.processAdding(osc3Freq, osc3Params, osc3SineBuffer, osc3CosineBuffer);
-	if (proc.globalParams.sidechainEnable->isOn())
-	{
-		osc4SineBuffer  .copyFrom(0, 0, proc.sidechainBuffer, 0,   0, numSamples);
-		osc4SineBuffer  .copyFrom(1, 0, proc.sidechainBuffer, 1,   0, numSamples);
-		osc4CosineBuffer.copyFrom(0, 0, proc.sidechainBuffer, 0, 0, numSamples);
-		osc4CosineBuffer.copyFrom(1, 0, proc.sidechainBuffer, 1, 0, numSamples);
-	}
-	else
-	{
-		osc4.processAdding(osc4Freq, osc4Params, osc4SineBuffer, osc4CosineBuffer);
-	}
+	osc4.processAdding(osc4Freq, osc4Params, osc4SineBuffer, osc4CosineBuffer);
 	// Apply velocity
 	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
 	osc1SineBuffer.applyGain(osc1Vol);
@@ -204,7 +194,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	osc2CosineBuffer.applyGain(osc2Vol);
 	osc3SineBuffer.applyGain(osc3Vol);
 	osc3CosineBuffer.applyGain(osc3Vol);
-	osc4SineBuffer.applyGain(osc4Vol);
+	osc4SineBuffer.applyGain(osc4Vol); 
 	osc4CosineBuffer.applyGain(osc4Vol);
 
 	// the whole enchilada

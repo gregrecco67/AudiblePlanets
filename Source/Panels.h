@@ -350,7 +350,6 @@ public:
         addControl(new gin::Switch(proc.globalParams.legato), 1, 1);
         addControl(new gin::Switch(proc.globalParams.mono), 2, 1);
 		addControl(new gin::Knob(proc.globalParams.pitchbendRange), 1, 0);
-		addControl(new gin::Switch(proc.globalParams.sidechainEnable), 2, 0);
     }
 
     APAudioProcessor& proc;
