@@ -28,6 +28,7 @@ SynthVoice::SynthVoice(APAudioProcessor& p)
 
 void SynthVoice::noteStarted()
 {
+    curNote = getCurrentlyPlayingNote();
 	fastKill = false;
 	startVoice();
 
@@ -82,6 +83,7 @@ void SynthVoice::noteStarted()
 void SynthVoice::noteRetriggered()
 {
 	auto note = getCurrentlyPlayingNote();
+    curNote = getCurrentlyPlayingNote();
 
 	if (glideInfo.fromNote != -1 && (glideInfo.glissando || glideInfo.portamento))
 	{
@@ -168,6 +170,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 {
 	updateParams(numSamples);
 
+
 	// Run OSC
 	gin::ScratchBuffer osc1SineBuffer(2, numSamples);
 	gin::ScratchBuffer osc1CosineBuffer(2, numSamples);
@@ -183,7 +186,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	osc2.processAdding(osc2Freq, osc2Params, osc2SineBuffer, osc2CosineBuffer);
 	osc3.processAdding(osc3Freq, osc3Params, osc3SineBuffer, osc3CosineBuffer);
 	osc4.processAdding(osc4Freq, osc4Params, osc4SineBuffer, osc4CosineBuffer);
-
 	// Apply velocity
 	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
 	osc1SineBuffer.applyGain(osc1Vol);
@@ -192,7 +194,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	osc2CosineBuffer.applyGain(osc2Vol);
 	osc3SineBuffer.applyGain(osc3Vol);
 	osc3CosineBuffer.applyGain(osc3Vol);
-	osc4SineBuffer.applyGain(osc4Vol);
+	osc4SineBuffer.applyGain(osc4Vol); 
 	osc4CosineBuffer.applyGain(osc4Vol);
 
 	// the whole enchilada

@@ -41,7 +41,7 @@ private:
     APAudioProcessor& proc;
 
     
-    gin::SynthesiserUsage usage { proc };
+    gin::SynthesiserUsage usage { proc.synth };
 	gin::LevelMeter meter { proc.levelTracker };
     
     juce::TabbedComponent tabbed{juce::TabbedButtonBar::TabsAtBottom };

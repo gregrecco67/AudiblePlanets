@@ -200,25 +200,28 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
 		coarse		= p.addExtParam(id + "coarse",     nm + "Coarse",      "Coarse",    "", { 1.0, 24.0, 1.0, 1.0 }, 1.0, 0.0f);
 		fine		= p.addExtParam(id + "fine", nm + "Fine", "Fine", "", osc1FineRange, 0.0, 0.0f);
 		volume		= p.addExtParam(id + "volume",     nm + "Volume",      "Volume",    "", { 0.0, 1.0, 0.01f, 1.0 }, 0.5, 0.0f);
+		phase = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.15f, 0.0f);
 		break;
 	case 2:
 		coarse		= p.addExtParam(id + "coarse", nm + "Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 2.0, 0.0f);
 		fine		= p.addExtParam(id + "fine", nm + "Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
 		volume		= p.addExtParam(id + "volume", nm + "Volume", "Volume", "", { 0.0, 1.0, 0.01f, 1.0 }, 0.5, 0.0f);
+		phase = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.3f, 0.0f);
 		break;
 	case 3:
 		coarse		= p.addExtParam(id + "coarse", nm + "Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 3.0, 0.0f);
 		fine		= p.addExtParam(id + "fine", nm + "Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
 		volume		= p.addExtParam(id + "volume", nm + "Volume", "Volume", "", { 0.0, 1.0, 0.01f, 1.0 }, 0.35f, 0.0f);
+		phase = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.65f, 0.0f);
 		break;
 	case 4:
 		coarse		= p.addExtParam(id + "coarse", nm + "Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 4.0, 0.0f);
 		fine		= p.addExtParam(id + "fine", nm + "Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
 		volume		= p.addExtParam(id + "volume", nm + "Volume", "Volume", "", { 0.0, 1.0, 0.01f, 1.0 }, 0.2f, 0.0f);
+		phase = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.85f, 0.0f);
 		break;
 	}
 	
-	phase     = p.addExtParam(id + "phase", nm + "Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.3f, 0.0f);
     tones     = p.addExtParam(id + "tones",      nm + "Tones",       "Tones",     "", { 1.0, 5.9f, 0.001f, 1.0 }, 1.0, 0.0f);
     detune    = p.addExtParam(id + "detune",     nm + "Detune",      "Detune",    "", { 0.0, 0.5, 0.0f, 1.0 }, 0.0, 0.0f);
     spread    = p.addExtParam(id + "spread",     nm + "Spread",      "Spread",    "%", { -100.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
@@ -308,7 +311,7 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
 	velSens        = p.addExtParam("velSens", "Vel. Sens.",   "",      "%",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
     voices         = p.addIntParam("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-    pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 12.0, 0.0f);
+    pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
 
     level->conversionFunction     = [](float in) { return juce::Decibels::decibelsToGain (in); };
 	velSens->conversionFunction   = [](float in) { return in / 100.0f; };
@@ -464,27 +467,18 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 
 
 void APAudioProcessor::updatePitchbend() {
-    setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
+    synth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
 
 //==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(
-	BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true), 
+	BusesProperties()
+	.withOutput("Output", juce::AudioChannelSet::stereo(), true),
 	false, 
 	getOptions()
-)
+), synth(APSynth(*this))
 {
-    enableLegacyMode(12);
-    setVoiceStealingEnabled(true);
-
-    for (int i = 0; i < 10; i++)
-    {
-        auto voice = new SynthVoice(*this);
-        modMatrix.addVoice(voice);
-        addVoice(voice);
-    }
-
 	osc1Params.setup(*this, String{ "1" });
 	osc2Params.setup(*this, String{ "2" });
 	osc3Params.setup(*this, String{ "3" });
@@ -531,6 +525,7 @@ void APAudioProcessor::setupModMatrix()
     modSrcTimbre    = modMatrix.addPolyModSource("mpet", "MPE Timbre", false);
 	modSrcModwheel  = modMatrix.addMonoModSource("mw", "Mod Wheel", false);
     modSrcMonoPitchbend = modMatrix.addMonoModSource("pb", "Pitch Wheel", true);
+    modPolyAT = modMatrix.addPolyModSource("polyAT", "Poly Aftertouch", false);
 	
     modSrcNote      = modMatrix.addPolyModSource("note", "MIDI Note Number", false);
     modSrcVelocity  = modMatrix.addPolyModSource("vel", "MIDI Velocity", false);
@@ -594,7 +589,7 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
 	juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
 
-    setCurrentPlaybackSampleRate(newSampleRate);
+    synth.setCurrentPlaybackSampleRate(newSampleRate);
     modMatrix.setSampleRate(newSampleRate);
 
     stereoDelay.prepare(spec);
@@ -627,11 +622,11 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     if (presetLoaded)
     {
         presetLoaded = false;
-        turnOffAllVoices(false);
+        synth.turnOffAllVoices(false);
     }
 
-    startBlock();
-    setMPE(globalParams.mpe->isOn());
+    synth.startBlock();
+    synth.setMPE(globalParams.mpe->isOn());
 
     playhead = getPlayHead();
 
@@ -640,12 +635,12 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
     buffer.clear();
 
-    setMono(globalParams.mono->isOn());
-    setLegato(globalParams.legato->isOn());
-    setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
-    setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
-    setGlideRate(globalParams.glideRate->getProcValue());
-    setNumVoices(int (globalParams.voices->getProcValue()));
+    synth.setMono(globalParams.mono->isOn());
+    synth.setLegato(globalParams.legato->isOn());
+    synth.setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
+    synth.setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
+    synth.setGlideRate(globalParams.glideRate->getProcValue());
+    synth.setNumVoices(int (globalParams.voices->getProcValue()));
 
     while (todo > 0)
     {
@@ -653,7 +648,7 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
         updateParams(thisBlock); 
 
-        renderNextBlock(buffer, midi, pos, thisBlock);
+        synth.renderNextBlock(buffer, midi, pos, thisBlock);
 
         auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);
         applyEffects(bufferSlice);
@@ -668,22 +663,12 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
 	levelTracker.trackBuffer(buffer);
 
-    endBlock(buffer.getNumSamples());
+    synth.endBlock(buffer.getNumSamples());
 }
 
 juce::Array<float> APAudioProcessor::getLiveFilterCutoff()
 {
-    juce::Array<float> values;
-
-    for (auto v : voices)
-    {
-        if (v->isActive())
-        {
-            auto vav = dynamic_cast<SynthVoice*>(v);
-            values.add (vav->getFilterCutoffNormalized());
-        }
-    }
-    return values;
+    return synth.getLiveFilterCutoff();
 }
 
 void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
@@ -977,18 +962,6 @@ void APAudioProcessor::updateParams(int newBlockSize)
 
     // Output gain
     outputGain.setGain(modMatrix.getValue(globalParams.level));
-}
-
-void APAudioProcessor::handleMidiEvent(const juce::MidiMessage& m)
-{
-    MPESynthesiser::handleMidiEvent(m);
-
-	if (m.isController()) {
-		if (m.getControllerNumber() == 1)
-			modMatrix.setMonoValue(modSrcModwheel, float(m.getControllerValue()) / 127.0f);
-	}
-    if (m.isPitchWheel())
-        modMatrix.setMonoValue(modSrcMonoPitchbend, float(m.getPitchWheelValue()) / 0x2000 - 1.0f);
 }
 
 //==============================================================================
