@@ -41,16 +41,12 @@ public:
 			shouldDrawButtonAsHighlighted,
 			shouldDrawButtonAsDown);
 
-		//g.setColour(button.findColour(ToggleButton::textColourId));
-
 		auto c = button.findColour(button.getToggleState() ? juce::TextButton::textColourOnId : juce::TextButton::textColourOffId).withMultipliedAlpha(button.isEnabled() ? 1.0f : 0.5f);
 
 		if (button.isMouseOver() && button.isEnabled())
 			c = c.brighter();
-
+		
 		g.setColour(c);
-
-
 		g.setFont(juce::Font(12.0f, juce::Font::plain ));
 
 		if (!button.isEnabled())

@@ -122,11 +122,6 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
 	addAndMakeVisible(decreaseAllButton);
 	decreaseAllButton.onClick = [this] { decreaseAll(); };
 
-	//addAndMakeVisible(env1);
-	//addAndMakeVisible(env2);
-	//addAndMakeVisible(env3);
-	//addAndMakeVisible(env4);
-
 	addAndMakeVisible(env1Box);
 	addAndMakeVisible(env2Box);
 	addAndMakeVisible(env3Box);
@@ -1002,16 +997,10 @@ void RandEditor::resized()
 	increaseAllButton.setBounds(5 * 56 , 570, 3*56, 20);
 	decreaseAllButton.setBounds(5 * 56 + 173, 570, 3*56, 20);
     
-	//env1.setBounds(631, 40, 200, 80); env1Box.setBounds(836, 0, 56 * 3, 70 * 2 + 23);
-	//env2.setBounds(631, 204, 200, 80); env2Box.setBounds(836, 164, 56 * 3, 70 * 2 + 23);
-	//env3.setBounds(631, 368, 200, 80); env3Box.setBounds(836, 328, 56 * 3, 70 * 2 + 23);
-	//env4.setBounds(631, 532, 200, 80); env4Box.setBounds(836, 492, 56 * 3, 70 * 2 + 23);
-
 	env1Box.setBounds(624, 0,   56 * 6, 70 * 2 + 23);
 	env2Box.setBounds(624, 163, 56 * 6, 70 * 2 + 23);
 	env3Box.setBounds(624, 326, 56 * 6, 70 * 2 + 23);
 	env4Box.setBounds(624, 489, 56 * 6, 70 * 2 + 23);
-	//test.setBounds(800, 23, 55, 20);
 
 	osc1Box.setBounds(626 + 56 * 6, 0, 56 * 4, 70 * 2 + 23);
 	osc2Box.setBounds(626 + 56 * 6, 163, 56 * 4, 70 * 2 + 23);

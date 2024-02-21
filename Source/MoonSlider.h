@@ -19,9 +19,6 @@
 #include "BinaryData.h"
 
 class MoonSlider : public gin::PluginSlider
-	//public juce::DragAndDropTarget,
-	//private juce::Timer,
-	//private gin::ModMatrix::Listener
 {
 public:
 	MoonSlider(gin::Parameter* parameter_);

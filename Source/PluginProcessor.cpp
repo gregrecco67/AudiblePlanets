@@ -634,8 +634,8 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
     auto numSamples = buffer.getNumSamples();
     
-    downsampledBuffer.setSize(2, numSamples);
-    auto downsampledBlock = juce::dsp::AudioBlock<float>(downsampledBuffer);
+    //downsampledBuffer.setSize(2, numSamples);
+    //auto downsampledBlock = juce::dsp::AudioBlock<float>(downsampledBuffer);
     
     //juce::dsp::AudioBlock<float> block(buffer);
     //

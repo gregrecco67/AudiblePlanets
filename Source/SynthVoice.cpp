@@ -355,7 +355,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		float modSample3L{ sample3L }, demodSample3L{ sample3L }, modSample3R{ sample3R }, demodSample3R{ sample3R };
 		float modSample4L{ sample4L }, demodSample4L{ sample4L }, modSample4R{ sample4R }, demodSample4R{ sample4R };
 
-		// demodulate by considering not just angle, but also magnitude of planet vector
+		// 5. demodulate by considering not just angle, but also magnitude of planet vector
 		auto atanDistance2L = (float)std::sqrt(epi2.xL * epi2.xL + (epi2.yL + equant) * (epi2.yL + equant));
 		auto atanDistance2R = (float)std::sqrt(epi2.xR * epi2.xR + (epi2.yR + equant) * (epi2.yR + equant));
 		auto atanDistance3L = (float)std::sqrt(epi3.xL * epi3.xL + (epi3.yL + equant) * (epi3.yL + equant));
@@ -363,7 +363,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL + equant) * (epi4.yL + equant));
 		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR + equant) * (epi4.yR + equant));
 
-		// trying out a  volume-taming factor
+		// distance can be > 1, so scale it down a bit
 		demodSample2L *= atanDistance2L * 0.75f;
 		demodSample2R *= atanDistance2R * 0.75f;
 		demodSample3L *= atanDistance3L * 0.75f;
@@ -371,7 +371,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		demodSample4L *= atanDistance4L * 0.75f;
 		demodSample4R *= atanDistance4R * 0.75f;
 
-		// original recipe
+		// original recipe (before we added demodmix)
 		modSample2L *= envs[1]->getOutput();
 		modSample2R *= envs[1]->getOutput();
 		modSample3L *= envs[2]->getOutput();
@@ -379,7 +379,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		modSample4L *= envs[3]->getOutput();
 		modSample4R *= envs[3]->getOutput();
 
-		// mix by demodmix AND ALGO
+		// 6. mix by demodmix AND ALGO
 		float sampleL{ 0.f }, sampleR{ 0.f };
 		auto demodmix = getValue(proc.timbreParams.demodmix);
 		if (algo == 0) {
@@ -399,7 +399,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			sampleR = ((modSample2R + modSample3R + modSample4R) * 0.333f * (1.0f - demodmix) + (demodSample2R + demodSample3L + demodSample4R) * 0.333f * demodmix);
 		}
 
-		// SHIP IT OUT
+		// 7. SHIP IT OUT
 		synthBuffer.setSample(0, i, sampleL);
 		synthBuffer.setSample(1, i, sampleR);
 	}

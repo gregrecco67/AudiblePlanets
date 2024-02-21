@@ -13,7 +13,7 @@
  
  *
  *
- * adapted from ../modules/gin/modules/gin_dsp/dsp/gin_oscillators.h
+ * Oscillators.h adapted from ../modules/gin/modules/gin_dsp/dsp/gin_oscillators.h
  
  */
 
@@ -67,14 +67,6 @@ public:
             phase = juce::MathConstants<float>::halfPi;
         }
     }
-
-	/*void process(float freq, const Params& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
-	{
-		mainPhaseBuffer.clear();
-		quarterPhaseBuffer.clear();
-		internalParams = params;
-		processAdding(freq, params, mainPhaseBuffer, quarterPhaseBuffer);
-	}*/
 
 	float sineValueForPhaseAndTones(float phase_, float tones) {
 		float fullTones{ 0.f }, value{ 0.0f };
