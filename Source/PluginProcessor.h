@@ -30,7 +30,7 @@ public:
     ~APAudioProcessor() override;
 
     bool supportsMPE() const override { return true; }
-
+    
     //==============================================================================
     void reset() override;
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
@@ -291,6 +291,8 @@ public:
 
 	gin::LevelTracker levelTracker;
     APSynth synth;
+    std::unique_ptr<juce::dsp::Oversampling<float>> oversampler;
+    juce::AudioBuffer<float> downsampledBuffer;
 	
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)

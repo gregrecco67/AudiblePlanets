@@ -589,7 +589,17 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
 	juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
 
-    synth.setCurrentPlaybackSampleRate(newSampleRate);
+    oversampler = std::make_unique<juce::dsp::Oversampling<float>>(
+        spec.numChannels,
+        1,
+        dsp::Oversampling<float>::FilterType::filterHalfBandFIREquiripple,
+        true,
+        true);
+
+    oversampler->initProcessing(spec.maximumBlockSize);
+    oversampler->reset();
+    
+    synth.setCurrentPlaybackSampleRate(newSampleRate * 2.0);
     modMatrix.setSampleRate(newSampleRate);
 
     stereoDelay.prepare(spec);
@@ -619,6 +629,20 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 {
     juce::ScopedNoDenormals noDenormals;
 
+    auto numSamples = buffer.getNumSamples();
+    
+    downsampledBuffer.setSize(2, numSamples);
+    auto downsampledBlock = juce::dsp::AudioBlock<float>(downsampledBuffer);
+    
+    juce::dsp::AudioBlock<float> block(buffer);
+    
+    juce::dsp::AudioBlock<float> oversampledBlock = oversampler->processSamplesUp(block);
+    
+    float* pointers[2];
+    pointers[0] = oversampledBlock.getChannelPointer(0);
+    pointers[1] = oversampledBlock.getChannelPointer(1);
+    juce::AudioBuffer<float> oversampledBuffer{  pointers, 2, buffer.getNumSamples() * 2 };
+    
     if (presetLoaded)
     {
         presetLoaded = false;
@@ -647,9 +671,14 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
         int thisBlock = std::min(todo, 32);
 
         updateParams(thisBlock); 
-
-        synth.renderNextBlock(buffer, midi, pos, thisBlock);
-
+        
+        synth.renderNextBlock(oversampledBuffer, midi, pos * 2, thisBlock * 2);
+        
+        oversampler->processSamplesDown(downsampledBlock);
+        
+        buffer.copyFrom(0, pos, downsampledBuffer, 0, pos, thisBlock);
+        buffer.copyFrom(1, pos, downsampledBuffer, 1, pos, thisBlock);
+        
         auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);
         applyEffects(bufferSlice);
 
