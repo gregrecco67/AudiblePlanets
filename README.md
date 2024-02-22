@@ -3,7 +3,7 @@
 
 An expressive, quasi-Ptolemaic semi-modular synthesizer.
 
-![p1](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/97e5a0bf-8641-49fb-b0cb-6553649035d7)
+![page1](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/5a87fcd9-e36b-4a47-8191-0ddd9254c721)
 
 ![p2](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/0929bf64-1c9a-4b50-a56b-bbfc424a422f)
 
