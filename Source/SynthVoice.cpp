@@ -183,6 +183,19 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	gin::ScratchBuffer synthBuffer(2, numSamples);
 
 	osc1.processAdding(osc1Freq, osc1Params, osc1SineBuffer, osc1CosineBuffer);
+	
+	if (proc.globalParams.sidechainEnable->isOn()) { // just overwrite them
+		osc1CosineBuffer.copyFrom(0, 0, proc.sidechainSlice, 0, 0, numSamples);
+		osc1CosineBuffer.copyFrom(1, 0, proc.sidechainSlice, 1, 0, numSamples);
+		for (int i = 0; i < numSamples; i++) {
+			auto ls = std::clamp(osc1CosineBuffer.getSample(0, i), -1.f, 1.f);
+			auto rs = std::clamp(osc1CosineBuffer.getSample(1, i), -1.f, 1.f);
+			osc1SineBuffer.setSample(0, i, std::sqrt(1.f - ls * ls) * 2.f - 1.f);
+			osc1SineBuffer.setSample(1, i, std::sqrt(1.f - rs * rs) * 2.f - 1.f);
+		}
+	}
+	
+	
 	osc2.processAdding(osc2Freq, osc2Params, osc2SineBuffer, osc2CosineBuffer);
 	osc3.processAdding(osc3Freq, osc3Params, osc3SineBuffer, osc3CosineBuffer);
 	osc4.processAdding(osc4Freq, osc4Params, osc4SineBuffer, osc4CosineBuffer);
