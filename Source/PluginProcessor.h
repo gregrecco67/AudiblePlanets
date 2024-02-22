@@ -30,14 +30,14 @@ public:
     ~APAudioProcessor() override;
 
     bool supportsMPE() const override { return true; }
-
+    
     //==============================================================================
     void reset() override;
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
-
+    bool isBusesLayoutSupported (const BusesLayout& layouts) const;
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
@@ -119,7 +119,7 @@ public:
     {
         GlobalParams() = default;
 
-        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange;
+        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange, sidechainEnable;
 
         void setup(APAudioProcessor& p);
 
@@ -291,6 +291,10 @@ public:
 
 	gin::LevelTracker levelTracker;
     APSynth synth;
+	juce::AudioBuffer<float> sidechainBuffer;
+	juce::AudioBuffer<float> sidechainSlice;
+    //std::unique_ptr<juce::dsp::Oversampling<float>> oversampler;
+    //juce::AudioBuffer<float> downsampledBuffer;
 	
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)

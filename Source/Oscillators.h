@@ -13,15 +13,15 @@
  
  *
  *
- * adapted from ../modules/gin/modules/gin_dsp/dsp/gin_oscillators.h
+ * Oscillators.h adapted from ../modules/gin/modules/gin_dsp/dsp/gin_oscillators.h
  
  */
 
 #pragma once
 #include <JuceHeader.h>
 #include "FastMath.hpp"
-#define SEMITONE 1.05946309436f
-#define SEMITONE_INV 0.94387431268f
+// #define SEMITONE 1.05946309436f
+// #define SEMITONE_INV 0.94387431268f
 
 enum class Wave
 {
@@ -67,14 +67,6 @@ public:
             phase = juce::MathConstants<float>::halfPi;
         }
     }
-
-	/*void process(float freq, const Params& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
-	{
-		mainPhaseBuffer.clear();
-		quarterPhaseBuffer.clear();
-		internalParams = params;
-		processAdding(freq, params, mainPhaseBuffer, quarterPhaseBuffer);
-	}*/
 
 	float sineValueForPhaseAndTones(float phase_, float tones) {
 		float fullTones{ 0.f }, value{ 0.0f };
@@ -174,6 +166,16 @@ struct APVoicedOscillatorParams
 	float phaseShift = 0.0f;
 };
 
+// utility for detune calculations
+static inline float fastSemitonePower(float x) { // about 2x faster than std::pow(SEMITONE, x) and accurate to ~ e-06
+	float u = 4.6385981e-07f;
+	u = u * x + -3.2122109e-05f;
+	u = u * x + 0.0016682396f;
+	u = u * x + -0.057762265f;
+	return u * x + 1.f;
+}
+
+
 //==============================================================================
 /** Stereo Oscillator with multiples voices, pan, spread, detune, etc
 */
@@ -208,6 +210,7 @@ public:
 		processAdding(freq, params, mainPhaseBuffer, quarterPhaseBuffer);
     }
 
+
     void processAdding(float freq, const P& params, juce::AudioSampleBuffer& mainPhaseBuffer, juce::AudioSampleBuffer& quarterPhaseBuffer)
     {
         typename O::Params p;
@@ -222,8 +225,8 @@ public:
         }
         else
         {
-			float baseFreq = freq * std::pow(SEMITONE, -params.detune);
-            float freqFactor = std::pow(SEMITONE, params.detune / (params.voices - 1)); // !!
+			float baseFreq = freq * fastSemitonePower(-params.detune); // 2x faster than std::pow(SEMITONE_INV, params.detune);
+			float freqFactor = fastSemitonePower(params.detune / (params.voices - 1)); // !!
 
             float basePan = params.pan - params.spread;
             float panDelta = (params.spread * 2) / (params.voices - 1);

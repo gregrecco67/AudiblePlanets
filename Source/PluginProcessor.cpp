@@ -312,6 +312,7 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
     voices         = p.addIntParam("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
     pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
+	sidechainEnable = p.addIntParam("sidechain", "Sidechain", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 
     level->conversionFunction     = [](float in) { return juce::Decibels::decibelsToGain (in); };
 	velSens->conversionFunction   = [](float in) { return in / 100.0f; };
@@ -470,11 +471,24 @@ void APAudioProcessor::updatePitchbend() {
     synth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
+bool APAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+{
+//    if (layouts.getMainInputChannelSet()  == juce::AudioChannelSet::disabled()
+//     || layouts.getMainOutputChannelSet() == juce::AudioChannelSet::disabled())
+//        return false;
+ 
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+        return false;
+    
+    return layouts.getMainInputChannelSet() == layouts.getMainOutputChannelSet();
+}
+
 
 //==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(
 	BusesProperties()
-	.withOutput("Output", juce::AudioChannelSet::stereo(), true),
+	.withOutput("Output", juce::AudioChannelSet::stereo(), true)
+	.withInput("Sidechain", juce::AudioChannelSet::stereo(), true),
 	false, 
 	getOptions()
 ), synth(APSynth(*this))
@@ -589,7 +603,20 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
 	juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
 
-    synth.setCurrentPlaybackSampleRate(newSampleRate);
+    //oversampler = std::make_unique<juce::dsp::Oversampling<float>>(
+    //    2, // channels
+    //    1, // 2^1 oversampling
+    //    dsp::Oversampling<float>::FilterType::filterHalfBandFIREquiripple,
+    //    true,
+    //    false);
+
+    //oversampler->reset();
+    //oversampler->initProcessing(spec.maximumBlockSize);
+    
+    //synth.setCurrentPlaybackSampleRate(newSampleRate * 2.0);
+
+	synth.setCurrentPlaybackSampleRate(newSampleRate); // rollback to 1x
+
     modMatrix.setSampleRate(newSampleRate);
 
     stereoDelay.prepare(spec);
@@ -619,6 +646,20 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 {
     juce::ScopedNoDenormals noDenormals;
 
+    auto numSamples = buffer.getNumSamples();
+    
+    //downsampledBuffer.setSize(2, numSamples);
+    //auto downsampledBlock = juce::dsp::AudioBlock<float>(downsampledBuffer);
+    
+    //juce::dsp::AudioBlock<float> block(buffer);
+    //
+    //juce::dsp::AudioBlock<float> oversampledBlock = oversampler->processSamplesUp(block);
+    //
+    //float* pointers[2];
+    //pointers[0] = oversampledBlock.getChannelPointer(0);
+    //pointers[1] = oversampledBlock.getChannelPointer(1);
+    //juce::AudioBuffer<float> oversampledBuffer{  pointers, 2, buffer.getNumSamples() * 2 };
+    //
     if (presetLoaded)
     {
         presetLoaded = false;
@@ -631,9 +672,13 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     playhead = getPlayHead();
 
     int pos = 0;
-    int todo = buffer.getNumSamples();
+    int todo = numSamples;
 
-    buffer.clear();
+	sidechainBuffer.setSize(2, numSamples, false, false, true);
+	sidechainBuffer.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
+	sidechainBuffer.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples()); // copy input
+
+    buffer.clear(); // then clear it from output buffer
 
     synth.setMono(globalParams.mono->isOn());
     synth.setLegato(globalParams.legato->isOn());
@@ -647,9 +692,17 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
         int thisBlock = std::min(todo, 32);
 
         updateParams(thisBlock); 
+        
+        //synth.renderNextBlock(oversampledBuffer, midi, pos * 2, thisBlock * 2);
+        
+		sidechainSlice = gin::sliceBuffer(sidechainBuffer, pos, thisBlock);
+		synth.renderNextBlock(buffer, midi, pos, thisBlock); // rollback
 
-        synth.renderNextBlock(buffer, midi, pos, thisBlock);
-
+        //oversampler->processSamplesDown(downsampledBlock);
+        //
+        //buffer.copyFrom(0, pos, downsampledBuffer, 0, pos, thisBlock);
+        //buffer.copyFrom(1, pos, downsampledBuffer, 1, pos, thisBlock);
+        
         auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);
         applyEffects(bufferSlice);
 

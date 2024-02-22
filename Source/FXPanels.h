@@ -331,7 +331,6 @@ public:
 	gin::ParamComponent::Ptr chrate, chdepth, chdelay, chfeedback, chdry, chwet;
 	gin::ParamComponent::Ptr rvsize, rvdecay, rvdamping, rvlowpass, rvpredelay, rvdry, rvwet;
 	gin::ParamComponent::Ptr mbfilterlowshelffreq, mbfilterlowshelfgain, mbfilterlowshelfq, mbfilterpeakfreq, mbfilterpeakgain, mbfilterpeakq, mbfilterhighshelffreq, mbfilterhighshelfgain, mbfilterhighshelfq;
-    //gin::Parameter::Ptr box;
     gin::DynamicsMeter dynamicsMeter;
     juce::ImageComponent funcImage{"function"};
 	int currentEffect = 0;
