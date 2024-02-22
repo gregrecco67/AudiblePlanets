@@ -471,6 +471,18 @@ void APAudioProcessor::updatePitchbend() {
     synth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
+bool APAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+{
+//    if (layouts.getMainInputChannelSet()  == juce::AudioChannelSet::disabled()
+//     || layouts.getMainOutputChannelSet() == juce::AudioChannelSet::disabled())
+//        return false;
+ 
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+        return false;
+    
+    return layouts.getMainInputChannelSet() == layouts.getMainOutputChannelSet();
+}
+
 
 //==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(
