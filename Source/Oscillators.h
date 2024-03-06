@@ -47,7 +47,7 @@ public:
 
     struct Params
     {
-        Wave wave = Wave::sine;
+		Wave wave = Wave::sine;
         float leftGain = 1.0;
         float rightGain = 1.0;
 		float tones = 1.0;

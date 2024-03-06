@@ -39,7 +39,7 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
     proc.fxOrderParams.fxb2->addListener(this);
     proc.fxOrderParams.fxb3->addListener(this);
     proc.fxOrderParams.fxb4->addListener(this);
-	proc.globalParams.pitchbendRange->addListener(this);
+	
     
 	addAndMakeVisible(fxa1Selector);
 	addAndMakeVisible(fxa2Selector);
@@ -120,10 +120,6 @@ void FXEditor::resized()
 
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
 {
-    if (param == proc.globalParams.pitchbendRange) {
-        proc.updatePitchbend();
-        return;
-    }
     if (param == proc.fxOrderParams.fxa1) {
         auto fxa1Choice = param->getUserValueInt();
         fxa1Box.setControls(fxa1Choice);

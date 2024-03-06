@@ -21,14 +21,14 @@
 #include "OrbitViz.h"
 
 //==============================================================================
-class Editor : public juce::Component, public juce::Timer
+class Editor : public juce::Component, public juce::Timer, public gin::Parameter::ParameterListener
 {
 public:
     Editor(APAudioProcessor& proc_);
 
-    //void setupCallbacks();
     void resized() override;
     void timerCallback() override;
+	void valueUpdated(gin::Parameter* param);
 
 private:
     APAudioProcessor& proc;

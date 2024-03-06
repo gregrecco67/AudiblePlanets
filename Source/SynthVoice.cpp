@@ -28,6 +28,10 @@ SynthVoice::SynthVoice(APAudioProcessor& p)
 
 void SynthVoice::noteStarted()
 {
+	//if (GIN_HAS_SIMD) {
+	//	int N = mipp::N<float>();
+	//	DBG("int N = mipp::N<float>() = " + String(N));
+	//}
     curNote = getCurrentlyPlayingNote();
 	fastKill = false;
 	startVoice();
