@@ -36,7 +36,6 @@ Editor::Editor(APAudioProcessor& proc_)
 	addAndMakeVisible(timbre);
     addAndMakeVisible(orbitViz);
     addAndMakeVisible(orbit);
-    
 	proc.globalParams.pitchbendRange->addListener(this);
     startTimerHz(frameRate);
 }
