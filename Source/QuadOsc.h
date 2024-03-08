@@ -39,14 +39,14 @@ struct StereoPosition {
 };
 
 
-enum class Wave
+enum class Wavetype
 {
 	sine = 0,
 	sawUp = 1,
 };
 
 // utility for detune calculations
-static inline float fastSemitonePower(float x) { // about 2x faster than std::pow(SEMITONE, x) and accurate to ~ e-06
+static inline float semitonePower(float x) { // about 2x faster than std::pow(SEMITONE, x) and accurate to ~ e-06
 	float u = 4.6385981e-07f;
 	u = u * x + -3.2122109e-05f;
 	u = u * x + 0.0016682396f;
@@ -103,7 +103,7 @@ public:
 
 	struct Params {
 		int voices = 4;
-		Wave wave = Wave::sine;
+        Wavetype wave = Wavetype::sine;
 		float tones{ 1.0 }, pan{ 0.f }, spread{ 0.f }, detune{ 0.f }, phaseShift{ 0.f };
 	};
 
@@ -125,8 +125,8 @@ public:
 	void recalculate()
 	{
 		// calculate frequencies
-		float baseFreq = freq * fastSemitonePower(-params.detune); // 2x faster than std::pow(SEMITONE_INV, params.detune);
-		float freqFactor = fastSemitonePower(params.detune / (params.voices - 1)); // !!
+		float baseFreq = freq * semitonePower(-params.detune); // 2x faster than std::pow(SEMITONE_INV, params.detune);
+		float freqFactor = semitonePower(params.detune / (params.voices - 1)); // !!
 
 		// CHANGE PP detuned and spread to [0, 1] range
 		// pan is still [-1, 1]

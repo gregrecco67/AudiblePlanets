@@ -225,6 +225,9 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         // 6. need to distinguish base positions (centered on origin) and derived positions
         //    (in the epicycle chain) and "cooked" positions (base * transform)
         
+        // TODO 3/7: get new osc working first, then try out squashing
+        
+        
         env1.getNextSample(); // advance each envelope, we'll read them below as necessary
         env2.getNextSample();
         env3.getNextSample();
@@ -242,22 +245,22 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 			epi2 = epi1 + osc2Positions[i] * b;
 		}
 		else { // if smoothed, we prepare the transform matrix to squash the 2nd orbit along the tangent of the first
-			float cosThetaL = osc2Positions[i].xL;
-			float sinThetaL = osc2Positions[i].yL;
-			float cosThetaR = osc2Positions[i].xR;
-			float sinThetaR = osc2Positions[i].yR;
+			float cosThetaL  = osc1Positions[i].xL;
+			float sinThetaL  = osc1Positions[i].yL;
+			float cosThetaR  = osc1Positions[i].xR;
+			float sinThetaR  = osc1Positions[i].yR;
 			float cos2ThetaL = cosThetaL * cosThetaL;
 			float cos2ThetaR = cosThetaR * cosThetaR;
 			float sin2ThetaL = sinThetaL * sinThetaL;
 			float sin2ThetaR = sinThetaR * sinThetaR;
 			StereoMatrix transform = { 
 				.left = { 
-					.a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0 - k2),
-					.c = cosThetaL * sinThetaL * (1.0 - k2), .d = sin2ThetaL + k2 * cos2ThetaL
+					.a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k2),
+					.c = cosThetaL * sinThetaL * (1.0f - k2), .d = sin2ThetaL + k2 * cos2ThetaL
 				},
 				.right = { 
-					.a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0 - k2),
-					.c = cosThetaR * sinThetaR * (1.0 - k2), .d = sin2ThetaR + k2 * cos2ThetaR
+					.a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k2),
+					.c = cosThetaR * sinThetaR * (1.0f - k2), .d = sin2ThetaR + k2 * cos2ThetaR
 				} 
 			};
 			// then apply the matrix, scale by b and add it to first body's position
@@ -266,7 +269,33 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         
 		if (algo == 0) // 1-2-3-(4)
 		{
-			epi3 = epi2 + osc3Positions[i] * c;
+            if (!proc.globalParams.smooth->isOn()) {
+                epi3 = epi2 + osc3Positions[i] * c;
+            }
+            else { // squash along tangent
+                // or should we draw a perpendicular to epi2?
+                // and from equant?
+                float cosThetaL = osc2Positions[i].xL;
+                float sinThetaL = osc2Positions[i].yL;
+                float cosThetaR = osc2Positions[i].xR;
+                float sinThetaR = osc2Positions[i].yR;
+                float cos2ThetaL = cosThetaL * cosThetaL;
+                float cos2ThetaR = cosThetaR * cosThetaR;
+                float sin2ThetaL = sinThetaL * sinThetaL;
+                float sin2ThetaR = sinThetaR * sinThetaR;
+                StereoMatrix transform = {
+                    .left = {
+                        .a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k2),
+                        .c = cosThetaL * sinThetaL * (1.0f - k2), .d = sin2ThetaL + k2 * cos2ThetaL
+                    },
+                    .right = {
+                        .a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k2),
+                        .c = cosThetaR * sinThetaR * (1.0f - k2), .d = sin2ThetaR + k2 * cos2ThetaR
+                    }
+                };
+                // then apply the matrix, scale by b and add it to first body's position
+                epi2 = epi1 + osc2Positions[i] * transform * b; // pretty slick if it works...
+            }
 			epi4 = epi3 + osc4Positions[i] * d;
 		}
 		if (algo == 1) { // 1-2-(3), 2-(4)
@@ -503,7 +532,7 @@ void SynthVoice2::updateParams(int blockSize)
 		osc4Freq = baseFreq * ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine));
 	}
 
-	osc1Params.wave = (bool)getValue(proc.osc1Params.saw) ? Wave::sawUp : Wave::sine;
+	osc1Params.wave = (bool)getValue(proc.osc1Params.saw) ? Wavetype::sawUp : Wavetype::sine;
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
@@ -526,7 +555,7 @@ void SynthVoice2::updateParams(int blockSize)
 		break;
 	}
 
-	osc2Params.wave = (bool)getValue(proc.osc2Params.saw) ? Wave::sawUp : Wave::sine;
+	osc2Params.wave = (bool)getValue(proc.osc2Params.saw) ? Wavetype::sawUp : Wavetype::sine;
 	osc2Params.tones = getValue(proc.osc2Params.tones);
 	osc2Params.pan = getValue(proc.osc2Params.pan);
 	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
@@ -549,7 +578,7 @@ void SynthVoice2::updateParams(int blockSize)
 		break;
 	}
 
-	osc3Params.wave = (bool)getValue(proc.osc3Params.saw) ? Wave::sawUp : Wave::sine;
+	osc3Params.wave = (bool)getValue(proc.osc3Params.saw) ? Wavetype::sawUp : Wavetype::sine;
 	osc3Params.tones = getValue(proc.osc3Params.tones);
 	osc3Params.pan = getValue(proc.osc3Params.pan);
 	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
@@ -572,7 +601,7 @@ void SynthVoice2::updateParams(int blockSize)
 		break;
 	}
 
-	osc4Params.wave = (bool)getValue(proc.osc4Params.saw) ? Wave::sawUp : Wave::sine;
+	osc4Params.wave = (bool)getValue(proc.osc4Params.saw) ? Wavetype::sawUp : Wavetype::sine;
 	osc4Params.tones = getValue(proc.osc4Params.tones);
 	osc4Params.pan = getValue(proc.osc4Params.pan);
 	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;
