@@ -15,18 +15,19 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Oscillators.h"
+//#include "Oscillators.h"
+#include "QuadOsc.h"
 #include "Envelope.h"
 #include <numbers>
 class APAudioProcessor;
 
 using namespace std::numbers;
 //==============================================================================
-class SynthVoice : public gin::SynthesiserVoice,
+class SynthVoice2 : public gin::SynthesiserVoice,
                    public gin::ModVoice
 {
 public:
-    SynthVoice(APAudioProcessor& p);
+    SynthVoice2(APAudioProcessor& p);
     
     void noteStarted() override;
     void noteRetriggered() override;
@@ -50,7 +51,7 @@ private:
 
     APAudioProcessor& proc;
 
-    APBLLTVoicedStereoOscillator osc1, osc2, osc3, osc4;
+    QuadOscillator osc1, osc2, osc3, osc4;
 
     gin::Filter filter;
     gin::LFO lfo1, lfo2, lfo3, lfo4;
@@ -58,44 +59,23 @@ private:
     Envelope env1, env2, env3, env4;
     std::array<Envelope*, 4> envs{&env1, &env2, &env3, &env4};
     
-    struct Matrix {
-        friend Matrix operator*(const Matrix& m, const float s) {
-            return {m.a * s, m.b * s, m.c * s, m.d * s };
-        }
-        float a, b, c, d;
-    };
-    
-    Matrix I {1, 0, 0, 1};
-    Matrix half {0.5f, 0, 0, 0.5f};
-    
-    struct StereoPosition {
-        float xL, yL, xR, yR;
-        friend StereoPosition operator*(const StereoPosition& p, const Matrix& m) {
-            return {.xL = m.a * p.xL + m.b * p.yL,
-                    .yL = m.c * p.xL + m.d * p.yL,
-                    .xR = m.a * p.xR + m.b * p.yR,
-                    .yR = m.c * p.xR + m.d * p.yR };
-        }
-        StereoPosition operator+(const StereoPosition otherPos) {
-            return {this->xL + otherPos.xL, this->yL + otherPos.yL,
-                this->xR + otherPos.xR, this->yR + otherPos.yR};
-        }
-    };
-    
-    
 	StereoPosition epi1{ 1.0f, 0.0f, 1.0f, 0.0f};
 	StereoPosition epi2{ 1.0, 0.0f, 1.0f, 0.0f };
 	StereoPosition epi3{ 1.0f, 0.0f, 1.0f, 0.0f };
 	StereoPosition epi4{ 1.0f, 0.0f, 1.0f, 0.0f };
 
+	StereoPosition osc1Positions[32];
+	StereoPosition osc2Positions[32];
+	StereoPosition osc3Positions[32];
+	StereoPosition osc4Positions[32];
+
     float currentMidiNote = -1;
-    APVoicedStereoOscillatorParams osc1Params, osc2Params, osc3Params, osc4Params;
+    QuadOscillator::Params osc1Params, osc2Params, osc3Params, osc4Params;
 	float osc1Freq = 0.0f, osc2Freq = 0.0f, osc3Freq = 0.0f, osc4Freq = 0.0f;
 	float osc1Vol = 0.0f, osc2Vol = 0.0f, osc3Vol = 0.0f, osc4Vol = 0.0f;
 	int algo{ 0 };
 	float equant{ 0.f };
     
-
 	float baseAmplitude = 0.1f; 
 
     gin::EasedValueSmoother<float> noteSmoother;

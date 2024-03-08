@@ -16,17 +16,13 @@
 #include "PluginProcessor.h"
 
 //==============================================================================
-SynthVoice::SynthVoice(APAudioProcessor& p)
+SynthVoice2::SynthVoice2(APAudioProcessor& p)
 	: proc(p)
 {
 	filter.setNumChannels(2);
-	osc1Params.voices = 4;
-	osc2Params.voices = 4;
-	osc3Params.voices = 4;
-	osc4Params.voices = 4;
 }
 
-void SynthVoice::noteStarted()
+void SynthVoice2::noteStarted()
 {
 	//if (GIN_HAS_SIMD) {
 	//	int N = mipp::N<float>();
@@ -84,7 +80,7 @@ void SynthVoice::noteStarted()
 
 }
 
-void SynthVoice::noteRetriggered()
+void SynthVoice2::noteRetriggered()
 {
 	auto note = getCurrentlyPlayingNote();
     curNote = getCurrentlyPlayingNote();
@@ -105,10 +101,10 @@ void SynthVoice::noteRetriggered()
 
 	updateParams(0);
 
-	osc1.noteOn();
-	osc2.noteOn();
-	osc3.noteOn();
-	osc4.noteOn();
+	osc1.noteOn(0.f);
+	osc2.noteOn(0.f);
+	osc3.noteOn(0.f);
+	osc4.noteOn(0.f);
 
 	env1.noteOn();
 	env2.noteOn();
@@ -117,7 +113,7 @@ void SynthVoice::noteRetriggered()
 
 }
 
-void SynthVoice::noteStopped(bool allowTailOff)
+void SynthVoice2::noteStopped(bool allowTailOff)
 {
 	env1.noteOff();
 	env2.noteOff();
@@ -130,19 +126,19 @@ void SynthVoice::noteStopped(bool allowTailOff)
 
 }
 
-void SynthVoice::notePressureChanged()
+void SynthVoice2::notePressureChanged()
 {
 	auto note = getCurrentlyPlayingNote();
 	proc.modMatrix.setPolyValue(*this, proc.modSrcPressure, note.pressure.asUnsignedFloat());
 }
 
-void SynthVoice::noteTimbreChanged()
+void SynthVoice2::noteTimbreChanged()
 {
 	auto note = getCurrentlyPlayingNote();
 	proc.modMatrix.setPolyValue(*this, proc.modSrcTimbre, note.timbre.asUnsignedFloat());
 }
 
-void SynthVoice::setCurrentSampleRate(double newRate)
+void SynthVoice2::setCurrentSampleRate(double newRate)
 {
 	MPESynthesiserVoice::setCurrentSampleRate(newRate);
 
@@ -170,130 +166,120 @@ void SynthVoice::setCurrentSampleRate(double newRate)
     env4.setParameters(p);
 }
 
-void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
+void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
 {
 	updateParams(numSamples);
 
 
 	// Run OSC
-	gin::ScratchBuffer osc1SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc1CosineBuffer(2, numSamples);
-	gin::ScratchBuffer osc2SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc2CosineBuffer(2, numSamples);
-	gin::ScratchBuffer osc3SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc3CosineBuffer(2, numSamples);
-	gin::ScratchBuffer osc4SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc4CosineBuffer(2, numSamples);
+
 	gin::ScratchBuffer synthBuffer(2, numSamples);
 
-	osc1.processAdding(osc1Freq, osc1Params, osc1SineBuffer, osc1CosineBuffer);
+
+	// we do this to advance phase, even if we have to overwrite with sidechain (rare)
+	osc1.renderPositions(osc1Freq, osc1Params, osc1Positions, numSamples); 
 	
-	if (proc.globalParams.sidechainEnable->isOn()) { // just overwrite them
-		osc1CosineBuffer.copyFrom(0, 0, proc.sidechainSlice, 0, 0, numSamples);
-		osc1CosineBuffer.copyFrom(1, 0, proc.sidechainSlice, 1, 0, numSamples);
+	if (proc.globalParams.sidechainEnable->isOn()) { 
 		// taking sidechain as the vertical component, we calculate the horizontal component
 		// effectively mapping the sidechain to a semicircle
 		for (int i = 0; i < numSamples; i++) {
-			auto ls = std::clamp(osc1CosineBuffer.getSample(0, i), -1.f, 1.f);
-			auto rs = std::clamp(osc1CosineBuffer.getSample(1, i), -1.f, 1.f);
-			osc1SineBuffer.setSample(0, i, std::sqrt(1.f - ls * ls) * 2.f - 1.f);
-			osc1SineBuffer.setSample(1, i, std::sqrt(1.f - rs * rs) * 2.f - 1.f);
+			osc1Positions[i].yL = std::clamp(proc.sidechainSlice.getSample(0, i), -1.f, 1.f);
+			osc1Positions[i].yR = std::clamp(proc.sidechainSlice.getSample(1, i), -1.f, 1.f);
+			osc1Positions[i].xL = std::sqrt(1.f - osc1Positions[i].yL * osc1Positions[i].yL) * 2.f - 1.f;
+			osc1Positions[i].xR = std::sqrt(1.f - osc1Positions[i].yR * osc1Positions[i].yR) * 2.f - 1.f;
 		}
 	}
 	
-	osc2.processAdding(osc2Freq, osc2Params, osc2SineBuffer, osc2CosineBuffer);
-	osc3.processAdding(osc3Freq, osc3Params, osc3SineBuffer, osc3CosineBuffer);
-	osc4.processAdding(osc4Freq, osc4Params, osc4SineBuffer, osc4CosineBuffer);
-	// Apply velocity
+	osc2.renderPositions(osc2Freq, osc2Params, osc2Positions, numSamples);
+	osc3.renderPositions(osc3Freq, osc3Params, osc3Positions, numSamples);
+	osc4.renderPositions(osc4Freq, osc4Params, osc4Positions, numSamples);
+
+	// Get velocity
 	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
-	osc1SineBuffer.applyGain(osc1Vol);
-	osc1CosineBuffer.applyGain(osc1Vol);
-	osc2SineBuffer.applyGain(osc2Vol);
-	osc2CosineBuffer.applyGain(osc2Vol);
-	osc3SineBuffer.applyGain(osc3Vol);
-	osc3CosineBuffer.applyGain(osc3Vol);
-	osc4SineBuffer.applyGain(osc4Vol); 
-	osc4CosineBuffer.applyGain(osc4Vol);
+	
+	// apply volumes (old form below) in the per-sample loop, since we want to keep positions for computing slope of squash tangent
+	
+	//osc1SineBuffer.applyGain(osc1Vol);
+	//osc1CosineBuffer.applyGain(osc1Vol);
+	//osc2SineBuffer.applyGain(osc2Vol);
+	//osc2CosineBuffer.applyGain(osc2Vol);
+	//osc3SineBuffer.applyGain(osc3Vol);
+	//osc3CosineBuffer.applyGain(osc3Vol);
+	//osc4SineBuffer.applyGain(osc4Vol); 
+	//osc4CosineBuffer.applyGain(osc4Vol);
 
     // TODO: 1. replace oscillator with quadOsc, calculating all directly
-    // 2. make it return a stereoposition instead of two stereo buffers
+    // 2. make it write into a stereoposition array instead of two stereo buffers
     // 3. calculate k's (orbit tangential scaling factors) for 2, 3, 4 from osc1vol, etc.
-    
-    // sketch of k
-    // k2 = 1/2 * osc1Vol
-    // k3 = 1/4 * osc2Vol
-    // k4 = 1/4 * osc3Vol
-    
-    
+
+	// no k1 since we don't squash first orbit
+    float k2 = 0.5f * osc2Vol;
+	float k3 = 0.25f * osc3Vol;
+	float k4 = 0.25f * osc4Vol;
     
 	// the whole enchilada
 	for (int i = 0; i < numSamples; i++)
 	{
-        // 4. calculate matrices from vol, env (abcd), and positions (which are directly sin t, cos t)
-        // 5. apply matrices to osc positions, add them according to algo
+        // 4. calculate matrices from positions (which are (semi-)directly sin t, cos t)
+        // 5. apply matrices to osc positions, add them according to algo and envelope
         // 6. need to distinguish base positions (centered on origin) and derived positions
         //    (in the epicycle chain) and "cooked" positions (base * transform)
         
-        env1.getNextSample();
+        env1.getNextSample(); // advance each envelope, we'll read them below as necessary
         env2.getNextSample();
         env3.getNextSample();
         env4.getNextSample();
         // get bodies' position by algorithm
-        auto a = envs[0]->getOutput(); // load ALL FOUR env vals once per loop, then look them up
-		auto b = envs[1]->getOutput(); // in an envVals array
+        auto a = envs[0]->getOutput(); // read each envelope value from the pointer for each osc
+		auto b = envs[1]->getOutput(); // a = current output of envelope assigned to osc1, etc.
         auto c = envs[2]->getOutput(); // 
         auto d = envs[3]->getOutput();
         
-		epi1 = {
-			a * osc1SineBuffer.getSample(0, i), a * osc1CosineBuffer.getSample(0, i),
-			a * osc1SineBuffer.getSample(1, i), a * osc1CosineBuffer.getSample(1, i)
-		};
+		epi1 = osc1Positions[i] * a; // position of body on first circle, scaled by osc1 selected envelope
+
+		// second body always orbits first, in all algorithms, so calculate it
+		if (!proc.globalParams.smooth->isOn()) {
+			epi2 = epi1 + osc2Positions[i] * b;
+		}
+		else { // if smoothed, we prepare the transform matrix to squash the 2nd orbit along the tangent of the first
+			float cosThetaL = osc2Positions[i].xL;
+			float sinThetaL = osc2Positions[i].yL;
+			float cosThetaR = osc2Positions[i].xR;
+			float sinThetaR = osc2Positions[i].yR;
+			float cos2ThetaL = cosThetaL * cosThetaL;
+			float cos2ThetaR = cosThetaR * cosThetaR;
+			float sin2ThetaL = sinThetaL * sinThetaL;
+			float sin2ThetaR = sinThetaR * sinThetaR;
+			StereoMatrix transform = { 
+				.left = { 
+					.a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0 - k2),
+					.c = cosThetaL * sinThetaL * (1.0 - k2), .d = sin2ThetaL + k2 * cos2ThetaL
+				},
+				.right = { 
+					.a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0 - k2),
+					.c = cosThetaR * sinThetaR * (1.0 - k2), .d = sin2ThetaR + k2 * cos2ThetaR
+				} 
+			};
+			// then apply the matrix, scale by b and add it to first body's position
+			epi2 = epi1 + osc2Positions[i] * transform * b; // pretty slick if it works...
+		}
         
-		epi2 = {
-			epi1.xL + b * osc2SineBuffer.getSample(0, i), epi1.yL + b * osc2CosineBuffer.getSample(0, i),
-			epi1.xR + b * osc2SineBuffer.getSample(1, i), epi1.yR + b * osc2CosineBuffer.getSample(1, i)
-		};
-        
-		if (algo == 0)
+		if (algo == 0) // 1-2-3-(4)
 		{
-			epi3 = {
-				epi2.xL + c * osc3SineBuffer.getSample(0, i), epi2.yL + c * osc3CosineBuffer.getSample(0, i),
-				epi2.xR + c * osc3SineBuffer.getSample(1, i), epi2.yR + c * osc3CosineBuffer.getSample(1, i)
-			};
-			epi4 = {
-				epi3.xL + d * osc4SineBuffer.getSample(0, i), epi3.yL + d * osc4CosineBuffer.getSample(0, i),
-				epi3.xR + d * osc4SineBuffer.getSample(1, i), epi3.yR + d * osc4CosineBuffer.getSample(1, i)
-			};
+			epi3 = epi2 + osc3Positions[i] * c;
+			epi4 = epi3 + osc4Positions[i] * d;
 		}
-		if (algo == 1) {
-			epi3 = {
-				epi2.xL + c * osc3SineBuffer.getSample(0, i), epi2.yL + c * osc3CosineBuffer.getSample(0, i),
-				epi2.xR + c * osc3SineBuffer.getSample(1, i), epi2.yR + c * osc3CosineBuffer.getSample(1, i)
-			};
-			epi4 = {
-				epi2.xL + d * osc4SineBuffer.getSample(0, i), epi2.yL + d * osc4CosineBuffer.getSample(0, i),
-				epi2.xR + d * osc4SineBuffer.getSample(1, i), epi2.yR + d * osc4CosineBuffer.getSample(1, i)
-			};
+		if (algo == 1) { // 1-2-(3), 2-(4)
+			epi3 = epi2 + osc3Positions[i] * c;
+			epi4 = epi2 + osc4Positions[i] * d;
 		}
-		if (algo == 2) {
-			epi3 = {
-				epi1.xL + c * osc3SineBuffer.getSample(0, i), epi1.yL + c * osc3CosineBuffer.getSample(0, i),
-				epi1.xR + c * osc3SineBuffer.getSample(1, i), epi1.yR + c * osc3CosineBuffer.getSample(1, i)
-			};
-			epi4 = {
-				epi3.xL + d * osc4SineBuffer.getSample(0, i), epi3.yL + d * osc4CosineBuffer.getSample(0, i),
-				epi3.xR + d * osc4SineBuffer.getSample(1, i), epi3.yR + d * osc4CosineBuffer.getSample(1, i)
-			};
+		if (algo == 2) { // 1-(2), 1-3-(4)
+			epi3 = epi1 + osc3Positions[i] * c;
+			epi4 = epi3 + osc4Positions[i] * d;
 		}
-		if (algo == 3) {
-			epi3 = {
-				epi1.xL + c * osc3SineBuffer.getSample(0, i), epi1.yL + c * osc3CosineBuffer.getSample(0, i),
-				epi1.xR + c * osc3SineBuffer.getSample(1, i), epi1.yR + c * osc3CosineBuffer.getSample(1, i)
-			};
-			epi4 = {
-				epi1.xL + d * osc4SineBuffer.getSample(0, i), epi1.yL + d * osc4CosineBuffer.getSample(0, i),
-				epi1.xR + d * osc4SineBuffer.getSample(1, i), epi1.yR + d * osc4CosineBuffer.getSample(1, i)
-			};
+		if (algo == 3) { // 1-(2), 1-(3), 1-(4)
+			epi3 = epi1 + osc3Positions[i] * c;
+			epi4 = epi1 + osc4Positions[i] * d;
 		}
 
 
@@ -477,7 +463,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	finishBlock(numSamples);
 }
 
-void SynthVoice::updateParams(int blockSize)
+void SynthVoice2::updateParams(int blockSize)
 {
 	algo = (int)getValue(proc.timbreParams.algo);
 	equant = getValue(proc.timbreParams.equant);
@@ -812,12 +798,12 @@ void SynthVoice::updateParams(int blockSize)
 	noteSmoother.process(blockSize);
 }
 
-bool SynthVoice::isVoiceActive()
+bool SynthVoice2::isVoiceActive()
 {
 	return isActive();
 }
 
-float SynthVoice::getFilterCutoffNormalized()
+float SynthVoice2::getFilterCutoffNormalized()
 {
 	float freq = filter.getFrequency();
 	auto range = proc.filterParams.frequency->getUserRange();
