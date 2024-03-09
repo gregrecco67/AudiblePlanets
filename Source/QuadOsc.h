@@ -131,7 +131,7 @@ public:
 		// CHANGE PP detuned and spread to [0, 1] range
 		// pan is still [-1, 1]
 
-		// base pan is for leftmost voice
+		// basePan is for leftmost voice
 		// if pan is 0, then max spread should put first voice at -1 and last voice at 1
 		// if pan is -1, then max spread should put first voice at -1 and last voice at 0
 		// if pan is 1, then max spread should put first voice at 0 and last voice at 1
@@ -173,9 +173,8 @@ public:
 
 	void noteOn(float initPhase)
 	{
-		if (initPhase != 0.f) return;
 		for (int i = 0; i < 4; i++) {
-			phases[i] = 0.f;
+			phases[i] = initPhase;
 		}
 	}
 
