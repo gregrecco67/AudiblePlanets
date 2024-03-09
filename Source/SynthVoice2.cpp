@@ -241,61 +241,61 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 		epi1 = osc1Positions[i] * a; // position of body on first circle, scaled by osc1 selected envelope
 
 		// second body always orbits first, in all algorithms, so calculate it
-		if (!proc.globalParams.smooth->isOn()) {
-			epi2 = epi1 + osc2Positions[i] * b;
-		}
-		else { // if smoothed, we prepare the transform matrix to squash the 2nd orbit along the tangent of the first
-			float cosThetaL  = osc1Positions[i].xL;
-			float sinThetaL  = osc1Positions[i].yL;
-			float cosThetaR  = osc1Positions[i].xR;
-			float sinThetaR  = osc1Positions[i].yR;
-			float cos2ThetaL = cosThetaL * cosThetaL;
-			float cos2ThetaR = cosThetaR * cosThetaR;
-			float sin2ThetaL = sinThetaL * sinThetaL;
-			float sin2ThetaR = sinThetaR * sinThetaR;
-			StereoMatrix transform = { 
-				.left = { 
-					.a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k2),
-					.c = cosThetaL * sinThetaL * (1.0f - k2), .d = sin2ThetaL + k2 * cos2ThetaL
-				},
-				.right = { 
-					.a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k2),
-					.c = cosThetaR * sinThetaR * (1.0f - k2), .d = sin2ThetaR + k2 * cos2ThetaR
-				} 
-			};
-			// then apply the matrix, scale by b and add it to first body's position
-			epi2 = epi1 + osc2Positions[i] * transform * b; // pretty slick if it works...
-		}
+//		if (!proc.globalParams.smooth->isOn()) {
+		epi2 = epi1 + osc2Positions[i] * b;
+	//	}
+		//else { // if smoothed, we prepare the transform matrix to squash the 2nd orbit along the tangent of the first
+		//	float cosThetaL  = osc1Positions[i].xL;
+		//	float sinThetaL  = osc1Positions[i].yL;
+		//	float cosThetaR  = osc1Positions[i].xR;
+		//	float sinThetaR  = osc1Positions[i].yR;
+		//	float cos2ThetaL = cosThetaL * cosThetaL;
+		//	float cos2ThetaR = cosThetaR * cosThetaR;
+		//	float sin2ThetaL = sinThetaL * sinThetaL;
+		//	float sin2ThetaR = sinThetaR * sinThetaR;
+		//	StereoMatrix transform = { 
+		//		.left = { 
+		//			.a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k2),
+		//			.c = cosThetaL * sinThetaL * (1.0f - k2), .d = sin2ThetaL + k2 * cos2ThetaL
+		//		},
+		//		.right = { 
+		//			.a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k2),
+		//			.c = cosThetaR * sinThetaR * (1.0f - k2), .d = sin2ThetaR + k2 * cos2ThetaR
+		//		} 
+		//	};
+		//	// then apply the matrix, scale by b and add it to first body's position
+		//	epi2 = epi1 + osc2Positions[i] * transform * b; // pretty slick if it works...
+		//}
         
 		if (algo == 0) // 1-2-3-(4)
 		{
-            if (!proc.globalParams.smooth->isOn()) {
-                epi3 = epi2 + osc3Positions[i] * c;
-            }
-            else { // squash along tangent
-                // or should we draw a perpendicular to epi2?
-                // and from equant?
-                float cosThetaL = osc2Positions[i].xL;
-                float sinThetaL = osc2Positions[i].yL;
-                float cosThetaR = osc2Positions[i].xR;
-                float sinThetaR = osc2Positions[i].yR;
-                float cos2ThetaL = cosThetaL * cosThetaL;
-                float cos2ThetaR = cosThetaR * cosThetaR;
-                float sin2ThetaL = sinThetaL * sinThetaL;
-                float sin2ThetaR = sinThetaR * sinThetaR;
-                StereoMatrix transform = {
-                    .left = {
-                        .a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k2),
-                        .c = cosThetaL * sinThetaL * (1.0f - k2), .d = sin2ThetaL + k2 * cos2ThetaL
-                    },
-                    .right = {
-                        .a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k2),
-                        .c = cosThetaR * sinThetaR * (1.0f - k2), .d = sin2ThetaR + k2 * cos2ThetaR
-                    }
-                };
-                // then apply the matrix, scale by b and add it to first body's position
-                epi2 = epi1 + osc2Positions[i] * transform * b; // pretty slick if it works...
-            }
+            //if (!proc.globalParams.smooth->isOn()) {
+            epi3 = epi2 + osc3Positions[i] * c;
+            //}
+            //else { // squash along tangent
+            //    // or should we draw a perpendicular to epi2?
+            //    // and from equant?
+            //    float cosThetaL = osc2Positions[i].xL;
+            //    float sinThetaL = osc2Positions[i].yL;
+            //    float cosThetaR = osc2Positions[i].xR;
+            //    float sinThetaR = osc2Positions[i].yR;
+            //    float cos2ThetaL = cosThetaL * cosThetaL;
+            //    float cos2ThetaR = cosThetaR * cosThetaR;
+            //    float sin2ThetaL = sinThetaL * sinThetaL;
+            //    float sin2ThetaR = sinThetaR * sinThetaR;
+            //    StereoMatrix transform = {
+            //        .left = {
+            //            .a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k2),
+            //            .c = cosThetaL * sinThetaL * (1.0f - k2), .d = sin2ThetaL + k2 * cos2ThetaL
+            //        },
+            //        .right = {
+            //            .a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k2),
+            //            .c = cosThetaR * sinThetaR * (1.0f - k2), .d = sin2ThetaR + k2 * cos2ThetaR
+            //        }
+            //    };
+            //    // then apply the matrix, scale by b and add it to first body's position
+            //    epi2 = epi1 + osc2Positions[i] * transform * b; // pretty slick if it works...
+            //}
 			epi4 = epi3 + osc4Positions[i] * d;
 		}
 		if (algo == 1) { // 1-2-(3), 2-(4)

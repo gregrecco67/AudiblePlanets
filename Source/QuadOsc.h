@@ -161,12 +161,12 @@ public:
 			positions[i] = { 0.f, 0.f, 0.f, 0.f };
 			for (int v = 0; i < 4; i++) {
 				// do the per-voice stuff
-				phases[i] += phaseIncs[i];
-				if (phases[i] > pi) { phases[i] -= 2.f * pi; }
-				positions[i].xL += gainsL[i] * sineValueForPhaseAndTones(phases[i] + 0.25f, params.tones);
-				positions[i].yL += gainsL[i] * sineValueForPhaseAndTones(phases[i], params.tones);
-				positions[i].xR += gainsR[i] * sineValueForPhaseAndTones(phases[i] + 0.25f, params.tones);
-				positions[i].yR += gainsR[i] * sineValueForPhaseAndTones(phases[i], params.tones);
+				phases[v] += phaseIncs[v];
+				if (phases[v] > pi) { phases[v] -= 2.f * pi; }
+				positions[i].xL += gainsL[v] * std::sin(phases[v]); //sineValueForPhaseAndTones(phases[i] + 0.25f, params.tones);
+				positions[i].yL += gainsL[v] * std::sin(phases[v]+.25f*pi); //sineValueForPhaseAndTones(phases[i], params.tones);
+				positions[i].xR += gainsR[v] * std::sin(phases[v]); //sineValueForPhaseAndTones(phases[i] + 0.25f, params.tones);
+				positions[i].yR += gainsR[v] * std::sin(phases[v]+.25f*pi); //sineValueForPhaseAndTones(phases[i], params.tones);
 			}
 		}
 	}
