@@ -119,7 +119,7 @@ public:
     {
         GlobalParams() = default;
 
-        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange, sidechainEnable, smooth;
+        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange, sidechainEnable, squash;
 
         void setup(APAudioProcessor& p);
 

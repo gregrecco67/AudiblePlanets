@@ -368,7 +368,7 @@ public:
 		addControl(new gin::Knob(proc.orbitParams.speed), 0, 0);
 		addControl(new gin::Knob(proc.orbitParams.scale), 1, 0);
 		addControl(new gin::Select(proc.timbreParams.algo), 0, 1);
-        addControl(new gin::Knob(proc.globalParams.smooth), 1, 1);
+        addControl(new gin::Knob(proc.globalParams.squash), 1, 1);
 	}
 
 	APAudioProcessor& proc;

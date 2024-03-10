@@ -1,7 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include <gin/gin.h>
-#include "SynthVoice2.h"
+#include "SynthVoice.h"
 
 class APAudioProcessor;
 

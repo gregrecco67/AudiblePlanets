@@ -20,10 +20,6 @@ SynthVoice::SynthVoice(APAudioProcessor& p)
 	: proc(p)
 {
 	filter.setNumChannels(2);
-	osc1Params.voices = 4;
-	osc2Params.voices = 4;
-	osc3Params.voices = 4;
-	osc4Params.voices = 4;
 }
 
 void SynthVoice::noteStarted()
@@ -105,10 +101,10 @@ void SynthVoice::noteRetriggered()
 
 	updateParams(0);
 
-	osc1.noteOn();
-	osc2.noteOn();
-	osc3.noteOn();
-	osc4.noteOn();
+	osc1.noteOn(0.f);
+	osc2.noteOn(0.f);
+	osc3.noteOn(0.f);
+	osc4.noteOn(0.f);
 
 	env1.noteOn();
 	env2.noteOn();
@@ -176,110 +172,103 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 
 	// Run OSC
-	gin::ScratchBuffer osc1SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc1CosineBuffer(2, numSamples);
-	gin::ScratchBuffer osc2SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc2CosineBuffer(2, numSamples);
-	gin::ScratchBuffer osc3SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc3CosineBuffer(2, numSamples);
-	gin::ScratchBuffer osc4SineBuffer(2, numSamples);
-	gin::ScratchBuffer osc4CosineBuffer(2, numSamples);
+
 	gin::ScratchBuffer synthBuffer(2, numSamples);
 
-	osc1.processAdding(osc1Freq, osc1Params, osc1SineBuffer, osc1CosineBuffer);
+
+	// we do this to advance phase, even if we have to overwrite with sidechain (rare)
+	osc1.renderPositions(osc1Freq, osc1Params, osc1Positions, numSamples); 
 	
-	if (proc.globalParams.sidechainEnable->isOn()) { // just overwrite them
-		osc1CosineBuffer.copyFrom(0, 0, proc.sidechainSlice, 0, 0, numSamples);
-		osc1CosineBuffer.copyFrom(1, 0, proc.sidechainSlice, 1, 0, numSamples);
+	if (proc.globalParams.sidechainEnable->isOn()) { 
 		// taking sidechain as the vertical component, we calculate the horizontal component
 		// effectively mapping the sidechain to a semicircle
 		for (int i = 0; i < numSamples; i++) {
-			auto ls = std::clamp(osc1CosineBuffer.getSample(0, i), -1.f, 1.f);
-			auto rs = std::clamp(osc1CosineBuffer.getSample(1, i), -1.f, 1.f);
-			osc1SineBuffer.setSample(0, i, std::sqrt(1.f - ls * ls) * 2.f - 1.f);
-			osc1SineBuffer.setSample(1, i, std::sqrt(1.f - rs * rs) * 2.f - 1.f);
+			osc1Positions[i].yL = std::clamp(proc.sidechainSlice.getSample(0, i), -1.f, 1.f);
+			osc1Positions[i].yR = std::clamp(proc.sidechainSlice.getSample(1, i), -1.f, 1.f);
+			osc1Positions[i].xL = std::sqrt(1.f - osc1Positions[i].yL * osc1Positions[i].yL) * 2.f - 1.f;
+			osc1Positions[i].xR = std::sqrt(1.f - osc1Positions[i].yR * osc1Positions[i].yR) * 2.f - 1.f;
 		}
 	}
 	
-	osc2.processAdding(osc2Freq, osc2Params, osc2SineBuffer, osc2CosineBuffer);
-	osc3.processAdding(osc3Freq, osc3Params, osc3SineBuffer, osc3CosineBuffer);
-	osc4.processAdding(osc4Freq, osc4Params, osc4SineBuffer, osc4CosineBuffer);
-	// Apply velocity
-	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
-	osc1SineBuffer.applyGain(osc1Vol);
-	osc1CosineBuffer.applyGain(osc1Vol);
-	osc2SineBuffer.applyGain(osc2Vol);
-	osc2CosineBuffer.applyGain(osc2Vol);
-	osc3SineBuffer.applyGain(osc3Vol);
-	osc3CosineBuffer.applyGain(osc3Vol);
-	osc4SineBuffer.applyGain(osc4Vol); 
-	osc4CosineBuffer.applyGain(osc4Vol);
+	osc2.renderPositions(osc2Freq, osc2Params, osc2Positions, numSamples);
+	osc3.renderPositions(osc3Freq, osc3Params, osc3Positions, numSamples);
+	osc4.renderPositions(osc4Freq, osc4Params, osc4Positions, numSamples);
 
+
+
+	// more squash = smaller k, which scales about the tangent to the deferent
+	float k = 1.f - getValue(proc.globalParams.squash); 
+    
 	// the whole enchilada
 	for (int i = 0; i < numSamples; i++)
 	{
-        env1.getNextSample();
+        // 4. calculate matrix from osc1 positions
+        // 5. apply matrix to osc positions, add them according to algo and envelope
+
+		env1.getNextSample(); // advance each envelope, we'll read them below as necessary
         env2.getNextSample();
         env3.getNextSample();
         env4.getNextSample();
-        // get bodies' position by algorithm
-        auto a = envs[0]->getOutput(); // load ALL FOUR env vals once per loop, then look them up
-		auto b = envs[1]->getOutput(); // in an envVals array
+        auto a = envs[0]->getOutput(); // read each envelope value from the pointer for each osc
+		auto b = envs[1]->getOutput(); // a = current output of envelope assigned to osc1, etc.
         auto c = envs[2]->getOutput(); // 
         auto d = envs[3]->getOutput();
+
+		// calculate squash matrix
+		// get distances in order to normalize vectors
+		float distanceL = std::sqrt(osc1Positions[i].xL * osc1Positions[i].xL + osc1Positions[i].yL * osc1Positions[i].yL);
+		float distanceR = std::sqrt(osc1Positions[i].xR * osc1Positions[i].xR + osc1Positions[i].yR * osc1Positions[i].yR);
+		// normalized vectors
+		float cosThetaL = osc1Positions[i].yL /  (distanceL + .001f); // what we want is the tangent to the orbit at this point
+		float sinThetaL = -osc1Positions[i].xL / (distanceL + .001f); // so swap x and y and negate y
+		float cosThetaR = osc1Positions[i].yR /  (distanceR + .001f); 
+		float sinThetaR = -osc1Positions[i].xR / (distanceR + .001f); // +.001f to avoid divide by zero
+		float cos2ThetaL = cosThetaL * cosThetaL;
+		float cos2ThetaR = cosThetaR * cosThetaR;
+		float sin2ThetaL = sinThetaL * sinThetaL;
+		float sin2ThetaR = sinThetaR * sinThetaR;
+		// plug in to transform matrix
+		StereoMatrix squash = {
+			.left = {
+				.a = cos2ThetaL + k * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k),
+				.c = cosThetaL * sinThetaL * (1.0f - k), .d = sin2ThetaL + k * cos2ThetaL
+			},
+			.right = {
+				.a = cos2ThetaR + k * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k),
+				.c = cosThetaR * sinThetaR * (1.0f - k), .d = sin2ThetaR + k * cos2ThetaR
+			}
+		};
+
+
+		epi1 = osc1Positions[i] * (a * osc1Vol); // position of body on first circle, scaled by osc1 selected envelope
+		
+		// apply the squash matrix to squash secondary orbits along the tangent of the first
+		epi2 = epi1 + ((osc2Positions[i] * squash) * (b * osc2Vol)); 
+		
+        // get bodies 3 & 4 position by algorithm
         
-		epi1 = {
-			a * osc1SineBuffer.getSample(0, i), a * osc1CosineBuffer.getSample(0, i),
-			a * osc1SineBuffer.getSample(1, i), a * osc1CosineBuffer.getSample(1, i)
-		};
-		epi2 = {
-			epi1.xL + b * osc2SineBuffer.getSample(0, i), epi1.yL + b * osc2CosineBuffer.getSample(0, i),
-			epi1.xR + b * osc2SineBuffer.getSample(1, i), epi1.yR + b * osc2CosineBuffer.getSample(1, i)
-		};
-		if (algo == 0)
+		if (algo == 0) // 1-2-3-(4)
 		{
-			epi3 = {
-				epi2.xL + c * osc3SineBuffer.getSample(0, i), epi2.yL + c * osc3CosineBuffer.getSample(0, i),
-				epi2.xR + c * osc3SineBuffer.getSample(1, i), epi2.yR + c * osc3CosineBuffer.getSample(1, i)
-			};
-			epi4 = {
-				epi3.xL + d * osc4SineBuffer.getSample(0, i), epi3.yL + d * osc4CosineBuffer.getSample(0, i),
-				epi3.xR + d * osc4SineBuffer.getSample(1, i), epi3.yR + d * osc4CosineBuffer.getSample(1, i)
-			};
+			epi3 = epi2 + ((osc3Positions[i] * squash) * (c * osc3Vol));
+			epi4 = epi3 + ((osc4Positions[i] * squash) * (d * osc4Vol));
 		}
-		if (algo == 1) {
-			epi3 = {
-				epi2.xL + c * osc3SineBuffer.getSample(0, i), epi2.yL + c * osc3CosineBuffer.getSample(0, i),
-				epi2.xR + c * osc3SineBuffer.getSample(1, i), epi2.yR + c * osc3CosineBuffer.getSample(1, i)
-			};
-			epi4 = {
-				epi2.xL + d * osc4SineBuffer.getSample(0, i), epi2.yL + d * osc4CosineBuffer.getSample(0, i),
-				epi2.xR + d * osc4SineBuffer.getSample(1, i), epi2.yR + d * osc4CosineBuffer.getSample(1, i)
-			};
+		if (algo == 1) { // 1-2-(3), 2-(4)
+			epi3 = epi2 + ((osc3Positions[i] * squash) * (c * osc3Vol));
+			epi4 = epi2 + ((osc4Positions[i] * squash) * (d * osc4Vol));
 		}
-		if (algo == 2) {
-			epi3 = {
-				epi1.xL + c * osc3SineBuffer.getSample(0, i), epi1.yL + c * osc3CosineBuffer.getSample(0, i),
-				epi1.xR + c * osc3SineBuffer.getSample(1, i), epi1.yR + c * osc3CosineBuffer.getSample(1, i)
-			};
-			epi4 = {
-				epi3.xL + d * osc4SineBuffer.getSample(0, i), epi3.yL + d * osc4CosineBuffer.getSample(0, i),
-				epi3.xR + d * osc4SineBuffer.getSample(1, i), epi3.yR + d * osc4CosineBuffer.getSample(1, i)
-			};
+		if (algo == 2) { // 1-(2), 1-3-(4)
+			epi3 = epi1 + ((osc3Positions[i] * squash) * (c * osc3Vol));
+			epi4 = epi3 + ((osc4Positions[i] * squash) * (d * osc4Vol));
 		}
-		if (algo == 3) {
-			epi3 = {
-				epi1.xL + c * osc3SineBuffer.getSample(0, i), epi1.yL + c * osc3CosineBuffer.getSample(0, i),
-				epi1.xR + c * osc3SineBuffer.getSample(1, i), epi1.yR + c * osc3CosineBuffer.getSample(1, i)
-			};
-			epi4 = {
-				epi1.xL + d * osc4SineBuffer.getSample(0, i), epi1.yL + d * osc4CosineBuffer.getSample(0, i),
-				epi1.xR + d * osc4SineBuffer.getSample(1, i), epi1.yR + d * osc4CosineBuffer.getSample(1, i)
-			};
+		if (algo == 3) { // 1-(2), 1-(3), 1-(4)
+			epi3 = epi1 + ((osc3Positions[i] * squash) * (c * osc3Vol));
+			epi4 = epi1 + ((osc4Positions[i] * squash) * (d * osc4Vol));
 		}
 
-
+		// ----------------------------------------
 		// interpret bodies' positions by algorithm
+		// ----------------------------------------
+		
 		// 1. get angles
         float atanAngle2L{0}, atanAngle2R{0}, atanAngle3L{0}, atanAngle3R{0}, atanAngle4L, atanAngle4R;
 
@@ -300,7 +289,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			atanAngle3L = FastMath<float>::fastAtan2(epi3.yL + equant, epi3.xL);
 			atanAngle3R = FastMath<float>::fastAtan2(epi3.yR + equant, epi3.xR);
 		}
-
 
 		// 2. generate component waveforms from angles
 		float sine2L{ 0.f }, sine2R{ 0.f }, sine3L{ 0.f }, sine3R{ 0.f }, sine4L{ 0.f }, sine4R{ 0.f };
@@ -344,10 +332,8 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			saw3R = (atanAngle3R * (float)inv_pi) * 2.0f - 1.0f;
 		}
 
-
 		// 3. mix component waveforms by blend value
 		float sample2L, sample2R, sample3L, sample3R, sample4L, sample4R;
-
 		auto blend = getValue(proc.timbreParams.blend);
 		if (blend < 0.5f)
 		{
@@ -367,7 +353,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			sample4R = (square4R * (1.0f - blend) * 2.0f + saw4R * (blend - 0.5f) * 2.f);
 		}
 
-
 		// 4. compute modulated and demodulated samples, and mix them by demodmix
 		float modSample2L{ sample2L }, demodSample2L{ sample2L }, modSample2R{ sample2R }, demodSample2R{ sample2R };
 		float modSample3L{ sample3L }, demodSample3L{ sample3L }, modSample3R{ sample3R }, demodSample3R{ sample3R };
@@ -381,15 +366,14 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL + equant) * (epi4.yL + equant));
 		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR + equant) * (epi4.yR + equant));
 
-		// distance can be > 1, so scale it down a bit
-		demodSample2L *= atanDistance2L * 0.75f;
-		demodSample2R *= atanDistance2R * 0.75f;
-		demodSample3L *= atanDistance3L * 0.75f;
-		demodSample3R *= atanDistance3R * 0.75f;
-		demodSample4L *= atanDistance4L * 0.75f;
-		demodSample4R *= atanDistance4R * 0.75f;
+		demodSample2L *= atanDistance2L;
+		demodSample2R *= atanDistance2R;
+		demodSample3L *= atanDistance3L;
+		demodSample3R *= atanDistance3R;
+		demodSample4L *= atanDistance4L;
+		demodSample4R *= atanDistance4R;
 
-		// original recipe (before we added demodmix)
+		// since mod samples are angle-only, we need to reapply their envelope values
 		modSample2L *= envs[1]->getOutput();
 		modSample2R *= envs[1]->getOutput();
 		modSample3L *= envs[2]->getOutput();
@@ -422,6 +406,9 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		synthBuffer.setSample(1, i, sampleR);
 	}
 
+	// Get and apply velocity according to keytrack param
+	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
+	float ampKeyTrack = getValue(proc.globalParams.velSens);
 	synthBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack) * baseAmplitude);
 	
 	if (proc.filterParams.enable->isOn())
@@ -499,7 +486,7 @@ void SynthVoice::updateParams(int blockSize)
 		osc4Freq = baseFreq * ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine));
 	}
 
-	osc1Params.wave = (bool)getValue(proc.osc1Params.saw) ? Wave::sawUp : Wave::sine;
+	osc1Params.wave = (bool)getValue(proc.osc1Params.saw) ? Wavetype::sawUp : Wavetype::sine;
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
@@ -522,7 +509,7 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc2Params.wave = (bool)getValue(proc.osc2Params.saw) ? Wave::sawUp : Wave::sine;
+	osc2Params.wave = (bool)getValue(proc.osc2Params.saw) ? Wavetype::sawUp : Wavetype::sine;
 	osc2Params.tones = getValue(proc.osc2Params.tones);
 	osc2Params.pan = getValue(proc.osc2Params.pan);
 	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
@@ -545,7 +532,7 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc3Params.wave = (bool)getValue(proc.osc3Params.saw) ? Wave::sawUp : Wave::sine;
+	osc3Params.wave = (bool)getValue(proc.osc3Params.saw) ? Wavetype::sawUp : Wavetype::sine;
 	osc3Params.tones = getValue(proc.osc3Params.tones);
 	osc3Params.pan = getValue(proc.osc3Params.pan);
 	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
@@ -568,7 +555,7 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc4Params.wave = (bool)getValue(proc.osc4Params.saw) ? Wave::sawUp : Wave::sine;
+	osc4Params.wave = (bool)getValue(proc.osc4Params.saw) ? Wavetype::sawUp : Wavetype::sine;
 	osc4Params.tones = getValue(proc.osc4Params.tones);
 	osc4Params.pan = getValue(proc.osc4Params.pan);
 	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;
@@ -590,8 +577,6 @@ void SynthVoice::updateParams(int blockSize)
 		envs[3] = &env4;
 		break;
 	}
-
-	ampKeyTrack = getValue(proc.globalParams.velSens);
 
 	if (proc.filterParams.enable->isOn())
 	{

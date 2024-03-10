@@ -313,7 +313,7 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
     pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
 	sidechainEnable = p.addIntParam("sidechain", "Sidechain", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-    smooth         = p.addExtParam("smooth", "Smooth", "", "", {0.0f, 1.0f, 0.0f, 1.0f}, 0.0f, 0.0f);
+    squash         = p.addExtParam("squash", "Squash", "", "", {0.0f, 1.0f, 0.0f, 1.0f}, 0.0f, 0.0f);
 
     level->conversionFunction     = [](float in) { return juce::Decibels::decibelsToGain (in); };
 	velSens->conversionFunction   = [](float in) { return in / 100.0f; };

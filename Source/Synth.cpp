@@ -8,7 +8,7 @@ APSynth::APSynth(APAudioProcessor& proc_) : proc(proc_)
 
     for (int i = 0; i < 10; i++)
     {
-        auto voice = new SynthVoice2(proc);
+        auto voice = new SynthVoice(proc);
         proc.modMatrix.addVoice(voice);
         addVoice(voice);
     }
@@ -21,7 +21,7 @@ juce::Array<float> APSynth::getLiveFilterCutoff() {
     {
         if (v->isActive())
         {
-            auto vav = dynamic_cast<SynthVoice2*>(v);
+            auto vav = dynamic_cast<SynthVoice*>(v);
             values.add (vav->getFilterCutoffNormalized());
         }
     }
@@ -41,7 +41,7 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
 	}
     if (m.isAftertouch()) {
         for (auto& voice : voices) {
-            SynthVoice2* svoice = static_cast<SynthVoice2*>(voice);
+            SynthVoice* svoice = static_cast<SynthVoice*>(voice);
             if (svoice->curNote.initialNote == m.getNoteNumber()) {
                 proc.modMatrix.setPolyValue(*svoice, proc.modPolyAT, m.getAfterTouchValue() / 127.0f);
             }
