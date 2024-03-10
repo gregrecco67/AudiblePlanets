@@ -36,14 +36,17 @@ Editor::Editor(APAudioProcessor& proc_)
 	addAndMakeVisible(timbre);
     addAndMakeVisible(orbitViz);
     addAndMakeVisible(orbit);
-    
-	//setupCallbacks();
+	proc.globalParams.pitchbendRange->addListener(this);
     startTimerHz(frameRate);
 }
 
-//void Editor::setupCallbacks()
-//{
-//}
+void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
+{
+	if (param == proc.globalParams.pitchbendRange) {
+		proc.updatePitchbend();
+		return;
+	}
+}
 
 void Editor::timerCallback() {
     auto speed = proc.orbitParams.speed->getUserValue();

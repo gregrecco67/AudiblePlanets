@@ -21,14 +21,14 @@
 #include "OrbitViz.h"
 
 //==============================================================================
-class Editor : public juce::Component, public juce::Timer
+class Editor : public juce::Component, public juce::Timer, public gin::Parameter::ParameterListener
 {
 public:
     Editor(APAudioProcessor& proc_);
 
-    //void setupCallbacks();
     void resized() override;
     void timerCallback() override;
+	void valueUpdated(gin::Parameter* param) override;
 
 private:
     APAudioProcessor& proc;
@@ -58,6 +58,5 @@ private:
     int frameRate{ 30 };
     float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };
     float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * (float)frameRate) };
-    
     gin::Layout layout { *this };
 };

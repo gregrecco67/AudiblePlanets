@@ -16,7 +16,7 @@
 
 #include <JuceHeader.h>
 #include <gin/gin.h>
-#include "SynthVoice.h"
+//#include "SynthVoice.h"
 #include "Envelope.h"
 #include "FXProcessors.h"
 #include "Synth.h"
@@ -119,7 +119,7 @@ public:
     {
         GlobalParams() = default;
 
-        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange, sidechainEnable;
+        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange, sidechainEnable, squash;
 
         void setup(APAudioProcessor& p);
 
