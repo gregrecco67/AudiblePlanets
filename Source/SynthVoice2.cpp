@@ -198,15 +198,6 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
 	
 	// apply volumes (old form below) in the per-sample loop, since we want to keep positions for computing slope of squash tangent
-	
-	//osc1SineBuffer.applyGain(osc1Vol);
-	//osc1CosineBuffer.applyGain(osc1Vol);
-	//osc2SineBuffer.applyGain(osc2Vol);
-	//osc2CosineBuffer.applyGain(osc2Vol);
-	//osc3SineBuffer.applyGain(osc3Vol);
-	//osc3CosineBuffer.applyGain(osc3Vol);
-	//osc4SineBuffer.applyGain(osc4Vol); 
-	//osc4CosineBuffer.applyGain(osc4Vol);
 
     // TODO: 1. replace oscillator with quadOsc, calculating all directly
     // 2. make it write into a stereoposition array instead of two stereo buffers
@@ -238,65 +229,14 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         auto c = envs[2]->getOutput(); // 
         auto d = envs[3]->getOutput();
         
-		epi1 = osc1Positions[i] * a; // position of body on first circle, scaled by osc1 selected envelope
+        epi1 = osc1Positions[i]; // * a; // position of body on first circle, scaled by osc1 selected envelope
+        epi2 = epi1 + osc2Positions[i]; // * b;
 
-		// second body always orbits first, in all algorithms, so calculate it
-//		if (!proc.globalParams.smooth->isOn()) {
-		epi2 = epi1 + osc2Positions[i] * b;
-	//	}
-		//else { // if smoothed, we prepare the transform matrix to squash the 2nd orbit along the tangent of the first
-		//	float cosThetaL  = osc1Positions[i].xL;
-		//	float sinThetaL  = osc1Positions[i].yL;
-		//	float cosThetaR  = osc1Positions[i].xR;
-		//	float sinThetaR  = osc1Positions[i].yR;
-		//	float cos2ThetaL = cosThetaL * cosThetaL;
-		//	float cos2ThetaR = cosThetaR * cosThetaR;
-		//	float sin2ThetaL = sinThetaL * sinThetaL;
-		//	float sin2ThetaR = sinThetaR * sinThetaR;
-		//	StereoMatrix transform = { 
-		//		.left = { 
-		//			.a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k2),
-		//			.c = cosThetaL * sinThetaL * (1.0f - k2), .d = sin2ThetaL + k2 * cos2ThetaL
-		//		},
-		//		.right = { 
-		//			.a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k2),
-		//			.c = cosThetaR * sinThetaR * (1.0f - k2), .d = sin2ThetaR + k2 * cos2ThetaR
-		//		} 
-		//	};
-		//	// then apply the matrix, scale by b and add it to first body's position
-		//	epi2 = epi1 + osc2Positions[i] * transform * b; // pretty slick if it works...
-		//}
         
 		if (algo == 0) // 1-2-3-(4)
 		{
-            //if (!proc.globalParams.smooth->isOn()) {
-            epi3 = epi2 + osc3Positions[i] * c;
-            //}
-            //else { // squash along tangent
-            //    // or should we draw a perpendicular to epi2?
-            //    // and from equant?
-            //    float cosThetaL = osc2Positions[i].xL;
-            //    float sinThetaL = osc2Positions[i].yL;
-            //    float cosThetaR = osc2Positions[i].xR;
-            //    float sinThetaR = osc2Positions[i].yR;
-            //    float cos2ThetaL = cosThetaL * cosThetaL;
-            //    float cos2ThetaR = cosThetaR * cosThetaR;
-            //    float sin2ThetaL = sinThetaL * sinThetaL;
-            //    float sin2ThetaR = sinThetaR * sinThetaR;
-            //    StereoMatrix transform = {
-            //        .left = {
-            //            .a = cos2ThetaL + k2 * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k2),
-            //            .c = cosThetaL * sinThetaL * (1.0f - k2), .d = sin2ThetaL + k2 * cos2ThetaL
-            //        },
-            //        .right = {
-            //            .a = cos2ThetaR + k2 * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k2),
-            //            .c = cosThetaR * sinThetaR * (1.0f - k2), .d = sin2ThetaR + k2 * cos2ThetaR
-            //        }
-            //    };
-            //    // then apply the matrix, scale by b and add it to first body's position
-            //    epi2 = epi1 + osc2Positions[i] * transform * b; // pretty slick if it works...
-            //}
-			epi4 = epi3 + osc4Positions[i] * d;
+            epi3 = epi2 + osc3Positions[i]; // * c;
+            epi4 = epi3 + osc4Positions[i]; // * d;
 		}
 		if (algo == 1) { // 1-2-(3), 2-(4)
 			epi3 = epi2 + osc3Positions[i] * c;

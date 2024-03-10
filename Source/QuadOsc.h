@@ -19,10 +19,10 @@ struct StereoMatrix {
 };
 
 struct StereoPosition {
-	float xL{ 0 }, yL{ 0 }, xR{ 0 }, yR{ 0 };
+	float xL{ 0.f }, yL{ 0.f }, xR{ 0.f }, yR{ 0.f };
 	
 	friend StereoPosition operator*(const StereoPosition& p, const StereoMatrix& m) { // apply matrix to position
-		return { .xL = m.left.a * p.xL + m.left.b * p.yL,
+		return {.xL = m.left.a * p.xL + m.left.b * p.yL,
 				.yL = m.left.c * p.xL + m.left.d * p.yL,
 				.xR = m.right.a * p.xR + m.right.b * p.yR,
 				.yR = m.right.c * p.xR + m.right.d * p.yR };
@@ -141,15 +141,24 @@ public:
 
 		for (int i = 0; i < params.voices; i++)
 		{
-			float pan = juce::jlimit(-1.0f, 1.0f, basePan + panDelta * i);
-			gainsL[i] = (1.0f - pan) / 2;
-			gainsR[i] = (1.0f + pan) / 2;
-			freqs[i] = baseFreq * std::pow(freqFactor, i);
-		}
-
-		// calculate phaseIncs
-		for (int i = 0; i < 4; i++) {
-			phaseIncs[i] = freqs[i] / sampleRate;
+			float thisPan = juce::jlimit(-1.0f, 1.0f, basePan + panDelta * i);
+			gainsL[i] = (1.0f - thisPan) / 2;
+			gainsR[i] = (1.0f + thisPan) / 2;
+            switch(i) {
+                case 0:
+                    freqs[i] = baseFreq;
+                    break;
+                case 1:
+                    freqs[i] = baseFreq * freqFactor;
+                    break;
+                case 2:
+                    freqs[i] = baseFreq * freqFactor * freqFactor;
+                    break;
+                case 3:
+                    freqs[i] = baseFreq * freqFactor * freqFactor * freqFactor;
+                    break;
+            }
+            phaseIncs[i] = freqs[i] * pi * 2.0f / sampleRate;
 		}
 	}
 
@@ -157,17 +166,22 @@ public:
 		freq = freq_;
 		params = params_;
 		recalculate();
+        DBG("numSamples" + String(numSamples));
 		for (int i = 0; i < numSamples; i++) {
 			positions[i] = { 0.f, 0.f, 0.f, 0.f };
-			for (int v = 0; i < 4; i++) {
-				// do the per-voice stuff
-				phases[v] += phaseIncs[v];
-				if (phases[v] > pi) { phases[v] -= 2.f * pi; }
-				positions[i].xL += gainsL[v] * std::sin(phases[v]); //sineValueForPhaseAndTones(phases[i] + 0.25f, params.tones);
-				positions[i].yL += gainsL[v] * std::sin(phases[v]+.25f*pi); //sineValueForPhaseAndTones(phases[i], params.tones);
-				positions[i].xR += gainsR[v] * std::sin(phases[v]); //sineValueForPhaseAndTones(phases[i] + 0.25f, params.tones);
-				positions[i].yR += gainsR[v] * std::sin(phases[v]+.25f*pi); //sineValueForPhaseAndTones(phases[i], params.tones);
-			}
+            for (int v = 0; v < 4; v++) {
+                positions[i].xL += (gainsL[v] * std::sin(phases[v]+.25f*pi));
+                positions[i].yL += (gainsL[v] * std::sin(phases[v]));
+                positions[i].xR += (gainsR[v] * std::sin(phases[v]+.25f*pi));
+                positions[i].yR += (gainsR[v] * std::sin(phases[v]));
+                phases[v] += phaseIncs[v];
+                DBG("sample: " + String(i));
+                DBG("phases[" + String(v) + "]: " + String(phases[v]));
+                DBG("phaseIncs[" + String(v) + "]: " + String(phaseIncs[v]));
+                if (phases[v] > pi) { phases[v] -= 2.f * pi; }
+                DBG("pos: " + String(positions[i].xL));
+            }
+            
 		}
 	}
 
