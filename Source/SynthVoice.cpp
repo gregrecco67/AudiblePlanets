@@ -216,8 +216,8 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 		// calculate squash matrix
 		// get distances in order to normalize vectors
-		float distanceL = std::sqrt(osc1Positions[i].xL * osc1Positions[i].xL + osc1Positions[i].yL * osc1Positions[i].yL);
-		float distanceR = std::sqrt(osc1Positions[i].xR * osc1Positions[i].xR + osc1Positions[i].yR * osc1Positions[i].yR);
+		float distanceL = std::sqrt(osc1Positions[i].xL * osc1Positions[i].xL + (osc1Positions[i].yL - equant) * (osc1Positions[i].yL - equant));
+		float distanceR = std::sqrt(osc1Positions[i].xR * osc1Positions[i].xR + (osc1Positions[i].yR - equant) * (osc1Positions[i].yR - equant));
 		// normalized vectors
 		float cosThetaL = osc1Positions[i].yL /  (distanceL + .001f); // what we want is the tangent to the orbit at this point
 		float sinThetaL = -osc1Positions[i].xL / (distanceL + .001f); // so swap x and y and negate y
@@ -228,7 +228,55 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		float sin2ThetaL = sinThetaL * sinThetaL;
 		float sin2ThetaR = sinThetaR * sinThetaR;
 		// plug in to transform matrix
-		StereoMatrix squash = {
+		StereoMatrix squash1 = {
+			.left = {
+				.a = cos2ThetaL + k * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k),
+				.c = cosThetaL * sinThetaL * (1.0f - k), .d = sin2ThetaL + k * cos2ThetaL
+			},
+			.right = {
+				.a = cos2ThetaR + k * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k),
+				.c = cosThetaR * sinThetaR * (1.0f - k), .d = sin2ThetaR + k * cos2ThetaR
+			}
+		};
+
+		// separate matrix for each orbit that can be the basis for another
+		distanceL = std::sqrt(osc2Positions[i].xL * osc2Positions[i].xL + (osc2Positions[i].yL - equant) * (osc2Positions[i].yL - equant));
+		distanceR = std::sqrt(osc2Positions[i].xR * osc2Positions[i].xR + (osc2Positions[i].yR - equant) * (osc2Positions[i].yR - equant));
+		// normalized vectors
+		cosThetaL =  osc2Positions[i].yL / (distanceL + .001f); // what we want is the tangent to the orbit at this point
+		sinThetaL = -osc2Positions[i].xL / (distanceL + .001f); // so swap x and y and negate y
+		cosThetaR =  osc2Positions[i].yR / (distanceR + .001f);
+		sinThetaR = -osc2Positions[i].xR / (distanceR + .001f); // +.001f to avoid divide by zero
+		cos2ThetaL = cosThetaL * cosThetaL;
+		cos2ThetaR = cosThetaR * cosThetaR;
+		sin2ThetaL = sinThetaL * sinThetaL;
+		sin2ThetaR = sinThetaR * sinThetaR;
+		
+		StereoMatrix squash2 = {
+			.left = {
+				.a = cos2ThetaL + k * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k),
+				.c = cosThetaL * sinThetaL * (1.0f - k), .d = sin2ThetaL + k * cos2ThetaL
+			},
+			.right = {
+				.a = cos2ThetaR + k * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k),
+				.c = cosThetaR * sinThetaR * (1.0f - k), .d = sin2ThetaR + k * cos2ThetaR
+			}
+		};
+
+		// separate matrix for each orbit that can be the basis for another
+		distanceL = std::sqrt(osc3Positions[i].xL * osc3Positions[i].xL + (osc3Positions[i].yL - equant) * (osc3Positions[i].yL - equant));
+		distanceR = std::sqrt(osc3Positions[i].xR * osc3Positions[i].xR + (osc3Positions[i].yR - equant) * (osc3Positions[i].yR - equant));
+		// normalized vectors
+		cosThetaL =  osc3Positions[i].yL / (distanceL + .001f); // what we want is the tangent to the orbit at this point
+		sinThetaL = -osc3Positions[i].xL / (distanceL + .001f); // so swap x and y and negate y
+		cosThetaR =  osc3Positions[i].yR / (distanceR + .001f);
+		sinThetaR = -osc3Positions[i].xR / (distanceR + .001f); // +.001f to avoid divide by zero
+		cos2ThetaL = cosThetaL * cosThetaL;
+		cos2ThetaR = cosThetaR * cosThetaR;
+		sin2ThetaL = sinThetaL * sinThetaL;
+		sin2ThetaR = sinThetaR * sinThetaR;
+
+		StereoMatrix squash3 = {
 			.left = {
 				.a = cos2ThetaL + k * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k),
 				.c = cosThetaL * sinThetaL * (1.0f - k), .d = sin2ThetaL + k * cos2ThetaL
@@ -242,27 +290,27 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 		epi1 = osc1Positions[i] * (a * osc1Vol); // position of body on first circle, scaled by osc1 selected envelope
 		
-		// apply the squash matrix to squash secondary orbits along the tangent of the first
-		epi2 = epi1 + ((osc2Positions[i] * squash) * (b * osc2Vol)); 
+		// apply the squash matrix to squash secondary orbits along the tangent of the one they're orbiting
+		epi2 = epi1 + ((osc2Positions[i] * squash1) * (b * osc2Vol)); 
 		
         // get bodies 3 & 4 position by algorithm
         
 		if (algo == 0) // 1-2-3-(4)
 		{
-			epi3 = epi2 + ((osc3Positions[i] * squash) * (c * osc3Vol));
-			epi4 = epi3 + ((osc4Positions[i] * squash) * (d * osc4Vol));
+			epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
+			epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
 		}
 		if (algo == 1) { // 1-2-(3), 2-(4)
-			epi3 = epi2 + ((osc3Positions[i] * squash) * (c * osc3Vol));
-			epi4 = epi2 + ((osc4Positions[i] * squash) * (d * osc4Vol));
+			epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
+			epi4 = epi2 + ((osc4Positions[i] * squash2) * (d * osc4Vol));
 		}
 		if (algo == 2) { // 1-(2), 1-3-(4)
-			epi3 = epi1 + ((osc3Positions[i] * squash) * (c * osc3Vol));
-			epi4 = epi3 + ((osc4Positions[i] * squash) * (d * osc4Vol));
+			epi3 = epi1 + ((osc3Positions[i] * squash1) * (c * osc3Vol));
+			epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
 		}
 		if (algo == 3) { // 1-(2), 1-(3), 1-(4)
-			epi3 = epi1 + ((osc3Positions[i] * squash) * (c * osc3Vol));
-			epi4 = epi1 + ((osc4Positions[i] * squash) * (d * osc4Vol));
+			epi3 = epi1 + ((osc3Positions[i] * squash1) * (c * osc3Vol));
+			epi4 = epi1 + ((osc4Positions[i] * squash1) * (d * osc4Vol));
 		}
 
 		// ----------------------------------------
