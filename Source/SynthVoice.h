@@ -73,7 +73,7 @@ private:
 	float osc1Freq = 0.0f, osc2Freq = 0.0f, osc3Freq = 0.0f, osc4Freq = 0.0f;
 	float osc1Vol = 0.0f, osc2Vol = 0.0f, osc3Vol = 0.0f, osc4Vol = 0.0f;
 	int algo{ 0 };
-	float equant{ 0.f };
+	float equant{ 0.f }, demodVol{ 2.0f };
     
 	float baseAmplitude = 0.1f; 
 

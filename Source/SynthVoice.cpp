@@ -414,12 +414,12 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL + equant) * (epi4.yL + equant));
 		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR + equant) * (epi4.yR + equant));
 
-		demodSample2L *= atanDistance2L;
-		demodSample2R *= atanDistance2R;
-		demodSample3L *= atanDistance3L;
-		demodSample3R *= atanDistance3R;
-		demodSample4L *= atanDistance4L;
-		demodSample4R *= atanDistance4R;
+		demodSample2L *= atanDistance2L * demodVol;
+		demodSample2R *= atanDistance2R * demodVol;
+		demodSample3L *= atanDistance3L * demodVol;
+		demodSample3R *= atanDistance3R * demodVol;
+		demodSample4L *= atanDistance4L * demodVol;
+		demodSample4R *= atanDistance4R * demodVol;
 
 		// since mod samples are angle-only, we need to reapply their envelope values
 		modSample2L *= envs[1]->getOutput();
@@ -498,6 +498,7 @@ void SynthVoice::updateParams(int blockSize)
 {
 	algo = (int)getValue(proc.timbreParams.algo);
 	equant = getValue(proc.timbreParams.equant);
+	demodVol = getValue(proc.timbreParams.demodVol);
 
 	auto note = getCurrentlyPlayingNote();
 
