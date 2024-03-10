@@ -166,20 +166,15 @@ public:
 		freq = freq_;
 		params = params_;
 		recalculate();
-        DBG("numSamples" + String(numSamples));
 		for (int i = 0; i < numSamples; i++) {
 			positions[i] = { 0.f, 0.f, 0.f, 0.f };
             for (int v = 0; v < 4; v++) {
-                positions[i].xL += (gainsL[v] * std::sin(phases[v]+.25f*pi));
-                positions[i].yL += (gainsL[v] * std::sin(phases[v]));
-                positions[i].xR += (gainsR[v] * std::sin(phases[v]+.25f*pi));
-                positions[i].yR += (gainsR[v] * std::sin(phases[v]));
+                positions[i].xL += (gainsL[v] * std::sin(phases[v]+.25f*pi)) * .25f;
+                positions[i].yL += (gainsL[v] * std::sin(phases[v])) * .25f;
+                positions[i].xR += (gainsR[v] * std::sin(phases[v]+.25f*pi)) * .25f;
+                positions[i].yR += (gainsR[v] * std::sin(phases[v])) * .25f;
                 phases[v] += phaseIncs[v];
-                DBG("sample: " + String(i));
-                DBG("phases[" + String(v) + "]: " + String(phases[v]));
-                DBG("phaseIncs[" + String(v) + "]: " + String(phaseIncs[v]));
                 if (phases[v] > pi) { phases[v] -= 2.f * pi; }
-                DBG("pos: " + String(positions[i].xL));
             }
             
 		}

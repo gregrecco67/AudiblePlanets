@@ -79,7 +79,6 @@ private:
 
     gin::EasedValueSmoother<float> noteSmoother;
     
-    float ampKeyTrack = 1.0f;
     friend class APSynth;
     juce::MPENote curNote;
 	

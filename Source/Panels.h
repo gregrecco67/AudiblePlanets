@@ -67,7 +67,7 @@ public:
 		}
 
         addControl(new gin::Knob(osc.detune), 2, 2);
-        addControl(new gin::Knob(osc.spread, true), 3, 2);
+        addControl(new gin::Knob(osc.spread), 3, 2);
         addControl(new gin::Knob(osc.pan, true), 4, 2);
 
         addControl(new gin::Select(osc.env));
@@ -368,7 +368,7 @@ public:
 		addControl(new gin::Knob(proc.orbitParams.speed), 0, 0);
 		addControl(new gin::Knob(proc.orbitParams.scale), 1, 0);
 		addControl(new gin::Select(proc.timbreParams.algo), 0, 1);
-        addControl(new gin::Switch(proc.globalParams.smooth), 1, 1);
+        addControl(new gin::Knob(proc.globalParams.smooth), 1, 1);
 	}
 
 	APAudioProcessor& proc;
