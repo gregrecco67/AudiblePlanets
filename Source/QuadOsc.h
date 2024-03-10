@@ -3,6 +3,7 @@
 #include <numbers>
 
 using std::numbers::pi;
+using std::numbers::inv_pi;
 
 struct Matrix {
 	friend Matrix operator*(const Matrix& m, const float s) { // scalar multiplication
@@ -124,18 +125,9 @@ public:
 
 	void recalculate()
 	{
-		// calculate frequencies
-		float baseFreq = freq * semitonePower(-params.detune); // 2x faster than std::pow(SEMITONE_INV, params.detune);
-		float freqFactor = semitonePower(params.detune / (params.voices - 1)); // !!
-
-		// CHANGE PP detuned and spread to [0, 1] range
-		// pan is still [-1, 1]
-
-		// basePan is for leftmost voice
-		// if pan is 0, then max spread should put first voice at -1 and last voice at 1
-		// if pan is -1, then max spread should put first voice at -1 and last voice at 0
-		// if pan is 1, then max spread should put first voice at 0 and last voice at 1
-
+		// calculate frequencies and pan positions for our four voices
+		float baseFreq = freq * semitonePower(-params.detune); // faster std::pow(SEMITONE, params.detune);
+		float freqFactor = semitonePower(params.detune / (params.voices - 1));
 		float basePan = params.pan - params.spread;
 		float panDelta = 2.f * params.spread / (params.voices - 1);
 
@@ -168,15 +160,28 @@ public:
 		recalculate();
 		for (int i = 0; i < numSamples; i++) {
 			positions[i] = { 0.f, 0.f, 0.f, 0.f };
-            for (int v = 0; v < 4; v++) {
-                positions[i].xL += (gainsL[v] * std::sin(phases[v]+.25f*pi)) * .25f;
-                positions[i].yL += (gainsL[v] * std::sin(phases[v])) * .25f;
-                positions[i].xR += (gainsR[v] * std::sin(phases[v]+.25f*pi)) * .25f;
-                positions[i].yR += (gainsR[v] * std::sin(phases[v])) * .25f;
-                phases[v] += phaseIncs[v];
-                if (phases[v] > pi) { phases[v] -= 2.f * pi; }
-            }
-            
+			if (params.wave == Wavetype::sine) {
+				for (int v = 0; v < 4; v++) {
+					positions[i].xL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.25f * pi, params.tones)) * .25f;
+					positions[i].yL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift, params.tones)) * .25f;
+					positions[i].xR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.25f * pi, params.tones)) * .25f;
+					positions[i].yR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift, params.tones)) * .25f;
+					phases[v] += phaseIncs[v];
+					if (phases[v] > pi) { phases[v] -= 2.f * pi; }
+				}
+			}
+			if (params.wave == Wavetype::sawUp) {
+				for (int v = 0; v < 4; v++) {
+					float quarterPhase = phases[v] + 0.25 * pi;
+					if (quarterPhase > pi) { quarterPhase -= 2.f * pi; }
+					positions[i].xL += (gainsL[v] * (quarterPhase * inv_pi)) * .25f;
+					positions[i].yL += (gainsL[v] * (phases[v]    * inv_pi)) * .25f;
+					positions[i].xR += (gainsR[v] * (quarterPhase * inv_pi)) * .25f;
+					positions[i].yR += (gainsR[v] * (phases[v]    * inv_pi)) * .25f;
+					phases[v] += phaseIncs[v];
+					if (phases[v] > pi) { phases[v] -= 2.f * pi; }
+				}
+			}
 		}
 	}
 

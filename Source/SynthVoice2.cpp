@@ -219,10 +219,10 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 		float distanceL = std::sqrt(osc1Positions[i].xL * osc1Positions[i].xL + osc1Positions[i].yL * osc1Positions[i].yL);
 		float distanceR = std::sqrt(osc1Positions[i].xR * osc1Positions[i].xR + osc1Positions[i].yR * osc1Positions[i].yR);
 		// normalized vectors
-		float cosThetaL = osc1Positions[i].yL / distanceL; // what we want is the tangent to the orbit at this point
-		float sinThetaL = -osc1Positions[i].xL / distanceL;// so swap x and y and negate y
-		float cosThetaR = osc1Positions[i].yR / distanceR;
-		float sinThetaR = -osc1Positions[i].xR / distanceR;
+		float cosThetaL = osc1Positions[i].yL /  (distanceL + .001f); // what we want is the tangent to the orbit at this point
+		float sinThetaL = -osc1Positions[i].xL / (distanceL + .001f); // so swap x and y and negate y
+		float cosThetaR = osc1Positions[i].yR /  (distanceR + .001f); 
+		float sinThetaR = -osc1Positions[i].xR / (distanceR + .001f); // +.001f to avoid divide by zero
 		float cos2ThetaL = cosThetaL * cosThetaL;
 		float cos2ThetaR = cosThetaR * cosThetaR;
 		float sin2ThetaL = sinThetaL * sinThetaL;
