@@ -57,7 +57,7 @@ static inline float semitonePower(float x) { // about 2x faster than std::pow(SE
 
 static inline float sineValueForPhaseAndTones(float phase_, float tones) {
 	float fullTones{ 0.f }, value{ 0.0f };
-	float partialToneFraction = std::modf(tones, &fullTones);
+	float partialToneFraction = std::clamp(std::modf(tones, &fullTones), 0.0f, 1.0f);
 
 	value += FastMath<float>::minimaxSin(phase_);
 

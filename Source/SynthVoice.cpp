@@ -15,6 +15,10 @@
 #include "SynthVoice.h"
 #include "PluginProcessor.h"
 
+// TODO: move Squash knob to timbre section and re-expand algorithm selector.
+// -- update orbit viz to show squash
+// -- update randomization to include squash and anything else missing
+
 //==============================================================================
 SynthVoice::SynthVoice(APAudioProcessor& p)
 	: proc(p)

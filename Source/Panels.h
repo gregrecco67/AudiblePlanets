@@ -218,12 +218,14 @@ public:
 		setName(name);
 
 		auto& timbreparams = proc.timbreParams;
+		auto& globalParams = proc.globalParams;
 		addControl(new gin::Knob(timbreparams.equant, true), 0, 0);
 		addControl(new gin::Knob(timbreparams.pitch), 0, 1);
 		addControl(new gin::Knob(timbreparams.blend), 1, 1);
         addControl(new gin::Knob(timbreparams.algo), 1, 0);
 		addControl(new gin::Knob(timbreparams.demodmix, true), 2, 0);
 		addControl(new gin::Knob(timbreparams.demodVol, true), 2, 1);
+		addControl(new gin::Knob(globalParams.squash), 3, 0);
 	}
 };
 
@@ -369,7 +371,6 @@ public:
 		addControl(new gin::Knob(proc.orbitParams.speed), 0, 0);
 		addControl(new gin::Knob(proc.orbitParams.scale), 1, 0);
 		addControl(new gin::Select(proc.timbreParams.algo), 0, 1);
-        addControl(new gin::Knob(proc.globalParams.squash), 1, 1);
 	}
 
 	APAudioProcessor& proc;
