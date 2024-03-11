@@ -119,7 +119,7 @@ public:
 	void normalizePhases()
 	{
 		for (int i = 0; i < 4; i++) {
-			if (phases[i] > pi) { phases[i] -= 2.f * pi; }
+			if (phases[i] > pi) { phases[i] -= 2.f * (float)pi; }
 		}
 	}
 
@@ -150,7 +150,7 @@ public:
                     freqs[i] = baseFreq * freqFactor * freqFactor * freqFactor;
                     break;
             }
-            phaseIncs[i] = freqs[i] * pi * 2.0f / sampleRate;
+            phaseIncs[i] = freqs[i] * (float)pi * 2.0f / sampleRate;
 		}
 	}
 
@@ -162,24 +162,24 @@ public:
 			positions[i] = { 0.f, 0.f, 0.f, 0.f };
 			if (params.wave == Wavetype::sine) {
 				for (int v = 0; v < 4; v++) {
-					positions[i].xL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.25f * pi, params.tones)) * .25f;
+					positions[i].xL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.25f * (float)pi, params.tones)) * .25f;
 					positions[i].yL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift, params.tones)) * .25f;
-					positions[i].xR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.25f * pi, params.tones)) * .25f;
+					positions[i].xR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.25f * (float)pi, params.tones)) * .25f;
 					positions[i].yR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift, params.tones)) * .25f;
 					phases[v] += phaseIncs[v];
-					if (phases[v] > pi) { phases[v] -= 2.f * pi; }
+					if (phases[v] > pi) { phases[v] -= 2.f * (float)pi; }
 				}
 			}
 			if (params.wave == Wavetype::sawUp) {
 				for (int v = 0; v < 4; v++) {
-					float quarterPhase = phases[v] + 0.25 * pi;
-					if (quarterPhase > pi) { quarterPhase -= 2.f * pi; }
-					positions[i].xL += (gainsL[v] * (quarterPhase * inv_pi)) * .25f;
-					positions[i].yL += (gainsL[v] * (phases[v]    * inv_pi)) * .25f;
-					positions[i].xR += (gainsR[v] * (quarterPhase * inv_pi)) * .25f;
-					positions[i].yR += (gainsR[v] * (phases[v]    * inv_pi)) * .25f;
+					float quarterPhase = phases[v] + 0.25 * (float)pi;
+					if (quarterPhase > pi) { quarterPhase -= 2.f * (float)pi; }
+					positions[i].xL += (gainsL[v] * (quarterPhase * (float)inv_pi)) * .25f;
+					positions[i].yL += (gainsL[v] * (phases[v]    * (float)inv_pi)) * .25f;
+					positions[i].xR += (gainsR[v] * (quarterPhase * (float)inv_pi)) * .25f;
+					positions[i].yR += (gainsR[v] * (phases[v]    * (float)inv_pi)) * .25f;
 					phases[v] += phaseIncs[v];
-					if (phases[v] > pi) { phases[v] -= 2.f * pi; }
+					if (phases[v] > pi) { phases[v] -= 2.f * (float)pi; }
 				}
 			}
 		}

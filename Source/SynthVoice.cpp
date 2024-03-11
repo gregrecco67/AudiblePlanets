@@ -173,12 +173,7 @@ void SynthVoice::setCurrentSampleRate(double newRate)
 void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
 {
 	updateParams(numSamples);
-
-
-	// Run OSC
-
 	gin::ScratchBuffer synthBuffer(2, numSamples);
-
 
 	// we do this to advance phase, even if we have to overwrite with sidechain (rare)
 	osc1.renderPositions(osc1Freq, osc1Params, osc1Positions, numSamples); 
@@ -198,17 +193,12 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	osc3.renderPositions(osc3Freq, osc3Params, osc3Positions, numSamples);
 	osc4.renderPositions(osc4Freq, osc4Params, osc4Positions, numSamples);
 
-
-
 	// more squash = smaller k, which scales about the tangent to the deferent
 	float k = 1.f - getValue(proc.globalParams.squash); 
     
 	// the whole enchilada
 	for (int i = 0; i < numSamples; i++)
 	{
-        // 4. calculate matrix from osc1 positions
-        // 5. apply matrix to osc positions, add them according to algo and envelope
-
 		env1.getNextSample(); // advance each envelope, we'll read them below as necessary
         env2.getNextSample();
         env3.getNextSample();
@@ -298,7 +288,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		epi2 = epi1 + ((osc2Positions[i] * squash1) * (b * osc2Vol)); 
 		
         // get bodies 3 & 4 position by algorithm
-        
 		if (algo == 0) // 1-2-3-(4)
 		{
 			epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
