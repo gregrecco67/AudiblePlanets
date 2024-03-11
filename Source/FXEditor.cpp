@@ -64,14 +64,7 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(laneAGain);
 	addAndMakeVisible(laneBGain);
 
-	fxa1Box.setControls(proc.fxOrderParams.fxa1->getUserValueInt());
-	fxa2Box.setControls(proc.fxOrderParams.fxa2->getUserValueInt());
-	fxa3Box.setControls(proc.fxOrderParams.fxa3->getUserValueInt());
-	fxa4Box.setControls(proc.fxOrderParams.fxa4->getUserValueInt());
-	fxb1Box.setControls(proc.fxOrderParams.fxb1->getUserValueInt());
-	fxb2Box.setControls(proc.fxOrderParams.fxb2->getUserValueInt());
-	fxb3Box.setControls(proc.fxOrderParams.fxb3->getUserValueInt());
-	fxb4Box.setControls(proc.fxOrderParams.fxb4->getUserValueInt());
+	setAllControls();
 
 }
 
@@ -108,14 +101,7 @@ void FXEditor::resized()
 	laneAGain.setBounds(1065, 113, 70, 87);
 	laneBGain.setBounds(1065, 426, 70, 87);
 
-	fxa1Box.setControls(proc.fxOrderParams.fxa1->getUserValueInt());
-	fxa2Box.setControls(proc.fxOrderParams.fxa2->getUserValueInt());
-	fxa3Box.setControls(proc.fxOrderParams.fxa3->getUserValueInt());
-	fxa4Box.setControls(proc.fxOrderParams.fxa4->getUserValueInt());
-	fxb1Box.setControls(proc.fxOrderParams.fxb1->getUserValueInt());
-	fxb2Box.setControls(proc.fxOrderParams.fxb2->getUserValueInt());
-	fxb3Box.setControls(proc.fxOrderParams.fxb3->getUserValueInt());
-	fxb4Box.setControls(proc.fxOrderParams.fxb4->getUserValueInt());
+	setAllControls();
 }
 
 void FXEditor::setAllControls() {
