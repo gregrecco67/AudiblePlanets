@@ -27,6 +27,7 @@ public:
 	void resized() override;
 	void valueUpdated(gin::Parameter* param) override;
 	void removeDuplicates(int effect, int componentToSkip);
+    void setAllControls();
 
 private:
 	APAudioProcessor& proc;

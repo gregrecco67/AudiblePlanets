@@ -118,56 +118,60 @@ void FXEditor::resized()
 	fxb4Box.setControls(proc.fxOrderParams.fxb4->getUserValueInt());
 }
 
+void FXEditor::setAllControls() {
+	fxa1Box.setControls(proc.fxOrderParams.fxa1->getUserValueInt());
+	fxa2Box.setControls(proc.fxOrderParams.fxa2->getUserValueInt());
+	fxa3Box.setControls(proc.fxOrderParams.fxa3->getUserValueInt());
+	fxa4Box.setControls(proc.fxOrderParams.fxa4->getUserValueInt());
+	fxb1Box.setControls(proc.fxOrderParams.fxb1->getUserValueInt());
+	fxb2Box.setControls(proc.fxOrderParams.fxb2->getUserValueInt());
+	fxb3Box.setControls(proc.fxOrderParams.fxb3->getUserValueInt());
+	fxb4Box.setControls(proc.fxOrderParams.fxb4->getUserValueInt());
+}
+
 void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
 {
     if (param == proc.fxOrderParams.fxa1) {
         auto fxa1Choice = param->getUserValueInt();
         fxa1Box.setControls(fxa1Choice);
 		removeDuplicates(fxa1Choice, 1);
-        return;
     }
-	if (param == proc.fxOrderParams.fxa2) {
+	else if (param == proc.fxOrderParams.fxa2) {
 		auto fxa2Choice = param->getUserValueInt();
 		fxa2Box.setControls(fxa2Choice);
 		removeDuplicates(fxa2Choice, 2);
-        return;
     }
-	if (param == proc.fxOrderParams.fxa3) {
+	else if (param == proc.fxOrderParams.fxa3) {
 		auto fxa3Choice = param->getUserValueInt();
 		fxa3Box.setControls(fxa3Choice);
 		removeDuplicates(fxa3Choice, 3);
-        return;
     }
-	if (param == proc.fxOrderParams.fxa4) {
+	else if (param == proc.fxOrderParams.fxa4) {
 		auto fxa4Choice = param->getUserValueInt();
 		fxa4Box.setControls(fxa4Choice);
 		removeDuplicates(fxa4Choice, 4);
-        return;
 	}
-	if (param == proc.fxOrderParams.fxb1) {
+	else if (param == proc.fxOrderParams.fxb1) {
 		auto fxb1Choice = param->getUserValueInt();
 		fxb1Box.setControls(fxb1Choice);
 		removeDuplicates(fxb1Choice, 5);
-        return;
 	}
-	if (param == proc.fxOrderParams.fxb2) {
+	else if (param == proc.fxOrderParams.fxb2) {
 		auto fxb2Choice = param->getUserValueInt();
 		fxb2Box.setControls(fxb2Choice);
 		removeDuplicates(fxb2Choice, 6);
-        return;
 	}
-	if (param == proc.fxOrderParams.fxb3) {
+	else if (param == proc.fxOrderParams.fxb3) {
 		auto fxb3Choice = param->getUserValueInt();
 		fxb3Box.setControls(fxb3Choice);
 		removeDuplicates(fxb3Choice, 7);
-        return;
 	}
-	if (param == proc.fxOrderParams.fxb4) {
+	else if (param == proc.fxOrderParams.fxb4) {
 		auto fxb4Choice = param->getUserValueInt();
 		fxb4Box.setControls(fxb4Choice);
 		removeDuplicates(fxb4Choice, 8);
-        return;
 	}
+	setAllControls();
 }
 
 void FXEditor::removeDuplicates(int effect, int componentToSkip)

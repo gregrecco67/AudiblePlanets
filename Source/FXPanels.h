@@ -160,6 +160,7 @@ public:
                     break;
                 
             }
+			funcImage.setVisible(true);
         }
         
 	}
@@ -182,6 +183,7 @@ public:
 			wsdry->setVisible(true);
 			wswet->setVisible(true);
 			wstype->setVisible(true);
+			paramChanged(); // ensure function image is initialized
             funcImage.setVisible(true);
 			break;
 		case 2:
