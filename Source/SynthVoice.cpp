@@ -418,12 +418,12 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL + equant) * (epi4.yL + equant));
 		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR + equant) * (epi4.yR + equant));
 
-		demodSample2L *= atanDistance2L * demodVol;
-		demodSample2R *= atanDistance2R * demodVol;
-		demodSample3L *= atanDistance3L * demodVol;
-		demodSample3R *= atanDistance3R * demodVol;
-		demodSample4L *= atanDistance4L * demodVol;
-		demodSample4R *= atanDistance4R * demodVol;
+		demodSample2L *= (atanDistance2L * demodVol);
+		demodSample2R *= (atanDistance2R * demodVol);
+		demodSample3L *= (atanDistance3L * demodVol);
+		demodSample3R *= (atanDistance3R * demodVol);
+		demodSample4L *= (atanDistance4L * demodVol);
+		demodSample4R *= (atanDistance4R * demodVol);
 
 		// since mod samples are angle-only, we need to reapply their envelope values
 		modSample2L *= envs[1]->getOutput();
@@ -449,7 +449,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			sampleR = ((modSample2R + modSample4R) * 0.5f * (1.0f - demodmix) + (demodSample2R + demodSample4R) * 0.5f * demodmix);
 		}
 		if (algo == 3) {
-			sampleL = ((modSample2L + modSample3L + modSample4L) * 0.333f * (1.0f - demodmix) + (demodSample2L + modSample3L + demodSample4L) * 0.333f * demodmix);
+			sampleL = ((modSample2L + modSample3L + modSample4L) * 0.333f * (1.0f - demodmix) + (demodSample2L + demodSample3L + demodSample4L) * 0.333f * demodmix);
 			sampleR = ((modSample2R + modSample3R + modSample4R) * 0.333f * (1.0f - demodmix) + (demodSample2R + demodSample3L + demodSample4R) * 0.333f * demodmix);
 		}
 
