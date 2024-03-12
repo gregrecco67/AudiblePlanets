@@ -380,6 +380,7 @@ void APAudioProcessor::StereoDelayParams::setup(APAudioProcessor& p)
 	pingpong = p.addIntParam(pfx + "pingpong",   name + "Ping Pong", "Ping Pong", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 	feedback = p.addExtParam(pfx + "feedback",   name + "Feedback", "Feedback", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
 	wet = p.addExtParam(pfx + "wet",        name + "Wet", "Wet", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f);
+	cutoff = p.addExtParam(pfx + "cutoff",     name + "Cutoff", "Cutoff", " Hz", { 20.0f, 20000.0f, 0.0, 0.3f }, 10000.0f, 0.0f);
 }
 
 //==============================================================================
@@ -975,6 +976,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
 	stereoDelay.setDry(1.0f);
 	stereoDelay.setFreeze(stereoDelayParams.freeze->getProcValue() > 0.0f);
 	stereoDelay.setPing(stereoDelayParams.pingpong->getProcValue() > 0.0f);
+	stereoDelay.setCutoff(modMatrix.getValue(stereoDelayParams.cutoff));
 
 	chorus.setRate(modMatrix.getValue(chorusParams.rate));
 	chorus.setDepth(modMatrix.getValue(chorusParams.depth));

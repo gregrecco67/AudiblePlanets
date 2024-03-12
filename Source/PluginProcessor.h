@@ -163,7 +163,7 @@ public:
 	{
 		StereoDelayParams() = default;
 
-		gin::Parameter::Ptr enable, timeleft, timeright, beatsleft, beatsright, temposync, freeze, pingpong, feedback, wet;
+		gin::Parameter::Ptr enable, timeleft, timeright, beatsleft, beatsright, temposync, freeze, pingpong, feedback, wet, cutoff;
 
 		void setup(APAudioProcessor& p);
         int pos{-1};

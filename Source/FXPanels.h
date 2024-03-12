@@ -54,6 +54,7 @@ public:
 		addControl(dlwet = new gin::Knob(proc.stereoDelayParams.wet), 1, 1);
 		addControl(dlpingpong = new gin::Switch(proc.stereoDelayParams.pingpong), 1, 2);
 		addControl(dlfreeze = new gin::Switch(proc.stereoDelayParams.freeze), 2, 2);
+		addControl(dlcutoff = new gin::Knob(proc.stereoDelayParams.cutoff), 2, 0);
 
 		// CH = 4
 		addControl(chrate = new gin::Knob(proc.chorusParams.rate), 0, 0);
@@ -211,6 +212,7 @@ public:
 			dlwet->setVisible(true);
 			dlpingpong->setVisible(true);
 			dlfreeze->setVisible(true);
+			dlcutoff->setVisible(true);
 			break;
 		case 4:
 			chrate->setVisible(true);
@@ -285,6 +287,7 @@ public:
 		dlwet->setVisible(false);
 		dlpingpong->setVisible(false);
 		dlfreeze->setVisible(false);
+		dlcutoff->setVisible(false);
 		// CH = 4
 		chrate->setVisible(false);
 		chdepth->setVisible(false);
@@ -329,7 +332,7 @@ public:
 	gin::ParamComponent::Ptr wsdrive, wsgain, wsdry, wswet, wstype;
 	gin::ParamComponent::Ptr gngain;
 	gin::ParamComponent::Ptr cpthreshold, cpratio, cpattack, cprelease, cpknee, cpinput, cpoutput, cptype;
-	gin::ParamComponent::Ptr dltimeleft, dltimeright, dlbeatsleft, dlbeatsright, dltemposync, dlfeedback, dlwet, dlpingpong, dlfreeze;
+	gin::ParamComponent::Ptr dltimeleft, dltimeright, dlbeatsleft, dlbeatsright, dltemposync, dlfeedback, dlwet, dlpingpong, dlfreeze, dlcutoff;
 	gin::ParamComponent::Ptr chrate, chdepth, chdelay, chfeedback, chdry, chwet;
 	gin::ParamComponent::Ptr rvsize, rvdecay, rvdamping, rvlowpass, rvpredelay, rvdry, rvwet;
 	gin::ParamComponent::Ptr mbfilterlowshelffreq, mbfilterlowshelfgain, mbfilterlowshelfq, mbfilterpeakfreq, mbfilterpeakgain, mbfilterpeakq, mbfilterhighshelffreq, mbfilterhighshelfgain, mbfilterhighshelfq;

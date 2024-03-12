@@ -148,8 +148,9 @@ public:
     ~StereoDelayProcessor() = default;
 
     void prepareToPlay(double sampleRate, int /*samplesPerBlock*/) {
-        delayTimeL.reset(sampleRate, 4.005f);
-        delayTimeR.reset(sampleRate, 4.005f);
+        delayTimeL.reset(sampleRate, .015f);
+        delayTimeR.reset(sampleRate, .015f);
+		cutoff.reset(sampleRate, .025f);
 		delayBuffer_L.setSize(1, 65.0, sampleRate);
 		delayBuffer_R.setSize(1, 65.0, sampleRate);
     }
@@ -157,13 +158,20 @@ public:
     {
         auto sampleRate = spec.sampleRate;
         auto samplesPerBlock = spec.maximumBlockSize;
-        prepareToPlay(sampleRate, samplesPerBlock);
+		LPFilter.prepare(spec);
+		cutoff.setCurrentAndTargetValue(2000.f);
+		LPFilter.setCutoffFrequency(cutoff.getNextValue());
+		LPFilter.setResonance(0.707f);
+		LPFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+		prepareToPlay(sampleRate, samplesPerBlock);
     }
     void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer&) {
         auto numSamples = buffer.getNumSamples();
         auto* leftSamples = buffer.getWritePointer(0);
         auto* rightSamples = buffer.getWritePointer(1);
         float freezeFactor = freeze ? 0.f : 0.5f;
+		cutoff.skip(std::min(numSamples - 1, 0));
+		LPFilter.setCutoffFrequency(cutoff.getNextValue());
         delayFB = freeze ? 1.f : delayFB;
         if (ping) {
             for (int i = 0; i < numSamples; i++) {
@@ -177,8 +185,8 @@ public:
 
                 leftSamples[i] = delayedSample_L * delayWet + leftSamples[i] * delayDry;
                 rightSamples[i] = delayedSample_R * delayWet + rightSamples[i] * delayDry;
-                delayBuffer_L.write(0, inDelay_L);
-                delayBuffer_R.write(0, inDelay_R);
+                delayBuffer_L.write(0, LPFilter.processSample(0, inDelay_L));
+				delayBuffer_R.write(0, LPFilter.processSample(1, inDelay_R));
 				delayBuffer_L.writeFinished();
 				delayBuffer_R.writeFinished();
             }
@@ -195,8 +203,8 @@ public:
 
 				leftSamples[i] = delayedSample_L * delayWet + leftSamples[i] * delayDry;
 				rightSamples[i] = delayedSample_R * delayWet + rightSamples[i] * delayDry;
-				delayBuffer_L.write(0, inDelay_L);
-				delayBuffer_R.write(0, inDelay_R);
+				delayBuffer_L.write(0, LPFilter.processSample(0, inDelay_L));
+				delayBuffer_R.write(0, LPFilter.processSample(1, inDelay_R));
 				delayBuffer_L.writeFinished();
 				delayBuffer_R.writeFinished();
 			}
@@ -229,6 +237,9 @@ public:
     void setPing(bool _ping) {
 		ping = _ping;
 	}
+	void setCutoff(float _cutoff) {
+		cutoff.setTargetValue(_cutoff);
+	}
 
 	void resetBuffers() {
 		delayBuffer_L.clear();
@@ -238,9 +249,10 @@ public:
 private:
     juce::AudioBuffer<float> inBuffer;
     float delayDry{ 0.5f }, delayWet{ 0.5f }, delayFB{ 0.5f };
-    juce::LinearSmoothedValue<float> delayTimeL{ .40f }, delayTimeR{ .40f };
+    juce::LinearSmoothedValue<float> delayTimeL{ .40f }, delayTimeR{ .40f }, cutoff{ 2000.f };
 	gin::DelayLine delayBuffer_L{ 1 }, delayBuffer_R{ 1 };
     bool freeze{ false }, ping{ true };
+	juce::dsp::StateVariableTPTFilter<float> LPFilter;
 };
 
 /// PlateReverb license info:
