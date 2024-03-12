@@ -172,7 +172,7 @@ public:
         float freezeFactor = freeze ? 0.f : 0.5f;
 		cutoff.skip(std::min(numSamples - 1, 0));
 		LPFilter.setCutoffFrequency(cutoff.getNextValue());
-        delayFB = freeze ? 1.f : delayFB;
+        delayFB = freeze ? 1.0f : delayFB;
         if (ping) {
             for (int i = 0; i < numSamples; i++) {
                 auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
@@ -248,7 +248,7 @@ public:
 
 private:
     juce::AudioBuffer<float> inBuffer;
-    float delayDry{ 0.5f }, delayWet{ 0.5f }, delayFB{ 0.5f };
+    float delayDry{ 1.0f }, delayWet{ 0.5f }, delayFB{ 0.5f };
     juce::LinearSmoothedValue<float> delayTimeL{ .40f }, delayTimeR{ .40f }, cutoff{ 2000.f };
 	gin::DelayLine delayBuffer_L{ 1 }, delayBuffer_R{ 1 };
     bool freeze{ false }, ping{ true };

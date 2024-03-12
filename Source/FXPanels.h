@@ -51,10 +51,11 @@ public:
 		addControl(dlbeatsright = new gin::Knob(proc.stereoDelayParams.beatsright), 0, 1);
 		addControl(dltemposync = new gin::Switch(proc.stereoDelayParams.temposync), 0, 2);
 		addControl(dlfeedback = new gin::Knob(proc.stereoDelayParams.feedback), 1, 0);
-		addControl(dlwet = new gin::Knob(proc.stereoDelayParams.wet), 1, 1);
+		addControl(dlcutoff = new gin::Knob(proc.stereoDelayParams.cutoff), 1, 1);
 		addControl(dlpingpong = new gin::Switch(proc.stereoDelayParams.pingpong), 1, 2);
+		addControl(dldry = new gin::Knob(proc.stereoDelayParams.dry), 2, 0);
+		addControl(dlwet = new gin::Knob(proc.stereoDelayParams.wet), 2, 1);
 		addControl(dlfreeze = new gin::Switch(proc.stereoDelayParams.freeze), 2, 2);
-		addControl(dlcutoff = new gin::Knob(proc.stereoDelayParams.cutoff), 2, 0);
 
 		// CH = 4
 		addControl(chrate = new gin::Knob(proc.chorusParams.rate), 0, 0);
@@ -210,6 +211,7 @@ public:
 			dltemposync->setVisible(true);
 			dlfeedback->setVisible(true);
 			dlwet->setVisible(true);
+			dldry->setVisible(true);
 			dlpingpong->setVisible(true);
 			dlfreeze->setVisible(true);
 			dlcutoff->setVisible(true);
@@ -285,6 +287,7 @@ public:
 		dltemposync->setVisible(false);
 		dlfeedback->setVisible(false);
 		dlwet->setVisible(false);
+		dldry->setVisible(false);
 		dlpingpong->setVisible(false);
 		dlfreeze->setVisible(false);
 		dlcutoff->setVisible(false);
@@ -332,7 +335,7 @@ public:
 	gin::ParamComponent::Ptr wsdrive, wsgain, wsdry, wswet, wstype;
 	gin::ParamComponent::Ptr gngain;
 	gin::ParamComponent::Ptr cpthreshold, cpratio, cpattack, cprelease, cpknee, cpinput, cpoutput, cptype;
-	gin::ParamComponent::Ptr dltimeleft, dltimeright, dlbeatsleft, dlbeatsright, dltemposync, dlfeedback, dlwet, dlpingpong, dlfreeze, dlcutoff;
+	gin::ParamComponent::Ptr dltimeleft, dltimeright, dlbeatsleft, dlbeatsright, dltemposync, dlfeedback, dldry, dlwet, dlpingpong, dlfreeze, dlcutoff;
 	gin::ParamComponent::Ptr chrate, chdepth, chdelay, chfeedback, chdry, chwet;
 	gin::ParamComponent::Ptr rvsize, rvdecay, rvdamping, rvlowpass, rvpredelay, rvdry, rvwet;
 	gin::ParamComponent::Ptr mbfilterlowshelffreq, mbfilterlowshelfgain, mbfilterlowshelfq, mbfilterpeakfreq, mbfilterpeakgain, mbfilterpeakq, mbfilterhighshelffreq, mbfilterhighshelfgain, mbfilterhighshelfq;
