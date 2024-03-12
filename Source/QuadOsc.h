@@ -172,7 +172,7 @@ public:
 			}
 			if (params.wave == Wavetype::sawUp) {
 				for (int v = 0; v < 4; v++) {
-					float quarterPhase = phases[v] + 0.25 * (float)pi;
+					float quarterPhase = phases[v] + 0.25f * (float)pi;
 					if (quarterPhase > pi) { quarterPhase -= 2.f * (float)pi; }
 					positions[i].xL += (gainsL[v] * (quarterPhase * (float)inv_pi)) * .25f;
 					positions[i].yL += (gainsL[v] * (phases[v]    * (float)inv_pi)) * .25f;

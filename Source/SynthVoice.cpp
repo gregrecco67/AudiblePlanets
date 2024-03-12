@@ -213,9 +213,9 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		float distanceL = std::sqrt(osc1Positions[i].xL * osc1Positions[i].xL + (osc1Positions[i].yL - equant) * (osc1Positions[i].yL - equant));
 		float distanceR = std::sqrt(osc1Positions[i].xR * osc1Positions[i].xR + (osc1Positions[i].yR - equant) * (osc1Positions[i].yR - equant));
 		// normalized vectors
-		float cosThetaL = osc1Positions[i].yL /  (distanceL + .001f); // what we want is the tangent to the orbit at this point
+		float cosThetaL = (osc1Positions[i].yL - equant) /  (distanceL + .001f); // what we want is the tangent to the orbit at this point
 		float sinThetaL = -osc1Positions[i].xL / (distanceL + .001f); // so swap x and y and negate y
-		float cosThetaR = osc1Positions[i].yR /  (distanceR + .001f); 
+		float cosThetaR = (osc1Positions[i].yR - equant) /  (distanceR + .001f);
 		float sinThetaR = -osc1Positions[i].xR / (distanceR + .001f); // +.001f to avoid divide by zero
 		float cos2ThetaL = cosThetaL * cosThetaL;
 		float cos2ThetaR = cosThetaR * cosThetaR;
@@ -237,9 +237,9 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		distanceL = std::sqrt(osc2Positions[i].xL * osc2Positions[i].xL + (osc2Positions[i].yL - equant) * (osc2Positions[i].yL - equant));
 		distanceR = std::sqrt(osc2Positions[i].xR * osc2Positions[i].xR + (osc2Positions[i].yR - equant) * (osc2Positions[i].yR - equant));
 		// normalized vectors
-		cosThetaL =  osc2Positions[i].yL / (distanceL + .001f); // what we want is the tangent to the orbit at this point
+		cosThetaL =  (osc2Positions[i].yL - equant) / (distanceL + .001f); // what we want is the tangent to the orbit at this point
 		sinThetaL = -osc2Positions[i].xL / (distanceL + .001f); // so swap x and y and negate y
-		cosThetaR =  osc2Positions[i].yR / (distanceR + .001f);
+		cosThetaR =  (osc2Positions[i].yR - equant) / (distanceR + .001f);
 		sinThetaR = -osc2Positions[i].xR / (distanceR + .001f); // +.001f to avoid divide by zero
 		cos2ThetaL = cosThetaL * cosThetaL;
 		cos2ThetaR = cosThetaR * cosThetaR;
@@ -261,9 +261,9 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		distanceL = std::sqrt(osc3Positions[i].xL * osc3Positions[i].xL + (osc3Positions[i].yL - equant) * (osc3Positions[i].yL - equant));
 		distanceR = std::sqrt(osc3Positions[i].xR * osc3Positions[i].xR + (osc3Positions[i].yR - equant) * (osc3Positions[i].yR - equant));
 		// normalized vectors
-		cosThetaL =  osc3Positions[i].yL / (distanceL + .001f); // what we want is the tangent to the orbit at this point
+		cosThetaL =  (osc3Positions[i].yL - equant) / (distanceL + .001f); // what we want is the tangent to the orbit at this point
 		sinThetaL = -osc3Positions[i].xL / (distanceL + .001f); // so swap x and y and negate y
-		cosThetaR =  osc3Positions[i].yR / (distanceR + .001f);
+		cosThetaR =  (osc3Positions[i].yR - equant) / (distanceR + .001f);
 		sinThetaR = -osc3Positions[i].xR / (distanceR + .001f); // +.001f to avoid divide by zero
 		cos2ThetaL = cosThetaL * cosThetaL;
 		cos2ThetaR = cosThetaR * cosThetaR;
@@ -313,22 +313,22 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		// 1. get angles
         float atanAngle2L{0}, atanAngle2R{0}, atanAngle3L{0}, atanAngle3R{0}, atanAngle4L, atanAngle4R;
 
-		atanAngle4L = FastMath<float>::fastAtan2(epi4.yL + equant, epi4.xL);
-		atanAngle4R = FastMath<float>::fastAtan2(epi4.yR + equant, epi4.xR);
+		atanAngle4L = FastMath<float>::fastAtan2(epi4.yL - equant, epi4.xL);
+		atanAngle4R = FastMath<float>::fastAtan2(epi4.yR - equant, epi4.xR);
 		if (algo == 1)
 		{
-			atanAngle3L = FastMath<float>::fastAtan2(epi3.yL + equant, epi3.xL);
-			atanAngle3R = FastMath<float>::fastAtan2(epi3.yR + equant, epi3.xR);
+			atanAngle3L = FastMath<float>::fastAtan2(epi3.yL - equant, epi3.xL);
+			atanAngle3R = FastMath<float>::fastAtan2(epi3.yR - equant, epi3.xR);
 		}
 		if (algo == 2) {
-			atanAngle2L = FastMath<float>::fastAtan2(epi2.yL + equant, epi2.xL);
-			atanAngle2R = FastMath<float>::fastAtan2(epi2.yR + equant, epi2.xR);
+			atanAngle2L = FastMath<float>::fastAtan2(epi2.yL - equant, epi2.xL);
+			atanAngle2R = FastMath<float>::fastAtan2(epi2.yR - equant, epi2.xR);
 		}
 		if (algo == 3) {
-			atanAngle2L = FastMath<float>::fastAtan2(epi2.yL + equant, epi2.xL);
-			atanAngle2R = FastMath<float>::fastAtan2(epi2.yR + equant, epi2.xR);
-			atanAngle3L = FastMath<float>::fastAtan2(epi3.yL + equant, epi3.xL);
-			atanAngle3R = FastMath<float>::fastAtan2(epi3.yR + equant, epi3.xR);
+			atanAngle2L = FastMath<float>::fastAtan2(epi2.yL - equant, epi2.xL);
+			atanAngle2R = FastMath<float>::fastAtan2(epi2.yR - equant, epi2.xR);
+			atanAngle3L = FastMath<float>::fastAtan2(epi3.yL - equant, epi3.xL);
+			atanAngle3R = FastMath<float>::fastAtan2(epi3.yR - equant, epi3.xR);
 		}
 
 		// 2. generate component waveforms from angles
@@ -400,12 +400,12 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		float modSample4L{ sample4L }, demodSample4L{ sample4L }, modSample4R{ sample4R }, demodSample4R{ sample4R };
 
 		// 5. demodulate by considering not just angle, but also magnitude of planet vector
-		auto atanDistance2L = (float)std::sqrt(epi2.xL * epi2.xL + (epi2.yL + equant) * (epi2.yL + equant));
-		auto atanDistance2R = (float)std::sqrt(epi2.xR * epi2.xR + (epi2.yR + equant) * (epi2.yR + equant));
-		auto atanDistance3L = (float)std::sqrt(epi3.xL * epi3.xL + (epi3.yL + equant) * (epi3.yL + equant));
-		auto atanDistance3R = (float)std::sqrt(epi3.xR * epi3.xR + (epi3.yR + equant) * (epi3.yR + equant));
-		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL + equant) * (epi4.yL + equant));
-		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR + equant) * (epi4.yR + equant));
+		auto atanDistance2L = (float)std::sqrt(epi2.xL * epi2.xL + (epi2.yL - equant) * (epi2.yL - equant));
+		auto atanDistance2R = (float)std::sqrt(epi2.xR * epi2.xR + (epi2.yR - equant) * (epi2.yR - equant));
+		auto atanDistance3L = (float)std::sqrt(epi3.xL * epi3.xL + (epi3.yL - equant) * (epi3.yL - equant));
+		auto atanDistance3R = (float)std::sqrt(epi3.xR * epi3.xR + (epi3.yR - equant) * (epi3.yR - equant));
+		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL - equant) * (epi4.yL - equant));
+		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR - equant) * (epi4.yR - equant));
 
 		demodSample2L *= (atanDistance2L * demodVol);
 		demodSample2R *= (atanDistance2R * demodVol);
