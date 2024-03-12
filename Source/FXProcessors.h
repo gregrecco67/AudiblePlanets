@@ -941,7 +941,7 @@ public:
 
     void prepare(juce::dsp::ProcessSpec spec)
     {
-        auto sampleRate = spec.sampleRate;
+        sampleRate = spec.sampleRate;
         auto samplesPerBlock = spec.maximumBlockSize;
         // see https://signalsmith-audio.co.uk/writing/2022/warm-distortion/
         *leftPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf (sampleRate, 6500.f, 1.0f, 63.0f);
@@ -1004,6 +1004,12 @@ public:
 		waveShaper.reset();
         preGain.reset();
 		postGain.reset();
+	}
+	void setHighShelfFreq(float freq) {
+		*leftPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,  freq, 1.0f, 63.0f);
+		*rightPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, 1.0f, 63.0f);
+		*leftPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,   freq, 1.0f, 0.015849f);
+		*rightPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,  freq, 1.0f, 0.015849f);
 	}
 
     void setFunctionToUse(int function)
@@ -1078,7 +1084,7 @@ private:
     using MonoChain = juce::dsp::ProcessorChain<Filter>;
     MonoChain leftPreBoost, leftPostCut, rightPreBoost, rightPostCut;
 
-
+	double sampleRate{ 44100.0 };
     int currentFunction = -1; // to trigger a change on first setFunctionToUse call
     juce::dsp::WaveShaper<float> waveShaper;
     float dry{ 0.5f }, wet{ 0.5f };

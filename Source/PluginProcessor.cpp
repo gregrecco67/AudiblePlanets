@@ -348,6 +348,7 @@ void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor& p)
 	dry = p.addExtParam(pfx + "dry",   name + "Dry", "Dry", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
 	wet = p.addExtParam(pfx + "wet",   name + "Wet", "Wet", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f);
 	type = p.addExtParam(pfx + "func",  name + "Function", "Function", "", { 0.0, 10.0, 1.0, 1.0 }, 0.0f, 0.0f, waveshaperTypeTextFunction);
+	highshelf = p.addExtParam(pfx + "highshelf", name + "High Shelf", "High Shelf", "", { 1000.0f, 10000.0f, 0.0, 1.3f }, 6500.0f, 0.0f);
 }
 
 //==============================================================================
@@ -948,6 +949,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
 	waveshaper.setDry(modMatrix.getValue(waveshaperParams.dry));
 	waveshaper.setWet(modMatrix.getValue(waveshaperParams.wet));
 	waveshaper.setFunctionToUse(int(modMatrix.getValue(waveshaperParams.type)));
+	waveshaper.setHighShelfFreq(modMatrix.getValue(waveshaperParams.highshelf));
 
 	compressor.setParams(
 		modMatrix.getValue(compressorParams.attack),

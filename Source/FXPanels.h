@@ -33,6 +33,7 @@ public:
 		addControl(wsdry = new gin::Knob(proc.waveshaperParams.dry), 1, 0);
 		addControl(wswet = new gin::Knob(proc.waveshaperParams.wet), 1, 1);
 		addControl(wstype = new gin::Select(proc.waveshaperParams.type), 0, 2, 2, 1);
+		addControl(wshsfreq = new gin::Knob(proc.waveshaperParams.highshelf), 2, 0);
 
 		// CP = 2
 		addControl(cpthreshold = new gin::Knob(proc.compressorParams.threshold), 0, 0);
@@ -185,6 +186,7 @@ public:
 			wsdry->setVisible(true);
 			wswet->setVisible(true);
 			wstype->setVisible(true);
+			wshsfreq->setVisible(true);
 			paramChanged(); // ensure function image is initialized
             funcImage.setVisible(true);
 			break;
@@ -268,7 +270,8 @@ public:
 		wsdry->setVisible(false);
 		wswet->setVisible(false);
 		wstype->setVisible(false);
-        funcImage.setVisible(false);
+        wshsfreq->setVisible(false);
+		funcImage.setVisible(false);
 		// CP = 2
 		cpthreshold->setVisible(false);
 		cpratio->setVisible(false);
@@ -332,7 +335,7 @@ public:
 	
     APAudioProcessor& proc;
     gin::ParamComponent::Ptr rmmodfreq1, rmmodfreq2, rmshape1, rmshape2, rmmix1, rmmix2, rmspread, rmlowcut, rmhighcut;
-	gin::ParamComponent::Ptr wsdrive, wsgain, wsdry, wswet, wstype;
+	gin::ParamComponent::Ptr wsdrive, wsgain, wsdry, wswet, wstype, wshsfreq;
 	gin::ParamComponent::Ptr gngain;
 	gin::ParamComponent::Ptr cpthreshold, cpratio, cpattack, cprelease, cpknee, cpinput, cpoutput, cptype;
 	gin::ParamComponent::Ptr dltimeleft, dltimeright, dlbeatsleft, dlbeatsright, dltemposync, dlfeedback, dldry, dlwet, dlpingpong, dlfreeze, dlcutoff;
