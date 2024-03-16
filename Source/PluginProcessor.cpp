@@ -272,6 +272,23 @@ void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr)
 
     this->num = numStr.getIntValue();
 }
+//==============================================================================
+
+void APAudioProcessor::MSEGParams::setup(APAudioProcessor& p, juce::String number)
+{
+	wave = p.addExtParam("mseg" + number + "wave", "MSEG" + number + "Wave", "Wave", "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
+	sync = p.addExtParam("mseg" + number + "sync", "MSEG" + number + "Sync", "Sync", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
+	rate = p.addExtParam("mseg" + number + "rate", "MSEG" + number + "Rate", "Rate", " Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
+	beat = p.addExtParam("mseg" + number + "beat", "MSEG" + number + "Beat", "Beat", "", { 0.0, float(gin::NoteDuration::getNoteDurations().size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
+	depth = p.addExtParam("mseg" + number + "depth", "MSEG" + number + "Depth", "Depth", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
+	phase = p.addExtParam("mseg" + number + "phase", "MSEG" + number + "Phase", "Phase", "", { -1.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
+	offset = p.addExtParam("mseg" + number + "offset", "MSEG" + number + "Offset", "Offset", "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+	xgrid = p.addExtParam("mseg" + number + "xgrid", "MSEG" + number + "XGrid", "X Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 10.0, 0.0f);
+	ygrid = p.addExtParam("mseg" + number + "ygrid", "MSEG" + number + "YGrid", "Y Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 8.0, 0.0f);
+	loop = p.addExtParam("mseg" + number + "loop", "MSEG" + number + "Loop", "Loop", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
+	enable = p.addIntParam("mseg" + number + "enable", "MSEG" + number + "Enable", "Enable", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
+	this->num = number.getIntValue();
+}
 
 //==============================================================================
 void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
@@ -528,6 +545,8 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	ringmodParams.setup(*this);
 
 	fxOrderParams.setup(*this);
+
+	mseg1Params.setup(*this, String{ "1" });
 
     setupModMatrix();
     init();
@@ -1041,4 +1060,3 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new APAudioProcessor();
 }
-

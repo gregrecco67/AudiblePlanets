@@ -114,6 +114,15 @@ public:
 		JUCE_DECLARE_NON_COPYABLE(TimbreParams)
 	};
 
+	struct MSEGParams
+	{
+		MSEGParams() = default;
+		gin::Parameter::Ptr wave, sync, rate, beat, depth, offset, phase, enable, xgrid, ygrid, loop;
+		void setup(APAudioProcessor& p, juce::String number);
+		int num;
+		JUCE_DECLARE_NON_COPYABLE(MSEGParams)
+	};
+
     // Global Params
     struct GlobalParams
     {
@@ -266,6 +275,7 @@ public:
 	MBFilterParams mbfilterParams;
 	RingModParams ringmodParams;
 	FXOrderParams fxOrderParams;
+	MSEGParams mseg1Params;
 
     //==============================================================================
 	GainProcessor effectGain;

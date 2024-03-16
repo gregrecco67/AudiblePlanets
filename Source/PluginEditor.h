@@ -20,6 +20,7 @@
 #include "Editor.h"
 #include "FXEditor.h"
 #include "RandEditor.h"
+#include "DevEditor.h"
 #include "APColors.h"
 
 //==============================================================================
@@ -45,11 +46,12 @@ private:
 	gin::LevelMeter meter { proc.levelTracker };
     
     juce::TabbedComponent tabbed{juce::TabbedButtonBar::TabsAtBottom };
-    juce::Component tab1, tab2, tab3;
+    juce::Component tab1, tab2, tab3, tab4;
 
     Editor editor { proc };
 	FXEditor fxEditor{ proc };
 	RandEditor randEditor{ proc };
+	DevEditor devEditor{ proc };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessorEditor)
 };
