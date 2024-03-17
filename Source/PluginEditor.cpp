@@ -24,12 +24,12 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
     tabbed.addTab("2. FX", APColors::tabBkgd, &tab2, false, 1);
     tabbed.addTab("3. Rand",   APColors::tabBkgd, &tab3, false, 2);
-	tabbed.addTab("4. Dev", APColors::tabBkgd, &tab4, false, 3);
+	//tabbed.addTab("4. Dev", APColors::tabBkgd, &tab4, false, 3);
 
     tab1.addAndMakeVisible(editor);
 	tab2.addAndMakeVisible(fxEditor);
 	tab3.addAndMakeVisible(randEditor);
-	tab4.addAndMakeVisible(devEditor);
+	//tab4.addAndMakeVisible(devEditor);
     
     usage.panic.onClick = [this] { proc.presetLoaded = true; };
     addAndMakeVisible(usage);

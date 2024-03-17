@@ -33,4 +33,8 @@ private:
 	gin::MSEGComponent msegComponent;
 	juce::Label msegLabel{"MSEG1", "MSEG1"};
 	gin::Layout layout{ *this };
+    gin::Knob rate{proc.mseg1Params.rate}, offset{proc.mseg1Params.offset},
+        depth{proc.mseg1Params.depth};
+    gin::Select beat{proc.mseg1Params.beat};
+    gin::Switch sync{proc.mseg1Params.sync}, loop{proc.mseg1Params.loop};
 };

@@ -11,14 +11,25 @@ DevEditor::DevEditor(APAudioProcessor& proc_) : proc(proc_), msegComponent(msegD
 	addAndMakeVisible(msegComponent);
 	//msegComponent.repaint();
 	msegLabel.setText("MSEG1", juce::dontSendNotification);
-	addAndMakeVisible(msegLabel);
+	//addAndMakeVisible(msegLabel);
+    addAndMakeVisible(rate);
+    addAndMakeVisible(offset);
+    addAndMakeVisible(depth);
+    addAndMakeVisible(beat);
+    addAndMakeVisible(sync);
+    addAndMakeVisible(loop);
 }
 
 void DevEditor::resized()
 {
-	msegLabel.setBounds(75, 40, 400, 35);
-	msegComponent.setBounds(75, 75, 400, 200);
-
+    msegComponent.setBounds(15, 25, 400, 200);
+    rate.setBounds(15, 225, 56, 70);
+    offset.setBounds(71, 225, 56, 70);
+    depth.setBounds(127, 225, 56, 70);
+    beat.setBounds(183, 225, 56, 70);
+    sync.setBounds(229, 225, 56, 70);
+    loop.setBounds(285, 225, 56, 70);
+    
 }
 
 void DevEditor::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) {
