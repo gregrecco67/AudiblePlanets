@@ -629,11 +629,22 @@ void APAudioProcessor::setupModMatrix()
 void APAudioProcessor::stateUpdated()
 {
 	modMatrix.stateUpdated(state);
+    // TODO: create individual vts for each mseg data segment
+    // append them in constructor, read them here
+    //mseg1Data.fromValueTree(state);
+    //mseg2Data.fromValueTree(state);
+    //mseg3Data.fromValueTree(state);
+    //mseg4Data.fromValueTree(state);
 }
 
 void APAudioProcessor::updateState()
 {
 	modMatrix.updateState(state);
+    //TODO: write individual vts?
+    //mseg1Data.toValueTree(state);
+    //mseg2Data.toValueTree(state);
+    //mseg3Data.toValueTree(state);
+    //mseg4Data.toValueTree(state);
 }
 
 void APAudioProcessor::reset()

@@ -20,7 +20,7 @@
 #include "Editor.h"
 #include "FXEditor.h"
 #include "RandEditor.h"
-#include "MSEGEditor.h"
+#include "MsegEditor.h"
 #include "APColors.h"
 
 //==============================================================================

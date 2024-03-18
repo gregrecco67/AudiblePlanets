@@ -950,9 +950,9 @@ public:
         *rightPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf (sampleRate, 6500.f, 1.0f, 0.015849f);
         prepareToPlay(sampleRate, samplesPerBlock);
     }
-    void prepareToPlay(double sampleRate, int samplesPerBlock) 
+    void prepareToPlay(double sampleRate_, int samplesPerBlock)
 	{
-		juce::dsp::ProcessSpec spec { sampleRate, static_cast<juce::uint32> (samplesPerBlock), 2 };
+		juce::dsp::ProcessSpec spec { sampleRate_, static_cast<juce::uint32> (samplesPerBlock), 2 };
 		preGain.prepare(spec);
         postGain.prepare(spec);
         preGain.setRampDurationSeconds(0.05);
