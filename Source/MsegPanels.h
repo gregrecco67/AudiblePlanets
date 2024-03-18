@@ -15,15 +15,32 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
+ //==============================================================================
+class MsegModBox : public gin::ParamBox
+{
+public:
+	MsegModBox(const juce::String& name, APAudioProcessor& proc_)
+		: gin::ParamBox(name), proc(proc_)
+	{
+		setName("msegmod");
+		setTitle("mod sources");
+		addControl(new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 4);
+	}
+
+	APAudioProcessor& proc;
+};
+
+
+//==============================================================================
 class MsegMatrixBox : public gin::ParamBox
 {
 public:
 	MsegMatrixBox(const juce::String& name, APAudioProcessor& proc_)
 		: gin::ParamBox(name), proc(proc_)
 	{
-		setName("mtx");
+		setName("msegmtx");
 
-		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 8);
+		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.224);
 	}
 
 	APAudioProcessor& proc;

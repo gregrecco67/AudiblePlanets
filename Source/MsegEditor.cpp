@@ -3,6 +3,7 @@
 MsegEditor::MsegEditor(APAudioProcessor& proc_) : proc(proc_)
 {
 	addAndMakeVisible(msegMatrixBox);
+	addAndMakeVisible(msegModBox);
 	addAndMakeVisible(mseg1Box);
 	addAndMakeVisible(mseg2Box);
 	addAndMakeVisible(mseg3Box);
@@ -16,14 +17,15 @@ void MsegEditor::resized()
 	mseg2Box.setBounds(0, 298, 450, 293);
 	mseg3Box.setBounds(455, 0, 435, 293);
 	mseg4Box.setBounds(455, 298, 435, 293);
-	msegMatrixBox.setBounds(895, 0, 280, 8*70+23);
+	msegModBox.setBounds(895, 0, 280, 303);
+	msegMatrixBox.setBounds(895, 313, 280, 303);
 }
 
 
 
-void MsegEditor::valueUpdated(gin::Parameter* param)
-{
-}
+//void MsegEditor::valueUpdated(gin::Parameter* param)
+//{
+//}
 
 void MsegEditor::timerCallback()
 {

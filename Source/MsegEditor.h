@@ -19,13 +19,13 @@
 #include "MsegPanels.h"
 
  //==============================================================================
-class MsegEditor : public juce::Component, public gin::Parameter::ParameterListener, public juce::Timer
+class MsegEditor : public juce::Component, public juce::Timer
 {
 public:
 	MsegEditor(APAudioProcessor& proc_);
 
 	void resized() override;
-	void valueUpdated(gin::Parameter* param) override;
+	//void valueUpdated(gin::Parameter* param) override;
 	void timerCallback() override;
 
 private:
@@ -33,6 +33,7 @@ private:
 	gin::Layout layout{ *this };
 
 	MsegMatrixBox msegMatrixBox{"Mod Matrix", proc};
+	MsegModBox msegModBox{"Mod Sources", proc};
 	MsegBox mseg1Box{"MSEG1", proc, proc.mseg1Params, proc.mseg1Data};
 	MsegBox mseg2Box{"MSEG2", proc, proc.mseg2Params, proc.mseg2Data};
 	MsegBox mseg3Box{"MSEG3", proc, proc.mseg3Params, proc.mseg3Data};
