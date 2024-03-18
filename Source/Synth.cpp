@@ -28,6 +28,63 @@ juce::Array<float> APSynth::getLiveFilterCutoff() {
     return values;
 }
 
+std::vector<float> APSynth::getMSEG1Phases() {
+	std::vector<float> values;
+
+	for (auto v : voices)
+	{
+		if (v->isActive())
+		{
+			auto vav = dynamic_cast<SynthVoice*>(v);
+			values.push_back(vav->getMSEG1Phase());
+		}
+	}
+	return values;
+}
+
+std::vector<float> APSynth::getMSEG2Phases() {
+	std::vector<float> values;
+
+	for (auto v : voices)
+	{
+		if (v->isActive())
+		{
+			auto vav = dynamic_cast<SynthVoice*>(v);
+			values.push_back(vav->getMSEG2Phase());
+		}
+	}
+	return values;
+}
+
+std::vector<float> APSynth::getMSEG3Phases() {
+	std::vector<float> values;
+
+	for (auto v : voices)
+	{
+		if (v->isActive())
+		{
+			auto vav = dynamic_cast<SynthVoice*>(v);
+			values.push_back(vav->getMSEG3Phase());
+		}
+	}
+	return values;
+}
+
+std::vector<float> APSynth::getMSEG4Phases() {
+	std::vector<float> values;
+
+	for (auto v : voices)
+	{
+		if (v->isActive())
+		{
+			auto vav = dynamic_cast<SynthVoice*>(v);
+			values.push_back(vav->getMSEG4Phase());
+		}
+	}
+	return values;
+}
+
+
 void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
     MPESynthesiser::handleMidiEvent(m);
 

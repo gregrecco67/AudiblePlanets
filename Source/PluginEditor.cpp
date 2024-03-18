@@ -24,7 +24,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
     tabbed.addTab("2. FX", APColors::tabBkgd, &tab2, false, 1);
     tabbed.addTab("3. Rand",   APColors::tabBkgd, &tab3, false, 2);
-	//tabbed.addTab("4. Dev", APColors::tabBkgd, &tab4, false, 3);
+	//tabbed.addTab("4. MSEG", APColors::tabBkgd, &tab4, false, 3);
 
     tab1.addAndMakeVisible(editor);
 	tab2.addAndMakeVisible(fxEditor);
@@ -55,6 +55,10 @@ bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*origin
             tabbed.setCurrentTabIndex(2);
             return true;
         }
+		if (key.isKeyCode(52) || key.isKeyCode(juce::KeyPress::numberPad4)) {
+			tabbed.setCurrentTabIndex(3);
+			return true;
+		}
         return false;
 }
 
@@ -85,7 +89,7 @@ void APAudioProcessorEditor::resized()
     patchBrowser.setBounds(rc);
 	fxEditor.setBounds(editorArea);
 	randEditor.setBounds(editorArea);
-	//devEditor.setBounds(editorArea);
+	devEditor.setBounds(editorArea);
 }
 
 void APAudioProcessorEditor::addMenuItems(juce::PopupMenu& m)

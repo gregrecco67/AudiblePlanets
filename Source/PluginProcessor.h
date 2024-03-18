@@ -117,7 +117,7 @@ public:
 	struct MSEGParams
 	{
 		MSEGParams() = default;
-		gin::Parameter::Ptr wave, sync, rate, beat, depth, offset, phase, enable, xgrid, ygrid, loop;
+		gin::Parameter::Ptr wave, sync, rate, beat, depth, offset, phase, enable, xgrid, ygrid, loop, draw, drawmode;
 		void setup(APAudioProcessor& p, juce::String number);
 		int num;
 		JUCE_DECLARE_NON_COPYABLE(MSEGParams)
@@ -255,7 +255,7 @@ public:
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
 		modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4,
         modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4,
-		modSrcModwheel, modPolyAT;
+		modSrcModwheel, modPolyAT, modSrcMSEG1, modSrcMSEG2, modSrcMSEG3, modSrcMSEG4;
 
     //==============================================================================
 
@@ -275,7 +275,7 @@ public:
 	MBFilterParams mbfilterParams;
 	RingModParams ringmodParams;
 	FXOrderParams fxOrderParams;
-	MSEGParams mseg1Params;
+	MSEGParams mseg1Params, mseg2Params, mseg3Params, mseg4Params;
 
     //==============================================================================
 	GainProcessor effectGain;
@@ -294,6 +294,7 @@ public:
     gin::ModMatrix modMatrix;
 
     gin::LFO lfo1, lfo2, lfo3, lfo4;
+	gin::MSEG::Data mseg1Data, mseg2Data, mseg3Data, mseg4Data;
 	std::array<gin::LFO*, 4> monoLFOs{ &lfo1, &lfo2, &lfo3, &lfo4 };
 	std::array<gin::ModSrcId*, 4> lfoIds{ &modSrcMonoLFO1, &modSrcMonoLFO2, &modSrcMonoLFO3, &modSrcMonoLFO4 };
     juce::AudioPlayHead* playhead = nullptr;

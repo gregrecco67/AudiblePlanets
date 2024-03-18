@@ -21,8 +21,12 @@
 
 //==============================================================================
 SynthVoice::SynthVoice(APAudioProcessor& p)
-	: proc(p)
+	: proc(p), mseg1(proc.mseg1Data), mseg2(proc.mseg2Data), mseg3(proc.mseg3Data), mseg4(proc.mseg4Data)
 {
+	mseg1.reset();
+	mseg2.reset();
+	mseg3.reset();
+	mseg4.reset();
 	filter.setNumChannels(2);
 }
 
@@ -82,6 +86,11 @@ void SynthVoice::noteStarted()
 	env3.noteOn();
 	env4.noteOn();
 
+	mseg1.noteOn();
+	mseg2.noteOn();
+	mseg3.noteOn();
+	mseg4.noteOn();
+
 }
 
 void SynthVoice::noteRetriggered()
@@ -128,6 +137,11 @@ void SynthVoice::noteStopped(bool allowTailOff)
         stopVoice();
     }
 
+	mseg1.reset();
+	mseg2.reset();
+	mseg3.reset();
+	mseg4.reset();
+
 }
 
 void SynthVoice::notePressureChanged()
@@ -168,6 +182,15 @@ void SynthVoice::setCurrentSampleRate(double newRate)
     env3.setParameters(p);
 	env4.setSampleRate(newRate);
     env4.setParameters(p);
+
+	mseg1.setSampleRate(newRate);
+	mseg2.setSampleRate(newRate);
+	mseg3.setSampleRate(newRate);
+	mseg4.setSampleRate(newRate);
+
+
+
+
 }
 
 void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
@@ -819,6 +842,63 @@ void SynthVoice::updateParams(int blockSize)
 	proc.modMatrix.setPolyValue(*this, proc.modSrcEnv4, env4.getOutput());
 
 	noteSmoother.process(blockSize);
+
+	if (proc.mseg1Params.sync->isOn()) {
+		mseg1Params.frequency = gin::NoteDuration::getNoteDurations()[size_t(proc.mseg1Params.beat->getProcValue())].toSeconds(proc.playhead);
+	}
+	else {
+		mseg1Params.frequency = proc.mseg1Params.rate->getUserValue();
+	}
+	mseg1Params.depth = proc.mseg1Params.depth->getUserValue();
+	mseg1Params.offset = proc.mseg1Params.offset->getUserValue();
+	mseg1Params.loop = proc.mseg1Params.loop->isOn();
+
+	if (proc.mseg2Params.sync->isOn()) {
+		mseg2Params.frequency = gin::NoteDuration::getNoteDurations()[size_t(proc.mseg2Params.beat->getProcValue())].toSeconds(proc.playhead);
+	}
+	else {
+		mseg2Params.frequency = proc.mseg2Params.rate->getUserValue();
+	}
+	mseg2Params.depth = proc.mseg2Params.depth->getUserValue();
+	mseg2Params.offset = proc.mseg2Params.offset->getUserValue();
+	mseg2Params.loop = proc.mseg2Params.loop->isOn();
+
+	if (proc.mseg3Params.sync->isOn()) {
+		mseg3Params.frequency = gin::NoteDuration::getNoteDurations()[size_t(proc.mseg3Params.beat->getProcValue())].toSeconds(proc.playhead);
+	}
+	else {
+		mseg3Params.frequency = proc.mseg3Params.rate->getUserValue();
+	}
+	mseg3Params.depth = proc.mseg3Params.depth->getUserValue();
+	mseg3Params.offset = proc.mseg3Params.offset->getUserValue();
+	mseg3Params.loop = proc.mseg3Params.loop->isOn();
+
+	if (proc.mseg4Params.sync->isOn()) {
+		mseg4Params.frequency = gin::NoteDuration::getNoteDurations()[size_t(proc.mseg4Params.beat->getProcValue())].toSeconds(proc.playhead);
+	}
+	else {
+		mseg4Params.frequency = proc.mseg4Params.rate->getUserValue();
+	}
+	mseg4Params.depth = proc.mseg4Params.depth->getUserValue();
+	mseg4Params.offset = proc.mseg4Params.offset->getUserValue();
+	mseg4Params.loop = proc.mseg4Params.loop->isOn();
+
+	mseg1.setParameters(mseg1Params);
+	mseg2.setParameters(mseg2Params);
+	mseg3.setParameters(mseg3Params);
+	mseg4.setParameters(mseg4Params);
+
+	mseg1.process(blockSize);
+	mseg2.process(blockSize);
+	mseg3.process(blockSize);
+	mseg4.process(blockSize);
+
+	proc.modMatrix.setPolyValue(*this, proc.modSrcMSEG1, mseg1.getOutput());
+	proc.modMatrix.setPolyValue(*this, proc.modSrcMSEG2, mseg2.getOutput());
+	proc.modMatrix.setPolyValue(*this, proc.modSrcMSEG3, mseg3.getOutput());
+	proc.modMatrix.setPolyValue(*this, proc.modSrcMSEG4, mseg4.getOutput());
+
+
 }
 
 bool SynthVoice::isVoiceActive()
@@ -831,4 +911,24 @@ float SynthVoice::getFilterCutoffNormalized()
 	float freq = filter.getFrequency();
 	auto range = proc.filterParams.frequency->getUserRange();
 	return range.convertTo0to1(juce::jlimit(range.start, range.end, gin::getMidiNoteFromHertz(freq)));
+}
+
+float SynthVoice::getMSEG1Phase()
+{
+	return mseg1.getCurrentPhase();
+}
+
+float SynthVoice::getMSEG2Phase()
+{
+	return mseg2.getCurrentPhase();
+}
+
+float SynthVoice::getMSEG3Phase()
+{
+	return mseg3.getCurrentPhase();
+}
+
+float SynthVoice::getMSEG4Phase()
+{
+	return mseg4.getCurrentPhase();
 }

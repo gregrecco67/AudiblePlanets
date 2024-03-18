@@ -185,6 +185,21 @@ static juce::String glideModeTextFunction(const gin::Parameter&, float v)
     }
 }
 
+static juce::String msegDrawModeTextFunction(const gin::Parameter&, float v)
+{
+	switch (int(v))
+	{
+		case 0: return "Step";
+		case 1: return "Half";
+		case 2: return "Down";
+		case 3: return "Up";
+		case 4: return "Tri";
+		default:
+			jassertfalse;
+			return {};
+	}
+}
+
 
 //==============================================================================
 void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr) 
@@ -287,6 +302,8 @@ void APAudioProcessor::MSEGParams::setup(APAudioProcessor& p, juce::String numbe
 	ygrid = p.addExtParam("mseg" + number + "ygrid", "MSEG" + number + "YGrid", "Y Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 8.0, 0.0f);
 	loop = p.addExtParam("mseg" + number + "loop", "MSEG" + number + "Loop", "Loop", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
 	enable = p.addIntParam("mseg" + number + "enable", "MSEG" + number + "Enable", "Enable", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
+	draw = p.addIntParam("mseg" + number + "draw", "MSEG" + number + "Draw", "Draw", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
+	drawmode = p.addIntParam("mseg" + number + "drawmode", "MSEG" + number + "DrawMode", "Draw Mode", "", { 0.0, 4.0, 0.0, 1.0 }, 0.0, 0.0f, msegDrawModeTextFunction);
 	this->num = number.getIntValue();
 }
 
@@ -475,14 +492,14 @@ static juce::String fxRouteFunction(const gin::Parameter&, float v)
 //==============================================================================
 void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 {
-    fxa1 = p.addExtParam("fxa1", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa2 = p.addExtParam("fxa2", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa3 = p.addExtParam("fxa3", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa4 = p.addExtParam("fxa4", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb1 = p.addExtParam("fxb1", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb2 = p.addExtParam("fxb2", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb3 = p.addExtParam("fxb3", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb4 = p.addExtParam("fxb4", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa1 = p.addExtParam("fxa1", "A1 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa2 = p.addExtParam("fxa2", "A2 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa3 = p.addExtParam("fxa3", "A3 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa4 = p.addExtParam("fxa4", "A4 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb1 = p.addExtParam("fxb1", "B1 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb2 = p.addExtParam("fxb2", "B2 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb3 = p.addExtParam("fxb3", "B3 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb4 = p.addExtParam("fxb4", "B4 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
 	chainAtoB = p.addIntParam("chainAtoB", "FX Chain Routing", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, fxRouteFunction);
 	laneAGain = p.addExtParam("laneAGain", "FX A Pre-Gain", "A Pre-Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	laneBGain = p.addExtParam("laneBGain", "FX B Pre-Gain", "B Pre-Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
@@ -547,6 +564,14 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	fxOrderParams.setup(*this);
 
 	mseg1Params.setup(*this, String{ "1" });
+	mseg2Params.setup(*this, String{ "2" });
+	mseg3Params.setup(*this, String{ "3" });
+	mseg4Params.setup(*this, String{ "4" });
+
+	mseg1Data.reset();
+	mseg2Data.reset();
+	mseg3Data.reset();
+	mseg4Data.reset();
 
     setupModMatrix();
     init();
@@ -583,8 +608,11 @@ void APAudioProcessor::setupModMatrix()
 	modSrcEnv3 = modMatrix.addPolyModSource("env3", "Env3", true);
 	modSrcEnv4 = modMatrix.addPolyModSource("env4", "Env4", true);
 
-
-    
+	modSrcMSEG1 = modMatrix.addPolyModSource("mseg1", "MSEG1", true);
+	modSrcMSEG2 = modMatrix.addPolyModSource("mseg2", "MSEG2", true);
+	modSrcMSEG3 = modMatrix.addPolyModSource("mseg3", "MSEG3", true);
+	modSrcMSEG4 = modMatrix.addPolyModSource("mseg4", "MSEG4", true);
+	    
     auto firstMonoParam = globalParams.mono;
     bool polyParam = true;
     for (auto pp : getPluginParameters())

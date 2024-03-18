@@ -16,6 +16,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "DevPanels.h"
 
  //==============================================================================
 class DevEditor : public juce::Component, public gin::Parameter::ParameterListener
@@ -24,17 +25,16 @@ public:
 	DevEditor(APAudioProcessor& proc_);
 
 	void resized() override;
-	void mouseWheelMove(const juce::MouseEvent&, const juce::MouseWheelDetails& wheel) override;
+	//void mouseWheelMove(const juce::MouseEvent&, const juce::MouseWheelDetails& wheel) override;
 	void valueUpdated(gin::Parameter* param) override;
 
 private:
 	APAudioProcessor& proc;
-	gin::MSEG::Data msegData;
-	gin::MSEGComponent msegComponent;
-	juce::Label msegLabel{"MSEG1", "MSEG1"};
 	gin::Layout layout{ *this };
-    gin::Knob rate{proc.mseg1Params.rate}, offset{proc.mseg1Params.offset},
-        depth{proc.mseg1Params.depth};
-    gin::Select beat{proc.mseg1Params.beat};
-    gin::Switch sync{proc.mseg1Params.sync}, loop{proc.mseg1Params.loop};
+
+	DevMSEGBox mseg1Box{"MSEG1", proc, proc.mseg1Params, proc.mseg1Data};
+	DevMSEGBox mseg2Box{"MSEG2", proc, proc.mseg2Params, proc.mseg2Data};
+	DevMSEGBox mseg3Box{"MSEG3", proc, proc.mseg3Params, proc.mseg3Data};
+	DevMSEGBox mseg4Box{"MSEG4", proc, proc.mseg4Params, proc.mseg4Data};
+
 };

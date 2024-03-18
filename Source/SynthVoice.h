@@ -44,6 +44,10 @@ public:
     bool isVoiceActive() override;
 
     float getFilterCutoffNormalized();
+	float getMSEG1Phase();
+	float getMSEG2Phase();
+	float getMSEG3Phase();
+	float getMSEG4Phase();
   
 private:
     void updateParams(int blockSize);
@@ -54,6 +58,9 @@ private:
 
     gin::Filter filter;
     gin::LFO lfo1, lfo2, lfo3, lfo4;
+	gin::MSEG mseg1, mseg2, mseg3, mseg4;
+	gin::MSEG::Parameters mseg1Params, mseg2Params, mseg3Params, mseg4Params;
+
 
     Envelope env1, env2, env3, env4;
     std::array<Envelope*, 4> envs{&env1, &env2, &env3, &env4};
