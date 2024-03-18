@@ -41,6 +41,8 @@ public:
 
     void renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override;
 
+	float getCurrentNote() override { return noteSmoother.getCurrentValue() * 127.0f; }
+
     bool isVoiceActive() override;
 
     float getFilterCutoffNormalized();

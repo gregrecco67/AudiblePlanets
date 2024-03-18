@@ -291,7 +291,6 @@ void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr)
 
 void APAudioProcessor::MSEGParams::setup(APAudioProcessor& p, juce::String number)
 {
-	wave = p.addExtParam("mseg" + number + "wave", "MSEG" + number + "Wave", "Wave", "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
 	sync = p.addExtParam("mseg" + number + "sync", "MSEG" + number + "Sync", "Sync", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
 	rate = p.addExtParam("mseg" + number + "rate", "MSEG" + number + "Rate", "Rate", " Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
 	beat = p.addExtParam("mseg" + number + "beat", "MSEG" + number + "Beat", "Beat", "", { 0.0, float(gin::NoteDuration::getNoteDurations().size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
@@ -440,7 +439,7 @@ void APAudioProcessor::ReverbParams::setup(APAudioProcessor& p)
 	String name = "Reverb ";
 	size = p.addExtParam(pfx + "size",     name + "Size", "Size", "", { 0.0, 2.0, 0.0, 1.0 }, 1.f, 0.0f);
 	decay = p.addExtParam(pfx + "decay",    name + "Decay", "Decay", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
-	damping = p.addExtParam(pfx + "damping",  name + "Damping", "Damping", "", { 20.0f, 20000.0f, 0.0, 1.0 }, 10000.0f, 0.0f);
+	damping = p.addExtParam(pfx + "damping",  name + "Damping", "Damping", "", { 20.0f, 20000.0f, 0.0, 0.3f }, 10000.0f, 0.0f);
 	lowpass = p.addExtParam(pfx + "lowpass",  name + "Lowpass", "Lowpass", " Hz", { 20.0f, 20000.0f, 0.0, 0.3f }, 20000.0f, 0.0f);
 	predelay = p.addExtParam(pfx + "predelay", name +  "Predelay", "Predelay", " s", { 0.0, 0.1f, 0.0, 1.0 }, 0.002f, 0.0f);
 	dry = p.addExtParam(pfx + "dry",      name +  "Dry", "Dry", "%", { 0.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
@@ -492,14 +491,14 @@ static juce::String fxRouteFunction(const gin::Parameter&, float v)
 //==============================================================================
 void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 {
-    fxa1 = p.addExtParam("fxa1", "A1 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa2 = p.addExtParam("fxa2", "A2 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa3 = p.addExtParam("fxa3", "A3 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa4 = p.addExtParam("fxa4", "A4 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb1 = p.addExtParam("fxb1", "B1 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb2 = p.addExtParam("fxb2", "B2 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb3 = p.addExtParam("fxb3", "B3 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb4 = p.addExtParam("fxb4", "B4 FX", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa1 = p.addExtParam("fxa1", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa2 = p.addExtParam("fxa2", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa3 = p.addExtParam("fxa3", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa4 = p.addExtParam("fxa4", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb1 = p.addExtParam("fxb1", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb2 = p.addExtParam("fxb2", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb3 = p.addExtParam("fxb3", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb4 = p.addExtParam("fxb4", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
 	chainAtoB = p.addIntParam("chainAtoB", "FX Chain Routing", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, fxRouteFunction);
 	laneAGain = p.addExtParam("laneAGain", "FX A Pre-Gain", "A Pre-Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	laneBGain = p.addExtParam("laneBGain", "FX B Pre-Gain", "B Pre-Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);

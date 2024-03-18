@@ -24,7 +24,7 @@ public:
 		: gin::ParamBox(name), proc(proc_), dynamicsMeter(proc.compressor)
 	{
 		setName(name);
-		setTitle(name);
+		//setTitle(name);
 
 		// FX controls
 		// WS = 1
@@ -169,6 +169,7 @@ public:
 	}
 
     void resized() override {
+		gin::ParamBox::resized();
         dynamicsMeter.setBounds(56, 163, 56, 70);
         funcImage.setBounds(56*2, 23 + 140, 55, 55);
     }

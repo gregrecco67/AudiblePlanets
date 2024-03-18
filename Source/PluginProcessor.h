@@ -117,7 +117,7 @@ public:
 	struct MSEGParams
 	{
 		MSEGParams() = default;
-		gin::Parameter::Ptr wave, sync, rate, beat, depth, offset, phase, enable, xgrid, ygrid, loop, draw, drawmode;
+		gin::Parameter::Ptr sync, rate, beat, depth, offset, phase, enable, xgrid, ygrid, loop, draw, drawmode;
 		void setup(APAudioProcessor& p, juce::String number);
 		int num;
 		JUCE_DECLARE_NON_COPYABLE(MSEGParams)

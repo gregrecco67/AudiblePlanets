@@ -15,10 +15,10 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
-class DevMatrixBox : public gin::ParamBox
+class MsegMatrixBox : public gin::ParamBox
 {
 public:
-	DevMatrixBox(const juce::String& name, APAudioProcessor& proc_)
+	MsegMatrixBox(const juce::String& name, APAudioProcessor& proc_)
 		: gin::ParamBox(name), proc(proc_)
 	{
 		setName("mtx");
@@ -30,15 +30,15 @@ public:
 
 };
 
-class DevMSEGBox : public gin::ParamBox
+class MsegBox : public gin::ParamBox
 {
 public:
-	DevMSEGBox(const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::MSEGParams& msegParams_, gin::MSEG::Data& data_)
+	MsegBox(const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::MSEGParams& msegParams_, gin::MSEG::Data& data_)
 		: gin::ParamBox(name), proc(proc_), msegParams(msegParams_), msegComponent(data_)
 	{
 		setName(name);
 		//addMouseListener(this, false);
-		msegComponent.setParams(msegParams.wave, msegParams.sync, msegParams.rate, msegParams.beat, msegParams.depth, msegParams.offset,
+		msegComponent.setParams(msegParams.sync, msegParams.rate, msegParams.beat, msegParams.depth, msegParams.offset,
 			msegParams.phase, msegParams.enable, msegParams.xgrid, msegParams.ygrid, msegParams.loop);
 		msegComponent.setEditable(true);
 		msegComponent.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(msegParams.drawmode->getUserValue()));
@@ -144,7 +144,7 @@ public:
 
 	void resized() override {
 		gin::ParamBox::resized();
-		msegComponent.setBounds(0, 93, 400, 200);
+		msegComponent.setBounds(0, 93, getWidth(), 200);
 	}
 
 	APAudioProcessor& proc;
