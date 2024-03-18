@@ -19,13 +19,14 @@
 #include "MsegPanels.h"
 
  //==============================================================================
-class MsegEditor : public juce::Component, public gin::Parameter::ParameterListener
+class MsegEditor : public juce::Component, public gin::Parameter::ParameterListener, public juce::Timer
 {
 public:
 	MsegEditor(APAudioProcessor& proc_);
 
 	void resized() override;
 	void valueUpdated(gin::Parameter* param) override;
+	void timerCallback() override;
 
 private:
 	APAudioProcessor& proc;

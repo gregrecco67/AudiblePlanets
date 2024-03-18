@@ -626,25 +626,55 @@ void APAudioProcessor::setupModMatrix()
     modMatrix.build();
 }
 
-void APAudioProcessor::stateUpdated()
+void APAudioProcessor::stateUpdated() // called when loading a preset
 {
 	modMatrix.stateUpdated(state);
-    // TODO: create individual vts for each mseg data segment
-    // append them in constructor, read them here
-    //mseg1Data.fromValueTree(state);
-    //mseg2Data.fromValueTree(state);
-    //mseg3Data.fromValueTree(state);
-    //mseg4Data.fromValueTree(state);
+
+	if (state.getOrCreateChildWithName("mseg1", nullptr).getNumChildren() > 0) {
+		mseg1Data.fromValueTree(state.getChildWithName("mseg1"));
+	}
+	else {
+		mseg1Data.reset();
+	}
+
+	if (state.getOrCreateChildWithName("mseg2", nullptr).getNumChildren() > 0) {
+		mseg2Data.fromValueTree(state.getChildWithName("mseg2"));
+	}
+	else {
+		mseg2Data.reset();
+	}
+
+	if (state.getOrCreateChildWithName("mseg3", nullptr).getNumChildren() > 0) {
+		mseg3Data.fromValueTree(state.getChildWithName("mseg3"));
+	}
+	else {
+		mseg3Data.reset();
+	}
+
+	if (state.getOrCreateChildWithName("mseg4", nullptr).getNumChildren() > 0) {
+		mseg4Data.fromValueTree(state.getChildWithName("mseg4"));
+	}
+	else {
+		mseg4Data.reset();
+	}
 }
 
-void APAudioProcessor::updateState()
+void APAudioProcessor::updateState() // called when saving a preset
 {
 	modMatrix.updateState(state);
-    //TODO: write individual vts?
-    //mseg1Data.toValueTree(state);
-    //mseg2Data.toValueTree(state);
-    //mseg3Data.toValueTree(state);
-    //mseg4Data.toValueTree(state);
+    
+    state.getOrCreateChildWithName("mseg1", nullptr).removeAllChildren(nullptr);
+	mseg1Data.toValueTree(state.getChildWithName("mseg1"));
+	
+	state.getOrCreateChildWithName("mseg2", nullptr).removeAllChildren(nullptr);
+	mseg2Data.toValueTree(state.getChildWithName("mseg2"));
+
+	state.getOrCreateChildWithName("mseg3", nullptr).removeAllChildren(nullptr);
+	mseg3Data.toValueTree(state.getChildWithName("mseg3"));
+
+	state.getOrCreateChildWithName("mseg4", nullptr).removeAllChildren(nullptr);
+	mseg4Data.toValueTree(state.getChildWithName("mseg4"));
+	
 }
 
 void APAudioProcessor::reset()

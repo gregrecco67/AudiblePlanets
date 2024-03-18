@@ -7,6 +7,7 @@ MsegEditor::MsegEditor(APAudioProcessor& proc_) : proc(proc_)
 	addAndMakeVisible(mseg2Box);
 	addAndMakeVisible(mseg3Box);
 	addAndMakeVisible(mseg4Box);
+	startTimerHz(4);
 }
 
 void MsegEditor::resized()
@@ -22,4 +23,12 @@ void MsegEditor::resized()
 
 void MsegEditor::valueUpdated(gin::Parameter* param)
 {
+}
+
+void MsegEditor::timerCallback()
+{
+	mseg1Box.msegComponent.markDirty();
+	mseg2Box.msegComponent.markDirty();
+	mseg3Box.msegComponent.markDirty();
+	mseg4Box.msegComponent.markDirty();
 }
