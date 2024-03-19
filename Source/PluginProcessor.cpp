@@ -993,6 +993,7 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 gin::ProcessorOptions APAudioProcessor::getOptions()
 {
 	gin::ProcessorOptions options;
+	options.pluginName = "Audible Planets";
 	options.programmingCredits = { "Greg Recco" };
 	options.url = "https://github.com/gregrecco67/AudiblePlanets";
 	options.urlTitle = "Visit https://github.com/gregrecco67/AudiblePlanets";

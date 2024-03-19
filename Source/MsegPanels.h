@@ -161,7 +161,7 @@ public:
 
 	void resized() override {
 		gin::ParamBox::resized();
-		msegComponent.setBounds(0, 93, getWidth(), 200);
+		msegComponent.setBounds(0, 93, getWidth(), getHeight() - 93);
 	}
 
 	APAudioProcessor& proc;
