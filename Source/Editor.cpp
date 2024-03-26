@@ -85,6 +85,7 @@ void Editor::timerCallback() {
     orbitViz.setEpi2Phase(vizEpi2Phase);
     orbitViz.setEpi3Phase(vizEpi3Phase);
 	orbitViz.setScale(proc.orbitParams.scale->getUserValue());
+	orbitViz.setSquash(proc.modMatrix.getValue(proc.globalParams.squash)); // TODO: create selector for live values visualization
     orbitViz.repaint();
 }
 

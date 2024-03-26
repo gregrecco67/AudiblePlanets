@@ -103,6 +103,11 @@ public:
 
 		juce::Path circ2;
 		addCircle(circ2, osc1, r2 * 2.f);
+		auto vector = juce::Point<float>(osc1.x - equantPos.x, osc1.y - equantPos.y);
+		auto angle = std::atan2(vector.y, vector.x);
+		auto squash2 = juce::AffineTransform::rotation(-angle, osc1.x, osc1.y).scaled(1.f - squash, 1.f, osc1.x, osc1.y).rotated(angle, osc1.x, osc1.y);
+		osc2.applyTransform(squash2);
+		circ2.applyTransform(squash2);
 		g.setColour(orbitColor);
 		shadow.render(g, circ2, stroketype);
 		g.strokePath(circ2, stroketype, {}); // osc2 orbit
@@ -113,13 +118,15 @@ public:
 		juce::Path circ3;
 		if (algo == 0 || algo == 1) {
 			osc3 = juce::Point<float>(osc2.x + r3 * std::cos(p3), osc2.y + r3 * std::sin(p3));
+			osc3.applyTransform(squash2);
 			addCircle(circ3, osc2, r3 * 2.f);
 		}
 		if (algo == 2 || algo == 3) {
 			osc3 = juce::Point<float>(osc1.x + r3 * std::cos(p3), osc1.y + r3 * std::sin(p3));
+			osc3.applyTransform(squash2);
 			addCircle(circ3, osc1, r3 * 2.f);
 		}
-
+		circ3.applyTransform(squash2);
 		g.setColour(orbitColor);
 		shadow.render(g, circ3, stroketype);
 		g.strokePath(circ3, stroketype, {}); // osc3 orbit
@@ -141,7 +148,8 @@ public:
 			osc4 = juce::Point<float>(osc1.x + r4 * std::cos(p4), osc1.y + r4 * std::sin(p4));
 			addCircle(circ4, osc1, r4 * 2.f);
 		}
-
+		circ4.applyTransform(squash2);
+		osc4.applyTransform(squash2);
 		g.setColour(orbitColor);
 		shadow.render(g, circ4, stroketype);
 		g.strokePath(circ4, stroketype, {}); // osc4 orbit
@@ -222,9 +230,10 @@ public:
 	float validate(float x) {
 		return std::clamp(x, 0.f, 1.f);
 	}
+	void setSquash(float input) { squash = input; }
 private:
 	float equant{ 0.f }, defPhase{ 0.f }, epi1Phase{ 0.f }, epi2Phase{ 0.f }, epi3Phase{ 0.f }, defRad{ 1.f }, epi1Rad{ 0.5f }, epi2Rad{ 0.25f }, epi3Rad{ 0.2f };
 	int algo{ 0 };
-	float scale{ 1.f }, mouseScale{ 0.f };
+	float scale{ 1.f }, mouseScale{ 0.f }, squash{ 0.f };
 
 };
