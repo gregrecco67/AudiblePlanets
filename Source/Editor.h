@@ -59,4 +59,5 @@ private:
     float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };
     float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * (float)frameRate) };
     gin::Layout layout { *this };
+	juce::ToggleButton liveViz{ "Live" };
 };
