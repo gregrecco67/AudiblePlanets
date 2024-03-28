@@ -1122,11 +1122,11 @@ public:
             case 9: // cheb3
 				waveShaper.functionToUse = [](float x) { 
 					if (std::abs(x) <= 1.f)
-						return 4.f * x * x * x - 3.f * x; 
+						return -(4.f * x * x * x - 3.f * x); // negative, so dry and wet don't interfere
 					else if (x > 1.f)
-						return 1.f;
+						return -1.f; // flipped for continuity with above
 					else if (x < -1.f)
-						return -1.f;
+						return 1.f;
 				};
 				currentFunction = function;
 				break;
