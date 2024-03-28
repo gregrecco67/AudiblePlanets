@@ -1026,7 +1026,7 @@ public:
 						return std::atan(2.f * x) / 1.10714871779409f;
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				}; // constant = arctan(2)
 				currentFunction = function;
@@ -1037,7 +1037,7 @@ public:
 						return std::atan(4.f * x) / 1.32581766366803f; 
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				}; // = arctan(4)
                 currentFunction = function;
@@ -1048,7 +1048,7 @@ public:
 						return std::atan(6.f * x) / 1.40564764938027f; 
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				};   // = arctan(6)
                 currentFunction = function;
@@ -1059,7 +1059,7 @@ public:
 						return std::tanh(2.f * x) / 0.964027580075817f; 
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				}; // = tanh(2)
                 currentFunction = function;
@@ -1070,7 +1070,7 @@ public:
 						return std::tanh(4.f * x) / 0.999329299739067f; 
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				}; // = tanh(4)
 				currentFunction = function;
@@ -1081,7 +1081,7 @@ public:
 						return std::tanh(6.f * x) / 0.999987711650796f; 
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				}; // = tanh(6)
 				currentFunction = function;
@@ -1092,7 +1092,7 @@ public:
 						return (1.5f * x * (1.f - x * x * .3333f)); 
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				};
                 currentFunction = function;
@@ -1103,7 +1103,7 @@ public:
 						return (x + x * x * x) * 0.5f; 
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				};
 				currentFunction = function;
@@ -1114,7 +1114,7 @@ public:
 						return x * x * x; 
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				};
 				currentFunction = function;
@@ -1125,7 +1125,7 @@ public:
 						return -(4.f * x * x * x - 3.f * x); // negative, so dry and wet don't interfere
 					else if (x > 1.f)
 						return -1.f; // flipped for continuity with above
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return 1.f;
 				};
 				currentFunction = function;
@@ -1136,7 +1136,7 @@ public:
 						return 16.f * x * x * x * x * x - 20.f * x * x * x + 5.f * x; 
 					else if (x > 1.f)
 						return 1.f;
-					else if (x < -1.f)
+					else //if (x < -1.f)
 						return -1.f;
 				};
                 currentFunction = function;
