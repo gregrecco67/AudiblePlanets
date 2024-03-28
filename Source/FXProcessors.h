@@ -1005,11 +1005,11 @@ public:
         preGain.reset();
 		postGain.reset();
 	}
-	void setHighShelfFreq(float freq) {
-		*leftPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,  freq, 1.0f, 63.0f);
-		*rightPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, 1.0f, 63.0f);
-		*leftPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,   freq, 1.0f, 0.015849f);
-		*rightPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,  freq, 1.0f, 0.015849f);
+	void setHighShelfFreqAndQ(float freq, float q) {
+		*leftPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,  freq, q, 63.0f);
+		*rightPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 63.0f);
+		*leftPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,   freq, q, 0.015849f);
+		*rightPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,  freq, q, 0.015849f);
 	}
 
     void setFunctionToUse(int function)
@@ -1021,47 +1021,124 @@ public:
             // "atan 2", "atan 4", "atan 6", "tanh 2", "tanh 4", "tanh 6", "cubic 3/2", "cubic mid", "cubic", "cheb 3", "cheb 5"
 
             case 0: // atan 2
-                waveShaper.functionToUse = [](float x) { return std::atan(2.f * x) / 1.10714871779409f; }; // constant = arctan(2)
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return std::atan(2.f * x) / 1.10714871779409f;
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				}; // constant = arctan(2)
 				currentFunction = function;
 				break;
             case 1: // atan 4 
-                waveShaper.functionToUse = [](float x) { return std::atan(4.f * x) / 1.32581766366803f; }; // = arctan(4)
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return std::atan(4.f * x) / 1.32581766366803f; 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				}; // = arctan(4)
                 currentFunction = function;
                 break;
             case 2: // atan 6
-                waveShaper.functionToUse = [](float x) { return std::atan(6.f * x) / 1.40564764938027f; };   // = arctan(6)
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return std::atan(6.f * x) / 1.40564764938027f; 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				};   // = arctan(6)
                 currentFunction = function;
                 break;
             case 3: // tanh 2
-                waveShaper.functionToUse = [](float x) { return std::tanh(2.f * x) / 0.964027580075817f; }; // = tanh(2)
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return std::tanh(2.f * x) / 0.964027580075817f; 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				}; // = tanh(2)
                 currentFunction = function;
                 break;
             case 4: // tanh 4
-                waveShaper.functionToUse = [](float x) { return std::tanh(4.f * x) / 0.999329299739067f; }; // = tanh(4)
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return std::tanh(4.f * x) / 0.999329299739067f; 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				}; // = tanh(4)
 				currentFunction = function;
 				break;
             case 5: // tanh 6
-                waveShaper.functionToUse = [](float x) { return std::tanh(6.f * x) / 0.999987711650796f; }; // = tanh(6)
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return std::tanh(6.f * x) / 0.999987711650796f; 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				}; // = tanh(6)
 				currentFunction = function;
                 break;
             case 6: // cubic 3/2
-                waveShaper.functionToUse = [](float x) { return (1.5f * x * (1.f - x * x * .3333f)); };
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return (1.5f * x * (1.f - x * x * .3333f)); 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				};
                 currentFunction = function;
                 break;
             case 7: // cubic mid
-                waveShaper.functionToUse = [](float x) { return (x + x * x * x) * 0.5f; };
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return (x + x * x * x) * 0.5f; 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				};
 				currentFunction = function;
 				break;
             case 8: // cubic
-                waveShaper.functionToUse = [](float x) { return x * x * x; };
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return x * x * x; 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				};
 				currentFunction = function;
 				break;
             case 9: // cheb3
-				waveShaper.functionToUse = [](float x) { return 4.f * x * x * x - 3.f * x; };
+				waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return 4.f * x * x * x - 3.f * x; 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				};
 				currentFunction = function;
 				break;
             case 10: // cheb5
-                waveShaper.functionToUse = [](float x) { return 16.f * x * x * x * x * x - 20.f * x * x * x + 5.f * x; };
+                waveShaper.functionToUse = [](float x) { 
+					if (std::abs(x) <= 1.f)
+						return 16.f * x * x * x * x * x - 20.f * x * x * x + 5.f * x; 
+					else if (x > 1.f)
+						return 1.f;
+					else if (x < -1.f)
+						return -1.f;
+				};
                 currentFunction = function;
                 break;
 			default:

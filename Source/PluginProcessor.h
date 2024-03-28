@@ -150,7 +150,7 @@ public:
 	{
 		WaveshaperParams() = default;
 
-		gin::Parameter::Ptr enable, drive, gain, type, dry, wet, highshelf;
+		gin::Parameter::Ptr enable, drive, gain, type, dry, wet, highshelf, hsq;
 
 		void setup(APAudioProcessor& p);
         int pos{-1};
