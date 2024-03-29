@@ -963,6 +963,17 @@ public:
         leftPostCut.prepare(spec);
         rightPostCut.prepare(spec);
 	}
+	// TODO: 
+	// -- regularize calling convention and just put all this in process()
+	// -- use stereo filters
+	// -- add cheb 4, 6
+	// -- add clipping fn (0.7?) * (1/0.7)?, 
+	// -- sine fn (sin (pi/2 * x)) :: OR rename cubic 3/2 to sine
+	// -- add halfwave rectifier
+	// -- LP filter on wet signal?
+	// -- add noise fn? would be dynamic addin to a sine, level based on drive?
+	// -- add bitcrusher? also dynamic number of steps based on drive?
+
     void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer&) 
     {
         juce::dsp::AudioBlock<float> block(buffer);
