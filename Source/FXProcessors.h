@@ -973,6 +973,14 @@ public:
 	// -- LP filter on wet signal?
 	// -- add noise fn? would be dynamic addin to a sine, level based on drive?
 	// -- add bitcrusher? also dynamic number of steps based on drive?
+    // -- add 5 Hz HP filter after all?
+    // -- oversampling?
+    
+    // [xx] 1. new function list in processor.cpp
+    // sine, atan 246, tanh 246, cubic mid, cubic, cheb 3456, halfwave, digiclip, bitcrush, noise (0-16)
+    // [xx] 2. check range of fn param
+    // [xx] 3. implement new static functions here (and dummies for those not yet done)
+    // 4. implement dynamic functions here
 
     void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer&) 
     {
@@ -1028,11 +1036,8 @@ public:
         if (function != currentFunction) {
             switch (function)
             {
-
-            // "atan 2", "atan 4", "atan 6", "tanh 2", "tanh 4", "tanh 6", "cubic 3/2", "cubic mid", "cubic", "cheb 3", "cheb 5"
-
-            case 0: // atan 2
-                waveShaper.functionToUse = [](float x) { 
+            case 1: // atan 2
+                waveShaper.functionToUse = [](float x) {
 					if (std::abs(x) <= 1.f)
 						return std::atan(2.f * x) / 1.10714871779409f;
 					else if (x > 1.f)
@@ -1042,8 +1047,8 @@ public:
 				}; // constant = arctan(2)
 				currentFunction = function;
 				break;
-            case 1: // atan 4 
-                waveShaper.functionToUse = [](float x) { 
+            case 2: // atan 4
+                waveShaper.functionToUse = [](float x) {
 					if (std::abs(x) <= 1.f)
 						return std::atan(4.f * x) / 1.32581766366803f; 
 					else if (x > 1.f)
@@ -1053,8 +1058,8 @@ public:
 				}; // = arctan(4)
                 currentFunction = function;
                 break;
-            case 2: // atan 6
-                waveShaper.functionToUse = [](float x) { 
+            case 3: // atan 6
+                waveShaper.functionToUse = [](float x) {
 					if (std::abs(x) <= 1.f)
 						return std::atan(6.f * x) / 1.40564764938027f; 
 					else if (x > 1.f)
@@ -1064,8 +1069,8 @@ public:
 				};   // = arctan(6)
                 currentFunction = function;
                 break;
-            case 3: // tanh 2
-                waveShaper.functionToUse = [](float x) { 
+            case 4: // tanh 2
+                waveShaper.functionToUse = [](float x) {
 					if (std::abs(x) <= 1.f)
 						return std::tanh(2.f * x) / 0.964027580075817f; 
 					else if (x > 1.f)
@@ -1075,8 +1080,8 @@ public:
 				}; // = tanh(2)
                 currentFunction = function;
                 break;
-            case 4: // tanh 4
-                waveShaper.functionToUse = [](float x) { 
+            case 5: // tanh 4
+                waveShaper.functionToUse = [](float x) {
 					if (std::abs(x) <= 1.f)
 						return std::tanh(4.f * x) / 0.999329299739067f; 
 					else if (x > 1.f)
@@ -1086,8 +1091,8 @@ public:
 				}; // = tanh(4)
 				currentFunction = function;
 				break;
-            case 5: // tanh 6
-                waveShaper.functionToUse = [](float x) { 
+            case 6: // tanh 6
+                waveShaper.functionToUse = [](float x) {
 					if (std::abs(x) <= 1.f)
 						return std::tanh(6.f * x) / 0.999987711650796f; 
 					else if (x > 1.f)
@@ -1096,17 +1101,6 @@ public:
 						return -1.f;
 				}; // = tanh(6)
 				currentFunction = function;
-                break;
-            case 6: // cubic 3/2
-                waveShaper.functionToUse = [](float x) { 
-					if (std::abs(x) <= 1.f)
-						return (1.5f * x * (1.f - x * x * .3333f)); 
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				};
-                currentFunction = function;
                 break;
             case 7: // cubic mid
                 waveShaper.functionToUse = [](float x) { 
@@ -1142,7 +1136,7 @@ public:
 				currentFunction = function;
 				break;
             case 10: // cheb5
-                waveShaper.functionToUse = [](float x) { 
+                waveShaper.functionToUse = [](float x) {
 					if (std::abs(x) <= 1.f)
 						return 16.f * x * x * x * x * x - 20.f * x * x * x + 5.f * x; 
 					else if (x > 1.f)
@@ -1150,6 +1144,42 @@ public:
 					else //if (x < -1.f)
 						return -1.f;
 				};
+                currentFunction = function;
+                break;
+            case 11: // "halfwave"
+                waveShaper.functionToUse = [](float x) {
+                    if (x > 0.f && x < 1.f)
+                        return std::tanh(1.5f * x) * 1.10479139298f; // 1.104 term is 1/tanh(1.5)
+                    else if (x > 1.f)
+                        return 1.f;
+                    else //if (x < -1.f)
+                        return 0.f;
+                }; // = tanh(4)
+                currentFunction = function;
+                break;
+            case 12: // "clipping"
+                waveShaper.functionToUse = [](float x) {
+                    if (x < -0.7f)
+                        return -1.f;
+                    else if (x > 0.7f)
+                        return 1.f;
+                    else
+                        return x * 1.42857142857f;
+                }; // = tanh(4)
+                currentFunction = function;
+                break;
+            case 13: // "bitcrush": quantize tanh 2 into (40-drive)? parts
+                    // placeholder
+                waveShaper.functionToUse = [](float x) {
+                    return x;
+                }; // = tanh(4)
+                currentFunction = function;
+                break;
+            case 14: // "noise"
+                    // placeholder
+                waveShaper.functionToUse = [](float x) {
+                    return x;
+                }; // = tanh(4)
                 currentFunction = function;
                 break;
 			default:
@@ -1161,6 +1191,7 @@ public:
     }
     void setGain(float pre, float post)
 	{
+        drive = pre;
         preGain.setGainLinear(pre);
         postGain.setGainLinear(post * powf(pre, -0.667f)); // compensate for preGain but only partly
 	}
@@ -1178,6 +1209,7 @@ private:
     float dry{ 0.5f }, wet{ 0.5f };
     juce::dsp::Gain<float> preGain;
     juce::dsp::Gain<float> postGain;
+    float drive{ 1.f };
 };
 
 class RingModulator : public ProcessorBase

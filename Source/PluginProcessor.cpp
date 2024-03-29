@@ -19,17 +19,21 @@ static juce::String waveshaperTypeTextFunction(const gin::Parameter&, float v)
 {
 	switch (int(v))
 	{
-		case 0: return "atan 2";
-		case 1: return "atan 4";
-		case 2: return "atan 6";
-		case 3: return "tanh 2";
-		case 4: return "tanh 4";
-		case 5: return "tanh 6";
-		case 6: return "cubic 3/2";
+        case 0: return "sine";
+		case 1: return "atan 2";
+		case 2: return "atan 4";
+		case 3: return "atan 6";
+		case 4: return "tanh 2";
+		case 5: return "tanh 4";
+		case 6: return "tanh 6";
 		case 7: return "cubic mid";
 		case 8: return "cubic";
 		case 9: return "cheb 3";
 		case 10: return "cheb 5";
+        case 11: return "halfwave";
+        case 12: return "clipping";
+        case 13: return "bitcrush";
+        case 14: return "noise";
 		default:
 			jassertfalse;
 			return {};
@@ -407,7 +411,7 @@ void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor& p)
 	gain = p.addExtParam(pfx + "gain",  name + "Gain", "Gain", "", { 0.03f, 3.0, 0.0f, 1.0 }, 1.0, 0.0f);
 	dry = p.addExtParam(pfx + "dry",   name + "Dry", "Dry", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, percentTextFunction);
 	wet = p.addExtParam(pfx + "wet",   name + "Wet", "Wet", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f, percentTextFunction);
-	type = p.addExtParam(pfx + "func",  name + "Function", "Function", "", { 0.0, 10.0, 1.0, 1.0 }, 0.0f, 0.0f, waveshaperTypeTextFunction);
+	type = p.addExtParam(pfx + "func",  name + "Function", "Function", "", { 0.0, 14.0, 1.0, 1.0 }, 0.0f, 0.0f, waveshaperTypeTextFunction);
 	highshelf = p.addExtParam(pfx + "highshelf", name + "High Shelf", "High Shelf", " Hz", { 3000.0f, 12000.0f, 0.0, 1.3f }, 6500.0f, 0.0f);
 	hsq = p.addExtParam(pfx + "hsq", name + "High Shelf Q", "High Shelf Q", "", { 0.5f, 5.0f, 0.0, 1.0 }, 1.0f, 0.0f);
 }

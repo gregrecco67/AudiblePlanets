@@ -129,26 +129,41 @@ public:
         {
             switch(proc.waveshaperParams.type->getUserValueInt())
             {
-                case 0:
+//                case 0: return "sine";
+//                case 1: return "atan 2";
+//                case 2: return "atan 4";
+//                case 3: return "atan 6";
+//                case 4: return "tanh 2";
+//                case 5: return "tanh 4";
+//                case 6: return "tanh 6";
+//                case 7: return "cubic mid";
+//                case 8: return "cubic";
+//                case 9: return "cheb 3";
+//                case 10: return "cheb 5";
+//                case 11: return "halfwave";
+//                case 12: return "clipping";
+//                case 13: return "bitcrush";
+//                case 14: return "noise";
+                case 0: // sine
                     funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan2_png, BinaryData::atan2_pngSize));
                     break;
                 case 1:
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan4_png, BinaryData::atan4_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan2_png, BinaryData::atan2_pngSize));
                     break;
                 case 2:
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan6_png, BinaryData::atan6_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan4_png, BinaryData::atan4_pngSize));
                     break;
                 case 3:
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::tanh2_png, BinaryData::tanh2_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan6_png, BinaryData::atan6_pngSize));
                     break;
                 case 4:
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::tanh4_png, BinaryData::tanh4_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::tanh2_png, BinaryData::tanh2_pngSize));
                     break;
                 case 5:
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::tanh6_png, BinaryData::tanh6_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::tanh4_png, BinaryData::tanh4_pngSize));
                     break;
                 case 6:
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cubic32_png, BinaryData::cubic32_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::tanh6_png, BinaryData::tanh6_pngSize));
                     break;
                 case 7:
                     funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cubicmid_png, BinaryData::cubicmid_pngSize));
@@ -160,6 +175,18 @@ public:
                     funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb3_png, BinaryData::cheb3_pngSize));
                     break;
                 case 10:
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
+                    break;
+                case 11: // halfwave
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
+                    break;
+                case 12: // clipping
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
+                    break;
+                case 13: // bitcrush
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
+                    break;
+                case 14: // noise
                     funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
                     break;
                 
