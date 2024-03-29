@@ -957,7 +957,6 @@ public:
         postGain.prepare(spec);
         preGain.setRampDurationSeconds(0.05);
         postGain.setRampDurationSeconds(0.05);
-        waveShaper.prepare(spec);
         leftPreBoost.prepare(spec);
         rightPreBoost.prepare(spec);
         leftPostCut.prepare(spec);
@@ -966,10 +965,10 @@ public:
 	// TODO: 
 	// -- regularize calling convention and just put all this in process()
 	// -- use stereo filters
-	// -- add cheb 4, 6
-	// -- add clipping fn (0.7?) * (1/0.7)?, 
-	// -- sine fn (sin (pi/2 * x)) :: OR rename cubic 3/2 to sine
-	// -- add halfwave rectifier
+	// [xx] -- add cheb 4, 6
+	// [xx] -- add clipping fn (0.7?) * (1/0.7)?, 
+	// [xx] -- sine fn (sin (pi/2 * x)) :: [no] OR rename cubic 3/2 to sine
+	// [xx] -- add halfwave rectifier
 	// -- LP filter on wet signal?
 	// -- add noise fn? would be dynamic addin to a sine, level based on drive?
 	// -- add bitcrusher? also dynamic number of steps based on drive?
@@ -977,7 +976,7 @@ public:
     // -- oversampling?
     
     // [xx] 1. new function list in processor.cpp
-    // sine, atan 246, tanh 246, cubic mid, cubic, cheb 3456, halfwave, digiclip, bitcrush, noise (0-16)
+    //		sine, atan 246, tanh 246, cubic mid, cubic, cheb 3-5, halfwave, digiclip, bitcrush, noise (0-16)
     // [xx] 2. check range of fn param
     // [xx] 3. implement new static functions here (and dummies for those not yet done)
     // 4. implement dynamic functions here
@@ -998,7 +997,7 @@ public:
         for (int ch = 0; ch < buffer.getNumChannels(); ch++) {
 			auto* channelData = buffer.getWritePointer(ch);
 			for (int i = 0; i < buffer.getNumSamples(); i++) {
-				channelData[i] = waveShaper.functionToUse(channelData[i]) * wet + channelData[i] * dry;
+				channelData[i] = useFunction(channelData[i]) * wet + channelData[i] * dry;
 			}
 		}
 
@@ -1020,7 +1019,6 @@ public:
 	}
     void reset() 
 	{
-		waveShaper.reset();
         preGain.reset();
 		postGain.reset();
 	}
@@ -1033,165 +1031,150 @@ public:
 
     void setFunctionToUse(int function)
     {
-        if (function != currentFunction) {
-            switch (function)
-            {
-            case 1: // atan 2
-                waveShaper.functionToUse = [](float x) {
-					if (std::abs(x) <= 1.f)
-						return std::atan(2.f * x) / 1.10714871779409f;
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				}; // constant = arctan(2)
-				currentFunction = function;
-				break;
-            case 2: // atan 4
-                waveShaper.functionToUse = [](float x) {
-					if (std::abs(x) <= 1.f)
-						return std::atan(4.f * x) / 1.32581766366803f; 
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				}; // = arctan(4)
-                currentFunction = function;
-                break;
-            case 3: // atan 6
-                waveShaper.functionToUse = [](float x) {
-					if (std::abs(x) <= 1.f)
-						return std::atan(6.f * x) / 1.40564764938027f; 
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				};   // = arctan(6)
-                currentFunction = function;
-                break;
-            case 4: // tanh 2
-                waveShaper.functionToUse = [](float x) {
-					if (std::abs(x) <= 1.f)
-						return std::tanh(2.f * x) / 0.964027580075817f; 
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				}; // = tanh(2)
-                currentFunction = function;
-                break;
-            case 5: // tanh 4
-                waveShaper.functionToUse = [](float x) {
-					if (std::abs(x) <= 1.f)
-						return std::tanh(4.f * x) / 0.999329299739067f; 
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				}; // = tanh(4)
-				currentFunction = function;
-				break;
-            case 6: // tanh 6
-                waveShaper.functionToUse = [](float x) {
-					if (std::abs(x) <= 1.f)
-						return std::tanh(6.f * x) / 0.999987711650796f; 
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				}; // = tanh(6)
-				currentFunction = function;
-                break;
-            case 7: // cubic mid
-                waveShaper.functionToUse = [](float x) { 
-					if (std::abs(x) <= 1.f)
-						return (x + x * x * x) * 0.5f; 
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				};
-				currentFunction = function;
-				break;
-            case 8: // cubic
-                waveShaper.functionToUse = [](float x) { 
-					if (std::abs(x) <= 1.f)
-						return x * x * x; 
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				};
-				currentFunction = function;
-				break;
-            case 9: // cheb3
-				waveShaper.functionToUse = [](float x) { 
-					if (std::abs(x) <= 1.f)
-						return -(4.f * x * x * x - 3.f * x); // negative, so dry and wet don't interfere
-					else if (x > 1.f)
-						return -1.f; // flipped for continuity with above
-					else //if (x < -1.f)
-						return 1.f;
-				};
-				currentFunction = function;
-				break;
-            case 10: // cheb5
-                waveShaper.functionToUse = [](float x) {
-					if (std::abs(x) <= 1.f)
-						return 16.f * x * x * x * x * x - 20.f * x * x * x + 5.f * x; 
-					else if (x > 1.f)
-						return 1.f;
-					else //if (x < -1.f)
-						return -1.f;
-				};
-                currentFunction = function;
-                break;
-            case 11: // "halfwave"
-                waveShaper.functionToUse = [](float x) {
-                    if (x > 0.f && x < 1.f)
-                        return std::tanh(1.5f * x) * 1.10479139298f; // 1.104 term is 1/tanh(1.5)
-                    else if (x > 1.f)
-                        return 1.f;
-                    else //if (x < -1.f)
-                        return 0.f;
-                }; // = tanh(4)
-                currentFunction = function;
-                break;
-            case 12: // "clipping"
-                waveShaper.functionToUse = [](float x) {
-                    if (x < -0.7f)
-                        return -1.f;
-                    else if (x > 0.7f)
-                        return 1.f;
-                    else
-                        return x * 1.42857142857f;
-                }; // = tanh(4)
-                currentFunction = function;
-                break;
-            case 13: // "bitcrush": quantize tanh 2 into (40-drive)? parts
-                    // placeholder
-                waveShaper.functionToUse = [](float x) {
-                    return x;
-                }; // = tanh(4)
-                currentFunction = function;
-                break;
-            case 14: // "noise"
-                    // placeholder
-                waveShaper.functionToUse = [](float x) {
-                    return x;
-                }; // = tanh(4)
-                currentFunction = function;
-                break;
-			default:
-                waveShaper.functionToUse = [](float x) { return x; };
-                currentFunction = function;
-				break;
-            }
-        }
+		currentFunction = function;
     }
+
+	float useFunction(float x) {
+		switch (currentFunction)
+		{
+		case 0:	// sine
+			if (std::abs(x) <= 1.f)
+				return std::sin(juce::MathConstants<float>::halfPi * x);
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 1: // atan 2
+			if (std::abs(x) <= 1.f)
+				return std::atan(2.f * x) / 1.10714871779409f;
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 2: // atan 4
+			if (std::abs(x) <= 1.f)
+				return std::atan(4.f * x) / 1.32581766366803f;
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 3: // atan 6
+			if (std::abs(x) <= 1.f)
+				return std::atan(6.f * x) / 1.40564764938027f;
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 4: // tanh 2
+			if (std::abs(x) <= 1.f)
+				return std::tanh(2.f * x) / 0.964027580075817f;
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 5: // tanh 4
+			if (std::abs(x) <= 1.f)
+				return std::tanh(4.f * x) / 0.999329299739067f;
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 6: // tanh 6
+			if (std::abs(x) <= 1.f)
+				return std::tanh(6.f * x) / 0.999987711650796f;
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 7: // cubic mid
+			if (std::abs(x) <= 1.f)
+				return (x + x * x * x) * 0.5f;
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 8: // cubic
+			if (std::abs(x) <= 1.f)
+				return x * x * x;
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 9: // cheb3
+			if (std::abs(x) <= 1.f)
+				return -(4.f * x * x * x - 3.f * x); // negative, so dry and wet don't interfere
+			else if (x > 1.f)
+				return -1.f; // flipped for continuity with above
+			else //if (x < -1.f)
+				return 1.f;
+			break;
+		case 10: // cheb5
+			if (std::abs(x) <= 1.f)
+				return 16.f * x * x * x * x * x - 20.f * x * x * x + 5.f * x;
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 11: // "halfwave"
+			if (x > 0.f && x < 1.f)
+				return std::tanh(1.5f * x) * 1.10479139298f; // 1.104 term is 1/tanh(1.5)
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return 0.f;
+			break;
+		case 12: // "clipping"
+			if (x < -0.7f)
+				return -1.f;
+			else if (x > 0.7f)
+				return 1.f;
+			else
+				return x * 1.42857142857f;
+			break;
+		case 13: // "bitcrush": quantize tanh 2 into (40-drive)? parts
+			// placeholder
+			if (std::abs(x) <= 1.f) {
+				int parts = 42 - (int)drive;
+				return std::floor(parts * std::tanh(4.f * x) / 0.999329299739067f) / (float)parts;
+			}
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		case 14: // "noise"
+			if (std::abs(x) <= 1.f) {
+				float p = pinkNoise.nextSample();
+				float factor = 1.f - (drive / 80.f);
+				if (p >= 0.f)
+					return jlimit(-1.f, 1.f, x * std::powf(p, factor));
+				else if (p < 0.f)
+					return jlimit(-1.f, 1.f, x * -std::powf(-p, factor));
+			}
+			else if (x > 1.f)
+				return 1.f;
+			else //if (x < -1.f)
+				return -1.f;
+			break;
+		default:
+			return x;
+			break;
+		}
+	}
+
     void setGain(float pre, float post)
 	{
-        drive = pre;
+		drive = pre;
         preGain.setGainLinear(pre);
         postGain.setGainLinear(post * powf(pre, -0.667f)); // compensate for preGain but only partly
 	}
@@ -1205,11 +1188,12 @@ private:
 
 	double sampleRate{ 44100.0 };
     int currentFunction = -1; // to trigger a change on first setFunctionToUse call
-    juce::dsp::WaveShaper<float> waveShaper;
+    //juce::dsp::WaveShaper<float> waveShaper;
     float dry{ 0.5f }, wet{ 0.5f };
     juce::dsp::Gain<float> preGain;
     juce::dsp::Gain<float> postGain;
     float drive{ 1.f };
+	gin::PinkNoise pinkNoise;
 };
 
 class RingModulator : public ProcessorBase
