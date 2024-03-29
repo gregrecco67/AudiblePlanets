@@ -1157,9 +1157,9 @@ public:
 				float p = pinkNoise.nextSample();
 				float factor = 1.f - (drive / 80.f);
 				if (p >= 0.f)
-					return jlimit(-1.f, 1.f, x * std::powf(p, factor));
+					return jlimit(-1.f, 1.f, x * std::pow(p, factor));
 				else if (p < 0.f)
-					return jlimit(-1.f, 1.f, x * -std::powf(-p, factor));
+					return jlimit(-1.f, 1.f, x * -std::pow(-p, factor));
 			}
 			else if (x > 1.f)
 				return 1.f;
