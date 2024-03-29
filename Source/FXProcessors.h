@@ -1145,7 +1145,7 @@ public:
 			// placeholder
 			if (std::abs(x) <= 1.f) {
 				int parts = 42 - (int)drive;
-				return std::floor(parts * std::tanh(4.f * x) / 0.999329299739067f) / (float)parts;
+				return std::floor(parts * std::sin(juce::MathConstants<float>::halfPi * x)) / parts;
 			}
 			else if (x > 1.f)
 				return 1.f;
