@@ -129,23 +129,8 @@ public:
         {
             switch(proc.waveshaperParams.type->getUserValueInt())
             {
-//                case 0: return "sine";
-//                case 1: return "atan 2";
-//                case 2: return "atan 4";
-//                case 3: return "atan 6";
-//                case 4: return "tanh 2";
-//                case 5: return "tanh 4";
-//                case 6: return "tanh 6";
-//                case 7: return "cubic mid";
-//                case 8: return "cubic";
-//                case 9: return "cheb 3";
-//                case 10: return "cheb 5";
-//                case 11: return "halfwave";
-//                case 12: return "clipping";
-//                case 13: return "bitcrush";
-//                case 14: return "noise";
                 case 0: // sine
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan2_png, BinaryData::atan2_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::sine_png, BinaryData::sine_pngSize));
                     break;
                 case 1:
                     funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::atan2_png, BinaryData::atan2_pngSize));
@@ -178,16 +163,16 @@ public:
                     funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
                     break;
                 case 11: // halfwave
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::halfwave_png, BinaryData::halfwave_pngSize));
                     break;
                 case 12: // clipping
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::clipping_png, BinaryData::clipping_pngSize));
                     break;
                 case 13: // bitcrush
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::bitcrush_png, BinaryData::bitcrush_pngSize));
                     break;
                 case 14: // noise
-                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::noise_png, BinaryData::noise_pngSize));
                     break;
                 
             }
