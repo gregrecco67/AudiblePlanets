@@ -301,6 +301,7 @@ public:
     juce::AudioPlayHead* playhead = nullptr;
     bool presetLoaded = false;
 	gin::Filter laneAFilter, laneBFilter;
+	SmoothedValue<float, ValueSmoothingTypes::Multiplicative> laneAFilterCutoff, laneBFilterCutoff;
 
 	gin::LevelTracker levelTracker;
     APSynth synth;

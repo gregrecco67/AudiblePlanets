@@ -733,6 +733,8 @@ void APAudioProcessor::reset()
 
 	waveshaper.reset();
 	compressor.reset();
+	
+	
 }
 
 void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBlock)
@@ -776,6 +778,8 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
 
 	laneAFilter.setSampleRate(newSampleRate);
 	laneBFilter.setSampleRate(newSampleRate);
+	laneAFilterCutoff.reset(newSampleRate, 0.02f);
+	laneBFilterCutoff.reset(newSampleRate, 0.02f);
 }
 
 void APAudioProcessor::releaseResources()
@@ -914,7 +918,10 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 		break;
 	}
 	float f = gin::getMidiNoteInHertz(modMatrix.getValue(fxOrderParams.laneAFreq));
-	laneAFilter.setParams(f, laneAQ);
+	laneAFilterCutoff.setTargetValue(f);
+	laneAFilter.setParams(laneAFilterCutoff.getCurrentValue(), laneAQ);
+	int numSamples = fxALaneBuffer.getNumSamples();
+	laneAFilterCutoff.skip(numSamples);
 
 
 	switch (int(fxOrderParams.laneBType->getProcValue()))
@@ -954,7 +961,9 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 	}
 	
 	f = gin::getMidiNoteInHertz(modMatrix.getValue(fxOrderParams.laneBFreq));
-	laneBFilter.setParams(f, laneBQ);
+	laneBFilterCutoff.setTargetValue(f);
+	laneBFilter.setParams(laneBFilterCutoff.getCurrentValue(), laneBQ);
+	laneBFilterCutoff.skip(numSamples);
 
 
 	if (fxOrderParams.chainAtoB->isOn()) { // lane A feeds into lane B
