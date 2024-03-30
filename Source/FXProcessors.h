@@ -944,72 +944,78 @@ public:
         sampleRate = spec.sampleRate;
         auto samplesPerBlock = spec.maximumBlockSize;
         // see https://signalsmith-audio.co.uk/writing/2022/warm-distortion/
-        *leftPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf (sampleRate, 6500.f, 1.0f, 63.0f);
-        *rightPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
-        *leftPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>:: makeHighShelf (sampleRate, 6500.f, 1.0f, 0.015849f);
-        *rightPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf (sampleRate, 6500.f, 1.0f, 0.015849f);
+		*preBoost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
+		*postCut.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
+		lowPassPostWet.setCutoffFrequency(2000.0f);
+		*highPassPost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 5.0f);
         prepareToPlay(sampleRate, samplesPerBlock);
-    }
+		preGain.prepare(spec);
+		postGain.prepare(spec);
+		preGain.setRampDurationSeconds(0.05);
+		postGain.setRampDurationSeconds(0.05);
+		lowPassPostWetCutoff.reset(sampleRate, 0.02f);
+		lowPassPostWetCutoff.setTargetValue(2000.0f);
+		preBoost.prepare(spec);
+		postCut.prepare(spec);
+		lowPassPostWet.prepare(spec);
+		highPassPost.prepare(spec);
+	}
     void prepareToPlay(double sampleRate_, int samplesPerBlock)
 	{
-		juce::dsp::ProcessSpec spec { sampleRate_, static_cast<juce::uint32> (samplesPerBlock), 2 };
-		preGain.prepare(spec);
-        postGain.prepare(spec);
-        preGain.setRampDurationSeconds(0.05);
-        postGain.setRampDurationSeconds(0.05);
-        leftPreBoost.prepare(spec);
-        rightPreBoost.prepare(spec);
-        leftPostCut.prepare(spec);
-        rightPostCut.prepare(spec);
+		//juce::dsp::ProcessSpec spec { sampleRate_, static_cast<juce::uint32> (samplesPerBlock), 2 };
+		//preGain.prepare(spec);
+  //      postGain.prepare(spec);
+  //      preGain.setRampDurationSeconds(0.05);
+  //      postGain.setRampDurationSeconds(0.05);
+
+		//preBoost.prepare(spec);
+		//postCut.prepare(spec);
+		//lowPassPostWet.prepare(spec);
 	}
 	// TODO: 
-	// -- regularize calling convention and just put all this in process()
-	// -- use stereo filters
 	// [xx] -- add cheb 4, 6
 	// [xx] -- add clipping fn (0.7?) * (1/0.7)?, 
 	// [xx] -- sine fn (sin (pi/2 * x)) :: [no] OR rename cubic 3/2 to sine
 	// [xx] -- add halfwave rectifier
-	// -- LP filter on wet signal?
-	// -- add noise fn? would be dynamic addin to a sine, level based on drive?
-	// -- add bitcrusher? also dynamic number of steps based on drive?
-    // -- add 5 Hz HP filter after all?
-    // -- oversampling?
+	// [xx] -- add noise fn? would be dynamic addin to a sine, level based on drive?
+	// [xx] -- add bitcrusher? also dynamic number of steps based on drive?
     
     // [xx] 1. new function list in processor.cpp
     //		sine, atan 246, tanh 246, cubic mid, cubic, cheb 3-5, halfwave, digiclip, bitcrush, noise (0-16)
     // [xx] 2. check range of fn param
     // [xx] 3. implement new static functions here (and dummies for those not yet done)
-    // 4. implement dynamic functions here
+    // [xx] 4. implement dynamic functions here
+
+	// [xx] 5. regularize calling convention and just put all this in process()
+	// [xx] 6.  use stereo filters
+	// [xx] 7. LP filter on wet signal?
+    // [xx] 8. add 5 Hz HP filter after all?
+    // [no] -- oversampling?
 
     void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer&) 
     {
-        juce::dsp::AudioBlock<float> block(buffer);
-		juce::dsp::ProcessContextReplacing<float> context(block);
-        preGain.process(context);
-
-        auto leftBlock = context.getOutputBlock().getSingleChannelBlock(0);
-        auto rightBlock = context.getOutputBlock().getSingleChannelBlock(1);
-        auto leftContext = juce::dsp::ProcessContextReplacing<float>(leftBlock);
-        auto rightContext = juce::dsp::ProcessContextReplacing<float>(rightBlock);
-        leftPreBoost.process(leftContext);
-        rightPreBoost.process(rightContext);
-
-        for (int ch = 0; ch < buffer.getNumChannels(); ch++) {
-			auto* channelData = buffer.getWritePointer(ch);
-			for (int i = 0; i < buffer.getNumSamples(); i++) {
-				channelData[i] = useFunction(channelData[i]) * wet + channelData[i] * dry;
-			}
-		}
-
-        leftPostCut.process(leftContext);
-        rightPostCut.process(rightContext);
-	    postGain.process(context);
 	}
-    void process(juce::dsp::ProcessContextReplacing<float> context) {
-        auto& inBlock = context.getOutputBlock();
-        inBuffer = fromAudioBlock(inBlock);
-        juce::MidiBuffer midiBuffer;
-        processBlock(inBuffer, midiBuffer);
+
+	void process(juce::dsp::ProcessContextReplacing<float> context) {
+		int numSamples = context.getOutputBlock().getNumSamples();
+
+		preGain.process(context); // gain
+		preBoost.process(context); // filter
+		
+		lowPassPostWetCutoff.skip(numSamples);
+		float cutoff = lowPassPostWetCutoff.getCurrentValue();
+		lowPassPostWet.setCutoffFrequency(cutoff);
+		
+		auto* dataL = context.getOutputBlock().getChannelPointer(0);
+		auto* dataR = context.getOutputBlock().getChannelPointer(1);
+		for (int i = 0; i < numSamples; i++) {
+			dataL[i] = lowPassPostWet.processSample(0, useFunction(dataL[i])) * wet + dataL[i] * dry;
+			dataR[i] = lowPassPostWet.processSample(1, useFunction(dataR[i])) * wet + dataR[i] * dry;
+		}
+		
+		postCut.process(context); // filter
+		postGain.process(context); // gain
+		highPassPost.process(context); // DC blocker
     }
 	void setDry(float _dry) {
 		dry = _dry;
@@ -1017,16 +1023,17 @@ public:
 	void setWet(float _wet) {
 		wet = _wet;
 	}
+	void setLPCutoff(float freq) {
+		lowPassPostWetCutoff.setTargetValue(freq);
+	}
     void reset() 
 	{
         preGain.reset();
 		postGain.reset();
 	}
 	void setHighShelfFreqAndQ(float freq, float q) {
-		*leftPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,  freq, q, 63.0f);
-		*rightPreBoost.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 63.0f);
-		*leftPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,   freq, q, 0.015849f);
-		*rightPostCut.get<0>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,  freq, q, 0.015849f);
+		*preBoost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 63.0f);
+		*postCut.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 0.015849f);
 	}
 
     void setFunctionToUse(int function)
@@ -1183,8 +1190,10 @@ private:
     juce::AudioBuffer<float> inBuffer;
 
     using Filter = juce::dsp::IIR::Filter<float>;
-    using MonoChain = juce::dsp::ProcessorChain<Filter>;
-    MonoChain leftPreBoost, leftPostCut, rightPreBoost, rightPostCut;
+	Filter preBoost, postCut, highPassPost;
+	juce::dsp::StateVariableTPTFilter<float> lowPassPostWet;
+	juce::SmoothedValue<float> lowPassPostWetCutoff;
+	
 
 	double sampleRate{ 44100.0 };
     int currentFunction = -1; // to trigger a change on first setFunctionToUse call

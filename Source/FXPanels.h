@@ -30,9 +30,10 @@ public:
 		// WS = 1
 		addControl(wsdrive = new gin::Knob(proc.waveshaperParams.drive), 0, 0);
 		addControl(wsgain = new gin::Knob(proc.waveshaperParams.gain), 0, 1);
+		addControl(wslp = new gin::Knob(proc.waveshaperParams.lp), 0, 2);
 		addControl(wsdry = new gin::Knob(proc.waveshaperParams.dry), 1, 0);
 		addControl(wswet = new gin::Knob(proc.waveshaperParams.wet), 1, 1);
-		addControl(wstype = new gin::Select(proc.waveshaperParams.type), 0, 2, 2, 1);
+		addControl(wstype = new gin::Select(proc.waveshaperParams.type), 1, 2);
 		addControl(wshsfreq = new gin::Knob(proc.waveshaperParams.highshelf), 2, 0);
 		addControl(wshsq = new gin::Knob(proc.waveshaperParams.hsq), 2, 1);
 
@@ -198,6 +199,7 @@ public:
 			wsdrive->setVisible(true);
 			wsgain->setVisible(true);
 			wsdry->setVisible(true);
+			wslp->setVisible(true);
 			wswet->setVisible(true);
 			wstype->setVisible(true);
 			wshsfreq->setVisible(true);
@@ -283,6 +285,7 @@ public:
 		wsdrive->setVisible(false);
 		wsgain->setVisible(false);
 		wsdry->setVisible(false);
+		wslp->setVisible(false);
 		wswet->setVisible(false);
 		wstype->setVisible(false);
         wshsfreq->setVisible(false);
@@ -351,7 +354,7 @@ public:
 	
     APAudioProcessor& proc;
     gin::ParamComponent::Ptr rmmodfreq1, rmmodfreq2, rmshape1, rmshape2, rmmix1, rmmix2, rmspread, rmlowcut, rmhighcut;
-	gin::ParamComponent::Ptr wsdrive, wsgain, wsdry, wswet, wstype, wshsfreq, wshsq;
+	gin::ParamComponent::Ptr wsdrive, wsgain, wsdry, wslp, wswet, wstype, wshsfreq, wshsq;
 	gin::ParamComponent::Ptr gngain;
 	gin::ParamComponent::Ptr cpthreshold, cpratio, cpattack, cprelease, cpknee, cpinput, cpoutput, cptype;
 	gin::ParamComponent::Ptr dltimeleft, dltimeright, dlbeatsleft, dlbeatsright, dltemposync, dlfeedback, dldry, dlwet, dlpingpong, dlfreeze, dlcutoff;
