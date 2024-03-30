@@ -50,5 +50,8 @@ private:
 		fxb4Selector{ proc.fxOrderParams.fxb4 };
     FXModBox mod{"mod", proc};
 	MatrixBox matrix{"matrix", proc};
-	gin::Knob laneAGain{ proc.fxOrderParams.laneAGain }, laneBGain{ proc.fxOrderParams.laneBGain }, outLevel{ proc.globalParams.level };
+	gin::Knob laneAGain{ proc.fxOrderParams.laneAGain },  laneAFreq{proc.fxOrderParams.laneAFreq}, laneARes{proc.fxOrderParams.laneARes},
+		laneBGain{ proc.fxOrderParams.laneBGain }, laneBFreq{proc.fxOrderParams.laneBFreq}, laneBRes{proc.fxOrderParams.laneBRes},
+		outLevel{ proc.globalParams.level };
+	gin::Select laneAType{ proc.fxOrderParams.laneAType }, laneBType{ proc.fxOrderParams.laneBType };
 };

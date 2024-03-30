@@ -960,37 +960,10 @@ public:
 		lowPassPostWet.prepare(spec);
 		highPassPost.prepare(spec);
 	}
-    void prepareToPlay(double sampleRate_, int samplesPerBlock)
+
+	void prepareToPlay(double sampleRate_, int samplesPerBlock)
 	{
-		//juce::dsp::ProcessSpec spec { sampleRate_, static_cast<juce::uint32> (samplesPerBlock), 2 };
-		//preGain.prepare(spec);
-  //      postGain.prepare(spec);
-  //      preGain.setRampDurationSeconds(0.05);
-  //      postGain.setRampDurationSeconds(0.05);
-
-		//preBoost.prepare(spec);
-		//postCut.prepare(spec);
-		//lowPassPostWet.prepare(spec);
 	}
-	// TODO: 
-	// [xx] -- add cheb 4, 6
-	// [xx] -- add clipping fn (0.7?) * (1/0.7)?, 
-	// [xx] -- sine fn (sin (pi/2 * x)) :: [no] OR rename cubic 3/2 to sine
-	// [xx] -- add halfwave rectifier
-	// [xx] -- add noise fn? would be dynamic addin to a sine, level based on drive?
-	// [xx] -- add bitcrusher? also dynamic number of steps based on drive?
-    
-    // [xx] 1. new function list in processor.cpp
-    //		sine, atan 246, tanh 246, cubic mid, cubic, cheb 3-5, halfwave, digiclip, bitcrush, noise (0-16)
-    // [xx] 2. check range of fn param
-    // [xx] 3. implement new static functions here (and dummies for those not yet done)
-    // [xx] 4. implement dynamic functions here
-
-	// [xx] 5. regularize calling convention and just put all this in process()
-	// [xx] 6.  use stereo filters
-	// [xx] 7. LP filter on wet signal?
-    // [xx] 8. add 5 Hz HP filter after all?
-    // [no] -- oversampling?
 
     void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer&) 
     {
@@ -1017,20 +990,25 @@ public:
 		postGain.process(context); // gain
 		highPassPost.process(context); // DC blocker
     }
+	
 	void setDry(float _dry) {
 		dry = _dry;
 	}
+	
 	void setWet(float _wet) {
 		wet = _wet;
 	}
+	
 	void setLPCutoff(float freq) {
 		lowPassPostWetCutoff.setTargetValue(freq);
 	}
-    void reset() 
+    
+	void reset() 
 	{
         preGain.reset();
 		postGain.reset();
 	}
+	
 	void setHighShelfFreqAndQ(float freq, float q) {
 		*preBoost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 63.0f);
 		*postCut.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 0.015849f);

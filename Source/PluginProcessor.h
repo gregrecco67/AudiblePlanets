@@ -241,7 +241,8 @@ public:
         
         FXOrderParams() = default;
         
-        gin::Parameter::Ptr fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4, chainAtoB, laneAGain, laneBGain;
+        gin::Parameter::Ptr fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4, chainAtoB, laneAGain, laneBGain,
+			laneAType, laneAFreq, laneARes, laneBType, laneBFreq, laneBRes;
         
         void setup(APAudioProcessor& p);
         
@@ -299,6 +300,7 @@ public:
 	std::array<gin::ModSrcId*, 4> lfoIds{ &modSrcMonoLFO1, &modSrcMonoLFO2, &modSrcMonoLFO3, &modSrcMonoLFO4 };
     juce::AudioPlayHead* playhead = nullptr;
     bool presetLoaded = false;
+	gin::Filter laneAFilter, laneBFilter;
 
 	gin::LevelTracker levelTracker;
     APSynth synth;

@@ -524,6 +524,7 @@ static juce::String fxRouteFunction(const gin::Parameter&, float v)
 //==============================================================================
 void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 {
+	float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
     fxa1 = p.addExtParam("fxa1", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
     fxa2 = p.addExtParam("fxa2", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
     fxa3 = p.addExtParam("fxa3", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
@@ -535,6 +536,12 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 	chainAtoB = p.addIntParam("chainAtoB", "FX Chain Routing", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, fxRouteFunction);
 	laneAGain = p.addExtParam("laneAGain", "FX A Pre-Gain", "A Pre-Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	laneBGain = p.addExtParam("laneBGain", "FX B Pre-Gain", "B Pre-Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	laneAType = p.addExtParam("laneAType", "FX A Filter", "A Filter", "", { 0.0, 7.0, 1.0, 1.0 }, 0.0f, 0.0f, filterTextFunction);
+	laneBType = p.addExtParam("laneBType", "FX B Filter", "B Filter", "", { 0.0, 7.0, 1.0, 1.0 }, 0.0f, 0.0f, filterTextFunction);
+	laneAFreq = p.addExtParam("laneAFreq", "FX A Freq", "A Freq", " Hz", { 0.0, maxFreq, 0.0f, 1.5f }, maxFreq, 0.0f, freqTextFunction);
+	laneBFreq = p.addExtParam("laneBFreq", "FX B Freq", "B Freq", " Hz", { 0.0, maxFreq, 0.0f, 1.5f }, maxFreq, 0.0f, freqTextFunction);
+	laneARes = p.addExtParam("laneARes", "FX A Res", "A Res", "", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
+	laneBRes = p.addExtParam("laneBRes", "FX B Res", "B Res", "", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
 }
 
 
@@ -604,6 +611,11 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	mseg2Data.reset();
 	mseg3Data.reset();
 	mseg4Data.reset();
+
+	laneAFilter.reset();
+	laneBFilter.reset();
+	laneAFilter.setNumChannels(2);
+	laneBFilter.setNumChannels(2);
 
     setupModMatrix();
     init();
@@ -761,6 +773,9 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
 	lfo2.setSampleRate(newSampleRate);
 	lfo3.setSampleRate(newSampleRate);
 	lfo4.setSampleRate(newSampleRate);
+
+	laneAFilter.setSampleRate(newSampleRate);
+	laneBFilter.setSampleRate(newSampleRate);
 }
 
 void APAudioProcessor::releaseResources()
@@ -860,11 +875,95 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 	auto fxb3 = fxOrderParams.fxb3->getUserValueInt();
 	auto fxb4 = fxOrderParams.fxb4->getUserValueInt();
 
+	float laneAQ = gin::Q / (1.0f - (fxOrderParams.laneARes->getUserValue() / 100.0f) * 0.99f);
+	float laneBQ = gin::Q / (1.0f - (fxOrderParams.laneBRes->getUserValue() / 100.0f) * 0.99f);
+
+	switch (int(fxOrderParams.laneAType->getProcValue()))
+	{
+	case 0:
+		laneAFilter.setType(gin::Filter::lowpass);
+		laneAFilter.setSlope(gin::Filter::db12);
+		break;
+	case 1:
+		laneAFilter.setType(gin::Filter::lowpass);
+		laneAFilter.setSlope(gin::Filter::db24);
+		break;
+	case 2:
+		laneAFilter.setType(gin::Filter::highpass);
+		laneAFilter.setSlope(gin::Filter::db12);
+		break;
+	case 3:
+		laneAFilter.setType(gin::Filter::highpass);
+		laneAFilter.setSlope(gin::Filter::db24);
+		break;
+	case 4:
+		laneAFilter.setType(gin::Filter::bandpass);
+		laneAFilter.setSlope(gin::Filter::db12);
+		break;
+	case 5:
+		laneAFilter.setType(gin::Filter::bandpass);
+		laneAFilter.setSlope(gin::Filter::db24);
+		break;
+	case 6:
+		laneAFilter.setType(gin::Filter::notch);
+		laneAFilter.setSlope(gin::Filter::db12);
+		break;
+	case 7:
+		laneAFilter.setType(gin::Filter::notch);
+		laneAFilter.setSlope(gin::Filter::db24);
+		break;
+	}
+	float f = gin::getMidiNoteInHertz(modMatrix.getValue(fxOrderParams.laneAFreq));
+	laneAFilter.setParams(f, laneAQ);
+
+
+	switch (int(fxOrderParams.laneBType->getProcValue()))
+	{
+	case 0:
+		laneBFilter.setType(gin::Filter::lowpass);
+		laneBFilter.setSlope(gin::Filter::db12);
+		break;
+	case 1:
+		laneBFilter.setType(gin::Filter::lowpass);
+		laneBFilter.setSlope(gin::Filter::db24);
+		break;
+	case 2:
+		laneBFilter.setType(gin::Filter::highpass);
+		laneBFilter.setSlope(gin::Filter::db12);
+		break;
+	case 3:
+		laneBFilter.setType(gin::Filter::highpass);
+		laneBFilter.setSlope(gin::Filter::db24);
+		break;
+	case 4:
+		laneBFilter.setType(gin::Filter::bandpass);
+		laneBFilter.setSlope(gin::Filter::db12);
+		break;
+	case 5:
+		laneBFilter.setType(gin::Filter::bandpass);
+		laneBFilter.setSlope(gin::Filter::db24);
+		break;
+	case 6:
+		laneBFilter.setType(gin::Filter::notch);
+		laneBFilter.setSlope(gin::Filter::db12);
+		break;
+	case 7:
+		laneBFilter.setType(gin::Filter::notch);
+		laneBFilter.setSlope(gin::Filter::db24);
+		break;
+	}
+	
+	f = gin::getMidiNoteInHertz(modMatrix.getValue(fxOrderParams.laneBFreq));
+	laneBFilter.setParams(f, laneBQ);
+
 
 	if (fxOrderParams.chainAtoB->isOn()) { // lane A feeds into lane B
 		fxALaneBuffer.applyGain(juce::Decibels::decibelsToGain(fxOrderParams.laneAGain->getUserValue()));
 		auto outBlock = juce::dsp::AudioBlock<float>(fxALaneBuffer);
 		auto outContext = juce::dsp::ProcessContextReplacing<float>(outBlock);
+
+		laneAFilter.process(fxALaneBuffer);
+
 		for (int fx : {fxa1, fxa2, fxa3, fxa4} )
 		{
 			switch (fx)
@@ -900,7 +999,11 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 			}
 
 		}
+
 		fxALaneBuffer.applyGain(juce::Decibels::decibelsToGain(fxOrderParams.laneBGain->getUserValue()));
+
+		laneBFilter.process(fxALaneBuffer);
+
 		for (int fx : {fxb1, fxb2, fxb3, fxb4})
 		{
 			switch (fx)
@@ -941,6 +1044,9 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 		fxBLaneBuffer.makeCopyOf(fxALaneBuffer);
 		fxALaneBuffer.applyGain(juce::Decibels::decibelsToGain(fxOrderParams.laneAGain->getUserValue()) * 0.5f);
 		fxBLaneBuffer.applyGain(juce::Decibels::decibelsToGain(fxOrderParams.laneBGain->getUserValue()) * 0.5f);
+
+		laneAFilter.process(fxALaneBuffer);
+		laneBFilter.process(fxBLaneBuffer);
 		auto ABlock = juce::dsp::AudioBlock<float>(fxALaneBuffer);
 		auto AContext = juce::dsp::ProcessContextReplacing<float>(ABlock);
 		auto BBlock = juce::dsp::AudioBlock<float>(fxBLaneBuffer);
