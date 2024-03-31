@@ -16,7 +16,7 @@ endforeach()
 
 juce_add_plugin (${PROJECT_NAME}
 				PRODUCT_NAME "Audible Planets" 
-				VERSION 1.0.7
+				VERSION 1.0.8
 				COMPANY_NAME "Void-Star"
 				COMPANY_WEBSITE "https://void-star.com/"
 				FORMATS "VST3" "AU" "Standalone" 
