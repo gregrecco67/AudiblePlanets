@@ -143,19 +143,19 @@ void FXEditor::resized()
 
 	chainSetting.setBounds(10, 289, 168, 35);
 
-	laneAType.setBounds   (20, 60, 56, 70);
-	laneAPrePost.setBounds(90, 60, 56, 70);
-	laneAFreq.setBounds   (20, 130, 56, 70);
-	laneARes.setBounds    (90, 130, 56, 70);
-	laneAGain.setBounds   (20, 200, 56, 70);
-	laneAPan.setBounds    (90, 200, 56, 70);
+	laneAFreq.setBounds   (20, 60, 56, 70);
+	laneARes.setBounds    (90, 60, 56, 70);
+	laneAGain.setBounds   (20, 130, 56, 70);
+	laneAPan.setBounds    (90, 130, 56, 70);
+	laneAType.setBounds   (20, 200, 56, 70);
+	laneAPrePost.setBounds(90, 200, 56, 70);
 
-	laneBType.setBounds   (20, 360, 56, 70);
-	laneBPrePost.setBounds(90, 360, 56, 70);
-	laneBFreq.setBounds   (20, 430, 56, 70);
-	laneBRes.setBounds    (90, 430, 56, 70);
-	laneBGain.setBounds   (20, 500, 56, 70);
-	laneBPan.setBounds    (90, 500, 56, 70);
+	laneBFreq.setBounds   (20, 360, 56, 70);
+	laneBRes.setBounds    (90, 360, 56, 70);
+	laneBGain.setBounds   (20, 430, 56, 70);
+	laneBPan.setBounds    (90, 430, 56, 70);
+	laneBType.setBounds   (20, 500, 56, 70);
+	laneBPrePost.setBounds(90, 500, 56, 70);
 
 	setAllControls();
 }

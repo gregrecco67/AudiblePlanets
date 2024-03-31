@@ -541,8 +541,8 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
     fxb3 = p.addExtParam("fxb3", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
     fxb4 = p.addExtParam("fxb4", "", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
 	chainAtoB = p.addIntParam("chainAtoB", "FX Chain Routing", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, fxRouteFunction);
-	laneAGain = p.addExtParam("laneAGain", "FX A Pre-Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
-	laneBGain = p.addExtParam("laneBGain", "FX B Pre-Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	laneAGain = p.addExtParam("laneAGain", "FX A Pre-Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	laneBGain = p.addExtParam("laneBGain", "FX B Pre-Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 0.0f, 0.0f);
 	laneAType = p.addExtParam("laneAType", "FX A Filter", "Filter Type", "", { 0.0, 7.0, 1.0, 1.0 }, 0.0f, 0.0f, filterTextFunction);
 	laneBType = p.addExtParam("laneBType", "FX B Filter", "Filter Type", "", { 0.0, 7.0, 1.0, 1.0 }, 0.0f, 0.0f, filterTextFunction);
 	laneAFreq = p.addExtParam("laneAFreq", "FX A Freq", "Freq", " Hz", { 0.0, maxFreq, 0.0f, 1.5f }, maxFreq, 0.0f, freqTextFunction);
@@ -791,6 +791,9 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
 	laneBFilter.setSampleRate(newSampleRate);
 	laneAFilterCutoff.reset(newSampleRate, 0.02f);
 	laneBFilterCutoff.reset(newSampleRate, 0.02f);
+
+	*dcFilter.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighPass(newSampleRate, 5.0f);
+	dcFilter.prepare(spec);
 }
 
 void APAudioProcessor::releaseResources()
@@ -890,6 +893,7 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 	auto fxb3 = fxOrderParams.fxb3->getUserValueInt();
 	auto fxb4 = fxOrderParams.fxb4->getUserValueInt();
 
+	int numSamples = fxALaneBuffer.getNumSamples();
 	float laneAQ = gin::Q / (1.0f - (modMatrix.getValue(fxOrderParams.laneARes) / 100.0f) * 0.99f);
 	float laneBQ = gin::Q / (1.0f - (modMatrix.getValue(fxOrderParams.laneBRes) / 100.0f) * 0.99f);
 	bool laneAPre = fxOrderParams.laneAPrePost->getProcValue() < 0.5f;
@@ -932,12 +936,11 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 		laneAFilter.setSlope(gin::Filter::db24);
 		break;
 	}
+
 	float f = gin::getMidiNoteInHertz(modMatrix.getValue(fxOrderParams.laneAFreq));
 	laneAFilterCutoff.setTargetValue(f);
 	laneAFilter.setParams(laneAFilterCutoff.getCurrentValue(), laneAQ);
-	int numSamples = fxALaneBuffer.getNumSamples();
 	laneAFilterCutoff.skip(numSamples);
-
 
 	switch (int(fxOrderParams.laneBType->getProcValue()))
 	{
@@ -980,8 +983,8 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 	laneBFilter.setParams(laneBFilterCutoff.getCurrentValue(), laneBQ);
 	laneBFilterCutoff.skip(numSamples);
 
-
-	if (fxOrderParams.chainAtoB->isOn()) { // lane A feeds into lane B
+	// case 1: lane A feeds into lane B
+	if (fxOrderParams.chainAtoB->isOn()) { 
 		auto outBlock = juce::dsp::AudioBlock<float>(fxALaneBuffer);
 		auto outContext = juce::dsp::ProcessContextReplacing<float>(outBlock);
 
@@ -1084,7 +1087,8 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 			fxALaneBuffer.applyGain(1, 0, numSamples, gain* std::min(1 + laneBPan, 1.0f));
 		}
 	}
-	else { // lanes A and B are run in parallel
+	// case 2: lanes A and B are run in parallel
+	else { 
 		juce::AudioBuffer<float> fxBLaneBuffer;
 		fxBLaneBuffer.makeCopyOf(fxALaneBuffer);
 
@@ -1196,6 +1200,7 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 	outputGain.process(fxALaneBuffer);
 	auto ABlock = juce::dsp::AudioBlock<float>(fxALaneBuffer);
 	auto AContext = juce::dsp::ProcessContextReplacing<float>(ABlock);
+	dcFilter.process(AContext);
 	limiter.process(AContext);
 }
 

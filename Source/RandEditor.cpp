@@ -144,12 +144,14 @@ void RandEditor::randomize()
 	std::uniform_real_distribution<> modDist(-1.f, 1.f);
     
 	// below is useful to get the number of modifiable parameters
-	//
-    //auto& params = proc.getPluginParameters();
-    //for (auto& param : params) {
-    //std::cout << param->getModIndex() << std::endl;
-    //}
-    std::uniform_int_distribution<> paramsDist{0, 237};
+// ----------------
+/*    auto& params = proc.getPluginParameters();
+    for (auto& param : params) {
+		std::cout << param->getModIndex() << std::endl;
+    }
+// ----------------*/
+	
+	std::uniform_int_distribution<> paramsDist{0, 239};
     auto numSrcs = proc.modMatrix.getNumModSources();
     std::uniform_int_distribution<> srcsDist{0, numSrcs - 1};
 	std::uniform_int_distribution<> functionDist{ 0, 19 };

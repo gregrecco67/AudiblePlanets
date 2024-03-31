@@ -947,7 +947,6 @@ public:
 		*preBoost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
 		*postCut.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
 		lowPassPostWet.setCutoffFrequency(2000.0f);
-		*highPassPost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 5.0f);
         prepareToPlay(sampleRate, samplesPerBlock);
 		preGain.prepare(spec);
 		postGain.prepare(spec);
@@ -958,6 +957,7 @@ public:
 		preBoost.prepare(spec);
 		postCut.prepare(spec);
 		lowPassPostWet.prepare(spec);
+		*highPassPost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 5.0f);
 		highPassPost.prepare(spec);
 	}
 
