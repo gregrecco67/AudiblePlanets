@@ -148,8 +148,8 @@ void RandEditor::randomize()
     //auto& params = proc.getPluginParameters();
     //for (auto& param : params) {
     //std::cout << param->getModIndex() << std::endl;
-	//}
-    std::uniform_int_distribution<> paramsDist{0, 229};
+    //}
+    std::uniform_int_distribution<> paramsDist{0, 237};
     auto numSrcs = proc.modMatrix.getNumModSources();
     std::uniform_int_distribution<> srcsDist{0, numSrcs - 1};
 	std::uniform_int_distribution<> functionDist{ 0, 19 };
