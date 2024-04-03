@@ -170,12 +170,12 @@ private:
 		proc.env4Params.attack, proc.env4Params.decay, proc.env4Params.sustain, proc.env4Params.release, proc.env4Params.acurve, proc.env4Params.drcurve
 	};
 
-	std::array<gin::Parameter::Ptr, 16> msegDsts{
-		proc.mseg1Params.rate, proc.mseg1Params.beat, proc.mseg1Params.depth, proc.mseg1Params.offset,
-		proc.mseg2Params.rate, proc.mseg2Params.beat, proc.mseg2Params.depth, proc.mseg2Params.offset,
-		proc.mseg3Params.rate, proc.mseg3Params.beat, proc.mseg3Params.depth, proc.mseg3Params.offset,
-		proc.mseg4Params.rate, proc.mseg4Params.beat, proc.mseg4Params.depth, proc.mseg4Params.offset
-	};
+//	std::array<gin::Parameter::Ptr, 16> msegDsts{
+//		proc.mseg1Params.rate, proc.mseg1Params.beat, proc.mseg1Params.depth, proc.mseg1Params.offset,
+//		proc.mseg2Params.rate, proc.mseg2Params.beat, proc.mseg2Params.depth, proc.mseg2Params.offset,
+//		proc.mseg3Params.rate, proc.mseg3Params.beat, proc.mseg3Params.depth, proc.mseg3Params.offset,
+//		proc.mseg4Params.rate, proc.mseg4Params.beat, proc.mseg4Params.depth, proc.mseg4Params.offset
+//	};
 
 	std::array<gin::Parameter::Ptr, 24> lfoDsts{
 		proc.lfo1Params.rate, proc.lfo1Params.depth, proc.lfo1Params.phase, proc.lfo1Params.delay, proc.lfo1Params.fade, proc.lfo1Params.offset, 

@@ -851,7 +851,7 @@ void SynthVoice::updateParams(int blockSize)
 	}
 	mseg1Params.depth = getValue(proc.mseg1Params.depth); //proc.mseg1Params.depth->getUserValue();
 	mseg1Params.offset = getValue(proc.mseg1Params.offset);
-	mseg1Params.loop = getValue(proc.mseg1Params.loop);
+    mseg1Params.loop = proc.mseg1Params.loop->isOn();
 
 	if (proc.mseg2Params.sync->isOn()) {
 		mseg2Params.frequency = 1 / gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.mseg2Params.beat))].toSeconds(proc.playhead);
@@ -861,7 +861,7 @@ void SynthVoice::updateParams(int blockSize)
 	}
 	mseg2Params.depth = getValue(proc.mseg2Params.depth);
 	mseg2Params.offset = getValue(proc.mseg2Params.offset);
-	mseg2Params.loop = getValue(proc.mseg2Params.loop);
+    mseg2Params.loop = proc.mseg2Params.loop->isOn();
 
 	if (proc.mseg3Params.sync->isOn()) {
 		mseg3Params.frequency = 1 / gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.mseg3Params.beat))].toSeconds(proc.playhead);
@@ -871,7 +871,7 @@ void SynthVoice::updateParams(int blockSize)
 	}
 	mseg3Params.depth = getValue(proc.mseg3Params.depth); //proc.mseg3Params.depth->getUserValue();
 	mseg3Params.offset = getValue(proc.mseg3Params.offset);
-	mseg3Params.loop = proc.mseg3Params.loop->isOn();
+    mseg3Params.loop = proc.mseg3Params.loop->isOn();
 
 	if (proc.mseg4Params.sync->isOn()) {
 		mseg4Params.frequency = 1 / gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.mseg4Params.beat))].toSeconds(proc.playhead);

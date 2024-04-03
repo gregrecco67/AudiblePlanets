@@ -49,7 +49,7 @@ public:
 		auto samplesR = inBlock.getChannelPointer(1);
 		
 		lfo.setFrequency(lfoRate);
-		for (int i = 0; i < numSamples; i++)
+		for (int i = 0; i < static_cast<int>(numSamples); i++)
 		{
 			auto lfoValues = lfo.getNextValues();
 			auto leftDelayTime_ms = std::clamp((lfoValues.mainPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
@@ -114,7 +114,7 @@ public:
     void prepare(juce::dsp::ProcessSpec spec)
     {
         auto sampleRate = spec.sampleRate;
-        auto samplesPerBlock = spec.maximumBlockSize;
+        
 		delayTimeL.reset(sampleRate, .015f);
 		delayTimeR.reset(sampleRate, .015f);
 		cutoff.reset(sampleRate, .025f);
@@ -127,9 +127,6 @@ public:
 		LPFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
     }
 
-    void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer&) {
-
-    }
     void process(juce::dsp::ProcessContextReplacing<float> context) {
         auto& inBlock = context.getOutputBlock();
 
@@ -414,7 +411,7 @@ public:
 		auto outRight = inBlock.getChannelPointer(1);
 		auto inLeft = inBlock.getChannelPointer(0);
 		auto inRight = inBlock.getChannelPointer(1);
-		for (int i = 0; i < numSamples; i++) {
+		for (int i = 0; i < static_cast<int>(numSamples); i++) {
 			process(inLeft[i], inRight[i], &outLeft[i], &outRight[i]);
 		}
     }
@@ -811,11 +808,8 @@ public:
     MBFilterProcessor() = default;
     ~MBFilterProcessor() = default;
 
-    void prepareToPlay(double sampleRate, int samplesPerBlock) {
-
-    }
     void prepare(juce::dsp::ProcessSpec spec) {
-		currentSampleRate = spec.sampleRate;
+		currentSampleRate = static_cast<float>(spec.sampleRate);
 		*iirLS.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(currentSampleRate, iirLSFrequency, iirLSQ, iirLSGain);
 		*iirPeak.state = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(currentSampleRate, iirPeakFrequency, iirPeakQ, iirPeakGain);
 		*iirHS.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(currentSampleRate, iirHSFrequency, iirHSQ, iirHSGain);
@@ -875,7 +869,7 @@ public:
     void prepare(juce::dsp::ProcessSpec spec)
     {
         sampleRate = spec.sampleRate;
-        auto samplesPerBlock = spec.maximumBlockSize;
+
         // see https://signalsmith-audio.co.uk/writing/2022/warm-distortion/
 		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
 		*postCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
@@ -895,7 +889,7 @@ public:
 	}
 
 	void process(juce::dsp::ProcessContextReplacing<float> context) {
-		int numSamples = context.getOutputBlock().getNumSamples();
+		int numSamples = static_cast<int>(context.getOutputBlock().getNumSamples());
 
 		preGain.process(context); // gain
 		preBoost.process(context); // high shelf
@@ -1070,7 +1064,7 @@ public:
 				float factor = 1.f - (drive / 80.f);
 				if (p >= 0.f)
 					return jlimit(-1.f, 1.f, x * std::pow(p, factor));
-				else if (p < 0.f)
+				else
 					return jlimit(-1.f, 1.f, x * -std::pow(-p, factor));
 			}
 			else if (x > 1.f)
