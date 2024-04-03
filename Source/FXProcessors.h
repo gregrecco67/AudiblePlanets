@@ -22,115 +22,79 @@
 
 #pragma once
 
-template<typename SampleType>
-juce::AudioBuffer<SampleType> fromAudioBlock(const juce::dsp::AudioBlock<SampleType>& block)
-{
-    SampleType* pointers[2]{nullptr, nullptr};
-    for (size_t channel = 0; channel < block.getNumChannels(); ++channel)
-        pointers[channel] = block.getChannelPointer(channel);
-
-    //return pointers;
-    return { pointers, 2, static_cast<int>(block.getNumSamples()) };
-}
-
-class ProcessorBase 
-{
-    
-public:
-    //==============================================================================
-    void prepareToPlay(double, int)  {}
-
-    void processBlock(juce::AudioSampleBuffer&, juce::MidiBuffer&)  {}
-    void process(juce::dsp::ProcessContextReplacing<float>) {}
-
-private:
-    //==============================================================================
-    
-};
-
-
-
-class ChorusProcessor : public ProcessorBase
+class ChorusProcessor 
 {
 public:
     ChorusProcessor() {}		
     ~ChorusProcessor() {}
 
 public:
-    void prepareToPlay(double sampleRate, int /*samplesPerBlock*/) {
-        currentSampleRate = (float)sampleRate;
-        centerDelayBuffer.setSize(1, 1.0, sampleRate);
-        leftDelayBuffer  .setSize(1, 1.0, sampleRate);
-        rightDelayBuffer .setSize(1, 1.0, sampleRate);
-        lfo.setSampleRate(currentSampleRate);
-        lfo.setFrequency(15.0f);
-        lfo.setWaveShape(LFO::WaveShapes::Sine);
-        lfo.initialize();
-    }
     void prepare(juce::dsp::ProcessSpec spec) {
         currentSampleRate = (float)spec.sampleRate;
-        prepareToPlay(spec.sampleRate, spec.maximumBlockSize);
-    }
-    
-    void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer& /*midiBuffer*/) {
-        auto numSamples = buffer.getNumSamples();
-        auto outLeft = buffer.getWritePointer(0);
-        auto outRight = buffer.getWritePointer(1);
-        auto inLeft = buffer.getReadPointer(0);
-        auto inRight = buffer.getReadPointer(1);
-
-        lfo.setFrequency(lfoRate);
-        for (int i = 0; i < numSamples; i++)
-        {
-			auto lfoValues = lfo.getNextValues();
-			auto leftDelayTime_ms = std::clamp((lfoValues.mainPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
-			auto centerDelayTime_ms = std::clamp((lfoValues.quarterPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
-			auto rightDelayTime_ms = std::clamp((lfoValues.halfPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
-            // left delay
-            auto leftIn = inLeft[i];
-            auto rightIn = inRight[i];
-            auto leftChorusOut = leftDelayBuffer    .readLagrange(0, leftDelayTime_ms / 1000.0f);
-            auto centerChorusOut = centerDelayBuffer.readLagrange(0, centerDelayTime_ms / 1000.0f);
-            auto rightChorusOut = rightDelayBuffer  .readLagrange(0, rightDelayTime_ms / 1000.0f);
-            leftDelayBuffer  .write(0, leftIn + leftChorusOut * feedback);
-            centerDelayBuffer.write(0, rightIn*0.5f + leftIn*0.5f + centerChorusOut * feedback);
-            rightDelayBuffer .write(0, rightIn + rightChorusOut * feedback);
-			leftDelayBuffer.writeFinished();
-			centerDelayBuffer.writeFinished();
-			rightDelayBuffer.writeFinished();
-            auto ynL = (leftChorusOut + centerChorusOut) * wet + dry * leftIn;
-            auto ynR = (centerChorusOut + rightChorusOut) * wet + dry * rightIn;
-            outLeft[i] = ynL;
-            outRight[i] = ynR;
-        }
+		centerDelayBuffer.setSize(1, 1.0, currentSampleRate);
+		leftDelayBuffer.setSize(1, 1.0, currentSampleRate);
+		rightDelayBuffer.setSize(1, 1.0, currentSampleRate);
+		lfo.setSampleRate(currentSampleRate);
+		lfo.setFrequency(15.0f);
+		lfo.setWaveShape(LFO::WaveShapes::Sine);
+		lfo.initialize();
     }
 
     void process(juce::dsp::ProcessContextReplacing<float> context) {
         //
         auto& inBlock = context.getOutputBlock();
-        auto inBuffer = fromAudioBlock(inBlock);
-        juce::MidiBuffer midiBuffer;
-        processBlock(inBuffer, midiBuffer);
+
+		auto numSamples = inBlock.getNumSamples();
+		auto samplesL = inBlock.getChannelPointer(0);
+		auto samplesR = inBlock.getChannelPointer(1);
+		
+		lfo.setFrequency(lfoRate);
+		for (int i = 0; i < numSamples; i++)
+		{
+			auto lfoValues = lfo.getNextValues();
+			auto leftDelayTime_ms = std::clamp((lfoValues.mainPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
+			auto centerDelayTime_ms = std::clamp((lfoValues.quarterPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
+			auto rightDelayTime_ms = std::clamp((lfoValues.halfPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
+			
+			auto leftIn = samplesL[i];
+			auto rightIn = samplesR[i];
+			auto leftChorusOut = leftDelayBuffer.readLagrange(0, leftDelayTime_ms / 1000.0f);
+			auto centerChorusOut = centerDelayBuffer.readLagrange(0, centerDelayTime_ms / 1000.0f);
+			auto rightChorusOut = rightDelayBuffer.readLagrange(0, rightDelayTime_ms / 1000.0f);
+			
+			leftDelayBuffer.write(0, leftIn + leftChorusOut * feedback);
+			centerDelayBuffer.write(0, rightIn * 0.5f + leftIn * 0.5f + centerChorusOut * feedback);
+			rightDelayBuffer.write(0, rightIn + rightChorusOut * feedback);
+			leftDelayBuffer.writeFinished();
+			centerDelayBuffer.writeFinished();
+			rightDelayBuffer.writeFinished();
+			
+			samplesL[i] = (leftChorusOut + centerChorusOut) * wet + dry * leftIn;
+			samplesR[i] = (centerChorusOut + rightChorusOut) * wet + dry * rightIn;
+		}
     }
 
     void setRate(float rate) {
         lfoRate = rate;
     }
+
     void setDepth(float _depth) {
 		depth = _depth;
 	}
+
     void setFeedback(float _feedback) {
         feedback = _feedback;
     }
+
     void setDry(float _dry) {
 		dry = _dry;
 	}
+
     void setWet(float _wet) {
 		wet = _wet;
 	}
 
-
-    void setCentreDelay(float _delayTime) {
+	void setCentreDelay(float _delayTime) {
 		delayTime = _delayTime;
 	}
 
@@ -139,60 +103,63 @@ private:
     LFO lfo;			///< the modulator
     float currentSampleRate = 44100.f;	///< current sample rate
 	gin::DelayLine centerDelayBuffer{ 1 }, leftDelayBuffer{ 1 }, rightDelayBuffer{ 1 };
-
 };
 
-class StereoDelayProcessor : public ProcessorBase {
+class StereoDelayProcessor
+{
 public:
     StereoDelayProcessor() = default;
     ~StereoDelayProcessor() = default;
 
-    void prepareToPlay(double sampleRate, int /*samplesPerBlock*/) {
-        delayTimeL.reset(sampleRate, .015f);
-        delayTimeR.reset(sampleRate, .015f);
-		cutoff.reset(sampleRate, .025f);
-		delayBuffer_L.setSize(1, 65.0, sampleRate);
-		delayBuffer_R.setSize(1, 65.0, sampleRate);
-    }
     void prepare(juce::dsp::ProcessSpec spec)
     {
         auto sampleRate = spec.sampleRate;
         auto samplesPerBlock = spec.maximumBlockSize;
+		delayTimeL.reset(sampleRate, .015f);
+		delayTimeR.reset(sampleRate, .015f);
+		cutoff.reset(sampleRate, .025f);
+		delayBuffer_L.setSize(1, 65.0, sampleRate);
+		delayBuffer_R.setSize(1, 65.0, sampleRate);
 		LPFilter.prepare(spec);
 		cutoff.setCurrentAndTargetValue(2000.f);
 		LPFilter.setCutoffFrequency(cutoff.getNextValue());
 		LPFilter.setResonance(0.707f);
 		LPFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
-		prepareToPlay(sampleRate, samplesPerBlock);
     }
+
     void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer&) {
-        auto numSamples = buffer.getNumSamples();
-        auto* leftSamples = buffer.getWritePointer(0);
-        auto* rightSamples = buffer.getWritePointer(1);
-        float freezeFactor = freeze ? 0.f : 0.5f;
+
+    }
+    void process(juce::dsp::ProcessContextReplacing<float> context) {
+        auto& inBlock = context.getOutputBlock();
+
+		auto numSamples = static_cast<int>(inBlock.getNumSamples());
+		auto* leftSamples = inBlock.getChannelPointer(0);
+		auto* rightSamples = inBlock.getChannelPointer(1);
+		float freezeFactor = freeze ? 0.f : 0.5f;
 		cutoff.skip(std::min(numSamples - 1, 0));
 		LPFilter.setCutoffFrequency(cutoff.getNextValue());
-        delayFB = freeze ? 1.0f : delayFB;
-        if (ping) {
-            for (int i = 0; i < numSamples; i++) {
-                auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
-                auto dTimeR = std::min(delayTimeR.getNextValue(), 64.0f);
+		delayFB = freeze ? 1.0f : delayFB;
+		if (ping) {
+			for (int i = 0; i < numSamples; i++) {
+				auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
+				auto dTimeR = std::min(delayTimeR.getNextValue(), 64.0f);
 
-                float delayedSample_L = delayBuffer_L.readLagrange(0, dTimeL);
-                float delayedSample_R = delayBuffer_R.readLagrange(0, dTimeR);
-                float inDelay_L = leftSamples[i] * freezeFactor + delayedSample_R * delayFB;
-                float inDelay_R = rightSamples[i] * freezeFactor + delayedSample_L * delayFB;
+				float delayedSample_L = delayBuffer_L.readLagrange(0, dTimeL);
+				float delayedSample_R = delayBuffer_R.readLagrange(0, dTimeR);
+				float inDelay_L = leftSamples[i] * freezeFactor + delayedSample_R * delayFB;
+				float inDelay_R = rightSamples[i] * freezeFactor + delayedSample_L * delayFB;
 
-                leftSamples[i] = delayedSample_L * delayWet + leftSamples[i] * delayDry;
-                rightSamples[i] = delayedSample_R * delayWet + rightSamples[i] * delayDry;
-                delayBuffer_L.write(0, LPFilter.processSample(0, inDelay_L));
+				leftSamples[i] = delayedSample_L * delayWet + leftSamples[i] * delayDry;
+				rightSamples[i] = delayedSample_R * delayWet + rightSamples[i] * delayDry;
+				delayBuffer_L.write(0, LPFilter.processSample(0, inDelay_L));
 				delayBuffer_R.write(0, LPFilter.processSample(1, inDelay_R));
 				delayBuffer_L.writeFinished();
 				delayBuffer_R.writeFinished();
-            }
-        }
-        else {
-            for (int i = 0; i < numSamples; i++) {
+			}
+		}
+		else {
+			for (int i = 0; i < numSamples; i++) {
 				auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
 				auto dTimeR = std::min(delayTimeR.getNextValue(), 64.0f);
 
@@ -208,35 +175,37 @@ public:
 				delayBuffer_L.writeFinished();
 				delayBuffer_R.writeFinished();
 			}
-        }
-    }
-    void process(juce::dsp::ProcessContextReplacing<float> context) {
-        auto& inBlock = context.getOutputBlock();
-        inBuffer = fromAudioBlock(inBlock);
-        juce::MidiBuffer midiBuffer;
-        processBlock(inBuffer, midiBuffer);
+		}
+
     }
     void setDry(float dry) {
         delayDry = dry;
     }
+
     void setWet(float wet) {
         delayWet = wet;
     }
+
     void setFB(float fb) {
         delayFB = fb;
     }
+
     void setTimeL(float time) {
         delayTimeL.setTargetValue(time);
     }
+
     void setTimeR(float time) {
         delayTimeR.setTargetValue(time);
     }
+
     void setFreeze(bool _freeze) {
         freeze = _freeze;
     }
+
     void setPing(bool _ping) {
 		ping = _ping;
 	}
+
 	void setCutoff(float _cutoff) {
 		cutoff.setTargetValue(_cutoff);
 	}
@@ -303,8 +272,8 @@ SOFTWARE.
 
 
 
-template <class F, class I> class PlateReverb : public ProcessorBase {
-
+template <class F, class I> class PlateReverb 
+{
 public:
 
     static constexpr F kMaxPredelay = 0.1f; // seconds
@@ -431,35 +400,24 @@ public:
         rightTank.damping.setCutoff(cutoff);
     }
 
-    void prepareToPlay(double _sampleRate, int /*samplesPerBlock*/) {
-        sampleRate = (float)_sampleRate;
-        setSampleRate(sampleRate);
-        setPredelay(predelay);
-    }
     void prepare(juce::dsp::ProcessSpec spec) {
         sampleRate = (float)spec.sampleRate;
-        prepareToPlay(spec.sampleRate, spec.maximumBlockSize);
+		setSampleRate(sampleRate);
+		setPredelay(predelay);
     }
 
     void process(juce::dsp::ProcessContextReplacing<float> context) {
-        //
         auto& inBlock = context.getOutputBlock();
-        auto inBuffer = fromAudioBlock(inBlock);
-        juce::MidiBuffer midiBuffer;
-        processBlock(inBuffer, midiBuffer);
-    }
 
-    void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer& /*midiBuffer*/) {
-        auto numSamples = buffer.getNumSamples();
-        auto outLeft = buffer.getWritePointer(0);
-        auto outRight = buffer.getWritePointer(1);
-        auto inLeft = buffer.getReadPointer(0);
-        auto inRight = buffer.getReadPointer(1); 
-        for (int i = 0; i < numSamples; i++) {
+		auto numSamples = inBlock.getNumSamples();
+		auto outLeft = inBlock.getChannelPointer(0);
+		auto outRight = inBlock.getChannelPointer(1);
+		auto inLeft = inBlock.getChannelPointer(0);
+		auto inRight = inBlock.getChannelPointer(1);
+		for (int i = 0; i < numSamples; i++) {
 			process(inLeft[i], inRight[i], &outLeft[i], &outRight[i]);
 		}
     }
-
 
     // Process a stereo pair of samples.
     void process(F dryLeft, F dryRight, F* leftOut, F* rightOut) {
@@ -819,69 +777,63 @@ private:
 };
 
 
-class GainProcessor : public ProcessorBase
+class GainProcessor
 {
 public:
     GainProcessor() = default;
     ~GainProcessor() = default;
 
-    void prepareToPlay(double sampleRate, int samplesPerBlock) {
-        currentSampleRate = (float)sampleRate;
-        juce::dsp::ProcessSpec spec{ sampleRate, static_cast<juce::uint32> (samplesPerBlock), 2 };
-        gain.prepare(spec);
-        gainLevelSmoothed.reset(sampleRate, 0.02f);
-    }
     void prepare(juce::dsp::ProcessSpec spec) {
-        auto sampleRate = spec.sampleRate;
-        auto samplesPerBlock = spec.maximumBlockSize;
-        prepareToPlay(sampleRate, samplesPerBlock);
+		gain.prepare(spec);
+		gainLevelSmoothed.reset(spec.sampleRate, 0.02f);
     }
+
     void process(juce::dsp::ProcessContextReplacing<float> context) {
         auto numSamples = context.getOutputBlock().getNumSamples();
         gainLevelSmoothed.skip((int)numSamples);
         gainLevelSmoothed.setTargetValue(gainLevelSmoothed.getCurrentValue());
         gain.process(context);
     }
+
     void setGainLevel(float gainLevel) {
 		gainLevelSmoothed.setTargetValue(gainLevel);
         gain.setGainDecibels(gainLevelSmoothed.getCurrentValue());
 	}
+
 private:
     juce::dsp::Gain<float> gain;
-    float currentSampleRate{ 44100.0f };
     juce::LinearSmoothedValue<float> gainLevelSmoothed{ 0.0f };
 };
 
-class MBFilterProcessor : public ProcessorBase
+class MBFilterProcessor
 {
 public:
     MBFilterProcessor() = default;
     ~MBFilterProcessor() = default;
 
     void prepareToPlay(double sampleRate, int samplesPerBlock) {
-        currentSampleRate = (float)sampleRate;
-        juce::dsp::ProcessSpec spec{ sampleRate, static_cast<juce::uint32> (samplesPerBlock), 2 };
-        *iirLS.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(currentSampleRate, iirLSFrequency, iirLSQ, iirLSGain);
-        *iirPeak.state = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(currentSampleRate, iirPeakFrequency, iirPeakQ, iirPeakGain);
-        *iirHS.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(currentSampleRate, iirHSFrequency, iirHSQ, iirHSGain);
 
-        iirLS.prepare(spec);
-        iirPeak.prepare(spec);
-        iirHS.prepare(spec);
-        iirLS.reset();
-        iirPeak.reset();
-        iirHS.reset();
     }
     void prepare(juce::dsp::ProcessSpec spec) {
-        auto sampleRate = spec.sampleRate;
-        auto samplesPerBlock = spec.maximumBlockSize;
-        prepareToPlay(sampleRate, samplesPerBlock);
+		currentSampleRate = spec.sampleRate;
+		*iirLS.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(currentSampleRate, iirLSFrequency, iirLSQ, iirLSGain);
+		*iirPeak.state = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(currentSampleRate, iirPeakFrequency, iirPeakQ, iirPeakGain);
+		*iirHS.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(currentSampleRate, iirHSFrequency, iirHSQ, iirHSGain);
+
+		iirLS.prepare(spec);
+		iirPeak.prepare(spec);
+		iirHS.prepare(spec);
+		iirLS.reset();
+		iirPeak.reset();
+		iirHS.reset();
     }
+
     void process(juce::dsp::ProcessContextReplacing<float> context) {
         iirLS.process(context);
         iirPeak.process(context);
         iirHS.process(context);
     }
+
     void setParams(float LSFreq, float LSGain, float LSQ, float PeakFreq, float PeakGain, float PeakQ, float HSFreq, float HSGain, float HSQ) {
 		iirLSFrequency = LSFreq;
 		iirLSGain = LSGain;
@@ -895,43 +847,24 @@ public:
         *iirLS.state  = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(currentSampleRate, iirLSFrequency, iirLSQ, iirLSGain);
         *iirPeak.state = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(currentSampleRate, iirPeakFrequency, iirPeakQ, iirPeakGain);
         *iirHS.state  = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(currentSampleRate, iirHSFrequency, iirHSQ, iirHSGain);
-     
 	}
-    void getFreqResponse(const double* freqs, double* levels) {
-        double LSMags[82], PeakMags[82], HSMags[82];
-        auto LSCoeffs   = juce::dsp::IIR::Coefficients<float>::makeLowShelf(currentSampleRate, iirLSFrequency, iirLSQ, iirLSGain);
-        auto PeakCoeffs = juce::dsp::IIR::Coefficients<float>::makePeakFilter(currentSampleRate, iirPeakFrequency, iirPeakQ, iirPeakGain);
-        auto HSCoeffs   = juce::dsp::IIR::Coefficients<float>::makeHighShelf(currentSampleRate, iirHSFrequency, iirHSQ, iirHSGain);
-        for (int i = 0; i < 82; i++) {
-            LSMags[i] = LSCoeffs->getMagnitudeForFrequency(freqs[i], currentSampleRate);
-            PeakMags[i] = PeakCoeffs->getMagnitudeForFrequency(freqs[i], currentSampleRate);
-            HSMags[i] = HSCoeffs->getMagnitudeForFrequency(freqs[i], currentSampleRate);
-            levels[i] = (LSMags[i] * PeakMags[i] * HSMags[i]);
-        }
-    }
 
 private:
-//    const int numBins{82};
-
     juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> iirLS;
-    
     float iirLSFrequency{ 40.0f }, iirLSGain{1.0f}, iirLSQ{1.0f};
 
     juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> iirHS;
-   
     float iirHSFrequency{ 8000.0f }, iirHSGain{ 1.0f }, iirHSQ{ 1.f };
 
     juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> iirPeak;
     float iirPeakFrequency{ 2000.0f }, iirPeakGain{ 1.0f }, iirPeakQ{ 1.0 };
 
-
     float currentSampleRate { 44100.0f };
-
 };
 
 
 // began process of adding a high boost/cut pair around the waveshaper
-class WaveShaperProcessor : public ProcessorBase
+class WaveShaperProcessor
 {
 public:
     WaveShaperProcessor() {
@@ -944,10 +877,10 @@ public:
         sampleRate = spec.sampleRate;
         auto samplesPerBlock = spec.maximumBlockSize;
         // see https://signalsmith-audio.co.uk/writing/2022/warm-distortion/
-		*preBoost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
-		*postCut.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
+		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
+		*postCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
 		lowPassPostWet.setCutoffFrequency(2000.0f);
-        prepareToPlay(sampleRate, samplesPerBlock);
+        
 		preGain.prepare(spec);
 		postGain.prepare(spec);
 		preGain.setRampDurationSeconds(0.05);
@@ -957,23 +890,15 @@ public:
 		preBoost.prepare(spec);
 		postCut.prepare(spec);
 		lowPassPostWet.prepare(spec);
-		*highPassPost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 5.0f);
+		*highPassPost.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 5.0f);
 		highPassPost.prepare(spec);
-	}
-
-	void prepareToPlay(double sampleRate_, int samplesPerBlock)
-	{
-	}
-
-    void processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer&) 
-    {
 	}
 
 	void process(juce::dsp::ProcessContextReplacing<float> context) {
 		int numSamples = context.getOutputBlock().getNumSamples();
 
 		preGain.process(context); // gain
-		preBoost.process(context); // filter
+		preBoost.process(context); // high shelf
 		
 		lowPassPostWetCutoff.skip(numSamples);
 		float cutoff = lowPassPostWetCutoff.getCurrentValue();
@@ -986,9 +911,9 @@ public:
 			dataR[i] = lowPassPostWet.processSample(1, useFunction(dataR[i])) * wet + dataR[i] * dry;
 		}
 		
-		postCut.process(context); // filter
+		postCut.process(context); // high shelf
+		highPassPost.process(context); // high pass
 		postGain.process(context); // gain
-		highPassPost.process(context); // DC blocker
     }
 	
 	void setDry(float _dry) {
@@ -1010,8 +935,10 @@ public:
 	}
 	
 	void setHighShelfFreqAndQ(float freq, float q) {
-		*preBoost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 63.0f);
-		*postCut.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 0.015849f);
+		*preBoost.state= *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 63.0f);
+		//*preBoostR.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 63.0f);
+		*postCut.state= *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 0.015849f);
+		//*postCutR.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 0.015849f);
 	}
 
     void setFunctionToUse(int function)
@@ -1161,14 +1088,17 @@ public:
 	{
 		drive = pre;
         preGain.setGainLinear(pre);
-        postGain.setGainLinear(post * powf(pre, -0.667f)); // compensate for preGain but only partly
+        postGain.setGainLinear(post * powf(pre, -0.5f)); // compensate for preGain but only partly
 	}
 	
 private:
     juce::AudioBuffer<float> inBuffer;
 
     using Filter = juce::dsp::IIR::Filter<float>;
-	Filter preBoost, postCut, highPassPost;
+	Filter preBoostL, preBoostR, postCutL, postCutR, highPassPostL, highPassPostR;
+
+	juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> preBoost, postCut, highPassPost;
+
 	juce::dsp::StateVariableTPTFilter<float> lowPassPostWet;
 	juce::SmoothedValue<float> lowPassPostWetCutoff;
 	
@@ -1183,7 +1113,7 @@ private:
 	gin::PinkNoise pinkNoise;
 };
 
-class RingModulator : public ProcessorBase
+class RingModulator
 {
 public:
 	RingModulator() = default;
@@ -1425,6 +1355,7 @@ private:
     juce::dsp::SIMDRegister<float> simdSaw(juce::dsp::SIMDRegister<float> phases) {
         return (phases * (float)M_1_PI) * 2.0f - 1.0f;
 	}
+
     juce::dsp::SIMDRegister<float> simdSquare(juce::dsp::SIMDRegister<float> phases) {
 		juce::dsp::SIMDRegister<float> square;
         square[0] = phases[0] > 0.f ? 1.f : -1.f;

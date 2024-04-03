@@ -407,7 +407,7 @@ void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor& p)
 {
 	String pfx = "ws";
 	String name = "Waveshaper ";
-	drive = p.addExtParam(pfx + "drive", name + "Drive", "Drive", "", { 1.0, 40.0, 0.0, 1.0 }, 1.0, 0.0f);
+	drive = p.addExtParam(pfx + "drive", name + "Drive", "Drive", "", { 1.0, 60.0, 0.0, 1.0 }, 1.0, 0.0f);
 	gain = p.addExtParam(pfx + "gain",  name + "Gain", "Gain", "", { 0.03f, 3.0, 0.0f, 1.0 }, 1.0, 0.0f);
 	dry = p.addExtParam(pfx + "dry",   name + "Dry", "Dry", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, percentTextFunction);
 	wet = p.addExtParam(pfx + "wet",   name + "Wet", "Wet", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f, percentTextFunction);
@@ -485,13 +485,13 @@ void APAudioProcessor::MBFilterParams::setup(APAudioProcessor& p)
 	String pfx = "mb";
 	String name = "MB Filter ";
 	lowshelffreq = p.addExtParam (pfx + "lowshelffreq",  name + "LS Freq", "LS Freq", " Hz", { 20.0, 20000.0, 1.0, 0.3f }, 20.0f, 0.0f);
-	lowshelfgain = p.addExtParam (pfx + "lowshelfgain",  name + "LS Gain", "LS Gain", "", { 0.01f, 4.0, 0.01f, 1.0 }, 1.0f, 0.0f);
+	lowshelfgain = p.addExtParam (pfx + "lowshelfgain",  name + "LS Gain", "LS Gain", "", { 0.01f, 6.0, 0.01f, 1.0 }, 1.0f, 0.0f);
 	lowshelfq = p.addExtParam    (pfx + "lowshelfq",     name + "LS Q", "LS Q", "", { 0.1f, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	peakfreq = p.addExtParam     (pfx + "peakfreq",      name + "Peak Freq", "Peak Freq", " Hz", { 20.0, 20000.0, 1.0, 0.3f }, 1000.0f, 0.0f);
-	peakgain = p.addExtParam     (pfx + "peakgain",      name + "Peak Gain", "Peak Gain", "", { 0.01f, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	peakgain = p.addExtParam     (pfx + "peakgain",      name + "Peak Gain", "Peak Gain", "", { 0.01f, 6.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	peakq = p.addExtParam        (pfx + "peakq",         name + "Peak Q", "Peak Q", "", { 0.1f, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	highshelffreq = p.addExtParam(pfx + "highshelffreq", name + "HS Freq", "HS Freq", " Hz", { 20.0, 20000.0, 1.0, 0.3f }, 20000.0f, 0.0f);
-	highshelfgain = p.addExtParam(pfx + "highshelfgain", name + "HS Gain", "HS Gain", "", { 0.01f, 4.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	highshelfgain = p.addExtParam(pfx + "highshelfgain", name + "HS Gain", "HS Gain", "", { 0.01f, 6.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	highshelfq = p.addExtParam   (pfx + "highshelfq",    name + "HS Q", "HS Q", "", { 0.1f, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
 }
 
@@ -514,7 +514,7 @@ void APAudioProcessor::RingModParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::GainParams::setup(APAudioProcessor& p)
 {
-	gain = p.addExtParam("fxgain", "FX Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 1.0f, 0.0f);
+	gain = p.addExtParam("fxgain", "FX Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 0.0f, 0.0f);
 }
 
 static juce::String fxRouteFunction(const gin::Parameter&, float v)
@@ -1034,15 +1034,15 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 		if (!laneAPre) {
 			laneAFilter.process(fxALaneBuffer);
 			float gain = juce::Decibels::decibelsToGain(fxOrderParams.laneAGain->getUserValue());
-			fxALaneBuffer.applyGain(0, 0, numSamples, gain* std::min(1 - laneAPan, 1.0f));
-			fxALaneBuffer.applyGain(1, 0, numSamples, gain* std::min(1 + laneAPan, 1.0f));
+			fxALaneBuffer.applyGain(0, 0, numSamples, gain * std::min(1 - laneAPan, 1.0f));
+			fxALaneBuffer.applyGain(1, 0, numSamples, gain * std::min(1 + laneAPan, 1.0f));
 		}
 
 		if (laneBPre) {
 			laneBFilter.process(fxALaneBuffer);
 			float gain = juce::Decibels::decibelsToGain(fxOrderParams.laneBGain->getUserValue());
-			fxALaneBuffer.applyGain(0, 0, numSamples, gain* std::min(1 - laneBPan, 1.0f));
-			fxALaneBuffer.applyGain(1, 0, numSamples, gain* std::min(1 + laneBPan, 1.0f));
+			fxALaneBuffer.applyGain(0, 0, numSamples, gain * std::min(1 - laneBPan, 1.0f));
+			fxALaneBuffer.applyGain(1, 0, numSamples, gain * std::min(1 + laneBPan, 1.0f));
 		}
 
 		for (int fx : {fxb1, fxb2, fxb3, fxb4})
@@ -1083,8 +1083,8 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 		if (!laneBPre) {
 			laneBFilter.process(fxALaneBuffer);
 			float gain = juce::Decibels::decibelsToGain(fxOrderParams.laneBGain->getUserValue());
-			fxALaneBuffer.applyGain(0, 0, numSamples, gain* std::min(1 - laneBPan, 1.0f));
-			fxALaneBuffer.applyGain(1, 0, numSamples, gain* std::min(1 + laneBPan, 1.0f));
+			fxALaneBuffer.applyGain(0, 0, numSamples, gain * std::min(1 - laneBPan, 1.0f));
+			fxALaneBuffer.applyGain(1, 0, numSamples, gain * std::min(1 + laneBPan, 1.0f));
 		}
 	}
 	// case 2: lanes A and B are run in parallel
