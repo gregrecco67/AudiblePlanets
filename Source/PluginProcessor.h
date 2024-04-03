@@ -301,7 +301,8 @@ public:
     juce::AudioPlayHead* playhead = nullptr;
     bool presetLoaded = false;
 	gin::Filter laneAFilter, laneBFilter;
-	juce::dsp::IIR::Filter<float> dcFilter;
+	//juce::dsp::IIR::Filter<float> dcFilter;
+	juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> dcFilter;
 	SmoothedValue<float, ValueSmoothingTypes::Multiplicative> laneAFilterCutoff, laneBFilterCutoff;
 
 	gin::LevelTracker levelTracker;

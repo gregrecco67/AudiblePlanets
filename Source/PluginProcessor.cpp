@@ -792,7 +792,7 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
 	laneAFilterCutoff.reset(newSampleRate, 0.02f);
 	laneBFilterCutoff.reset(newSampleRate, 0.02f);
 
-	*dcFilter.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighPass(newSampleRate, 5.0f);
+	*dcFilter.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(newSampleRate, 5.0f);
 	dcFilter.prepare(spec);
 }
 
