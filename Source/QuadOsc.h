@@ -162,9 +162,9 @@ public:
 			positions[i] = { 0.f, 0.f, 0.f, 0.f };
 			if (params.wave == Wavetype::sine) {
 				for (int v = 0; v < 4; v++) {
-					positions[i].xL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.25f * (float)pi, params.tones)) * .25f;
+					positions[i].xL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.5f * (float)pi, params.tones)) * .25f;
 					positions[i].yL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift, params.tones)) * .25f;
-					positions[i].xR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.25f * (float)pi, params.tones)) * .25f;
+					positions[i].xR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift + 0.5f * (float)pi, params.tones)) * .25f;
 					positions[i].yR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift, params.tones)) * .25f;
 					phases[v] += phaseIncs[v];
 					if (phases[v] > pi) { phases[v] -= 2.f * (float)pi; }
