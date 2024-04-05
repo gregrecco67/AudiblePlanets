@@ -17,6 +17,7 @@
 #include <JuceHeader.h>
 #include "QuadOsc.h"
 #include "Envelope.h"
+#include "libMTSClient.h"
 #include <numbers>
 class APAudioProcessor;
 

@@ -628,12 +628,15 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	laneAFilter.setNumChannels(2);
 	laneBFilter.setNumChannels(2);
 
+	client = MTS_RegisterClient();
+
     setupModMatrix();
     init();
 }
 
 APAudioProcessor::~APAudioProcessor()
 {
+	MTS_DeregisterClient(client);
 }
 
 //==============================================================================
@@ -805,6 +808,10 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     juce::ScopedNoDenormals noDenormals;
 
     auto numSamples = buffer.getNumSamples();
+
+	if (MTS_HasMaster(client)) {
+		scaleName = MTS_GetScaleName(client);
+	}
     
     //downsampledBuffer.setSize(2, numSamples);
     //auto downsampledBlock = juce::dsp::AudioBlock<float>(downsampledBuffer);
@@ -1225,7 +1232,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
 		auto& lfo = this->monoLFOs[lfoparams->num-1];
 		float freq = 0;
 		if (lfoparams->sync->getProcValue() > 0.0f)
-			freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(lfoparams->beat->getProcValue())].toSeconds(playhead);
+			freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(modMatrix.getValue(lfoparams->beat))].toSeconds(playhead);
 		else
 			freq = modMatrix.getValue(lfoparams->rate);
 
@@ -1274,8 +1281,8 @@ void APAudioProcessor::updateParams(int newBlockSize)
 		stereoDelay.setTimeR(modMatrix.getValue(stereoDelayParams.timeright));
 	}
 	else {
-		stereoDelay.setTimeL(notes[size_t(stereoDelayParams.beatsleft->getProcValue())].toSeconds(playhead));
-		stereoDelay.setTimeR(notes[size_t(stereoDelayParams.beatsright->getProcValue())].toSeconds(playhead));
+		stereoDelay.setTimeL(notes[size_t(modMatrix.getValue(stereoDelayParams.beatsleft))].toSeconds(playhead));
+		stereoDelay.setTimeR(notes[size_t(modMatrix.getValue(stereoDelayParams.beatsright))].toSeconds(playhead));
 	}
 	stereoDelay.setFB(modMatrix.getValue(stereoDelayParams.feedback));
 	stereoDelay.setWet(modMatrix.getValue(stereoDelayParams.wet));

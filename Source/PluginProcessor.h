@@ -309,6 +309,10 @@ public:
     APSynth synth;
 	juce::AudioBuffer<float> sidechainBuffer;
 	juce::AudioBuffer<float> sidechainSlice;
+
+	MTSClient* client;
+	String scaleName;
+
     //std::unique_ptr<juce::dsp::Oversampling<float>> oversampler;
     //juce::AudioBuffer<float> downsampledBuffer;
 	

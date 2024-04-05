@@ -33,11 +33,15 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     
     usage.panic.onClick = [this] { proc.presetLoaded = true; };
     addAndMakeVisible(usage);
+	addAndMakeVisible(scaleName);
     
 	meter.setBounds(1130, 5, 15, 30);
     usage.setBounds(45, 12, 80, 16);
+	scaleName.setFont(juce::Font(12.0f, juce::Font::plain));
+	scaleName.setColour(juce::Label::textColourId, juce::Colours::white.darker(0.2f));
+	scaleName.setBounds(130, 12, 100, 16);
     setSize(1186,725);
-    
+    startTimerHz(3);
     addKeyListener(this);
     this->setWantsKeyboardFocus(true);
 }
@@ -60,6 +64,18 @@ bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*origin
 			return true;
 		}
         return false;
+}
+
+void APAudioProcessorEditor::timerCallback()
+{
+	if (MTS_HasMaster(proc.client))
+	{
+		scaleName.setText(proc.scaleName, juce::dontSendNotification);
+	}
+	else
+	{
+		scaleName.setText("", juce::dontSendNotification);
+	}
 }
 
 APAudioProcessorEditor::~APAudioProcessorEditor()

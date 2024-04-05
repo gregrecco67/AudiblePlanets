@@ -25,7 +25,7 @@
 
 //==============================================================================
 class APAudioProcessorEditor : public gin::ProcessorEditor,
-    public juce::DragAndDropContainer, public juce::KeyListener
+	public juce::DragAndDropContainer, public juce::KeyListener, public juce::Timer
 {
 public:
     APAudioProcessorEditor(APAudioProcessor&);
@@ -37,6 +37,7 @@ public:
     void addMenuItems(juce::PopupMenu& m) override;
     bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
     using juce::Component::keyPressed; // above is overloaded
+	void timerCallback() override;
 
 private:
     APAudioProcessor& proc;
@@ -52,6 +53,7 @@ private:
 	FXEditor fxEditor{ proc };
 	RandEditor randEditor{ proc };
 	MsegEditor msegEditor{ proc };
+	Label scaleName;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessorEditor)
 };

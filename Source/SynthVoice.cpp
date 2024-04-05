@@ -137,11 +137,6 @@ void SynthVoice::noteStopped(bool allowTailOff)
         stopVoice();
     }
 
-	mseg1.reset();
-	mseg2.reset();
-	mseg3.reset();
-	mseg4.reset();
-
 }
 
 void SynthVoice::notePressureChanged()
@@ -187,10 +182,6 @@ void SynthVoice::setCurrentSampleRate(double newRate)
 	mseg2.setSampleRate(newRate);
 	mseg3.setSampleRate(newRate);
 	mseg4.setSampleRate(newRate);
-
-
-
-
 }
 
 void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
@@ -528,7 +519,10 @@ void SynthVoice::updateParams(int blockSize)
 	currentMidiNote = noteSmoother.getCurrentValue() * 127.0f;
 	if (glideInfo.glissando) currentMidiNote = (float)juce::roundToInt(currentMidiNote);
 
-    float baseFreq =  (float)gin::getMidiNoteInHertz(currentMidiNote + note.totalPitchbendInSemitones);
+    //float baseFreq =  (float)gin::getMidiNoteInHertz(currentMidiNote + note.totalPitchbendInSemitones);
+	//double mtsOffset = MTS_RetuningInSemitones(proc.client, (char)currentMidiNote, note.midiChannel);
+	float baseFreq =  MTS_NoteToFrequency(proc.client, static_cast<char>(currentMidiNote), note.midiChannel);
+	baseFreq *= std::pow(1.05946309436f, note.totalPitchbendInSemitones);
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
 	
 	if (proc.osc1Params.fixed->isOn()) {
