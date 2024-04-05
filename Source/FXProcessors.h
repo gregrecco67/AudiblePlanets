@@ -1048,10 +1048,9 @@ public:
 				return x * 1.42857142857f;
 			break;
 		case 13: // "bitcrush": quantize tanh 2 into (40-drive)? parts
-			// placeholder
 			if (std::abs(x) <= 1.f) {
-				int parts = 42 - (int)drive;
-				return std::floor(parts * std::sin(juce::MathConstants<float>::halfPi * x)) / parts;
+				int parts = 62 - (int)drive;
+				return std::floor(parts * std::sin(juce::MathConstants<float>::halfPi * x)) / static_cast<float>(parts) ;
 			}
 			else if (x > 1.f)
 				return 1.f;
@@ -1067,11 +1066,20 @@ public:
 				else
 					return jlimit(-1.f, 1.f, x * -std::pow(-p, factor));
 			}
-			else if (x > 1.f)
-				return 1.f;
-			else //if (x < -1.f)
-				return -1.f;
+			else
+                return jlimit(-1.f, 1.f, x);
 			break;
+        case 15: // "fullwave"
+            if (x < 0.f) {
+                return -std::tanh(3.f*x) * 0.99505475368f; // tanh(3x)/tanh(3)
+            }
+            else {
+                return std::tanh(3.f*x) * 0.99505475368f;
+            }
+            break;
+        case 16: // "wavefolder"
+            return 4 * (std::abs(0.5f * x + 0.25f - std::round(0.5f * x + 0.25f)) - 0.25f);
+            break;
 		default:
 			return x;
 			break;

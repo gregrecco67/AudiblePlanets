@@ -175,7 +175,12 @@ public:
                 case 14: // noise
                     funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::noise_png, BinaryData::noise_pngSize));
                     break;
-                
+                case 15: // fullwave
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::fullwave_png, BinaryData::fullwave_pngSize));
+                    break;
+                case 16: // wavefolder
+                    funcImage.setImage(juce::ImageCache::getFromMemory(BinaryData::wavefolder_png, BinaryData::wavefolder_pngSize));
+                    break;
             }
 			funcImage.setVisible(true);
         }

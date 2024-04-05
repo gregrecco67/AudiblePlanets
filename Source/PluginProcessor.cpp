@@ -34,6 +34,8 @@ static juce::String waveshaperTypeTextFunction(const gin::Parameter&, float v)
         case 12: return "clipping";
         case 13: return "bitcrush";
         case 14: return "noise";
+        case 15: return "fullwave";
+        case 16: return "wavefolder";
 		default:
 			jassertfalse;
 			return {};
@@ -411,7 +413,7 @@ void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor& p)
 	gain = p.addExtParam(pfx + "gain",  name + "Gain", "Gain", "", { 0.03f, 3.0, 0.0f, 1.0 }, 1.0, 0.0f);
 	dry = p.addExtParam(pfx + "dry",   name + "Dry", "Dry", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, percentTextFunction);
 	wet = p.addExtParam(pfx + "wet",   name + "Wet", "Wet", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f, percentTextFunction);
-	type = p.addExtParam(pfx + "func",  name + "Function", "Function", "", { 0.0, 14.0, 1.0, 1.0 }, 0.0f, 0.0f, waveshaperTypeTextFunction);
+	type = p.addExtParam(pfx + "func",  name + "Function", "Function", "", { 0.0, 16.0, 1.0, 1.0 }, 0.0f, 0.0f, waveshaperTypeTextFunction);
 	highshelf = p.addExtParam(pfx + "highshelf", name + "High Shelf", "High Shelf", " Hz", { 3000.0f, 12000.0f, 0.0, 1.3f }, 6500.0f, 0.0f);
 	hsq = p.addExtParam(pfx + "hsq", name + "High Shelf Q", "High Shelf Q", "", { 0.5f, 5.0f, 0.0, 1.0 }, 1.0f, 0.0f);
 	lp = p.addExtParam(pfx + "lp", name + "Low Pass", "Low Pass", "", { 20.0f, 20000.0f, 0.0, 0.3f }, 20000.0f, 0.0f);
