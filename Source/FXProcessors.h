@@ -1089,8 +1089,8 @@ public:
     void setGain(float pre, float post)
 	{
 		drive = pre;
-        preGain.setGainLinear(pre);
-        postGain.setGainLinear(post * powf(pre, -0.5f)); // compensate for preGain but only partly
+        preGain.setGainDecibels(pre);
+        postGain.setGainDecibels(post - (pre * 0.5f)); // compensate for preGain but only partly
 	}
 	
 private:

@@ -409,8 +409,8 @@ void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor& p)
 {
 	String pfx = "ws";
 	String name = "Waveshaper ";
-	drive = p.addExtParam(pfx + "drive", name + "Drive", "Drive", "", { 1.0, 60.0, 0.0, 1.0 }, 1.0, 0.0f);
-	gain = p.addExtParam(pfx + "gain",  name + "Gain", "Gain", "", { 0.03f, 3.0, 0.0f, 1.0 }, 1.0, 0.0f);
+	drive = p.addExtParam(pfx + "drive", name + "Drive", "Drive", "", { 0.0, 60.0, 0.0, 1.0 }, 0.0, 0.0f);
+	gain = p.addExtParam(pfx + "gain",  name + "Gain", "Gain", "", { -12.0f, 12.0f, 0.0f, 1.0 }, 0.0, 0.0f);
 	dry = p.addExtParam(pfx + "dry",   name + "Dry", "Dry", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, percentTextFunction);
 	wet = p.addExtParam(pfx + "wet",   name + "Wet", "Wet", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f, percentTextFunction);
 	type = p.addExtParam(pfx + "func",  name + "Function", "Function", "", { 0.0, 16.0, 1.0, 1.0 }, 0.0f, 0.0f, waveshaperTypeTextFunction);
