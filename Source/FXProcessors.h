@@ -901,8 +901,10 @@ public:
 		auto* dataL = context.getOutputBlock().getChannelPointer(0);
 		auto* dataR = context.getOutputBlock().getChannelPointer(1);
 		for (int i = 0; i < numSamples; i++) {
-			dataL[i] = lowPassPostWet.processSample(0, useFunction(dataL[i])) * wet + dataL[i] * dry;
-			dataR[i] = lowPassPostWet.processSample(1, useFunction(dataR[i])) * wet + dataR[i] * dry;
+			float left = dataL[i];
+			float right = dataR[i];
+			dataL[i] = lowPassPostWet.processSample(0, useFunction(left)) * wet + left * dry;
+			dataR[i] = lowPassPostWet.processSample(1, useFunction(right)) * wet + right * dry;
 		}
 		
 		postCut.process(context); // high shelf
@@ -1047,15 +1049,13 @@ public:
 			else
 				return x * 1.42857142857f;
 			break;
-		case 13: // "bitcrush": quantize tanh 2 into (40-drive)? parts
-			if (std::abs(x) <= 1.f) {
-				int parts = 62 - (int)drive;
-				return std::floor(parts * std::sin(juce::MathConstants<float>::halfPi * x)) / static_cast<float>(parts) ;
+		case 13: // "bitcrush"
+			if (std::abs(x) < 0.01f)
+				return 0.f;
+			else {
+				float steps = 8.f - 7.f * (drive / 60.f);
+				return std::floor(steps * std::atan(2.f * x) * 0.903221025259f) / steps;
 			}
-			else if (x > 1.f)
-				return 1.f;
-			else //if (x < -1.f)
-				return -1.f;
 			break;
 		case 14: // "noise"
 			if (std::abs(x) <= 1.f) {

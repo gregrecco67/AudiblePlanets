@@ -29,7 +29,7 @@ public:
 		// FX controls
 		// WS = 1
 		addControl(wsdrive = new gin::Knob(proc.waveshaperParams.drive), 0, 0);
-		addControl(wsgain = new gin::Knob(proc.waveshaperParams.gain), 0, 1);
+		addControl(wsgain = new gin::Knob(proc.waveshaperParams.gain, true), 0, 1);
 		addControl(wslp = new gin::Knob(proc.waveshaperParams.lp), 0, 2);
 		addControl(wsdry = new gin::Knob(proc.waveshaperParams.dry), 1, 0);
 		addControl(wswet = new gin::Knob(proc.waveshaperParams.wet), 1, 1);
