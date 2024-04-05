@@ -32,11 +32,12 @@ SynthVoice::SynthVoice(APAudioProcessor& p)
 
 void SynthVoice::noteStarted()
 {
-	//if (GIN_HAS_SIMD) {
-	//	int N = mipp::N<float>();
-	//	DBG("int N = mipp::N<float>() = " + String(N));
-	//}
     curNote = getCurrentlyPlayingNote();
+	
+	if (MTS_ShouldFilterNote(proc.client, curNote.initialNote, curNote.midiChannel)) {
+		return;
+	}
+
 	fastKill = false;
 	startVoice();
 
@@ -72,8 +73,8 @@ void SynthVoice::noteStarted()
 
 	updateParams(0);
 	snapParams();
-	updateParams(0);
-	snapParams();
+	//updateParams(0);
+	//snapParams();
 	//
 	osc1.noteOn(proc.osc1Params.phase->getUserValue());
 	osc2.noteOn(proc.osc2Params.phase->getUserValue());
