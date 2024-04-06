@@ -890,8 +890,7 @@ public:
 
 	void process(juce::dsp::ProcessContextReplacing<float> context) {
 		int numSamples = static_cast<int>(context.getOutputBlock().getNumSamples());
-
-		preGain.process(context); // gain
+		
 		preBoost.process(context); // high shelf
 		
 		lowPassPostWetCutoff.skip(numSamples);
@@ -903,8 +902,8 @@ public:
 		for (int i = 0; i < numSamples; i++) {
 			float left = dataL[i];
 			float right = dataR[i];
-			dataL[i] = lowPassPostWet.processSample(0, useFunction(left)) * wet + left * dry;
-			dataR[i] = lowPassPostWet.processSample(1, useFunction(right)) * wet + right * dry;
+			dataL[i] = lowPassPostWet.processSample(0, useFunction(preGain.processSample(left))) * wet + left * dry;
+			dataR[i] = lowPassPostWet.processSample(1, useFunction(preGain.processSample(right))) * wet + right * dry;
 		}
 		
 		postCut.process(context); // high shelf

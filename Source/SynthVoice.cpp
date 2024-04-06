@@ -520,10 +520,10 @@ void SynthVoice::updateParams(int blockSize)
 	currentMidiNote = noteSmoother.getCurrentValue() * 127.0f;
 	if (glideInfo.glissando) currentMidiNote = (float)juce::roundToInt(currentMidiNote);
 
-    //float baseFreq =  (float)gin::getMidiNoteInHertz(currentMidiNote + note.totalPitchbendInSemitones);
-	//double mtsOffset = MTS_RetuningInSemitones(proc.client, (char)currentMidiNote, note.midiChannel);
-	float baseFreq =  MTS_NoteToFrequency(proc.client, static_cast<char>(currentMidiNote), note.midiChannel);
-	baseFreq *= std::pow(1.05946309436f, note.totalPitchbendInSemitones);
+	float dummy;
+	float remainder = std::modf(currentMidiNote, &dummy);
+	float baseFreq = MTS_NoteToFrequency(proc.client, static_cast<char>(currentMidiNote), note.midiChannel);
+	baseFreq *= std::pow(1.05946309436f, note.totalPitchbendInSemitones + remainder); // tweak remainder for other scales? interpolate?
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
 	
 	if (proc.osc1Params.fixed->isOn()) {

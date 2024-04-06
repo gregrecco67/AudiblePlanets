@@ -64,7 +64,6 @@ private:
 	gin::MSEG mseg1, mseg2, mseg3, mseg4;
 	gin::MSEG::Parameters mseg1Params, mseg2Params, mseg3Params, mseg4Params;
 
-
     Envelope env1, env2, env3, env4;
     std::array<Envelope*, 4> envs{&env1, &env2, &env3, &env4};
     
@@ -85,7 +84,7 @@ private:
 	int algo{ 0 };
 	float equant{ 0.f }, demodVol{ 2.0f };
     
-	float baseAmplitude = 0.1f; 
+	float baseAmplitude = 0.15f; 
 
     gin::EasedValueSmoother<float> noteSmoother;
     
