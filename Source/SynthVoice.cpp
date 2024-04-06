@@ -522,8 +522,8 @@ void SynthVoice::updateParams(int blockSize)
 
 	float dummy;
 	float remainder = std::modf(currentMidiNote, &dummy);
-	float baseFreq = MTS_NoteToFrequency(proc.client, static_cast<char>(currentMidiNote), note.midiChannel);
-	baseFreq *= std::pow(1.05946309436f, note.totalPitchbendInSemitones + remainder);
+	float baseFreq = static_cast<float>(MTS_NoteToFrequency(proc.client, static_cast<char>(currentMidiNote), note.midiChannel));
+	baseFreq *= static_cast<float>(std::pow(1.05946309436f, note.totalPitchbendInSemitones + remainder));
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
 	
 	if (proc.osc1Params.fixed->isOn()) {
