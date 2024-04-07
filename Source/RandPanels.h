@@ -41,14 +41,14 @@ public:
 		: gin::ParamBox(name), proc(proc_), envparams(envparams_), display(proc, envparams.num)
 	{
 		setName(name);
-		addControl(new gin::Knob(envparams.attack), 0, 0);
-		addControl(new gin::Knob(envparams.decay), 1, 0);
-		addControl(new gin::Knob(envparams.sustain), 2, 0);
-		addControl(new gin::Knob(envparams.release), 3, 0);
-		addControl(new gin::Knob(envparams.acurve, true), 4, 0);
-		addControl(new gin::Knob(envparams.drcurve, true), 5, 0);
+		addControl(new APKnob(envparams.attack), 0, 0);
+		addControl(new APKnob(envparams.decay), 1, 0);
+		addControl(new APKnob(envparams.sustain), 2, 0);
+		addControl(new APKnob(envparams.release), 3, 0);
+		addControl(new APKnob(envparams.acurve, true), 4, 0);
+		addControl(new APKnob(envparams.drcurve, true), 5, 0);
 		addControl(new gin::Select(envparams.syncrepeat), 0, 1);
-		addControl(r = new gin::Knob(envparams.time), 1, 1);
+		addControl(r = new APKnob(envparams.time), 1, 1);
 		addControl(b = new gin::Select(envparams.duration), 1, 1);
 		watchParam(envparams.syncrepeat);
 		addAndMakeVisible(display);
@@ -88,15 +88,15 @@ public:
 	{
 		setName(name);
 
-		addControl(c = new gin::Knob(osc.coarse), 0, 0);
+		addControl(c = new APKnob(osc.coarse), 0, 0);
 		if (osc.num == 1) {
-			addControl(f = new gin::Knob(osc.fine), 1, 0);
+			addControl(f = new APKnob(osc.fine), 1, 0);
 		}
 		else {
-			addControl(f = new gin::Knob(osc.fine, true), 1, 0);
+			addControl(f = new APKnob(osc.fine, true), 1, 0);
 		}
-		addControl(r = new gin::Knob(osc.volume), 2, 0);
-		addControl(new gin::Knob(osc.tones), 3, 0);
+		addControl(r = new APKnob(osc.volume), 2, 0);
+		addControl(new APKnob(osc.tones), 3, 0);
 		addControl(new MoonKnob(osc.phase), 1, 1);
 
 
@@ -123,8 +123,8 @@ public:
 			break;
 		}
 
-		addControl(new gin::Knob(osc.detune), 2, 1);
-		addControl(new gin::Knob(osc.spread, true), 3, 1);
+		addControl(new APKnob(osc.detune), 2, 1);
+		addControl(new APKnob(osc.spread, true), 3, 1);
 
 		addControl(env = new gin::Select(osc.env), 0, 1);
 		addControl(fixed = new gin::Switch(osc.fixed));

@@ -20,6 +20,8 @@ public:
 
     juce::String getTextFromValue(double value) override
     {
+        if (onTextFromValue)
+            return onTextFromValue (value);
         return juce::String(value, 2);
     }
 
@@ -399,3 +401,424 @@ private:
     juce::Array<Assignment> assignments;
     int depthWidth = 50;
 };
+
+
+
+//==============================================================================
+/** Slider + editable text for showing a param
+*/
+class APKnob : public gin::ParamComponent,
+             public juce::DragAndDropTarget,
+             private juce::Timer, private gin::ModMatrix::Listener
+{
+public:
+
+    
+    APKnob (gin::Parameter* p, bool fromCentre=false)
+      : gin::ParamComponent (p),
+        value (parameter),
+        knob (parameter, juce::Slider::RotaryHorizontalVerticalDrag, juce::Slider::NoTextBox)
+    {
+        addAndMakeVisible (name);
+        addAndMakeVisible (value);
+        addAndMakeVisible (knob);
+        addChildComponent (modDepthSlider);
+        
+        modDepthSlider.setRange (-1.0, 1.0, 0.001);
+        modDepthSlider.setPopupDisplayEnabled (true, true, findParentComponentOfClass<juce::AudioProcessorEditor>());
+        modDepthSlider.setDoubleClickReturnValue (true, 0.0);
+
+        knob.setTitle (parameter->getName (100));
+        knob.setDoubleClickReturnValue (true, parameter->getUserDefaultValue());
+        knob.setSkewFactor (parameter->getSkew(), parameter->isSkewSymmetric());
+        if (fromCentre)
+            knob.getProperties().set ("fromCentre", true);
+
+        knob.setName (parameter->getShortName());
+
+        name.setText (parameter->getShortName(), juce::dontSendNotification);
+        name.setJustificationType (juce::Justification::centred);
+       #if JUCE_IOS
+        knob.setMouseDragSensitivity (500);
+       #endif
+
+        value.setTitle (parameter->getName (100));
+        value.setJustificationType (juce::Justification::centred);
+
+        value.setVisible (false);
+
+        addMouseListener (this, true);
+
+        if (parameter->getModIndex() >= 0)
+        {
+            auto& mm = *parameter->getModMatrix();
+            mm.addListener (this);
+        }
+
+        modTimer.onTimer = [this] ()
+        {
+            auto& mm = *parameter->getModMatrix();
+            if (mm.shouldShowLiveModValues())
+            {
+                auto curModValues = liveValuesCallback ? liveValuesCallback() : mm.getLiveValues (parameter);
+                if (curModValues != modValues)
+                {
+                    modValues = curModValues;
+
+                    juce::Array<juce::var> vals;
+                    for (auto v : modValues)
+                        vals.add (v);
+
+                    knob.getProperties().set ("modValues", vals);
+
+                    repaint();
+                }
+            }
+            else if (knob.getProperties().contains ("modValues"))
+            {
+                knob.getProperties().remove ("modValues");
+                repaint();
+            }
+        };
+        shiftTimer.onTimer = [this] ()
+        {
+            bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
+            knob.setInterceptsMouseClicks (! learning || shift, ! learning || shift );
+        };
+
+        modDepthSlider.onClick = [this] { showModMenu(); };
+        modDepthSlider.setMouseDragSensitivity (500);
+        modDepthSlider.onValueChange = [this]
+        {
+            if (auto mm = parameter->getModMatrix())
+            {
+                auto dst = gin::ModDstId (parameter->getModIndex());
+
+                if (auto depths = mm->getModDepths (dst); depths.size() > 0)
+                {
+                        mm->setModDepth (depths[0].first, dst, float (modDepthSlider.getValue()));
+                }
+            }
+        };
+        
+        modDepthSlider.onTextFromValue = [this] (double v)
+        {
+            if (auto mm = parameter->getModMatrix())
+            {
+                auto dst = gin::ModDstId (parameter->getModIndex());
+
+                if (auto depths = mm->getModDepths (dst); depths.size() > 0)
+                {
+                    auto d = depths[0];
+                    auto pname      = mm->getModSrcName (d.first);
+                    return pname + ": " + juce::String(v);
+                }
+            }
+            return juce::String();
+        };
+        
+        modMatrixChanged();
+    }
+
+    ~APKnob() override
+    {
+        if (parameter->getModIndex() >= 0)
+        {
+            auto& mm = *parameter->getModMatrix();
+            mm.removeListener (this);
+        }
+    }
+    
+
+    void setDisplayName (const juce::String& n)
+    {
+        name.setText (n, juce::dontSendNotification);
+    }
+
+    void setLiveValuesCallback (std::function<juce::Array<float> ()> cb)
+    {
+        liveValuesCallback = cb;
+        modMatrixChanged();
+    }
+
+    gin::PluginSlider& getSlider()   { return knob; }
+    gin::Readout& getReadout()       { return value; }
+
+    void paint (juce::Graphics& g) override
+    {
+        if (dragOver)
+        {
+            g.setColour (findColour (gin::PluginLookAndFeel::accentColourId, true).withAlpha (0.3f));
+            g.fillEllipse (knob.getBounds().toFloat());
+        }
+    }
+
+    void resized() override
+    {
+        auto r = getLocalBounds().reduced (2);
+
+        auto extra = r.getHeight() - r.getWidth();
+
+        auto rc = r.removeFromBottom (extra);
+
+        name.setBounds (rc);
+        value.setBounds (rc);
+        knob.setBounds (r.reduced (2));
+
+        modDepthSlider.setBounds (knob.getBounds().removeFromTop (7).removeFromRight (7).reduced (-3));
+    }
+    
+    void parentHierarchyChanged() override
+    {
+        auto a = wantsAccessibleKeyboard (*this);
+        name.setWantsKeyboardFocus (a);
+        value.setWantsKeyboardFocus (a);
+        knob.setWantsKeyboardFocus (a);
+
+        if (wantsAccessibleKeyboard (*this))
+        {
+            name.setVisible (false);
+            value.setVisible (true);
+        }
+        else
+        {
+            name.setVisible (true);
+            value.setVisible (false);
+        }
+    }
+
+    void mouseEnter (const juce::MouseEvent& /*ev*/) override
+    {
+        if (wantsAccessibleKeyboard (*this))
+            return;
+
+        if (! isTimerRunning() && isEnabled())
+        {
+            startTimer (100);
+            name.setVisible (false);
+            value.setVisible (true);
+        }
+    }
+    
+    void mouseDown (const juce::MouseEvent& ev) override
+    {
+        if (! isEnabled())
+            return;
+
+        bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
+        if (shift || ! learning || ! knob.getBounds().contains (ev.getMouseDownPosition()))
+            return;
+
+        auto& mm = *parameter->getModMatrix();
+        auto dst = gin::ModDstId (parameter->getModIndex());
+        modDepth = mm.getModDepth (mm.getLearn(), dst);
+
+        knob.getProperties().set ("modDepth", modDepth);
+
+        repaint();
+    }
+
+    void mouseDrag (const juce::MouseEvent& ev) override
+    {
+        if (! isEnabled())
+            return;
+
+        bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
+        if (shift || ! learning || ! knob.getBounds().contains (ev.getMouseDownPosition()))
+             return;
+
+        if (ev.getDistanceFromDragStart() >= 3)
+        {
+            auto pt = ev.getMouseDownPosition();
+            auto delta = (ev.position.x - pt.getX()) + (pt.getY() - ev.position.y);
+
+            float newModDepth = juce::jlimit (-1.0f, 1.0f, delta / 200.0f + modDepth);
+
+            knob.getProperties().set ("modDepth", newModDepth);
+
+            auto& mm = *parameter->getModMatrix();
+            auto dst = gin::ModDstId (parameter->getModIndex());
+
+            auto range = parameter->getUserRange();
+            if (range.interval <= 0.0f || juce::ModifierKeys::currentModifiers.isShiftDown())
+            {
+                mm.setModDepth (mm.getLearn(), dst, float (modDepthSlider.getValue()));
+            }
+            else
+            {
+                auto uv = range.convertFrom0to1 (std::clamp (float (parameter->getValue() + modDepthSlider.getValue()), 0.0f, 1.0f));
+                auto nv = range.convertTo0to1 (range.snapToLegalValue (uv));
+
+                auto d = nv - parameter->getValue();
+
+                mm.setModDepth (mm.getLearn(), dst, d);
+                modDepthSlider.setValue (d, juce::dontSendNotification);
+            }
+
+            repaint();
+        }
+    }
+
+    bool isInterestedInDragSource (const SourceDetails& sd) override
+    {
+        if (isEnabled() && parameter && parameter->getModMatrix())
+            return sd.description.toString().startsWith ("modSrc");
+
+        return false;
+    }
+
+    void itemDragEnter (const SourceDetails& /*dragSourceDetails*/) override
+    {
+        dragOver = true;
+        repaint();
+    }
+    
+    void itemDragExit (const SourceDetails& /*dragSourceDetails*/) override
+    {
+        dragOver = false;
+        repaint();
+    }
+    
+    void itemDropped (const SourceDetails& sd) override
+    {
+        dragOver = false;
+        repaint();
+
+        auto& mm = *parameter->getModMatrix();
+
+        auto src = gin::ModSrcId (sd.description.toString().getTrailingIntValue());
+        auto dst = gin::ModDstId (parameter->getModIndex());
+
+        mm.setModDepth (src, dst, 1.0f);
+    }
+    
+    
+protected:
+    void timerCallback() override
+    {
+        auto p = getMouseXYRelative();
+        if (! getLocalBounds().contains (p) &&
+            ! juce::ModifierKeys::getCurrentModifiers().isAnyMouseButtonDown() &&
+            ! value.isBeingEdited())
+        {
+            if (wantsAccessibleKeyboard (*this))
+            {
+                name.setVisible (false);
+                value.setVisible (true);
+            }
+            else
+            {
+                name.setVisible (true);
+                value.setVisible (false);
+            }
+
+            stopTimer();
+        }
+    }
+
+    void learnSourceChanged (gin::ModSrcId src) override
+    {
+        learning = src.isValid();
+
+        bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
+        knob.setInterceptsMouseClicks (! learning || shift, ! learning || shift );
+
+        auto& mm = *parameter->getModMatrix();
+        modDepth = mm.getModDepth (mm.getLearn(), gin::ModDstId (parameter->getModIndex()));
+
+        if (learning)
+        {
+            knob.getProperties().set ("modDepth", modDepth);
+            knob.getProperties().set ("modBipolar", mm.getModBipolarMapping (mm.getLearn(), gin::ModDstId (parameter->getModIndex())));
+
+            shiftTimer.startTimerHz (100);
+        }
+        else
+        {
+            knob.getProperties().remove ("modDepth");
+            knob.getProperties().remove ("modBipolar");
+
+            shiftTimer.stopTimer();
+        }
+
+        repaint();
+    }
+    
+    
+    void modMatrixChanged() override
+    {
+        if (auto mm = parameter->getModMatrix())
+        {
+            auto dst = gin::ModDstId (parameter->getModIndex());
+
+            if (mm->isModulated (dst) || liveValuesCallback)
+            {
+                modTimer.startTimerHz (30);
+
+                auto vis = mm->isModulated (dst);
+                if (vis != modDepthSlider.isVisible())
+                {
+                    modDepthSlider.setVisible (vis);
+                    resized();
+                }
+
+                if (auto depths = mm->getModDepths (dst); depths.size() > 0)
+                    modDepthSlider.setValue (depths[0].second, juce::dontSendNotification);
+                else
+                    modDepthSlider.setValue (0.0f, juce::dontSendNotification);
+            }
+            else
+            {
+                modTimer.stopTimer();
+                knob.getProperties().remove ("modValues");
+
+                if (modDepthSlider.isVisible())
+                {
+                    modDepthSlider.setVisible (false);
+                    resized();
+                }
+            }
+
+            if (learning && ! isMouseButtonDown (true))
+            {
+                modDepth = mm->getModDepth (mm->getLearn(), dst);
+                knob.getProperties().set ("modDepth", modDepth);
+                knob.getProperties().set ("modBipolar", mm->getModBipolarMapping (mm->getLearn(), gin::ModDstId (parameter->getModIndex())));
+                repaint();
+            }
+        }
+    }
+
+    void showModMenu()
+    {
+        juce::PopupMenu m;
+        m.setLookAndFeel (&getLookAndFeel());
+
+        auto& mm = *parameter->getModMatrix();
+        for (auto src : mm.getModSources (parameter))
+        {
+            m.addItem ("Remove: " + mm.getModSrcName (src), [this, src]
+            {
+                parameter->getModMatrix()->clearModDepth (src, gin::ModDstId (parameter->getModIndex()));
+            });
+        }
+
+        m.showMenuAsync ({});
+    }
+
+    juce::Label name;
+    gin::Readout value;
+    gin::PluginSlider knob;
+    bool learning = false;
+    float modDepth = 0.0f;
+    bool dragOver = false;
+
+    gin::CoalescedTimer modTimer;
+    gin::CoalescedTimer shiftTimer;
+    juce::Array<float> modValues;
+    std::function<juce::Array<float> ()> liveValuesCallback;
+    APModulationDepthSlider modDepthSlider;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APKnob)
+};
+

@@ -29,79 +29,79 @@ public:
 
 		// FX controls
 		// WS = 1
-		addControl(wsdrive = new gin::Knob(proc.waveshaperParams.drive), 0, 0);
-		addControl(wsgain = new gin::Knob(proc.waveshaperParams.gain, true), 0, 1);
-		addControl(wslp = new gin::Knob(proc.waveshaperParams.lp), 0, 2);
-		addControl(wsdry = new gin::Knob(proc.waveshaperParams.dry), 1, 0);
-		addControl(wswet = new gin::Knob(proc.waveshaperParams.wet), 1, 1);
+		addControl(wsdrive = new APKnob(proc.waveshaperParams.drive), 0, 0);
+		addControl(wsgain = new APKnob(proc.waveshaperParams.gain, true), 0, 1);
+		addControl(wslp = new APKnob(proc.waveshaperParams.lp), 0, 2);
+		addControl(wsdry = new APKnob(proc.waveshaperParams.dry), 1, 0);
+		addControl(wswet = new APKnob(proc.waveshaperParams.wet), 1, 1);
 		addControl(wstype = new gin::Select(proc.waveshaperParams.type), 1, 2);
-		addControl(wshsfreq = new gin::Knob(proc.waveshaperParams.highshelf), 2, 0);
-		addControl(wshsq = new gin::Knob(proc.waveshaperParams.hsq), 2, 1);
+		addControl(wshsfreq = new APKnob(proc.waveshaperParams.highshelf), 2, 0);
+		addControl(wshsq = new APKnob(proc.waveshaperParams.hsq), 2, 1);
 
 		// CP = 2
-		addControl(cpthreshold = new gin::Knob(proc.compressorParams.threshold), 0, 0);
-		addControl(cpratio = new gin::Knob(proc.compressorParams.ratio), 0, 1);
-		addControl(cpattack = new gin::Knob(proc.compressorParams.attack), 0, 2);
-		addControl(cprelease = new gin::Knob(proc.compressorParams.release), 1, 0);
-		addControl(cpknee = new gin::Knob(proc.compressorParams.knee), 1, 1);
-		addControl(cpinput = new gin::Knob(proc.compressorParams.input), 2, 0);
-		addControl(cpoutput = new gin::Knob(proc.compressorParams.output), 2, 1);
+		addControl(cpthreshold = new APKnob(proc.compressorParams.threshold), 0, 0);
+		addControl(cpratio = new APKnob(proc.compressorParams.ratio), 0, 1);
+		addControl(cpattack = new APKnob(proc.compressorParams.attack), 0, 2);
+		addControl(cprelease = new APKnob(proc.compressorParams.release), 1, 0);
+		addControl(cpknee = new APKnob(proc.compressorParams.knee), 1, 1);
+		addControl(cpinput = new APKnob(proc.compressorParams.input), 2, 0);
+		addControl(cpoutput = new APKnob(proc.compressorParams.output), 2, 1);
 		addControl(cptype = new gin::Select(proc.compressorParams.type), 2, 2);
 
 		// DL = 3
-		addControl(dltimeleft = new gin::Knob(proc.stereoDelayParams.timeleft), 0, 0);
-		addControl(dlbeatsleft = new gin::Knob(proc.stereoDelayParams.beatsleft), 0, 0);
-		addControl(dltimeright = new gin::Knob(proc.stereoDelayParams.timeright), 0, 1);
-		addControl(dlbeatsright = new gin::Knob(proc.stereoDelayParams.beatsright), 0, 1);
+		addControl(dltimeleft = new APKnob(proc.stereoDelayParams.timeleft), 0, 0);
+		addControl(dlbeatsleft = new APKnob(proc.stereoDelayParams.beatsleft), 0, 0);
+		addControl(dltimeright = new APKnob(proc.stereoDelayParams.timeright), 0, 1);
+		addControl(dlbeatsright = new APKnob(proc.stereoDelayParams.beatsright), 0, 1);
 		addControl(dltemposync = new gin::Switch(proc.stereoDelayParams.temposync), 0, 2);
-		addControl(dlfeedback = new gin::Knob(proc.stereoDelayParams.feedback), 1, 0);
-		addControl(dlcutoff = new gin::Knob(proc.stereoDelayParams.cutoff), 1, 1);
+		addControl(dlfeedback = new APKnob(proc.stereoDelayParams.feedback), 1, 0);
+		addControl(dlcutoff = new APKnob(proc.stereoDelayParams.cutoff), 1, 1);
 		addControl(dlpingpong = new gin::Switch(proc.stereoDelayParams.pingpong), 1, 2);
-		addControl(dldry = new gin::Knob(proc.stereoDelayParams.dry), 2, 0);
-		addControl(dlwet = new gin::Knob(proc.stereoDelayParams.wet), 2, 1);
+		addControl(dldry = new APKnob(proc.stereoDelayParams.dry), 2, 0);
+		addControl(dlwet = new APKnob(proc.stereoDelayParams.wet), 2, 1);
 		addControl(dlfreeze = new gin::Switch(proc.stereoDelayParams.freeze), 2, 2);
 
 		// CH = 4
-		addControl(chrate = new gin::Knob(proc.chorusParams.rate), 0, 0);
-		addControl(chdepth = new gin::Knob(proc.chorusParams.depth), 0, 1);
-		addControl(chdelay = new gin::Knob(proc.chorusParams.delay), 0, 2);
-		addControl(chfeedback = new gin::Knob(proc.chorusParams.feedback), 1, 0);
-		addControl(chdry = new gin::Knob(proc.chorusParams.dry), 1, 1);
-		addControl(chwet = new gin::Knob(proc.chorusParams.wet), 1, 2);
+		addControl(chrate = new APKnob(proc.chorusParams.rate), 0, 0);
+		addControl(chdepth = new APKnob(proc.chorusParams.depth), 0, 1);
+		addControl(chdelay = new APKnob(proc.chorusParams.delay), 0, 2);
+		addControl(chfeedback = new APKnob(proc.chorusParams.feedback), 1, 0);
+		addControl(chdry = new APKnob(proc.chorusParams.dry), 1, 1);
+		addControl(chwet = new APKnob(proc.chorusParams.wet), 1, 2);
 
 		// RV = 5
-		addControl(rvsize = new gin::Knob(proc.reverbParams.size), 0, 0);
-		addControl(rvdecay = new gin::Knob(proc.reverbParams.decay), 0, 1);
-		addControl(rvdamping = new gin::Knob(proc.reverbParams.damping), 0, 2);
-		addControl(rvlowpass = new gin::Knob(proc.reverbParams.lowpass), 1, 0);
-		addControl(rvpredelay = new gin::Knob(proc.reverbParams.predelay), 1, 1);
-		addControl(rvdry = new gin::Knob(proc.reverbParams.dry), 1, 2);
-		addControl(rvwet = new gin::Knob(proc.reverbParams.wet), 2, 0);
+		addControl(rvsize = new APKnob(proc.reverbParams.size), 0, 0);
+		addControl(rvdecay = new APKnob(proc.reverbParams.decay), 0, 1);
+		addControl(rvdamping = new APKnob(proc.reverbParams.damping), 0, 2);
+		addControl(rvlowpass = new APKnob(proc.reverbParams.lowpass), 1, 0);
+		addControl(rvpredelay = new APKnob(proc.reverbParams.predelay), 1, 1);
+		addControl(rvdry = new APKnob(proc.reverbParams.dry), 1, 2);
+		addControl(rvwet = new APKnob(proc.reverbParams.wet), 2, 0);
 
 		// MB = 6
-		addControl(mbfilterlowshelffreq = new gin::Knob(proc.mbfilterParams.lowshelffreq), 0, 0);
-		addControl(mbfilterlowshelfgain = new gin::Knob(proc.mbfilterParams.lowshelfgain), 0, 1);
-		addControl(mbfilterlowshelfq = new gin::Knob(proc.mbfilterParams.lowshelfq), 0, 2);
-		addControl(mbfilterpeakfreq = new gin::Knob(proc.mbfilterParams.peakfreq), 1, 0);
-		addControl(mbfilterpeakgain = new gin::Knob(proc.mbfilterParams.peakgain), 1, 1);
-		addControl(mbfilterpeakq = new gin::Knob(proc.mbfilterParams.peakq), 1, 2);
-		addControl(mbfilterhighshelffreq = new gin::Knob(proc.mbfilterParams.highshelffreq), 2, 0);
-		addControl(mbfilterhighshelfgain = new gin::Knob(proc.mbfilterParams.highshelfgain), 2, 1);
-		addControl(mbfilterhighshelfq = new gin::Knob(proc.mbfilterParams.highshelfq), 2, 2);
+		addControl(mbfilterlowshelffreq = new APKnob(proc.mbfilterParams.lowshelffreq), 0, 0);
+		addControl(mbfilterlowshelfgain = new APKnob(proc.mbfilterParams.lowshelfgain), 0, 1);
+		addControl(mbfilterlowshelfq = new APKnob(proc.mbfilterParams.lowshelfq), 0, 2);
+		addControl(mbfilterpeakfreq = new APKnob(proc.mbfilterParams.peakfreq), 1, 0);
+		addControl(mbfilterpeakgain = new APKnob(proc.mbfilterParams.peakgain), 1, 1);
+		addControl(mbfilterpeakq = new APKnob(proc.mbfilterParams.peakq), 1, 2);
+		addControl(mbfilterhighshelffreq = new APKnob(proc.mbfilterParams.highshelffreq), 2, 0);
+		addControl(mbfilterhighshelfgain = new APKnob(proc.mbfilterParams.highshelfgain), 2, 1);
+		addControl(mbfilterhighshelfq = new APKnob(proc.mbfilterParams.highshelfq), 2, 2);
 
         // RM = 7
-		addControl(rmmodfreq1 = new gin::Knob(proc.ringmodParams.modfreq1), 0, 0);
-        addControl(rmshape1 = new gin::Knob(proc.ringmodParams.shape1), 1, 0);
-        addControl(rmmix1 = new gin::Knob(proc.ringmodParams.mix1), 2, 0);
-        addControl(rmmodfreq2 = new gin::Knob(proc.ringmodParams.modfreq2), 0, 1);
-        addControl(rmshape2 = new gin::Knob(proc.ringmodParams.shape2), 1, 1);
-        addControl(rmmix2 = new gin::Knob(proc.ringmodParams.mix2), 2, 1);
-        addControl(rmspread = new gin::Knob(proc.ringmodParams.spread), 0, 2);
-        addControl(rmlowcut = new gin::Knob(proc.ringmodParams.lowcut), 1, 2);
-        addControl(rmhighcut = new gin::Knob(proc.ringmodParams.highcut), 2, 2);
+		addControl(rmmodfreq1 = new APKnob(proc.ringmodParams.modfreq1), 0, 0);
+        addControl(rmshape1 = new APKnob(proc.ringmodParams.shape1), 1, 0);
+        addControl(rmmix1 = new APKnob(proc.ringmodParams.mix1), 2, 0);
+        addControl(rmmodfreq2 = new APKnob(proc.ringmodParams.modfreq2), 0, 1);
+        addControl(rmshape2 = new APKnob(proc.ringmodParams.shape2), 1, 1);
+        addControl(rmmix2 = new APKnob(proc.ringmodParams.mix2), 2, 1);
+        addControl(rmspread = new APKnob(proc.ringmodParams.spread), 0, 2);
+        addControl(rmlowcut = new APKnob(proc.ringmodParams.lowcut), 1, 2);
+        addControl(rmhighcut = new APKnob(proc.ringmodParams.highcut), 2, 2);
 
 		// GN = 8
-		addControl(gngain = new gin::Knob(proc.gainParams.gain), 1, 1);
+		addControl(gngain = new APKnob(proc.gainParams.gain), 1, 1);
 		
         
         addAndMakeVisible(dynamicsMeter);

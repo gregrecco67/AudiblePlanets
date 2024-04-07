@@ -14,6 +14,7 @@
 
 #include "Editor.h"
 #include "BinaryData.h"
+#include "APModAdditions.h"
 
 Editor::Editor(APAudioProcessor& proc_)
     : proc(proc_)

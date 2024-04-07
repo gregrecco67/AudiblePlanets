@@ -18,6 +18,7 @@
 #include "PluginProcessor.h"
 #include "APColors.h"
 #include "MoonKnob.h"
+#include "APModAdditions.h"
 
 
 
@@ -30,15 +31,15 @@ public:
     {
         setName( name );
 
-        addControl(c = new gin::Knob(osc.coarse), 0, 0);
+        addControl(c = new APKnob(osc.coarse), 0, 0);
 		if (osc.num == 1) {
-			addControl(f = new gin::Knob(osc.fine), 1, 0);
+			addControl(f = new APKnob(osc.fine), 1, 0);
 		}
 		else {
-	        addControl(f = new gin::Knob(osc.fine, true), 1, 0);
+	        addControl(f = new APKnob(osc.fine, true), 1, 0);
 		}
-        addControl(r = new gin::Knob(osc.volume), 2, 0);
-        addControl(new gin::Knob(osc.tones), 3, 0);
+        addControl(r = new APKnob(osc.volume), 2, 0);
+        addControl(new APKnob(osc.tones), 3, 0);
 		addControl(new gin::Switch(osc.saw), 4, 0);
 		addControl(phaseKnob = new MoonKnob(osc.phase), 5, 0);
 
@@ -66,9 +67,9 @@ public:
 			break;
 		}
 
-        addControl(new gin::Knob(osc.detune), 2, 2);
-        addControl(new gin::Knob(osc.spread), 3, 2);
-        addControl(new gin::Knob(osc.pan, true), 4, 2);
+        addControl(new APKnob(osc.detune), 2, 2);
+        addControl(new APKnob(osc.spread), 3, 2);
+        addControl(new APKnob(osc.pan, true), 4, 2);
 
         addControl(new gin::Select(osc.env));
 		addControl(new gin::Switch(osc.fixed));
@@ -178,13 +179,13 @@ public:
 
         //auto& preset = envparams;
 
-        addControl(new gin::Knob(envparams.attack), 0, 1);
-        addControl(new gin::Knob(envparams.decay), 1, 1);
-        addControl(new gin::Knob(envparams.sustain), 2, 1);
-        addControl(new gin::Knob(envparams.release), 3, 1);
-		addControl(new gin::Knob(envparams.acurve, true), 0, 2);
-		addControl(new gin::Knob(envparams.drcurve, true), 1, 2);
-		addControl(r = new gin::Knob(envparams.time), 2, 2);
+        addControl(new APKnob(envparams.attack), 0, 1);
+        addControl(new APKnob(envparams.decay), 1, 1);
+        addControl(new APKnob(envparams.sustain), 2, 1);
+        addControl(new APKnob(envparams.release), 3, 1);
+		addControl(new APKnob(envparams.acurve, true), 0, 2);
+		addControl(new APKnob(envparams.drcurve, true), 1, 2);
+		addControl(r = new APKnob(envparams.time), 2, 2);
 		addControl(b =new gin::Select(envparams.duration), 3, 2);
 		addControl(new gin::Select(envparams.syncrepeat), 4, 2);
 		watchParam(envparams.syncrepeat);
@@ -219,13 +220,13 @@ public:
 
 		auto& timbreparams = proc.timbreParams;
 		auto& globalParams = proc.globalParams;
-		addControl(new gin::Knob(timbreparams.equant, true), 0, 0);
-		addControl(new gin::Knob(timbreparams.pitch), 0, 1);
-		addControl(new gin::Knob(timbreparams.blend), 1, 1);
-        addControl(new gin::Knob(timbreparams.algo), 1, 0);
-		addControl(new gin::Knob(timbreparams.demodmix, true), 2, 0);
-		addControl(new gin::Knob(timbreparams.demodVol, true), 2, 1);
-		addControl(new gin::Knob(globalParams.squash), 3, 0);
+		addControl(new APKnob(timbreparams.equant, true), 0, 0);
+		addControl(new APKnob(timbreparams.pitch), 0, 1);
+		addControl(new APKnob(timbreparams.blend), 1, 1);
+        addControl(new APKnob(timbreparams.algo), 1, 0);
+		addControl(new APKnob(timbreparams.demodmix, true), 2, 0);
+		addControl(new APKnob(timbreparams.demodVol, true), 2, 1);
+		addControl(new APKnob(globalParams.squash), 3, 0);
 	}
 };
 
@@ -243,11 +244,11 @@ public:
 
         addEnable(flt.enable);
 
-        auto freq = new gin::Knob(flt.frequency);
+        auto freq = new APKnob(flt.frequency);
         addControl(freq, 0, 0);
-        addControl(new gin::Knob(flt.resonance), 1, 0);
+        addControl(new APKnob(flt.resonance), 1, 0);
 
-        addControl(new gin::Knob(flt.keyTracking), 0, 1);
+        addControl(new APKnob(flt.keyTracking), 0, 1);
         addControl(new gin::Select(flt.type), 1, 1);
 
         freq->setLiveValuesCallback([this] ()
@@ -278,14 +279,14 @@ public:
 
         addControl(new gin::Switch(lfoparams.sync), 3, 1);
         addControl(new gin::Select(lfoparams.wave), 2, 1);
-        addControl(r = new gin::Knob(lfoparams.rate), 0, 0);
+        addControl(r = new APKnob(lfoparams.rate), 0, 0);
         addControl(b = new gin::Select(lfoparams.beat), 0, 0);
-        addControl(new gin::Knob(lfoparams.depth, true), 1, 0);
+        addControl(new APKnob(lfoparams.depth, true), 1, 0);
 
-        addControl(new gin::Knob(lfoparams.phase, true), 4, 1);
-        addControl(new gin::Knob(lfoparams.offset, true), 5, 1);
-        addControl(new gin::Knob(lfoparams.fade, true), 0, 1);
-        addControl(new gin::Knob(lfoparams.delay), 1, 1);
+        addControl(new APKnob(lfoparams.phase, true), 4, 1);
+        addControl(new APKnob(lfoparams.offset, true), 5, 1);
+        addControl(new APKnob(lfoparams.fade, true), 0, 1);
+        addControl(new APKnob(lfoparams.delay), 1, 1);
 
 
         auto l = new gin::LFOComponent();
@@ -346,13 +347,13 @@ public:
     {
         setName("global");
 
-        addControl(new gin::Knob(proc.globalParams.level), 2, 1);
+        addControl(new APKnob(proc.globalParams.level), 2, 1);
         addControl(new gin::Select(proc.globalParams.glideMode), 1, 0);
-        addControl(new gin::Knob(proc.globalParams.glideRate), 2, 0);
-        addControl(new gin::Knob(proc.globalParams.velSens), 1, 1);
+        addControl(new APKnob(proc.globalParams.glideRate), 2, 0);
+        addControl(new APKnob(proc.globalParams.velSens), 1, 1);
         addControl(new gin::Switch(proc.globalParams.legato), 1, 1);
         addControl(new gin::Switch(proc.globalParams.mono), 2, 1);
-		addControl(new gin::Knob(proc.globalParams.pitchbendRange), 1, 0);
+		addControl(new APKnob(proc.globalParams.pitchbendRange), 1, 0);
 		addControl(new gin::Switch(proc.globalParams.sidechainEnable), 2, 0);
     }
 
@@ -368,8 +369,8 @@ public:
 	{
 		setName("orbit");
 
-		addControl(new gin::Knob(proc.orbitParams.speed), 0, 0);
-		addControl(new gin::Knob(proc.orbitParams.scale), 1, 0);
+		addControl(new APKnob(proc.orbitParams.speed), 0, 0);
+		addControl(new APKnob(proc.orbitParams.scale), 1, 0);
 		addControl(new gin::Select(proc.timbreParams.algo), 0, 1);
 	}
 
