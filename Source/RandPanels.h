@@ -17,6 +17,7 @@
 #include "EnvelopeComponent.h"
 #include "APColors.h"
 #include "MoonKnob.h"
+#include "APModAdditions.h"
 
 class RandMatrixBox : public gin::ParamBox
 {
@@ -26,7 +27,7 @@ public:
 	{
 		setName("mtx");
 
-		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 8);
+		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 8);
 	}
 
 	APAudioProcessor& proc;

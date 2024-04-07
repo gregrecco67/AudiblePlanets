@@ -14,6 +14,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "APModAdditions.h"
 
 
 //==============================================================================
@@ -396,7 +397,7 @@ public:
 	{
 		setName("mtx");
 
-		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.1);
+		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.1);
 	}
 
 	APAudioProcessor& proc;

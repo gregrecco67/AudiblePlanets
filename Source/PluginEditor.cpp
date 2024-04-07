@@ -65,10 +65,10 @@ bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*origin
 			tabbed.setCurrentTabIndex(3);
 			return true;
 		}
-		//if (key.isKeyCode(53) || key.isKeyCode(juce::KeyPress::numberPad5)) {
-		//	tabbed.setCurrentTabIndex(4);
-		//	return true;
-		//}
+//		if (key.isKeyCode(53) || key.isKeyCode(juce::KeyPress::numberPad5)) {
+//			tabbed.setCurrentTabIndex(4);
+//			return true;
+//		}
         return false;
 }
 

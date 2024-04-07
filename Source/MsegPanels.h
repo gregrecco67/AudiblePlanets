@@ -14,6 +14,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "APModAdditions.h"
 
  //==============================================================================
 class MsegModBox : public gin::ParamBox
@@ -40,7 +41,7 @@ public:
 	{
 		setName("msegmtx");
 
-		addControl(new gin::ModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.224);
+		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.224);
 	}
 
 	APAudioProcessor& proc;
