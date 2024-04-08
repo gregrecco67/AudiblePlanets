@@ -25,6 +25,7 @@ class Editor : public juce::Component, public juce::Timer, public gin::Parameter
 {
 public:
     Editor(APAudioProcessor& proc_);
+	~Editor() override;
 
     void resized() override;
     void timerCallback() override;
@@ -60,4 +61,5 @@ private:
     float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * (float)frameRate) };
     gin::Layout layout { *this };
 	juce::ToggleButton liveViz{ "Live" };
+	APLNF aplnf;
 };

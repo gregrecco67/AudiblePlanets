@@ -47,7 +47,7 @@ public:
 			c = c.brighter();
 		
 		g.setColour(c);
-		g.setFont(juce::Font(12.0f, juce::Font::plain ));
+		g.setFont(regularFont);
 
 		if (!button.isEnabled())
 			g.setOpacity(0.5f);
@@ -57,6 +57,39 @@ public:
 			.withTrimmedRight(2),
 			Justification::centredLeft, 10);
 	}
+
+	void drawButtonText(Graphics& g, TextButton& button, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override 
+	{
+		Font font(getTextButtonFont(button, button.getHeight()));
+		g.setFont(regularFont);
+		if (shouldDrawButtonAsHighlighted && ! shouldDrawButtonAsDown) {
+			g.setColour(juce::Colour(0xffCC8866));
+		}
+		else if (shouldDrawButtonAsDown) {
+			g.setColour(juce::Colour(0xffCC8866).brighter(0.6f));
+		}
+		else {
+			g.setColour(button.findColour(button.getToggleState() ? TextButton::textColourOnId : TextButton::textColourOffId));
+		}
+		const int yIndent = jmin(4, button.proportionOfHeight(0.3f));
+		const int cornerSize = jmin(button.getHeight(), button.getWidth()) / 2;
+
+		const int fontHeight = roundToInt(font.getHeight() * 0.6f);
+		const int leftIndent = jmin(fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
+		const int rightIndent = jmin(fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
+		const int textWidth = button.getWidth() - leftIndent - rightIndent;
+
+		if (textWidth > 0)
+			g.drawFittedText(button.getButtonText(),
+				leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
+				Justification::centredLeft, 2);
+	}
+
+	juce::Font getLabelFont(juce::Label& label) override
+	{
+		return regularFont;
+	}
+
 };
 
 

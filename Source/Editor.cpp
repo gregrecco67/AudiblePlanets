@@ -40,7 +40,16 @@ Editor::Editor(APAudioProcessor& proc_)
 	proc.globalParams.pitchbendRange->addListener(this);
     startTimerHz(frameRate);
 	addAndMakeVisible(liveViz);
+	liveViz.setLookAndFeel(&aplnf);
 }
+
+Editor::~Editor()
+{
+	stopTimer();
+	proc.globalParams.pitchbendRange->removeListener(this);
+	liveViz.setLookAndFeel(nullptr);
+}
+
 
 void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
 {

@@ -40,7 +40,7 @@ public:
 		}
         addControl(r = new APKnob(osc.volume), 2, 0);
         addControl(new APKnob(osc.tones), 3, 0);
-		addControl(new gin::Switch(osc.saw), 4, 0);
+		addControl(new gin::Select(osc.saw), 4, 0);
 		addControl(phaseKnob = new MoonKnob(osc.phase), 5, 0);
 
 		
@@ -72,7 +72,7 @@ public:
         addControl(new APKnob(osc.pan, true), 4, 2);
 
         addControl(new gin::Select(osc.env));
-		addControl(new gin::Switch(osc.fixed));
+		addControl(new gin::Select(osc.fixed));
 		
 		watchParam(osc.fixed);
 		watchParam(osc.saw);
@@ -82,6 +82,7 @@ public:
 		addAndMakeVisible(fixedHz);
 
 		fixedHz.setJustificationType(Justification::centred);
+		fixedHz.setFont(regularFont);
     }
 
     ~OscillatorBox() override
@@ -95,7 +96,7 @@ public:
 	{
 	public:
 		APLookAndFeel1(){
-			setColour(juce::Slider::rotarySliderFillColourId, APColors::redLight);
+			setColour(juce::Slider::rotarySliderFillColourId, APColors::red);
 			setColour(juce::Slider::trackColourId, APColors::redMuted);
 		}
 	};
@@ -103,7 +104,7 @@ public:
 	{
 	public:
 		APLookAndFeel2() {
-			setColour(juce::Slider::rotarySliderFillColourId, APColors::yellowLight);
+			setColour(juce::Slider::rotarySliderFillColourId, APColors::yellow);
 			setColour(juce::Slider::trackColourId, APColors::yellowMuted);
 		}
 	};
@@ -111,7 +112,7 @@ public:
 	{
 	public:
 		APLookAndFeel3() {
-			setColour(juce::Slider::rotarySliderFillColourId, APColors::greenLight);
+			setColour(juce::Slider::rotarySliderFillColourId, APColors::green);
 			setColour(juce::Slider::trackColourId, APColors::greenMuted);
 		}
 	};
@@ -119,7 +120,7 @@ public:
 	{
 	public:
 		APLookAndFeel4() {
-			setColour(juce::Slider::rotarySliderFillColourId, APColors::blueLight);
+			setColour(juce::Slider::rotarySliderFillColourId, APColors::blue);
 			setColour(juce::Slider::trackColourId, APColors::blueMuted);
 		}
 	};
@@ -277,7 +278,7 @@ public:
         addModSource(new gin::ModulationSourceButton(proc.modMatrix, monoID, false));
         addModSource(new gin::ModulationSourceButton(proc.modMatrix, modsrcID, true));
 
-        addControl(new gin::Switch(lfoparams.sync), 3, 1);
+        addControl(new gin::Select(lfoparams.sync), 3, 1);
         addControl(new gin::Select(lfoparams.wave), 2, 1);
         addControl(r = new APKnob(lfoparams.rate), 0, 0);
         addControl(b = new gin::Select(lfoparams.beat), 0, 0);
@@ -351,10 +352,10 @@ public:
         addControl(new gin::Select(proc.globalParams.glideMode), 1, 0);
         addControl(new APKnob(proc.globalParams.glideRate), 2, 0);
         addControl(new APKnob(proc.globalParams.velSens), 1, 1);
-        addControl(new gin::Switch(proc.globalParams.legato), 1, 1);
-        addControl(new gin::Switch(proc.globalParams.mono), 2, 1);
+        addControl(new gin::Select(proc.globalParams.legato), 1, 1);
+        addControl(new gin::Select(proc.globalParams.mono), 2, 1);
+		addControl(new gin::Select(proc.globalParams.sidechainEnable), 2, 0);
 		addControl(new APKnob(proc.globalParams.pitchbendRange), 1, 0);
-		addControl(new gin::Switch(proc.globalParams.sidechainEnable), 2, 0);
     }
 
     APAudioProcessor& proc;

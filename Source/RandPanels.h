@@ -127,7 +127,7 @@ public:
 		addControl(new APKnob(osc.spread, true), 3, 1);
 
 		addControl(env = new gin::Select(osc.env), 0, 1);
-		addControl(fixed = new gin::Switch(osc.fixed));
+		addControl(fixed = new gin::Select(osc.fixed));
 	}
 
 	~RandOSCBox() override
@@ -137,7 +137,7 @@ public:
 		r->setLookAndFeel(nullptr);
 	}
 
-	class rAPLookAndFeel1 : public gin::CopperLookAndFeel
+	class rAPLookAndFeel1 : public APKnobLNF
 	{
 	public:
 		rAPLookAndFeel1() {
@@ -145,7 +145,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::redMuted);
 		}
 	};
-	class rAPLookAndFeel2 : public gin::CopperLookAndFeel
+	class rAPLookAndFeel2 : public APKnobLNF
 	{
 	public:
 		rAPLookAndFeel2() {
@@ -153,7 +153,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::yellowMuted);
 		}
 	};
-	class rAPLookAndFeel3 : public gin::CopperLookAndFeel
+	class rAPLookAndFeel3 : public APKnobLNF
 	{
 	public:
 		rAPLookAndFeel3() {
@@ -161,7 +161,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::greenMuted);
 		}
 	};
-	class rAPLookAndFeel4 : public gin::CopperLookAndFeel
+	class rAPLookAndFeel4 : public APKnobLNF
 	{
 	public:
 		rAPLookAndFeel4() {

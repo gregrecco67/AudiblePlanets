@@ -19,23 +19,30 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
 	addAndMakeVisible(matrix);
 	addAndMakeVisible(randomizeButton);
 	randomizeButton.onClick = [this] { randomize(); };
+	randomizeButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearAllButton);
 	clearAllButton.onClick = [this] { clearAll(); };
+	clearAllButton.setLookAndFeel(&laf);
     
 	addAndMakeVisible(randNumber);
     randNumber.setNormalisableRange({1.0, 7.0, 1.0});
     randNumber.setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 20);
 	randNumber.setNumDecimalPlacesToDisplay(0);
+	randNumber.setValue(2.0, juce::dontSendNotification);
 	addAndMakeVisible(randNumberLabel);
+	randNumberLabel.setLookAndFeel(&laf);
 
 	addAndMakeVisible(randAmount);
     randAmount.setRange(0.05, 0.5);
+	randAmount.setValue(0.15);
 	randAmount.setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 20);
 	randAmount.setNumDecimalPlacesToDisplay(2);
 	addAndMakeVisible(randAmountLabel);
+	randAmountLabel.setLookAndFeel(&laf);
 
     addAndMakeVisible(randOSCsButton);
     randOSCsButton.onClick = [this] { randomizeOSCs(); };
+	randOSCsButton.setLookAndFeel(&laf);
     //addAndMakeVisible(test);
     addAndMakeVisible(inharmonic);
 	inharmonic.setLookAndFeel(&laf);
@@ -43,84 +50,119 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
 	
 	addAndMakeVisible(randInharmonicButton);
 	randInharmonicButton.onClick = [this] { randomizeInharmonic(); };
+	randInharmonicButton.setLookAndFeel(&laf);
     addAndMakeVisible(resetInharmonicButton);
     resetInharmonicButton.onClick = [this] { resetInharmonic(); };
+	resetInharmonicButton.setLookAndFeel(&laf);
 
 	addAndMakeVisible(randENVsButton);
     randENVsButton.onClick = [this] { randomizeENVs(); };
+	randENVsButton.setLookAndFeel(&laf);
 	addAndMakeVisible(resetENVsButton);
 	resetENVsButton.onClick = [this] { resetENVs(); };
+	resetENVsButton.setLookAndFeel(&laf);
     addAndMakeVisible(randLFOsButton);
     randLFOsButton.onClick = [this] { randomizeLFOs(); };
+	randLFOsButton.setLookAndFeel(&laf);
 	addAndMakeVisible(resetLFOsButton);
 	resetLFOsButton.onClick = [this] { resetLFOs(); };
-	
+	resetLFOsButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randLFOToOSCButton);
 	randLFOToOSCButton.onClick = [this] { randLFOtoOSC(); };
+	randLFOToOSCButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearLFOToOSCButton);
 	clearLFOToOSCButton.onClick = [this] { resetLFOtoOSC(); };
+	clearLFOToOSCButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randENVToOSCButton);
 	randENVToOSCButton.onClick = [this] { randENVtoOSC(); };
+	randENVToOSCButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearENVToOSCButton);
 	clearENVToOSCButton.onClick = [this] { resetENVtoOSC(); };
+	clearENVToOSCButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randKeysToOSCButton);
 	randKeysToOSCButton.onClick = [this] { randKeystoOSC(); };
+	randKeysToOSCButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearKeysToOSCButton);
 	clearKeysToOSCButton.onClick = [this] { resetKeystoOSC(); };
+	clearKeysToOSCButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randLFOToTimbreButton);
 	randLFOToTimbreButton.onClick = [this] { randLFOtoTimbre(); };
+	randLFOToTimbreButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearLFOToTimbreButton);
 	clearLFOToTimbreButton.onClick = [this] { resetLFOtoTimbre(); };
+	clearLFOToTimbreButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randENVToTimbreButton);
 	randENVToTimbreButton.onClick = [this] { randENVtoTimbre(); };
+	randENVToTimbreButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearENVToTimbreButton);
 	clearENVToTimbreButton.onClick = [this] { resetENVtoTimbre(); };
+	clearENVToTimbreButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randKeysToTimbreButton);
 	randKeysToTimbreButton.onClick = [this] { randKeystoTimbre(); };
+	randKeysToTimbreButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearKeysToTimbreButton);
 	clearKeysToTimbreButton.onClick = [this] { resetKeystoTimbre(); };
+	clearKeysToTimbreButton.setLookAndFeel(&laf);
 	
 	addAndMakeVisible(randENVToENVButton);
 	randENVToENVButton.onClick = [this] { randENVtoENV(); };
+	randENVToENVButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearENVToENVButton);
 	clearENVToENVButton.onClick = [this] { resetENVtoENV(); };
+	clearENVToENVButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randLFOToENVButton);
 	randLFOToENVButton.onClick = [this] { randLFOtoENV(); };
+	randLFOToENVButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearLFOToENVButton);
 	clearLFOToENVButton.onClick = [this] { resetLFOtoENV(); };
+	clearLFOToENVButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randKeysToENVButton);
 	randKeysToENVButton.onClick = [this] { randKeystoENV(); };
+	randKeysToENVButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearKeysToENVButton);
 	clearKeysToENVButton.onClick = [this] { resetKeystoENV(); };
+	clearKeysToENVButton.setLookAndFeel(&laf);
 
 	addAndMakeVisible(randENVToLFOButton);
 	randENVToLFOButton.onClick = [this] { randENVtoLFO(); };
+	randENVToLFOButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearENVToLFOButton);
 	clearENVToLFOButton.onClick = [this] { resetENVtoLFO(); };
+	clearENVToLFOButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randLFOToLfoButton);
 	randLFOToLfoButton.onClick = [this] { randLFOtoLFO(); };
+	randLFOToLfoButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearLFOToLFOButton);
 	clearLFOToLFOButton.onClick = [this] { resetLFOtoLFO(); };
+	clearLFOToLFOButton.setLookAndFeel(&laf);
 	addAndMakeVisible(randKeysToLFOButton);
 	randKeysToLFOButton.onClick = [this] { randKeystoLFO(); };
+	randKeysToLFOButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearKeysToLFOButton);
 	clearKeysToLFOButton.onClick = [this] { resetKeystoLFO(); };
+	clearKeysToLFOButton.setLookAndFeel(&laf);
 
 	
 	addAndMakeVisible(randFXModsButton);
 	randFXModsButton.onClick = [this] { randomizeFXMods(); };
+	randFXModsButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearFXModsButton);
 	clearFXModsButton.onClick = [this] { clearFXMods(); };
+	clearFXModsButton.setLookAndFeel(&laf);
 
 	addAndMakeVisible(randFXSelectButton);
 	randFXSelectButton.onClick = [this] { randomizeFXSelect(); };
+	randFXSelectButton.setLookAndFeel(&laf);
 	addAndMakeVisible(clearFXSelectButton);
 	clearFXSelectButton.onClick = [this] { clearFXSelect(); };
+	clearFXSelectButton.setLookAndFeel(&laf);
 
 	addAndMakeVisible(increaseAllButton);
 	increaseAllButton.onClick = [this] { increaseAll(); };
+	increaseAllButton.setLookAndFeel(&laf);
 	addAndMakeVisible(decreaseAllButton);
 	decreaseAllButton.onClick = [this] { decreaseAll(); };
+	decreaseAllButton.setLookAndFeel(&laf);
 
 	addAndMakeVisible(env1Box);
 	addAndMakeVisible(env2Box);
@@ -136,6 +178,8 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
 RandEditor::~RandEditor()
 {
 	inharmonic.setLookAndFeel(nullptr);
+	randNumberLabel.setLookAndFeel(nullptr);
+	randAmountLabel.setLookAndFeel(nullptr);
 }
 
 void RandEditor::randomize()
@@ -949,7 +993,7 @@ void RandEditor::resized()
 	randAmountLabel.setBounds(5 * 56 + 173, 65, 2*56, 20);
 
     randOSCsButton.setBounds(5 * 56 , 105, 3*56, 20);
-	inharmonic.setBounds(5 * 56 + 173 + 40, 105, 2 * 56, 20);
+	inharmonic.setBounds(5 * 56 + 173, 105, 2 * 56, 20);
 	
     randInharmonicButton.setBounds(5 * 56 , 130, 3*56, 20);
 	resetInharmonicButton.setBounds(5 * 56 + 173, 130, 3 * 56, 20);

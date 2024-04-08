@@ -33,10 +33,10 @@ namespace APColors
 	const juce::Colour yellowDark = yellow.darker(1.45f);
 	const juce::Colour greenDark = green.darker(1.45f);
 	const juce::Colour purpleDark = purple.darker(1.45f);
-	const juce::Colour blueLight = blue.brighter(1.45f);
-	const juce::Colour redLight = red.brighter(1.45f);
-	const juce::Colour yellowLight = yellow.brighter(1.45f);
-	const juce::Colour greenLight = green.brighter(1.45f);
+	const juce::Colour blueLight = blue.brighter(.5f);
+	const juce::Colour redLight = red.brighter(.5f);
+	const juce::Colour yellowLight = yellow.brighter(.5f);
+	const juce::Colour greenLight = green.brighter(.5f);
 	const juce::Colour purpleLight = purple.brighter(1.45f);
 
 	const juce::Colour tabBkgd = juce::Colour(31, 30, 31).brighter(0.05f);

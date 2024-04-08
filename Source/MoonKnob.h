@@ -16,6 +16,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "MoonSlider.h"
+#include "Fonts.h"
 //==============================================================================
 /** Slider + editable text for showing a param
 */

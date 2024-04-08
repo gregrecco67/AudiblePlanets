@@ -53,13 +53,13 @@ public:
 		addControl(dlbeatsleft = new APKnob(proc.stereoDelayParams.beatsleft), 0, 0);
 		addControl(dltimeright = new APKnob(proc.stereoDelayParams.timeright), 0, 1);
 		addControl(dlbeatsright = new APKnob(proc.stereoDelayParams.beatsright), 0, 1);
-		addControl(dltemposync = new gin::Switch(proc.stereoDelayParams.temposync), 0, 2);
+		addControl(dltemposync = new gin::Select(proc.stereoDelayParams.temposync), 0, 2);
 		addControl(dlfeedback = new APKnob(proc.stereoDelayParams.feedback), 1, 0);
 		addControl(dlcutoff = new APKnob(proc.stereoDelayParams.cutoff), 1, 1);
-		addControl(dlpingpong = new gin::Switch(proc.stereoDelayParams.pingpong), 1, 2);
+		addControl(dlpingpong = new gin::Select(proc.stereoDelayParams.pingpong), 1, 2);
 		addControl(dldry = new APKnob(proc.stereoDelayParams.dry), 2, 0);
 		addControl(dlwet = new APKnob(proc.stereoDelayParams.wet), 2, 1);
-		addControl(dlfreeze = new gin::Switch(proc.stereoDelayParams.freeze), 2, 2);
+		addControl(dlfreeze = new gin::Select(proc.stereoDelayParams.freeze), 2, 2);
 
 		// CH = 4
 		addControl(chrate = new APKnob(proc.chorusParams.rate), 0, 0);

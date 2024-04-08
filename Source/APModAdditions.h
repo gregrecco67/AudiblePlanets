@@ -3,6 +3,8 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include <numbers>
+#include "BinaryData.h"
+#include "Fonts.h"
 
 using std::numbers::pi;
 
@@ -549,8 +551,7 @@ public:
 
         value.setTitle (parameter->getName (100));
         value.setJustificationType (juce::Justification::centred);
-
-        value.setVisible (false);
+		value.setVisible (false);
 
         addMouseListener (this, true);
 
@@ -668,6 +669,10 @@ public:
         name.setBounds (rc);
         value.setBounds (rc);
         knob.setBounds (r.reduced (2));
+		auto height = value.getHeight();
+		value.setFont(regularFont.withHeight(height*0.8f));
+		name.setFont(regularFont.withHeight(height*0.8f));
+
 
         modDepthSlider.setBounds (knob.getBounds().removeFromTop (7).removeFromRight (7).reduced (-3));
     }

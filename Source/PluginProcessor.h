@@ -16,10 +16,18 @@
 
 #include <JuceHeader.h>
 #include <gin/gin.h>
-//#include "SynthVoice.h"
 #include "Envelope.h"
 #include "FXProcessors.h"
 #include "Synth.h"
+
+
+/// MAYBE TODO:
+// Clear button for mod matrix box?
+// Macros page
+// Functions of other mod sources as mod sources
+// User defined wave shaper formula ?
+// Check on fade and delay options for LFO and MSEG
+
 
 //==============================================================================
 class APAudioProcessor : public gin::Processor

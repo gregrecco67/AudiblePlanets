@@ -62,11 +62,11 @@ public:
 		msegComponent.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(msegParams.drawmode->getUserValue()));
 		addControl(r = new APKnob(msegParams.rate), 0, 0);
 		addControl(b = new gin::Select(msegParams.beat), 0, 0);
-		addControl(new gin::Switch(msegParams.sync), 1, 0);
-		addControl(new gin::Switch(msegParams.loop), 2, 0);
+		addControl(new gin::Select(msegParams.sync), 1, 0);
+		addControl(new gin::Select(msegParams.loop), 2, 0);
 		addControl(new APKnob(msegParams.depth), 3, 0);
 		addControl(new APKnob(msegParams.offset), 4, 0);
-		addControl(new gin::Switch(msegParams.draw), 5, 0);
+		addControl(new gin::Select(msegParams.draw), 5, 0);
 		addControl(new gin::Select(msegParams.drawmode), 6, 0);
 		watchParam(msegParams.sync);
 		watchParam(msegParams.draw);

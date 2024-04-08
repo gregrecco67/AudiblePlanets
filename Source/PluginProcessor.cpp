@@ -19,23 +19,23 @@ static juce::String waveshaperTypeTextFunction(const gin::Parameter&, float v)
 {
 	switch (int(v))
 	{
-        case 0: return "sine";
-		case 1: return "atan 2";
-		case 2: return "atan 4";
-		case 3: return "atan 6";
-		case 4: return "tanh 2";
-		case 5: return "tanh 4";
-		case 6: return "tanh 6";
-		case 7: return "cubic mid";
-		case 8: return "cubic";
-		case 9: return "cheb 3";
-		case 10: return "cheb 5";
-        case 11: return "halfwave";
-        case 12: return "clipping";
-        case 13: return "bitcrush";
-        case 14: return "noise";
-        case 15: return "fullwave";
-        case 16: return "wavefolder";
+        case 0: return "Sine";
+		case 1: return "Atan 2";
+		case 2: return "Atan 4";
+		case 3: return "Atan 6";
+		case 4: return "Tanh 2";
+		case 5: return "Tanh 4";
+		case 6: return "Tanh 6";
+		case 7: return "Cubic mid";
+		case 8: return "Cubic";
+		case 9: return "Cheb 3";
+		case 10: return "Cheb 5";
+        case 11: return "Halfwave";
+        case 12: return "Clipping";
+        case 13: return "Bitcrush";
+        case 14: return "Noise";
+        case 15: return "Fullwave";
+        case 16: return "Wavefolder";
 		default:
 			jassertfalse;
 			return {};
@@ -90,10 +90,10 @@ static juce::String percentTextFunction(const gin::Parameter&, float v)
 static juce::String compressorTypeTextFunction(const gin::Parameter&, float v) {
 	switch (int(v))
 	{
-	case 0: return "compressor";
-	case 1: return "limiter";
-	case 2: return "expander";
-	case 3: return "gate";
+	case 0: return "Compressor";
+	case 1: return "Limiter";
+	case 2: return "Expander";
+	case 3: return "Gate";
 	default:
 		jassertfalse;
 		return {};
@@ -631,6 +631,8 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	laneBFilter.setNumChannels(2);
 
 	client = MTS_RegisterClient();
+
+	lf = std::make_unique<APLNF>();
 
     setupModMatrix();
     init();
