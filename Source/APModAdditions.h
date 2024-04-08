@@ -2,6 +2,9 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include <numbers>
+
+using std::numbers::pi;
 
 //==============================================================================
 /** A button for the modulation destination
@@ -402,7 +405,107 @@ private:
     int depthWidth = 50;
 };
 
+class APKnobLNF : public juce::LookAndFeel_V4 {
+public:
+    APKnobLNF() {
+        setColour (juce::Slider::thumbColourId, juce::Colour(0xffCC8866));
+        setColour (juce::Slider::rotarySliderFillColourId, juce::Colour(0xffCC8866));
+        setColour (juce::Slider::trackColourId, juce::Colour(0xff797C84));
+    }
+    
+    void drawRotarySlider (juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+                                           const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider)
+    {
+        float rotaryStartAngle = rotaryStartAngleIn;
+        const float radius = juce::jmin (width / 2, height / 2) - 2.0f;
+        const float centreX = x + width * 0.5f;
+        const float centreY = y + height * 0.5f;
+        const float rx = centreX - radius;
+        const float ry = centreY - radius;
+        const float rw = radius * 2.0f;
+        const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+        const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
 
+        const float thickness = (radius - 2) / radius;
+
+        g.setColour (slider.findColour (juce::Slider::trackColourId).withMultipliedAlpha (slider.isEnabled() ? 1.0f : 0.5f));
+
+        // Draw knob
+        {
+            const auto rcO = juce::Rectangle<float> (rx, ry, rw, rw).withSizeKeepingCentre (radius, radius);
+            const auto rcI = juce::Rectangle<float> (rx, ry, rw, rw).withSizeKeepingCentre (radius * 0.17f, radius * 0.17f);
+            const auto c = 2.0f * pi * radius;
+            const auto gap = (rcI.getWidth () / c) * 2.0f * pi;
+
+            juce::Path knob;
+            knob.addArc (rcO.getX(), rcO.getY(), rcO.getWidth(), rcO.getHeight(), angle + gap, angle - gap + pi * 2, true );
+            knob.addArc (rcI.getX(), rcI.getY(), rcI.getWidth(), rcI.getHeight(), angle - pi / 2, angle + pi / 2 - pi * 2, false );
+            knob.closeSubPath();
+            g.fillPath (knob);
+        }
+
+        {
+            juce::Path filledArc;
+            filledArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
+            g.fillPath (filledArc);
+        }
+
+        if (slider.isEnabled())
+            g.setColour (slider.findColour (juce::Slider::rotarySliderFillColourId).withAlpha (isMouseOver ? 0.95f : 0.85f));
+
+        auto fillStartAngle = rotaryStartAngle;
+        if (slider.getProperties().contains ("fromCentre"))
+            fillStartAngle = (rotaryStartAngle + rotaryEndAngle) / 2;
+
+        {
+            juce::Path filledArc;
+            filledArc.addPieSegment (rx, ry, rw, rw, fillStartAngle, angle, thickness);
+            g.fillPath (filledArc);
+        }
+
+        if (slider.getProperties().contains ("modDepth"))
+        {
+            auto depth = (float)slider.getProperties()["modDepth"];
+            bool bipolar = (bool)slider.getProperties()["modBipolar"];
+
+            g.setColour (juce::Colour(0xffFFFFFF).withAlpha (0.9f));
+
+            juce::Path filledArc;
+            if (bipolar)
+            {
+                auto a = juce::jlimit (rotaryStartAngle, rotaryEndAngle, angle - depth * (rotaryEndAngle - rotaryStartAngle));
+                auto b = juce::jlimit (rotaryStartAngle, rotaryEndAngle, angle + depth * (rotaryEndAngle - rotaryStartAngle));
+                filledArc.addPieSegment (rx, ry, rw, rw, std::min (a, b), std::max (a, b), thickness);
+            }
+            else
+            {
+                auto modPos = juce::jlimit (rotaryStartAngle, rotaryEndAngle, angle + depth * (rotaryEndAngle - rotaryStartAngle));
+                filledArc.addPieSegment (rx, ry, rw, rw, angle, modPos, thickness);
+            }
+
+            g.fillPath (filledArc);
+        }
+
+        if (slider.getProperties().contains ("modValues") && slider.isEnabled())
+        {
+            g.setColour (juce::Colour(0xffFFFFFF).withAlpha (0.9f));
+
+            auto varArray = slider.getProperties()["modValues"];
+            if (varArray.isArray())
+            {
+                for (auto value : *varArray.getArray())
+                {
+                    float modAngle = float (value) * (rotaryEndAngle - rotaryStartAngle) + rotaryStartAngle;
+
+                    float modX = centreX + std::sin (modAngle) * radius;
+                    float modY = centreY - std::cos (modAngle) * radius;
+
+                    g.fillEllipse (modX - 2, modY - 2, 4.0f, 4.0f);
+                }
+            }
+        }
+    }
+};
 
 //==============================================================================
 /** Slider + editable text for showing a param
@@ -414,6 +517,7 @@ class APKnob : public gin::ParamComponent,
 public:
 
     
+    
     APKnob (gin::Parameter* p, bool fromCentre=false)
       : gin::ParamComponent (p),
         value (parameter),
@@ -423,6 +527,7 @@ public:
         addAndMakeVisible (value);
         addAndMakeVisible (knob);
         addChildComponent (modDepthSlider);
+        setLookAndFeel(&knobLNF);
         
         modDepthSlider.setRange (-1.0, 1.0, 0.001);
         modDepthSlider.setPopupDisplayEnabled (true, true, findParentComponentOfClass<juce::AudioProcessorEditor>());
@@ -496,7 +601,7 @@ public:
 
                 if (auto depths = mm->getModDepths (dst); depths.size() > 0)
                 {
-                        mm->setModDepth (depths[0].first, dst, float (modDepthSlider.getValue()));
+                        mm->setModDepth(currentModSrc, dst, float (modDepthSlider.getValue()));
                 }
             }
         };
@@ -507,10 +612,9 @@ public:
             {
                 auto dst = gin::ModDstId (parameter->getModIndex());
 
-                if (auto depths = mm->getModDepths (dst); depths.size() > 0)
+                if (auto depths = mm->getModDepths(dst); depths.size() > 0)
                 {
-                    auto d = depths[0];
-                    auto pname      = mm->getModSrcName (d.first);
+                    auto pname      = mm->getModSrcName(currentModSrc);
                     return pname + ": " + juce::String(v);
                 }
             }
@@ -634,25 +738,28 @@ public:
 
             float newModDepth = juce::jlimit (-1.0f, 1.0f, delta / 200.0f + modDepth);
 
-            knob.getProperties().set ("modDepth", newModDepth);
-
             auto& mm = *parameter->getModMatrix();
+            
             auto dst = gin::ModDstId (parameter->getModIndex());
+            
+            knob.getProperties().set("modDepth", newModDepth);
+            if (bool bi = mm.getModBipolarMapping(mm.getLearn(), dst))
+            {
+                knob.getProperties().set("modBipolar", bi);
+            }
+
+            
+            
 
             auto range = parameter->getUserRange();
             if (range.interval <= 0.0f || juce::ModifierKeys::currentModifiers.isShiftDown())
             {
-                mm.setModDepth (mm.getLearn(), dst, float (modDepthSlider.getValue()));
+                mm.setModDepth (mm.getLearn(), dst, newModDepth);
             }
             else
             {
-                auto uv = range.convertFrom0to1 (std::clamp (float (parameter->getValue() + modDepthSlider.getValue()), 0.0f, 1.0f));
-                auto nv = range.convertTo0to1 (range.snapToLegalValue (uv));
-
-                auto d = nv - parameter->getValue();
-
-                mm.setModDepth (mm.getLearn(), dst, d);
-                modDepthSlider.setValue (d, juce::dontSendNotification);
+                mm.setModDepth (mm.getLearn(), dst, newModDepth);
+                modDepthSlider.setValue (newModDepth, juce::dontSendNotification);
             }
 
             repaint();
@@ -686,10 +793,10 @@ public:
 
         auto& mm = *parameter->getModMatrix();
 
-        auto src = gin::ModSrcId (sd.description.toString().getTrailingIntValue());
+        currentModSrc = gin::ModSrcId (sd.description.toString().getTrailingIntValue());
         auto dst = gin::ModDstId (parameter->getModIndex());
 
-        mm.setModDepth (src, dst, 1.0f);
+        mm.setModDepth (currentModSrc, dst, 1.0f);
     }
     
     
@@ -719,6 +826,8 @@ protected:
     void learnSourceChanged (gin::ModSrcId src) override
     {
         learning = src.isValid();
+        if (learning)
+            currentModSrc = src;
 
         bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
         knob.setInterceptsMouseClicks (! learning || shift, ! learning || shift );
@@ -762,8 +871,12 @@ protected:
                     resized();
                 }
 
-                if (auto depths = mm->getModDepths (dst); depths.size() > 0)
-                    modDepthSlider.setValue (depths[0].second, juce::dontSendNotification);
+                if (auto depths = mm->getModDepths (dst); depths.size() > 0) {
+                    for (auto depth : depths) {
+                        if (depth.first == currentModSrc)
+                            modDepthSlider.setValue (depth.second, juce::dontSendNotification);
+                    }
+                }
                 else
                     modDepthSlider.setValue (0.0f, juce::dontSendNotification);
             }
@@ -797,11 +910,34 @@ protected:
         auto& mm = *parameter->getModMatrix();
         for (auto src : mm.getModSources (parameter))
         {
-            m.addItem ("Remove: " + mm.getModSrcName (src), [this, src]
+            bool current{false};
+            if (src == currentModSrc) { current = true; }
+            m.addItem ("Remove: " + mm.getModSrcName (src), true, current, [this, src]
             {
-                parameter->getModMatrix()->clearModDepth (src, gin::ModDstId (parameter->getModIndex()));
+                auto dst = gin::ModDstId(parameter->getModIndex());
+                parameter->getModMatrix()->clearModDepth(src, dst);
+                if (auto depths = parameter->getModMatrix()->getModDepths(dst); depths.size() > 0) {
+                    currentModSrc = depths[0].first;
+                }
+                else {
+                    currentModSrc = gin::ModSrcId(-1);
+                }
+                modMatrixChanged();
             });
         }
+        m.addSeparator();
+        
+        for (auto src : mm.getModSources (parameter))
+        {
+            bool editing = (src == currentModSrc) ? true : false;
+            m.addItem ("Edit: " + mm.getModSrcName(src) + ": " + String(mm.getModDepth(src, gin::ModDstId(parameter->getModIndex())), 3), !editing, editing, [this, src]
+            {
+                currentModSrc = src;
+                modMatrixChanged();
+            });
+        }
+        
+        
 
         m.showMenuAsync ({});
     }
@@ -812,7 +948,9 @@ protected:
     bool learning = false;
     float modDepth = 0.0f;
     bool dragOver = false;
+    gin::ModSrcId currentModSrc{-1};
 
+    APKnobLNF knobLNF;
     gin::CoalescedTimer modTimer;
     gin::CoalescedTimer shiftTimer;
     juce::Array<float> modValues;

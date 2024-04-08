@@ -663,15 +663,15 @@ void APAudioProcessor::setupModMatrix()
 	modSrcLFO3 = modMatrix.addPolyModSource("lfo3", "poly LFO3", true);
 	modSrcLFO4 = modMatrix.addPolyModSource("lfo4", "poly LFO4", true);
 
-	modSrcEnv1 = modMatrix.addPolyModSource("env1", "Env1", true);
-	modSrcEnv2 = modMatrix.addPolyModSource("env2", "Env2", true);
-	modSrcEnv3 = modMatrix.addPolyModSource("env3", "Env3", true);
-	modSrcEnv4 = modMatrix.addPolyModSource("env4", "Env4", true);
+	modSrcEnv1 = modMatrix.addPolyModSource("env1", "Env1", false);
+	modSrcEnv2 = modMatrix.addPolyModSource("env2", "Env2", false);
+	modSrcEnv3 = modMatrix.addPolyModSource("env3", "Env3", false);
+	modSrcEnv4 = modMatrix.addPolyModSource("env4", "Env4", false);
 
-	modSrcMSEG1 = modMatrix.addPolyModSource("mseg1", "MSEG1", true);
-	modSrcMSEG2 = modMatrix.addPolyModSource("mseg2", "MSEG2", true);
-	modSrcMSEG3 = modMatrix.addPolyModSource("mseg3", "MSEG3", true);
-	modSrcMSEG4 = modMatrix.addPolyModSource("mseg4", "MSEG4", true);
+	modSrcMSEG1 = modMatrix.addPolyModSource("mseg1", "MSEG1", false);
+	modSrcMSEG2 = modMatrix.addPolyModSource("mseg2", "MSEG2", false);
+	modSrcMSEG3 = modMatrix.addPolyModSource("mseg3", "MSEG3", false);
+	modSrcMSEG4 = modMatrix.addPolyModSource("mseg4", "MSEG4", false);
 	    
     auto firstMonoParam = globalParams.mono;
     bool polyParam = true;

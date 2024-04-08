@@ -91,7 +91,7 @@ public:
 		r->setLookAndFeel(nullptr);
     }
 
-	class APLookAndFeel1 : public gin::CopperLookAndFeel
+	class APLookAndFeel1 : public APKnobLNF
 	{
 	public:
 		APLookAndFeel1(){
@@ -99,7 +99,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::redMuted);
 		}
 	};
-	class APLookAndFeel2 : public gin::CopperLookAndFeel
+	class APLookAndFeel2 : public APKnobLNF
 	{
 	public:
 		APLookAndFeel2() {
@@ -107,7 +107,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::yellowMuted);
 		}
 	};
-	class APLookAndFeel3 : public gin::CopperLookAndFeel
+	class APLookAndFeel3 : public APKnobLNF
 	{
 	public:
 		APLookAndFeel3() {
@@ -115,7 +115,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::greenMuted);
 		}
 	};
-	class APLookAndFeel4 : public gin::CopperLookAndFeel
+	class APLookAndFeel4 : public APKnobLNF
 	{
 	public:
 		APLookAndFeel4() {
