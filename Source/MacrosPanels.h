@@ -29,3 +29,14 @@ public:
 
 	APAudioProcessor& proc;
 };
+
+// TODO: create MacroModMatrixBox class.
+// constructor will take the ModSrcId of the macro it represents.
+// refresh() method will pull assignments from getModDepths(macro).
+// Row should show a linear slider (class MacroParamKnob) for the affected parameter,
+// a mod depth slider (like APModDepthSlider), and an overlay for the
+// degree of modulation. resized() will have to arrange all these elements:
+// enable button, mod depth slider, bipolar toggle, curve menu, mod src name,
+// mod dst name, param slider, delete button.
+// MacroModMatrixBox should also have a Create button in the header, which should
+// use the ParameterSelector popup to assign the macro to a parameter.

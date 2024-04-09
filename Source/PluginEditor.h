@@ -54,7 +54,7 @@ private:
 	FXEditor fxEditor{ proc };
 	RandEditor randEditor{ proc };
 	MsegEditor msegEditor{ proc };
-	//MacrosEditor macrosEditor{ proc };
+	MacrosEditor macrosEditor{ proc };
 
 	Label scaleName;
 

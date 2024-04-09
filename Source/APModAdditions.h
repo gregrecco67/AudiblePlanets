@@ -931,6 +931,7 @@ protected:
                 modMatrixChanged();
             });
         }
+        
         m.addSeparator();
         
         for (auto src : mm.getModSources (parameter))
@@ -943,8 +944,6 @@ protected:
             });
         }
         
-        
-
         m.showMenuAsync ({});
     }
 
