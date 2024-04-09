@@ -257,6 +257,15 @@ public:
         JUCE_DECLARE_NON_COPYABLE(FXOrderParams)
     };
     
+	struct MacroParams {
+		MacroParams() = default;
+
+		gin::Parameter::Ptr macro1, macro2, macro3, macro4;
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(MacroParams)
+	};
+
 	gin::ProcessorOptions getOptions();
 
     //==============================================================================
@@ -264,7 +273,8 @@ public:
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
 		modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4,
         modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4,
-		modSrcModwheel, modPolyAT, modSrcMSEG1, modSrcMSEG2, modSrcMSEG3, modSrcMSEG4;
+		modSrcModwheel, modPolyAT, modSrcMSEG1, modSrcMSEG2, modSrcMSEG3, modSrcMSEG4,
+		macroSrc1, macroSrc2, macroSrc3, macroSrc4;
 
     //==============================================================================
 
@@ -285,6 +295,7 @@ public:
 	RingModParams ringmodParams;
 	FXOrderParams fxOrderParams;
 	MSEGParams mseg1Params, mseg2Params, mseg3Params, mseg4Params;
+	MacroParams macroParams;
 
     //==============================================================================
 	GainProcessor effectGain;

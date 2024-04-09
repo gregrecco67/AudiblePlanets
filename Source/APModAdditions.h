@@ -632,6 +632,7 @@ public:
             auto& mm = *parameter->getModMatrix();
             mm.removeListener (this);
         }
+		setLookAndFeel(nullptr);
     }
     
 
