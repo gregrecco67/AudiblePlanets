@@ -25,13 +25,13 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     tabbed.addTab("2. FX", APColors::tabBkgd, &tab2, false, 1);
     tabbed.addTab("3. Rand",   APColors::tabBkgd, &tab3, false, 2);
 	tabbed.addTab("4. MSEG", APColors::tabBkgd, &tab4, false, 3);
-	tabbed.addTab("5. Macros", APColors::tabBkgd, &tab5, false, 4);
+	//tabbed.addTab("5. Macros", APColors::tabBkgd, &tab5, false, 4);
 
     tab1.addAndMakeVisible(editor);
 	tab2.addAndMakeVisible(fxEditor);
 	tab3.addAndMakeVisible(randEditor);
 	tab4.addAndMakeVisible(msegEditor);
-	tab5.addAndMakeVisible(macrosEditor);
+	//tab5.addAndMakeVisible(macrosEditor);
     
     usage.panic.onClick = [this] { proc.presetLoaded = true; };
     addAndMakeVisible(usage);
@@ -112,7 +112,7 @@ void APAudioProcessorEditor::resized()
 	fxEditor.setBounds(editorArea);
 	randEditor.setBounds(editorArea);
 	msegEditor.setBounds(editorArea);
-	macrosEditor.setBounds(editorArea);
+	//macrosEditor.setBounds(editorArea);
 }
 
 void APAudioProcessorEditor::addMenuItems(juce::PopupMenu& m)
