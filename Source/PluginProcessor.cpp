@@ -560,10 +560,10 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 void APAudioProcessor::MacroParams::setup(APAudioProcessor& p)
 {
 	String name = "Macro ";
-	macro1 = p.addExtParam(name + "1", name + "1", "1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
-	macro2 = p.addExtParam(name + "2", name + "2", "2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
-	macro3 = p.addExtParam(name + "3", name + "3", "3", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
-	macro4 = p.addExtParam(name + "4", name + "4", "4", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	macro1 = p.addExtParam(name + "1", name + "1", name + "1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	macro2 = p.addExtParam(name + "2", name + "2", name + "2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	macro3 = p.addExtParam(name + "3", name + "3", name + "3", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	macro4 = p.addExtParam(name + "4", name + "4", name + "4", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
 }
 
 
@@ -638,6 +638,8 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	laneBFilter.reset();
 	laneAFilter.setNumChannels(2);
 	laneBFilter.setNumChannels(2);
+
+	macroParams.setup(*this);
 
 	client = MTS_RegisterClient();
 
@@ -1268,10 +1270,10 @@ void APAudioProcessor::updateParams(int newBlockSize)
 		modMatrix.setMonoValue(*(this->lfoIds[lfoparams->num - 1]), lfo->getOutput());
 	}
 
-	//modMatrix.setMonoValue(macroSrc1, modMatrix.getValue(macroParams.macro1));
-	//modMatrix.setMonoValue(macroSrc2, modMatrix.getValue(macroParams.macro2));
-	//modMatrix.setMonoValue(macroSrc3, modMatrix.getValue(macroParams.macro3));
-	//modMatrix.setMonoValue(macroSrc4, modMatrix.getValue(macroParams.macro4));
+	modMatrix.setMonoValue(macroSrc1, modMatrix.getValue(macroParams.macro1));
+	modMatrix.setMonoValue(macroSrc2, modMatrix.getValue(macroParams.macro2));
+	modMatrix.setMonoValue(macroSrc3, modMatrix.getValue(macroParams.macro3));
+	modMatrix.setMonoValue(macroSrc4, modMatrix.getValue(macroParams.macro4));
 
 	effectGain.setGainLevel(modMatrix.getValue(gainParams.gain));
 
