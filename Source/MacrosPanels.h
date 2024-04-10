@@ -86,9 +86,12 @@ private:
 	{
 		assignments.clear();
 
-		for (auto param : modMatrix.getModDepths(macroSrc))
-			assignments.add(Assignment(macroSrc, modMatrix.getParameter(param.first)));
-
+        for (auto param : modMatrix.getModDepths(macroSrc)) {
+            Assignment assignment;
+            assignment.src = macroSrc;
+            assignment.dst = modMatrix.getParameter(param.first);
+            assignments.add(Assignment(assignment));
+        }
 		updateContent();
 		repaint();
 	}
@@ -446,12 +449,13 @@ public:
 		PopupMenu msegsMenu, mseg1Menu, mseg2Menu, mseg3Menu, mseg4Menu;
 		PopupMenu timbreMenu; // equant, pitch, blend, demodmix, demodvol, algo
 		PopupMenu globalMenu; // level, squash
-		PopupMenu fxMenu;
+		PopupMenu fxLanesMenu;
+		PopupMenu fxModulesMenu;
 		PopupMenu waveshaperMenu;
 		PopupMenu compressorMenu;
 		PopupMenu delayMenu;
 		PopupMenu reverbMenu;
-		PopupMenu mbeqMenu;
+		PopupMenu mbfilterMenu;
 		PopupMenu chorusMenu;
 		PopupMenu ringmodMenu;
 
@@ -562,11 +566,101 @@ public:
 		envsMenu.addSubMenu("ENV3", env3Menu);
 		envsMenu.addSubMenu("ENV4", env4Menu);
 
+        timbreMenu.addItem("Equant", [this]() { setDest(proc.timbreParams.equant); });
+		timbreMenu.addItem("Pitch", [this]() { setDest(proc.timbreParams.pitch); });
+		timbreMenu.addItem("Blend", [this]() { setDest(proc.timbreParams.blend); });
+		timbreMenu.addItem("Demod Mix", [this]() { setDest(proc.timbreParams.demodmix); });
+		timbreMenu.addItem("Demod Vol", [this]() { setDest(proc.timbreParams.demodVol); });
+		timbreMenu.addItem("Algorithm", [this]() { setDest(proc.timbreParams.algo); });
+		timbreMenu.addItem("Squash", [this]() { setDest(proc.globalParams.squash); });
+
+        filterMenu.addItem("Cutoff", [this]() { setDest(proc.filterParams.frequency); });
+		filterMenu.addItem("Resonance", [this]() { setDest(proc.filterParams.resonance); });
+
+		fxLanesMenu.addItem("FX Lane A Gain", [this]() { setDest(proc.fxOrderParams.laneAGain); });
+		fxLanesMenu.addItem("FX Lane A Cutoff", [this]() { setDest(proc.fxOrderParams.laneAFreq); });
+		fxLanesMenu.addItem("FX Lane A Resonance", [this]() { setDest(proc.fxOrderParams.laneARes); });
+		fxLanesMenu.addItem("FX Lane A Pan", [this]() { setDest(proc.fxOrderParams.laneAPan); });
+		fxLanesMenu.addItem("FX Lane B Gain", [this]() { setDest(proc.fxOrderParams.laneBGain); });
+		fxLanesMenu.addItem("FX Lane B Cutoff", [this]() { setDest(proc.fxOrderParams.laneBFreq); });
+		fxLanesMenu.addItem("FX Lane B Resonance", [this]() { setDest(proc.fxOrderParams.laneBRes); });
+		fxLanesMenu.addItem("FX Lane B Pan", [this]() { setDest(proc.fxOrderParams.laneBPan); });
+        
+		waveshaperMenu.addItem("Drive", [this]() { setDest(proc.waveshaperParams.drive); });
+		waveshaperMenu.addItem("Dry", [this]() { setDest(proc.waveshaperParams.dry); });
+		waveshaperMenu.addItem("Wet", [this]() { setDest(proc.waveshaperParams.wet); });
+		waveshaperMenu.addItem("High Shelf", [this]() { setDest(proc.waveshaperParams.highshelf); });
+		waveshaperMenu.addItem("Low Pass", [this]() { setDest(proc.waveshaperParams.lp); });
+
+		compressorMenu.addItem("Threshold", [this]() { setDest(proc.compressorParams.threshold); });
+		compressorMenu.addItem("Ratio", [this]() { setDest(proc.compressorParams.ratio); });
+		compressorMenu.addItem("Attack", [this]() { setDest(proc.compressorParams.attack); });
+		compressorMenu.addItem("Release", [this]() { setDest(proc.compressorParams.release); });
+		compressorMenu.addItem("Input", [this]() { setDest(proc.compressorParams.input); });
+		compressorMenu.addItem("Output", [this]() { setDest(proc.compressorParams.output); });
+
+		delayMenu.addItem("Time Left", [this]() { setDest(proc.stereoDelayParams.timeleft); });
+		delayMenu.addItem("Beats Left", [this]() { setDest(proc.stereoDelayParams.beatsleft); });
+		delayMenu.addItem("Time Right", [this]() { setDest(proc.stereoDelayParams.timeright); });
+		delayMenu.addItem("Beats Right", [this]() { setDest(proc.stereoDelayParams.beatsright); });
+		delayMenu.addItem("Feedback", [this]() { setDest(proc.stereoDelayParams.feedback); });
+		delayMenu.addItem("LP Cutoff", [this]() { setDest(proc.stereoDelayParams.cutoff); });
+		delayMenu.addItem("Dry", [this]() { setDest(proc.stereoDelayParams.dry); });
+		delayMenu.addItem("Wet", [this]() { setDest(proc.stereoDelayParams.wet); });
+
+		chorusMenu.addItem("Rate", [this]() { setDest(proc.chorusParams.rate); });
+		chorusMenu.addItem("Depth", [this]() { setDest(proc.chorusParams.depth); });
+		chorusMenu.addItem("Delay", [this]() { setDest(proc.chorusParams.delay); });
+		chorusMenu.addItem("Feedback", [this]() { setDest(proc.chorusParams.feedback); });
+		chorusMenu.addItem("Dry", [this]() { setDest(proc.chorusParams.dry); });
+		chorusMenu.addItem("Wet", [this]() { setDest(proc.chorusParams.wet); });
+
+		reverbMenu.addItem("Room Size", [this]() { setDest(proc.reverbParams.size); });
+		reverbMenu.addItem("Decay", [this]() { setDest(proc.reverbParams.decay); });
+		reverbMenu.addItem("Damping", [this]() { setDest(proc.reverbParams.damping); });
+        reverbMenu.addItem("Low pass", [this]() { setDest(proc.reverbParams.lowpass); });
+		reverbMenu.addItem("Pre Delay", [this]() { setDest(proc.reverbParams.predelay); });
+		reverbMenu.addItem("Dry", [this]() { setDest(proc.reverbParams.dry); });
+		reverbMenu.addItem("Wet", [this]() { setDest(proc.reverbParams.wet); });
+
+		mbfilterMenu.addItem("Low Freq", [this]() { setDest(proc.mbfilterParams.lowshelffreq); });
+		mbfilterMenu.addItem("Low Gain", [this]() { setDest(proc.mbfilterParams.lowshelfgain); });
+		mbfilterMenu.addItem("Low Q", [this]() { setDest(proc.mbfilterParams.lowshelfq); });
+		mbfilterMenu.addItem("Peak Frequency", [this]() { setDest(proc.mbfilterParams.peakfreq); });
+		mbfilterMenu.addItem("Peak Gain", [this]() { setDest(proc.mbfilterParams.peakgain); });
+		mbfilterMenu.addItem("Peak Q", [this]() { setDest(proc.mbfilterParams.peakq); });
+		mbfilterMenu.addItem("High Freq", [this]() { setDest(proc.mbfilterParams.highshelffreq); });
+		mbfilterMenu.addItem("High Gain", [this]() { setDest(proc.mbfilterParams.highshelfgain); });
+		mbfilterMenu.addItem("High Q", [this]() { setDest(proc.mbfilterParams.highshelfq); });
+
+		ringmodMenu.addItem("Mod Freq 1", [this]() { setDest(proc.ringmodParams.modfreq1); });
+		ringmodMenu.addItem("Shape 1", [this]() { setDest(proc.ringmodParams.shape1); });
+		ringmodMenu.addItem("Mix 1", [this]() { setDest(proc.ringmodParams.mix1); });
+		ringmodMenu.addItem("Mod Freq 2", [this]() { setDest(proc.ringmodParams.modfreq2); });
+		ringmodMenu.addItem("Shape 2", [this]() { setDest(proc.ringmodParams.shape2); });
+		ringmodMenu.addItem("Mix 2", [this]() { setDest(proc.ringmodParams.mix2); });
+		ringmodMenu.addItem("Spread", [this]() { setDest(proc.ringmodParams.spread); });
+		ringmodMenu.addItem("Low Cut", [this]() { setDest(proc.ringmodParams.lowcut); });
+		ringmodMenu.addItem("High Cut", [this]() { setDest(proc.ringmodParams.highcut); });
+
+		
+
+		fxModulesMenu.addSubMenu("Waveshaper", waveshaperMenu);
+		fxModulesMenu.addSubMenu("Compressor", compressorMenu);
+		fxModulesMenu.addSubMenu("Delay", delayMenu);
+		fxModulesMenu.addSubMenu("Chorus", chorusMenu);
+		fxModulesMenu.addSubMenu("Reverb", reverbMenu);
+		fxModulesMenu.addSubMenu("MB Filter", mbfilterMenu);
+		fxModulesMenu.addSubMenu("Ring Mod", ringmodMenu);
+		fxModulesMenu.addItem("Gain", [this]() { setDest(proc.gainParams.gain); });
 
 		m.addSubMenu("Oscillators", oscsMenu);
 		m.addSubMenu("Envelopes", envsMenu);
 		m.addSubMenu("LFOs", lfosMenu);
-
+		m.addSubMenu("Timbre", timbreMenu);
+		m.addSubMenu("Filter", filterMenu);
+		m.addSubMenu("FX Modules", fxModulesMenu);
+		m.addSubMenu("FX Lanes", fxLanesMenu);
 	}
 
 	void setDest(gin::Parameter::Ptr p) {

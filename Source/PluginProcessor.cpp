@@ -346,19 +346,19 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
 	auto& notes = gin::NoteDuration::getNoteDurations();
 
     
-    attack = p.addExtParam(id + "attack", id + "Attack", "A", " s", { 0.0, 60.0, 0.0, 0.2f }, 0.01f, 0.0f);
+    attack = p.addExtParam(id + "attack", id + "Attack", "A", "", { 0.0, 60.0, 0.0, 0.2f }, 0.01f, 0.0f, secondsTextFunction);
 	if (numStr.getIntValue() == 2) {
-		decay = p.addExtParam(id + "decay", id + "Decay", "D", " s", { 0.0, 60.0, 0.0, 0.2f }, 0.45f, 0.0f);
+		decay = p.addExtParam(id + "decay", id + "Decay", "D", "", { 0.0, 60.0, 0.0, 0.2f }, 0.45f, 0.0f, secondsTextFunction);
 	}
 	else {
-		decay = p.addExtParam(id + "decay", id + "Decay", "D", " s", { 0.0, 60.0, 0.0, 0.2f }, 0.07f, 0.0f);
+		decay = p.addExtParam(id + "decay", id + "Decay", "D", "", { 0.0, 60.0, 0.0, 0.2f }, 0.07f, 0.0f, secondsTextFunction);
 	}
     sustain = p.addExtParam(id + "sustain", id + "Sustain", "S", "%", { 0.0, 100.0, 0.0, 1.0 }, 50.0f, 0.0f);
-    release = p.addExtParam(id + "release", id + "Release", "R", " s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
+    release = p.addExtParam(id + "release", id + "Release", "R", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
 	acurve = p.addExtParam(id + "acurve", id + "ACurve", "A Curve", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
 	drcurve = p.addExtParam(id + "drcurve", id + "DRCurve", "DR Curve", "", { -1.0, 1.0, 0.0, 1.0 }, -1.0f, 0.0f);
 	syncrepeat = p.addExtParam(id + "syncrepeat", id + "SyncRepeat", "Repeat", "", { 0.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, syncrepeatTextFunction);
-	time = p.addExtParam(id + "time", id + "Time", "Time", " s", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f);
+	time = p.addExtParam(id + "time", id + "Time", "Time", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
 	duration = p.addExtParam(id + "beat", id + "Beat", "Beat", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
 
     sustain->conversionFunction = [](float in) { return in / 100.0f; };
@@ -391,7 +391,7 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 	equant = p.addExtParam("equant", "Equant", "", "", { -0.5, 0.5, 0.0, 1.0 }, 0.0, 0.0f);
 	pitch = p.addExtParam("pitch", "Pitch", "", "", { 0.01f, 4.0, 0.0f, 1.0 }, 1.0, 0.0f);
 	blend = p.addExtParam("blend", "Blend", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-	demodmix = p.addExtParam("demodmix", "Demodulate", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+	demodmix = p.addExtParam("demodmix", "Demodulate", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, percentTextFunction);
     algo = p.addExtParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0, 0.f, algoTextFunction);
 	demodVol = p.addExtParam("demodVol", "Demod Vol", "", "", { 0.0f, 4.0f, 0.0f, 1.0f }, 2.0f, 0.0f);	
 }

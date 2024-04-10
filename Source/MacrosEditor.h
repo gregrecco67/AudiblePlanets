@@ -34,5 +34,5 @@ private:
 	MacrosMatrixBox macro3{ "Macro 3", proc, proc.macroSrc3, proc.macroParams.macro3 };
 	MacrosMatrixBox macro4{ "Macro 4", proc, proc.macroSrc4, proc.macroParams.macro4 };
 
-	gin::Layout layout{ *this };
+//	gin::Layout layout{ *this };
 };
