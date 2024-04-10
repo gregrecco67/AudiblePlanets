@@ -17,25 +17,68 @@
 #include "PluginProcessor.h"
 #include "APModAdditions.h"
 
-class MacrosModMatrixBox : public juce::ListBox,
-	private juce::ListBoxModel,
-	private gin::ModMatrix::Listener
+class APMacroParamSliderLNF : public gin::CopperLookAndFeel
 {
 public:
-	MacrosModMatrixBox(gin::Processor& p, gin::ModMatrix& m, gin::ModSrcId macroSrc_, int dw = 50)
+	APMacroParamSliderLNF()
+	{
+		setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+	}
+
+	void drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
+		float sliderPos, float /*minSliderPos*/, float /*maxSliderPos*/,
+		const juce::Slider::SliderStyle /*style*/, juce::Slider& slider) override
+	{
+		//const bool isMouseOver = slider.isMouseOverOrDragging();
+		auto rc = juce::Rectangle<int>(x, y, width, height);
+		rc = rc.withSizeKeepingCentre(width, height);
+
+		// track
+		g.setColour(slider.findColour(juce::Slider::trackColourId).withAlpha(0.1f));
+		g.fillRect(rc);
+
+		// thumb
+		if (slider.isEnabled()) {
+			g.setColour(slider.findColour(juce::Slider::thumbColourId).withAlpha(0.85f));
+		}
+		else {
+			g.setColour(juce::Colours::darkgrey.withAlpha(0.5f));
+		}
+		float t = rc.getY();
+		float h = rc.getHeight();
+		auto c = rc.getCentreX();
+		g.fillRect(juce::Rectangle<float>(0, t, sliderPos, h));
+
+	}
+};
+
+
+class MacrosModMatrixBox : public juce::ListBox,
+	private juce::ListBoxModel,
+	private gin::ModMatrix::Listener,
+	public juce::Timer
+{
+public:
+	MacrosModMatrixBox(gin::Processor& p, gin::ModMatrix& m, gin::ModSrcId macroSrc_, juce::String name_, int dw = 50)
 		: proc(p), modMatrix(m), depthWidth(dw), macroSrc(macroSrc_)
 	{
-		setName("matrix");
+		setName(name_);
 		setModel(this);
 		setRowHeight(18);
 		refresh();
 
 		modMatrix.addListener(this);
+		startTimerHz(15);
 	}
 
 	~MacrosModMatrixBox() override
 	{
 		modMatrix.removeListener(this);
+	}
+
+	void timerCallback() override
+	{
+		refresh();
 	}
 
 private:
@@ -79,15 +122,19 @@ private:
 		Row(MacrosModMatrixBox& o)
 			: owner(o)
 		{
+
 			addAndMakeVisible(enableButton);
 			addAndMakeVisible(deleteButton);
 			addAndMakeVisible(curveButton);
 			addAndMakeVisible(biPolarButton);
 			addAndMakeVisible(depth);
-			addAndMakeVisible(src);
 			addAndMakeVisible(dst);
+			addAndMakeVisible(paramSlider);
+
+			paramSlider.setRange(0.0, 1.0);
 
 			depth.setLookAndFeel(&depthLookAndFeel);
+			paramSlider.setLookAndFeel(&macroLNF);
 
 			depth.setRange(-1.0, 1.0);
 			depth.addListener(this);
@@ -104,7 +151,23 @@ private:
 					auto range = parameter->getUserRange();
 					owner.modMatrix.setModDepth(a.src, dstId, float(depth.getValue()));
 				};
-
+			paramSlider.onValueChange = [this]
+				{
+					auto& a = owner.assignments.getReference(row);
+					auto parameter = a.dst;
+					auto dstId = gin::ModDstId(parameter->getModIndex());
+					auto range = parameter->getUserRange();
+					auto userValue = range.convertFrom0to1(float(paramSlider.getValue()));
+					parameter->setUserValue(userValue);
+					auto legalValue = range.snapToLegalValue(userValue);
+					paramSlider.setValue(range.convertTo0to1(legalValue));
+				};
+			paramSlider.onTextFromValue = [this](double value)
+				{
+					auto& a = owner.assignments.getReference(row);
+					auto parameter = a.dst;
+					return parameter->userValueToText(parameter->getUserValue());
+				};
 			enableButton.onClick = [this]
 				{
 					if (row >= 0 && row < owner.assignments.size())
@@ -206,9 +269,9 @@ private:
 			if (idx >= 0 && idx < owner.assignments.size())
 			{
 				auto& a = owner.assignments.getReference(idx);
-				src.setText(owner.modMatrix.getModSrcName(a.src), juce::dontSendNotification);
 				dst.setText(a.dst->getName(100), juce::dontSendNotification);
 
+				
 				auto ev = owner.modMatrix.getModEnable(a.src, gin::ModDstId(a.dst->getModIndex()));
 				enableButton.setToggleState(ev, juce::dontSendNotification);
 
@@ -216,11 +279,13 @@ private:
 				biPolarButton.setToggleState(b, juce::dontSendNotification);
 
 				depth.setValue(owner.modMatrix.getModDepth(a.src, gin::ModDstId(a.dst->getModIndex())), juce::dontSendNotification);
+				float paramUserValue = a.dst->getUserValue();
+				float paramValue = a.dst->getUserRange().convertTo0to1(paramUserValue);
+				paramSlider.setValue(paramValue);
 				curveButton.setCurve(owner.modMatrix.getModFunction(a.src, gin::ModDstId(a.dst->getModIndex())));
 			}
 			else
 			{
-				src.setText("", juce::dontSendNotification);
 				dst.setText("", juce::dontSendNotification);
 				curveButton.setCurve(gin::ModMatrix::Function::linear);
 			}
@@ -243,8 +308,8 @@ private:
 			curveButton.setBounds(rc.removeFromLeft(h));
 
 			int w = rc.getWidth() / 2;
-			src.setBounds(rc.removeFromLeft(w));
 			dst.setBounds(rc.removeFromLeft(w));
+			paramSlider.setBounds(rc);
 		}
 
 		class PopupLNF : public juce::LookAndFeel_V4
@@ -289,6 +354,8 @@ private:
 
 			juce::String getTextFromValue(double value) override
 			{
+				if(onTextFromValue)
+					return onTextFromValue(value);
 				return juce::String(value, 3);
 			}
 
@@ -334,9 +401,11 @@ private:
 		};
 
 		APDepthSlider depth;
+		APDepthSlider paramSlider;
 		APModDepthLookAndFeel depthLookAndFeel;
+		APMacroParamSliderLNF macroLNF;
 
-		juce::Label src;
+		//juce::Label src;
 		juce::Label dst;
 
 		gin::ModCurveButton curveButton;
@@ -522,16 +591,18 @@ public:
 		: gin::ParamBox(name), proc(proc_), macroSrc(macroSrc_)
 	{
 		setName("mtx");
-		addControl(new APKnob(macroDst_), 0, 0, 1, 1);
+		addControl(knob = new APKnob(macroDst_), 0, 0, 1.5, 1.5);
 		addAndMakeVisible(paramSelector);
-		addControl(new MacrosModMatrixBox(proc, proc.modMatrix, macroSrc), 1, 0, 5, 4);
+		addControl(new MacrosModMatrixBox(proc, proc.modMatrix, macroSrc, name, 70), 2, 0, 6, 4);
 	}
 
 	void resized() override {
 		ParamBox::resized();
+		knob->setBounds(0, 23, 84, 105);
 		paramSelector.setBounds(5, 0, 55, 23);
 	}
 
+	gin::ParamComponent::Ptr knob;
 	APAudioProcessor& proc;
 	gin::ModSrcId macroSrc;
 	ParameterSelector paramSelector{ proc, macroSrc };
@@ -540,13 +611,5 @@ public:
 
 
 
-// TODO: create MacroModMatrixBox class.
-// constructor will take the ModSrcId of the macro it represents.
-// refresh() method will pull assignments from getModDepths(macro).
-// Row should show a linear slider (class MacroParamKnob) for the affected parameter,
-// a mod depth slider (like APModDepthSlider), and an overlay for the
-// degree of modulation. resized() will have to arrange all these elements:
-// enable button, mod depth slider, bipolar toggle, curve menu, mod src name,
-// mod dst name, param slider, delete button.
-// MacroModMatrixBox should also have a Create button in the header, which should
-// use the ParameterSelector popup to assign the macro to a parameter.
+// TODO: 
+// Row should show live values?

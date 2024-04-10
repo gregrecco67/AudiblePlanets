@@ -560,10 +560,10 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 void APAudioProcessor::MacroParams::setup(APAudioProcessor& p)
 {
 	String name = "Macro ";
-	macro1 = p.addExtParam(name + "1", name + "1", name + "1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
-	macro2 = p.addExtParam(name + "2", name + "2", name + "2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
-	macro3 = p.addExtParam(name + "3", name + "3", name + "3", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
-	macro4 = p.addExtParam(name + "4", name + "4", name + "4", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f);
+	macro1 = p.addExtParam(name + "1", name + "1", name + "1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
+	macro2 = p.addExtParam(name + "2", name + "2", name + "2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
+	macro3 = p.addExtParam(name + "3", name + "3", name + "3", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
+	macro4 = p.addExtParam(name + "4", name + "4", name + "4", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
 }
 
 

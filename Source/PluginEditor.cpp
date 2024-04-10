@@ -69,6 +69,10 @@ bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*origin
 			tabbed.setCurrentTabIndex(4);
 			return true;
 		}
+		if (key.isKeyCode(juce::KeyPress::escapeKey)) {
+			proc.modMatrix.disableLearn();
+			return true;
+		}
         return false;
 }
 
