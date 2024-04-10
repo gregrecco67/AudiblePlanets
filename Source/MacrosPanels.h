@@ -667,8 +667,8 @@ public:
 		proc.modMatrix.setModDepth(macroSrc, gin::ModDstId(p->getModIndex()), 0.0f);
 	}
 
-	void mouseDown(const MouseEvent& e) override {
-		m.show();
+	void mouseDown(const MouseEvent& /*ev*/) override {
+        m.showMenu(PopupMenu::Options().withMousePosition());
 	}
 
 	PopupMenu m;
