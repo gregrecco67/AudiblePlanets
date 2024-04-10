@@ -17,6 +17,7 @@
 #include <JuceHeader.h>
 #include "MoonSlider.h"
 #include "Fonts.h"
+#include "APModAdditions.h"
 //==============================================================================
 /** Slider + editable text for showing a param
 */
@@ -62,12 +63,13 @@ private:
 	bool learning = false;
 	float modDepth = 0.0f;
 	bool dragOver = false;
+	gin::ModSrcId currentModSrc{ -1 };
 
 	gin::CoalescedTimer modTimer;
 	gin::CoalescedTimer shiftTimer;
 	juce::Array<float> modValues;
 	std::function<juce::Array<float>()> liveValuesCallback;
-	gin::ModulationDepthSlider modDepthSlider;
+	APModulationDepthSlider modDepthSlider;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MoonKnob)
 };

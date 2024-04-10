@@ -83,6 +83,13 @@ MoonKnob::MoonKnob(gin::Parameter* p, bool fromCentre)
 			knob.setInterceptsMouseClicks(!learning || shift, !learning || shift);
 		};
 
+	if (auto mm = parameter->getModMatrix()) {
+		if (auto depths = mm->getModDepths(gin::ModDstId(parameter->getModIndex())); depths.size() > 0) {
+			currentModSrc = depths[0].first;
+		}
+	}
+
+
 	modDepthSlider.onClick = [this] { showModMenu(); };
 	modDepthSlider.setMouseDragSensitivity(500);
 	modDepthSlider.onValueChange = [this]
@@ -92,9 +99,25 @@ MoonKnob::MoonKnob(gin::Parameter* p, bool fromCentre)
 				auto dst = gin::ModDstId(parameter->getModIndex());
 
 				if (auto depths = mm->getModDepths(dst); depths.size() > 0)
-					mm->setModDepth(depths[0].first, dst, float(modDepthSlider.getValue()));
+					mm->setModDepth(currentModSrc, dst, float(modDepthSlider.getValue()));
 			}
 		};
+
+	modDepthSlider.onTextFromValue = [this](double v)
+		{
+			if (auto mm = parameter->getModMatrix())
+			{
+				auto dst = gin::ModDstId(parameter->getModIndex());
+
+				if (auto depths = mm->getModDepths(dst); depths.size() > 0)
+				{
+					auto pname = mm->getModSrcName(currentModSrc);
+					return pname + ": " + juce::String(v);
+				}
+			}
+			return juce::String();
+		};
+
 	modMatrixChanged();
 }
 
@@ -115,9 +138,33 @@ void MoonKnob::showModMenu()
 	auto& mm = *parameter->getModMatrix();
 	for (auto src : mm.getModSources(parameter))
 	{
-		m.addItem("Remove " + mm.getModSrcName(src), [this, src]
+		bool current{ false };
+		if (currentModSrc == gin::ModSrcId{ -1 }) { currentModSrc = src; }
+		if (src == currentModSrc) { current = true; }
+		m.addItem("Remove: " + mm.getModSrcName(src), true, current, [this, src]
 			{
-				parameter->getModMatrix()->clearModDepth(src, gin::ModDstId(parameter->getModIndex()));
+				auto dst = gin::ModDstId(parameter->getModIndex());
+				parameter->getModMatrix()->clearModDepth(src, dst);
+				if (auto depths = parameter->getModMatrix()->getModDepths(dst); depths.size() > 0) {
+					currentModSrc = depths[0].first;
+				}
+				else {
+					currentModSrc = gin::ModSrcId(-1);
+				}
+				modMatrixChanged();
+			});
+	}
+
+	m.addSeparator();
+
+	for (auto src : mm.getModSources(parameter))
+	{
+		if (currentModSrc == gin::ModSrcId{ -1 }) { currentModSrc = src; }
+		bool editing = (src == currentModSrc) ? true : false;
+		m.addItem("Edit: " + mm.getModSrcName(src) + ": " + String(mm.getModDepth(src, gin::ModDstId(parameter->getModIndex())), 3), !editing, editing, [this, src]
+			{
+				currentModSrc = src;
+				modMatrixChanged();
 			});
 	}
 
@@ -204,6 +251,8 @@ void MoonKnob::parentHierarchyChanged()
 void MoonKnob::learnSourceChanged(gin::ModSrcId src)
 {
 	learning = src.isValid();
+	if (learning)
+		currentModSrc = src;
 
 	bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
 	knob.setInterceptsMouseClicks(!learning || shift, !learning || shift);
@@ -233,15 +282,31 @@ void MoonKnob::modMatrixChanged()
 {
 	if (auto mm = parameter->getModMatrix())
 	{
+
 		auto dst = gin::ModDstId(parameter->getModIndex());
+		for (auto src : mm->getModSources(parameter))
+		{
+			bool current{ false };
+			if (currentModSrc == gin::ModSrcId{ -1 }) { currentModSrc = src; }
+		}
 
 		if (mm->isModulated(dst) || liveValuesCallback)
 		{
 			modTimer.startTimerHz(30);
-			modDepthSlider.setVisible(mm->isModulated(dst));
 
-			if (auto depths = mm->getModDepths(dst); depths.size() > 0)
-				modDepthSlider.setValue(depths[0].second, juce::dontSendNotification);
+			auto vis = mm->isModulated(dst);
+			if (vis != modDepthSlider.isVisible())
+			{
+				modDepthSlider.setVisible(vis);
+				resized();
+			}
+
+			if (auto depths = mm->getModDepths(dst); depths.size() > 0) {
+				for (auto depth : depths) {
+					if (depth.first == currentModSrc)
+						modDepthSlider.setValue(depth.second, juce::dontSendNotification);
+				}
+			}
 			else
 				modDepthSlider.setValue(0.0f, juce::dontSendNotification);
 		}
@@ -249,13 +314,19 @@ void MoonKnob::modMatrixChanged()
 		{
 			modTimer.stopTimer();
 			knob.getProperties().remove("modValues");
-			modDepthSlider.setVisible(false);
+
+			if (modDepthSlider.isVisible())
+			{
+				modDepthSlider.setVisible(false);
+				resized();
+			}
 		}
 
 		if (learning && !isMouseButtonDown(true))
 		{
 			modDepth = mm->getModDepth(mm->getLearn(), dst);
 			knob.getProperties().set("modDepth", modDepth);
+			knob.getProperties().set("modBipolar", mm->getModBipolarMapping(mm->getLearn(), gin::ModDstId(parameter->getModIndex())));
 			repaint();
 		}
 	}
@@ -328,12 +399,12 @@ void MoonKnob::itemDragExit(const SourceDetails&)
 void MoonKnob::itemDropped(const SourceDetails& sd)
 {
 	dragOver = false;
-	repaint();
 
 	auto& mm = *parameter->getModMatrix();
 
-	auto src = gin::ModSrcId(sd.description.toString().getTrailingIntValue());
+	currentModSrc = gin::ModSrcId(sd.description.toString().getTrailingIntValue());
 	auto dst = gin::ModDstId(parameter->getModIndex());
 
-	mm.setModDepth(src, dst, 1.0f);
+	mm.setModDepth(currentModSrc, dst, 1.0f);
+	repaint();
 }

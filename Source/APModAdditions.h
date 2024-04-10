@@ -592,6 +592,11 @@ public:
             knob.setInterceptsMouseClicks (! learning || shift, ! learning || shift );
         };
 
+		if (auto mm = parameter->getModMatrix()) {
+			if (auto depths = mm->getModDepths(gin::ModDstId(parameter->getModIndex())); depths.size() > 0) {
+				currentModSrc = depths[0].first;
+			}
+		}
         modDepthSlider.onClick = [this] { showModMenu(); };
         modDepthSlider.setMouseDragSensitivity (500);
         modDepthSlider.onValueChange = [this]
@@ -795,7 +800,6 @@ public:
     void itemDropped (const SourceDetails& sd) override
     {
         dragOver = false;
-        repaint();
 
         auto& mm = *parameter->getModMatrix();
 
@@ -803,6 +807,7 @@ public:
         auto dst = gin::ModDstId (parameter->getModIndex());
 
         mm.setModDepth (currentModSrc, dst, 1.0f);
+        repaint();
     }
     
     
@@ -865,6 +870,11 @@ protected:
         if (auto mm = parameter->getModMatrix())
         {
             auto dst = gin::ModDstId (parameter->getModIndex());
+			for (auto src : mm->getModSources(parameter))
+			{
+				bool current{ false };
+				if (currentModSrc == gin::ModSrcId{ -1 }) { currentModSrc = src; }
+			}
 
             if (mm->isModulated (dst) || liveValuesCallback)
             {
@@ -917,6 +927,7 @@ protected:
         for (auto src : mm.getModSources (parameter))
         {
             bool current{false};
+			if (currentModSrc == gin::ModSrcId{ -1 }) { currentModSrc = src; }
             if (src == currentModSrc) { current = true; }
             m.addItem ("Remove: " + mm.getModSrcName (src), true, current, [this, src]
             {
@@ -936,6 +947,7 @@ protected:
         
         for (auto src : mm.getModSources (parameter))
         {
+			if (currentModSrc == gin::ModSrcId{ -1 }) { currentModSrc = src; }
             bool editing = (src == currentModSrc) ? true : false;
             m.addItem ("Edit: " + mm.getModSrcName(src) + ": " + String(mm.getModDepth(src, gin::ModDstId(parameter->getModIndex())), 3), !editing, editing, [this, src]
             {
