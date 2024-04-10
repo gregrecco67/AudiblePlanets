@@ -251,8 +251,6 @@ void MoonKnob::parentHierarchyChanged()
 void MoonKnob::learnSourceChanged(gin::ModSrcId src)
 {
 	learning = src.isValid();
-	if (learning)
-		currentModSrc = src;
 
 	bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
 	knob.setInterceptsMouseClicks(!learning || shift, !learning || shift);

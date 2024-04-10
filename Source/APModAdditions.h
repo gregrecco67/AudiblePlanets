@@ -837,8 +837,6 @@ protected:
     void learnSourceChanged (gin::ModSrcId src) override
     {
         learning = src.isValid();
-        if (learning)
-            currentModSrc = src;
 
         bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
         knob.setInterceptsMouseClicks (! learning || shift, ! learning || shift );
