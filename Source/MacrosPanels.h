@@ -135,6 +135,7 @@ private:
 			addAndMakeVisible(paramSlider);
 
 			paramSlider.setRange(0.0, 1.0);
+			
 
 			depth.setLookAndFeel(&depthLookAndFeel);
 			paramSlider.setLookAndFeel(&macroLNF);
@@ -164,13 +165,17 @@ private:
 					parameter->setUserValue(userValue);
 					auto legalValue = range.snapToLegalValue(userValue);
 					paramSlider.setValue(range.convertTo0to1(legalValue));
+					auto defaultValue = parameter->getUserDefaultValue();
 				};
+
 			paramSlider.onTextFromValue = [this](double value)
 				{
 					auto& a = owner.assignments.getReference(row);
 					auto parameter = a.dst;
 					return parameter->userValueToText(parameter->getUserValue());
 				};
+	
+
 			enableButton.onClick = [this]
 				{
 					if (row >= 0 && row < owner.assignments.size())
@@ -362,7 +367,15 @@ private:
 				return juce::String(value, 3);
 			}
 
+			void mouseDoubleClick(const juce::MouseEvent& ev) override
+			{
+				if (onDoubleClick)
+					return onDoubleClick();
+				juce::Slider::mouseDoubleClick(ev);
+			}
+
 			std::function<juce::String(double)> onTextFromValue;
+			std::function<void()> onDoubleClick;
 		};
 
 		class APModDepthLookAndFeel : public gin::CopperLookAndFeel
@@ -661,6 +674,7 @@ public:
 		m.addSubMenu("Filter", filterMenu);
 		m.addSubMenu("FX Modules", fxModulesMenu);
 		m.addSubMenu("FX Lanes", fxLanesMenu);
+		m.addItem("Global Level", [this]() { setDest(proc.globalParams.level); });
 	}
 
 	void setDest(gin::Parameter::Ptr p) {
@@ -701,8 +715,6 @@ public:
 	gin::ModSrcId macroSrc;
 	ParameterSelector paramSelector{ proc, macroSrc };
 };
-
-
 
 
 // TODO: 
