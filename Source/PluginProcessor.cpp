@@ -564,6 +564,11 @@ void APAudioProcessor::MacroParams::setup(APAudioProcessor& p)
 	macro2 = p.addExtParam(name + "2", name + "2", name + "2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
 	macro3 = p.addExtParam(name + "3", name + "3", name + "3", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
 	macro4 = p.addExtParam(name + "4", name + "4", name + "4", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
+	learning = p.addIntParam("Learn", "Learn", "Learn", "", { 0.0, 4.0, 1.0, 1.0 }, 0.0f, 0.0f);
+	macro1cc = p.addIntParam("Macro1CC", "Macro 1 CC", "CC", "", { -1.0, 127.0, 1.0, 1.0 }, -1.0f, 0.0f);
+	macro2cc = p.addIntParam("Macro2CC", "Macro 2 CC", "CC", "", { -1.0, 127.0, 1.0, 1.0 }, -1.0f, 0.0f);
+	macro3cc = p.addIntParam("Macro3CC", "Macro 3 CC", "CC", "", { -1.0, 127.0, 1.0, 1.0 }, -1.0f, 0.0f);
+	macro4cc = p.addIntParam("Macro4CC", "Macro 4 CC", "CC", "", { -1.0, 127.0, 1.0, 1.0 }, -1.0f, 0.0f);
 }
 
 

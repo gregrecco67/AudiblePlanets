@@ -52,6 +52,68 @@ public:
 	}
 };
 
+class MIDILearnButton : public juce::Label
+{
+public:
+	MIDILearnButton(APAudioProcessor& p) : proc(p) {
+		setEditable(false, false, false);
+		setJustificationType(Justification::left);
+		setText("Learn", dontSendNotification);
+		setLookAndFeel(&midilearnLNF);
+	}
+
+	~MIDILearnButton() override
+	{
+		setLookAndFeel(nullptr);
+	}
+
+	void mouseDown(const juce::MouseEvent& ev) override
+	{
+		learning = !learning;
+		if (learning) {
+			proc.macroParams.learning->setUserValue(static_cast<float>(thisMacroNumber));
+			setText("Learning", dontSendNotification);
+		}
+		else {
+			proc.macroParams.learning->setValue(0.0f);
+			setText("Learn", dontSendNotification);
+		}
+	}
+
+	void setMacroNumber(int n)
+	{
+		thisMacroNumber = n;
+	}
+	
+	void setCCString(const juce::String& s)
+	{
+		currentAssignment = s;
+		setText(s, dontSendNotification);
+	}
+
+
+	class MIDILearnLNF : public gin::CopperLookAndFeel
+	{
+	public:
+		MIDILearnLNF()
+		{
+		}
+
+		void drawLabel(juce::Graphics& g, juce::Label& label) override
+		{
+			auto rc = label.getLocalBounds();
+			g.setColour(juce::Colours::white);
+			g.setFont(regularFont.withHeight(20.0f));
+			g.drawText(label.getText(), rc, juce::Justification::centred);
+		}
+	} midilearnLNF;
+
+	juce::String currentAssignment;
+	APAudioProcessor& proc;
+	bool learning{ false };
+	int mididCC{ -1 }, thisMacroNumber{ 0 };
+};
+
 
 class MacrosModMatrixBox : public juce::ListBox,
 	private juce::ListBoxModel,
@@ -695,25 +757,42 @@ public:
 class MacrosMatrixBox : public gin::ParamBox
 {
 public:
-	MacrosMatrixBox(const juce::String& name, APAudioProcessor& proc_, gin::ModSrcId macroSrc_, gin::Parameter::Ptr macroDst_)
-		: gin::ParamBox(name), proc(proc_), macroSrc(macroSrc_)
+	MacrosMatrixBox(
+		const juce::String& name, 
+		APAudioProcessor& proc_, 
+		gin::ModSrcId macroSrc_, 
+		gin::Parameter::Ptr macroDst_, 
+		gin::Parameter::Ptr macroCC_, 
+		int macroNumber)
+		: gin::ParamBox(name), proc(proc_), macroSrc(macroSrc_), macroCC(macroCC_)
 	{
 		setName("mtx");
 		addControl(knob = new APKnob(macroDst_), 0, 0, 1.5, 1.5);
 		addAndMakeVisible(paramSelector);
+		addAndMakeVisible(midiLearnButton);
 		addControl(new MacrosModMatrixBox(proc, proc.modMatrix, macroSrc, name, 70), 2, 0, 6, 4);
+		midiLearnButton.setMacroNumber(macroNumber);
+		macroCC->addListener(this);
+		addControl(new gin::Knob(macroCC), 0, 3, 1, 1);
+	}
+
+	void valueUpdated(gin::Parameter* p) override {
+		midiLearnButton.setCCString(macroCC->getUserValueText());
 	}
 
 	void resized() override {
 		ParamBox::resized();
 		knob->setBounds(0, 23, 84, 105);
+		midiLearnButton.setBounds(0, 128, 84, 55);
 		paramSelector.setBounds(5, 0, 55, 23);
 	}
 
 	gin::ParamComponent::Ptr knob;
 	APAudioProcessor& proc;
 	gin::ModSrcId macroSrc;
+	gin::Parameter::Ptr macroCC;
 	ParameterSelector paramSelector{ proc, macroSrc };
+	MIDILearnButton midiLearnButton{ proc };
 };
 
 

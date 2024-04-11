@@ -29,10 +29,10 @@ public:
 private:
 	APAudioProcessor& proc;
 	
-	MacrosMatrixBox macro1{ "Macro 1", proc, proc.macroSrc1, proc.macroParams.macro1 };
-	MacrosMatrixBox macro2{ "Macro 2", proc, proc.macroSrc2, proc.macroParams.macro2 };
-	MacrosMatrixBox macro3{ "Macro 3", proc, proc.macroSrc3, proc.macroParams.macro3 };
-	MacrosMatrixBox macro4{ "Macro 4", proc, proc.macroSrc4, proc.macroParams.macro4 };
+	MacrosMatrixBox macro1{ "Macro 1", proc, proc.macroSrc1, proc.macroParams.macro1, proc.macroParams.macro1cc, 1 };
+	MacrosMatrixBox macro2{ "Macro 2", proc, proc.macroSrc2, proc.macroParams.macro2, proc.macroParams.macro2cc, 2 };
+	MacrosMatrixBox macro3{ "Macro 3", proc, proc.macroSrc3, proc.macroParams.macro3, proc.macroParams.macro3cc, 3 };
+	MacrosMatrixBox macro4{ "Macro 4", proc, proc.macroSrc4, proc.macroParams.macro4, proc.macroParams.macro4cc, 4 };
 
 //	gin::Layout layout{ *this };
 };

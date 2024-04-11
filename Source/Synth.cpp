@@ -95,6 +95,36 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
     if (m.isController()) {
 		if (m.getControllerNumber() == 1) {
 			proc.modMatrix.setMonoValue(proc.modSrcModwheel, float(m.getControllerValue()) / 127.0f);
+			return;
+		}
+		if (proc.macroParams.learning->getValue() > 0.f) {
+			int n = proc.macroParams.learning->getUserValueInt();
+			int cc = m.getControllerNumber();
+			if (n == 1) {
+				proc.macroParams.macro1cc->setUserValue(cc);
+			}
+			else if (n == 2) {
+				proc.macroParams.macro2cc->setUserValue(cc);
+			}
+			else if (n == 3) {
+				proc.macroParams.macro3cc->setUserValue(cc);
+			}
+			else if (n == 4) {
+				proc.macroParams.macro4cc->setUserValue(cc);
+			}
+			proc.macroParams.learning->setValue(0.f);
+		}
+		if (m.getControllerNumber() == proc.macroParams.macro1cc->getUserValue()) {
+			proc.macroParams.macro1->setValue(float(m.getControllerValue()) / 127.0f);
+		}
+		if (m.getControllerNumber() == proc.macroParams.macro2cc->getUserValue()) {
+			proc.macroParams.macro2->setValue(float(m.getControllerValue()) / 127.0f);
+		}
+		if (m.getControllerNumber() == proc.macroParams.macro3cc->getUserValue()) {
+			proc.macroParams.macro3->setValue(float(m.getControllerValue()) / 127.0f);
+		}
+		if (m.getControllerNumber() == proc.macroParams.macro4cc->getUserValue()) {
+			proc.macroParams.macro4->setValue(float(m.getControllerValue()) / 127.0f);
 		}
     }
 	if (m.isPitchWheel()) {

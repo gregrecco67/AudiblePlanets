@@ -260,7 +260,7 @@ public:
 	struct MacroParams {
 		MacroParams() = default;
 
-		gin::Parameter::Ptr macro1, macro2, macro3, macro4;
+		gin::Parameter::Ptr macro1, macro2, macro3, macro4, learning, macro1cc, macro2cc, macro3cc, macro4cc;
 		void setup(APAudioProcessor& p);
 
 		JUCE_DECLARE_NON_COPYABLE(MacroParams)
