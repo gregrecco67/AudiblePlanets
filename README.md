@@ -3,13 +3,16 @@
 
 An expressive, quasi-Ptolemaic semi-modular synthesizer.
 
-![page1](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/ee32d7f9-37db-4fba-a2d6-afe360672ead)
+![page1](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/78278e55-f174-4492-b56b-a9d59bdc3cd6)
 
-![page 2](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/cbfb923d-24ba-4c64-bda3-00fc26942215)
+![page2](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/48b1f6f5-b148-496e-a3cf-c009202ebd02)
 
-![page3](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/2c033065-1767-415b-b86a-c0bc61c73abf)
+![page3](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/1c74e79c-fcd1-4025-9138-389d88145902)
 
-![page4](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/47486691-6145-41f1-b4ac-20de89a455a4)
+![page4](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/f9c1549a-1501-48c8-b99e-cab07ccccdb1)
+
+![page5](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/6ddbacf2-edd9-4cb3-b803-98a868b20ad4)
+
 
 ## Features
 
@@ -76,7 +79,9 @@ This brings them farther from the center without diminishing their effect as muc
 
 The global parameters include controls for monosynth and legato modes, glissando and portamento at an adjustable rate, velocity sensitivity, pitchwheel range, and overall volume. There's also a dedicated per-voice filter, with cutoff, resonance, and key tracking controls, and a variety of common filter types.
 
-The partially open circles found in various panel headers, as the section in the top right indicates, are sources of modulation. The single-line versions are "mono" and the double-line versions "poly," which is to say the latter are different for each key press (or subsequent pressure, tilt, or slide, on MPE-capable MIDI controllers). To use any of them, click and drag from the source to the destination. Almost any knob can have its setting modulated, and that goes for the effects controls on the FX page and the MSEG controls as well. When a parameter is modulated, a small orange circle appears in the upper-right corner of the control. Clicking and dragging it (or using a mouse scroll wheel while hovering) will increase or decrease the modulation amount, in a positive or negative direction, or both. (More spacious sets of modulation controls reside on the "Rand" and "MSEG" pages.) Right-clicking the small circle will give the option to remove any or all of the modulation sources attached to it. Small white dots on the periphery of the control indicate the modulated value or values of the parameter for whichever voices are active.
+![mod sources](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/044d751a-7b62-48e2-ab3c-1a244e76c57b)
+
+The partially open circles found in various panel headers, as the section in the top right indicates, are sources of modulation. The single-line versions are "mono" and the double-line versions "poly," which is to say the latter are different for each key press (or subsequent pressure, tilt, or slide, on MPE-capable MIDI controllers). To use any of them, click and drag from the source to the destination. Alternatively, if you want to assign the same source to several parameters, you can click on it: it will turn white, and while the synth is in this mode, you can assign modulation from that source just by dragging on the knob for the parameter you want to modulate. Press 'ESC' to exit this "learning" mode. Almost any knob can have its setting modulated, and that goes for the effects controls on the FX page and the MSEG controls as well. When a parameter is modulated, a small orange circle appears in the upper-right corner of the control. Clicking and dragging it (or using a mouse scroll wheel while hovering) will increase or decrease the modulation amount, in a positive or negative direction, or both. (More spacious sets of modulation controls reside on the "Rand" and "MSEG" pages.) Right-clicking the small circle will give the option to remove any or all of the modulation sources attached to it, or to switch to editing the value of a different source. Small white dots on the periphery of the control indicate the modulated value or values of the parameter for whichever voices are active. Many controls accept text input, and all can be adjusted finely by dragging while holding down the control key.
 
 The orbit visualization can be slowed down or sped up with the Orbit "Speed" control and you can zoom in or out with the "Scale" control or by hovering over the orbits and scrolling the mouse wheel.
 
@@ -91,6 +96,10 @@ Sound design can at times be a game of "almost, but not quite." At other times, 
 ### MSEG Page
 
 The MSEG page exposes controls for producing arbitrary control signals, single or repeating, with many of the same parameters as the LFOs on the main page. Double-click to create points, which you can click and drag to their desired locations, or turn on "Draw" and select a draw mode from the drop-down menu. All control points will snap to grid lines they are near. Scroll with the mouse wheel to adjust the number of horizontal divisions in the grid, and scroll with a modifier key held down (e.g., control, shift, alt) to adjust the vertical grid. 
+
+### Macros Page
+
+This page exposes controls for four sources of modulation that can be assigned to any number of parameters to modulate them all at once. Click on "Add" in the upper left of any one to assign modulation destinations.
 
 # Motivation / Inspiration
 
