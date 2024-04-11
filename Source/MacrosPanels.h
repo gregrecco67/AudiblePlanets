@@ -29,7 +29,6 @@ public:
 		float sliderPos, float /*minSliderPos*/, float /*maxSliderPos*/,
 		const juce::Slider::SliderStyle /*style*/, juce::Slider& slider) override
 	{
-		//const bool isMouseOver = slider.isMouseOverOrDragging();
 		auto rc = juce::Rectangle<int>(x, y, width, height);
 		rc = rc.withSizeKeepingCentre(width, height);
 
@@ -69,6 +68,18 @@ public:
 
 	void mouseDown(const juce::MouseEvent& ev) override
 	{
+        if (thisMacroNumber == 1) {
+            if (proc.macroParams.macro1cc->getUserValue() > 0.f) { return; }
+        }
+        if (thisMacroNumber == 2) {
+            if (proc.macroParams.macro2cc->getUserValue() > 0.f) { return; }
+        }
+        if (thisMacroNumber == 3) {
+            if (proc.macroParams.macro3cc->getUserValue() > 0.f) { return; }
+        }
+        if (thisMacroNumber == 4) {
+            if (proc.macroParams.macro4cc->getUserValue() > 0.f) { return; }
+        }
 		learning = !learning;
 		if (learning) {
 			proc.macroParams.learning->setUserValue(static_cast<float>(thisMacroNumber));
@@ -91,6 +102,10 @@ public:
 		setText(s, dontSendNotification);
 	}
 
+    void setLearning(bool shouldLearn) {
+        learning = shouldLearn;
+    }
+    
 
 	class MIDILearnLNF : public gin::CopperLookAndFeel
 	{
@@ -773,28 +788,49 @@ public:
 		addControl(new MacrosModMatrixBox(proc, proc.modMatrix, macroSrc, name, 70), 2, 0, 6, 4);
 		midiLearnButton.setMacroNumber(macroNumber);
 		macroCC->addListener(this);
-		addControl(new gin::Knob(macroCC), 0, 3, 1, 1);
+        clearButton.onClick = [this]() { cancelAssignment(); };
+        addChildComponent(clearButton);
+        valueUpdated(macroCC);
 	}
 
 	void valueUpdated(gin::Parameter* p) override {
-		midiLearnButton.setCCString(macroCC->getUserValueText());
+		auto ccValue = macroCC->getUserValueInt();
+		if (ccValue >= 0) {
+			midiLearnButton.setCCString("CC " + macroCC->getUserValueText());
+            clearButton.setVisible(true);
+		}
+        else {
+            midiLearnButton.setCCString("Learn");
+            midiLearnButton.setLearning(false);
+            clearButton.setVisible(false);
+        }
 	}
 
 	void resized() override {
 		ParamBox::resized();
 		knob->setBounds(0, 23, 84, 105);
 		midiLearnButton.setBounds(0, 128, 84, 55);
+        clearButton.setBounds(0, 183, 84, 25);
 		paramSelector.setBounds(5, 0, 55, 23);
 	}
 
+    void cancelAssignment() {
+        macroCC->setUserValue(-1.f);
+        midiLearnButton.setCCString("Learn");
+		midiLearnButton.setLearning(false);
+        clearButton.setVisible(false);
+    }
+
+	void disableLearning() {
+		midiLearnButton.setLearning(false);
+		midiLearnButton.setCCString("Learn");
+	}
+    
 	gin::ParamComponent::Ptr knob;
 	APAudioProcessor& proc;
 	gin::ModSrcId macroSrc;
 	gin::Parameter::Ptr macroCC;
 	ParameterSelector paramSelector{ proc, macroSrc };
 	MIDILearnButton midiLearnButton{ proc };
+    TextButton clearButton{"Clear", "Clear"};
 };
-
-
-// TODO: 
-// Row should show live values?

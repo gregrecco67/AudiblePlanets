@@ -115,16 +115,16 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
 			proc.macroParams.learning->setValue(0.f);
 		}
 		if (m.getControllerNumber() == proc.macroParams.macro1cc->getUserValue()) {
-			proc.macroParams.macro1->setValue(float(m.getControllerValue()) / 127.0f);
+			proc.macroParams.macro1->setValue(m.getControllerValue()/127.0f);
 		}
 		if (m.getControllerNumber() == proc.macroParams.macro2cc->getUserValue()) {
-			proc.macroParams.macro2->setValue(float(m.getControllerValue()) / 127.0f);
+			proc.macroParams.macro2->setValue(m.getControllerValue()/127.0f);
 		}
 		if (m.getControllerNumber() == proc.macroParams.macro3cc->getUserValue()) {
-			proc.macroParams.macro3->setValue(float(m.getControllerValue()) / 127.0f);
+			proc.macroParams.macro3->setValue(m.getControllerValue()/127.0f);
 		}
 		if (m.getControllerNumber() == proc.macroParams.macro4cc->getUserValue()) {
-			proc.macroParams.macro4->setValue(float(m.getControllerValue()) / 127.0f);
+			proc.macroParams.macro4->setValue(m.getControllerValue()/127.0f);
 		}
     }
 	if (m.isPitchWheel()) {

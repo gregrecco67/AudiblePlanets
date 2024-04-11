@@ -99,7 +99,7 @@ The MSEG page exposes controls for producing arbitrary control signals, single o
 
 ### Macros Page
 
-This page exposes controls for four sources of modulation that can be assigned to any number of parameters to modulate them all at once. Click on "Add" in the upper left of any one to assign modulation destinations.
+This page exposes controls for four sources of modulation that can be assigned to any number of parameters to modulate them all at once. Click on "Add" in the upper left of any one to assign modulation destinations. Each macro knob can be assigned to respond to a MIDI CC message. Just click "Learn" beneath the knob, and then activate the control you want to assign to it on your MIDI controller. A CC number will appear below the knob to indicate the assignment was successful. Click on the "Clear" button below it to remove the assignment.
 
 # Motivation / Inspiration
 
