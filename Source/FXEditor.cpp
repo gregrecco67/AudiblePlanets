@@ -26,6 +26,15 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(fxb3Box);
 	addAndMakeVisible(fxb4Box);
 	
+	fxa1Selector.setShowName(false);
+	fxa2Selector.setShowName(false);
+	fxa3Selector.setShowName(false);
+	fxa4Selector.setShowName(false);
+	fxb1Selector.setShowName(false);
+	fxb2Selector.setShowName(false);
+	fxb3Selector.setShowName(false);
+	fxb4Selector.setShowName(false);
+
 	addAndMakeVisible(chainSetting);
     addAndMakeVisible(mod);
 	addAndMakeVisible(matrix);
@@ -81,58 +90,23 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 
 void FXEditor::resized()
 {
-	// x-vals 10, 300, 478, 656, 834, 1116, 1009, 1065
-	// new x-vals 
-
- //   mod.setBounds(10, 7, 280, 303);
-	//matrix.setBounds(10, 320, 280, 320);
-	//
-	//fxa1Selector.setBounds(300, 7, 168, 35); // place these above, adjust the panels' size
-	//fxa2Selector.setBounds(478, 7, 168, 35);
-	//fxa3Selector.setBounds(656, 7, 168, 35);
-	//fxa4Selector.setBounds(834, 7, 168, 35);
-	//
-	//fxa1Box.setBounds(300, 30, 168, 233);
-	//fxa2Box.setBounds(478, 30, 168, 233);
-	//fxa3Box.setBounds(656, 30, 168, 233);
-	//fxa4Box.setBounds(834, 30, 168, 233);
-	//
-	//fxb1Selector.setBounds(300, 320, 168, 35);
-	//fxb2Selector.setBounds(478, 320, 168, 35);
-	//fxb3Selector.setBounds(656, 320, 168, 35);
-	//fxb4Selector.setBounds(834, 320, 168, 35);
-	//
-	//fxb1Box.setBounds(300, 343, 168, 233);
-	//fxb2Box.setBounds(478, 343, 168, 233);
-	//fxb3Box.setBounds(656, 343, 168, 233);
-	//fxb4Box.setBounds(834, 343, 168, 233);
-	//
-	//outLevel.setBounds(1116, 7, 42, 57);
-
-	//chainSetting.setBounds(1009, 289, 168, 35);
- //   
-	//laneAGain.setBounds(1065, 113, 70, 87);
-	//laneBGain.setBounds(1065, 426, 70, 87);
-
-	// editor size:  1186 x 725
-
 	mod.setBounds(900, 7, 280, 303);
 	matrix.setBounds(900, 320, 280, 320);
 
-	fxa1Selector.setBounds(188, 7, 168, 35); 
-	fxa2Selector.setBounds(366, 7, 168, 35);
-	fxa3Selector.setBounds(544, 7, 168, 35);
-	fxa4Selector.setBounds(722, 7, 168, 35);
+	fxa1Selector.setBounds(188, 7, 168, 15); 
+	fxa2Selector.setBounds(366, 7, 168, 15);
+	fxa3Selector.setBounds(544, 7, 168, 15);
+	fxa4Selector.setBounds(722, 7, 168, 15);
 
 	fxa1Box.setBounds(188, 30, 168, 233);
 	fxa2Box.setBounds(366, 30, 168, 233);
 	fxa3Box.setBounds(544, 30, 168, 233);
 	fxa4Box.setBounds(722, 30, 168, 233);
 
-	fxb1Selector.setBounds(188, 320, 168, 35);
-	fxb2Selector.setBounds(366, 320, 168, 35);
-	fxb3Selector.setBounds(544, 320, 168, 35);
-	fxb4Selector.setBounds(722, 320, 168, 35);
+	fxb1Selector.setBounds(188, 320, 168, 15);
+	fxb2Selector.setBounds(366, 320, 168, 15);
+	fxb3Selector.setBounds(544, 320, 168, 15);
+	fxb4Selector.setBounds(722, 320, 168, 15);
 
 	fxb1Box.setBounds(188, 343, 168, 233);
 	fxb2Box.setBounds(366, 343, 168, 233);

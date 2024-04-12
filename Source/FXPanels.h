@@ -50,9 +50,9 @@ public:
 
 		// DL = 3
 		addControl(dltimeleft = new APKnob(proc.stereoDelayParams.timeleft), 0, 0);
-		addControl(dlbeatsleft = new APKnob(proc.stereoDelayParams.beatsleft), 0, 0);
+		addControl(dlbeatsleft = new gin::Select(proc.stereoDelayParams.beatsleft), 0, 0);
 		addControl(dltimeright = new APKnob(proc.stereoDelayParams.timeright), 0, 1);
-		addControl(dlbeatsright = new APKnob(proc.stereoDelayParams.beatsright), 0, 1);
+		addControl(dlbeatsright = new gin::Select(proc.stereoDelayParams.beatsright), 0, 1);
 		addControl(dltemposync = new gin::Select(proc.stereoDelayParams.temposync), 0, 2);
 		addControl(dlfeedback = new APKnob(proc.stereoDelayParams.feedback), 1, 0);
 		addControl(dlcutoff = new APKnob(proc.stereoDelayParams.cutoff), 1, 1);
