@@ -51,7 +51,7 @@ Then, if on Mac OS:
 cmake -B build -G Xcode
 open build/AudiblePlanets.xcodeproj/
 ```
-On Linux (using Ninja):
+On [Linux](https://github.com/juce-framework/JUCE/blob/master/docs/Linux%20Dependencies.md) (using Ninja):
 ```
 cmake -B build -DCMAKE_BUILD_TYPE=Release -G Ninja .
 cd build
