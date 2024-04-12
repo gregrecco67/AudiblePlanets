@@ -324,12 +324,12 @@ void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr)
 
 void APAudioProcessor::MSEGParams::setup(APAudioProcessor& p, juce::String number)
 {
-    sync = p.addExtParam("mseg" + number + "sync", "MSEG" + number + "Sync", "Sync", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
-    rate = p.addExtParam("mseg" + number + "rate", "MSEG" + number + "Rate", "Rate", " Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
-    beat = p.addExtParam("mseg" + number + "beat", "MSEG" + number + "Beat", "Beat", "", { 0.0, float(gin::NoteDuration::getNoteDurations().size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
-    depth = p.addExtParam("mseg" + number + "depth", "MSEG" + number + "Depth", "Depth", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
-    phase = p.addExtParam("mseg" + number + "phase", "MSEG" + number + "Phase", "Phase", "", { -1.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
-    offset = p.addExtParam("mseg" + number + "offset", "MSEG" + number + "Offset", "Offset", "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+    sync = p.addExtParam("mseg" + number + "sync", "MSEG" + number + " Sync", "Sync", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
+    rate = p.addExtParam("mseg" + number + "rate", "MSEG" + number + " Rate", "Rate", " Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
+    beat = p.addExtParam("mseg" + number + "beat", "MSEG" + number + " Beat", "Beat", "", { 0.0, float(gin::NoteDuration::getNoteDurations().size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
+    depth = p.addExtParam("mseg" + number + "depth", "MSEG" + number + " Depth", "Depth", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
+    phase = p.addExtParam("mseg" + number + "phase", "MSEG" + number + " Phase", "Phase", "", { -1.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
+    offset = p.addExtParam("mseg" + number + "offset", "MSEG" + number + " Offset", "Offset", "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
     xgrid = p.addExtParam("mseg" + number + "xgrid", "MSEG" + number + "XGrid", "X Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 10.0, 0.0f);
     ygrid = p.addExtParam("mseg" + number + "ygrid", "MSEG" + number + "YGrid", "Y Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 8.0, 0.0f);
     loop = p.addExtParam("mseg" + number + "loop", "MSEG" + number + "Loop", "Loop", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
@@ -666,23 +666,23 @@ void APAudioProcessor::setupModMatrix()
     modSrcTimbre    = modMatrix.addPolyModSource("mpet", "MPE Timbre", false);
     modSrcModwheel  = modMatrix.addMonoModSource("mw", "Mod Wheel", false);
     modSrcMonoPitchbend = modMatrix.addMonoModSource("pb", "Pitch Wheel", true);
-    modPolyAT = modMatrix.addPolyModSource("polyAT", "Poly Aftertouch", false);
+    modPolyAT = modMatrix.addPolyModSource("polyAT", "Poly AT", false);
     
-    modSrcNote      = modMatrix.addPolyModSource("note", "MIDI Note Number", false);
+    modSrcNote      = modMatrix.addPolyModSource("note", "MIDI Note #", false);
     modSrcVelocity  = modMatrix.addPolyModSource("vel", "MIDI Velocity", false);
 
-    modSrcMonoLFO1 = modMatrix.addMonoModSource("mlfo1", "mono LFO1", true);
-    modSrcMonoLFO2 = modMatrix.addMonoModSource("mlfo2", "mono LFO2", true);
-    modSrcMonoLFO3 = modMatrix.addMonoModSource("mlfo3", "mono LFO3", true);
-    modSrcMonoLFO4 = modMatrix.addMonoModSource("mlfo4", "mono LFO4", true);
+    modSrcMonoLFO1 = modMatrix.addMonoModSource("mlfo1", "Mono LFO1", true);
+    modSrcMonoLFO2 = modMatrix.addMonoModSource("mlfo2", "Mono LFO2", true);
+    modSrcMonoLFO3 = modMatrix.addMonoModSource("mlfo3", "Mono LFO3", true);
+    modSrcMonoLFO4 = modMatrix.addMonoModSource("mlfo4", "Mono LFO4", true);
 
-    modSrcLFO1 = modMatrix.addPolyModSource("lfo1", "poly LFO1", true);
-    modSrcLFO2 = modMatrix.addPolyModSource("lfo2", "poly LFO2", true);
-    modSrcLFO3 = modMatrix.addPolyModSource("lfo3", "poly LFO3", true);
-    modSrcLFO4 = modMatrix.addPolyModSource("lfo4", "poly LFO4", true);
+    modSrcLFO1 = modMatrix.addPolyModSource("lfo1", "Poly LFO1", true);
+    modSrcLFO2 = modMatrix.addPolyModSource("lfo2", "Poly LFO2", true);
+    modSrcLFO3 = modMatrix.addPolyModSource("lfo3", "Poly LFO3", true);
+    modSrcLFO4 = modMatrix.addPolyModSource("lfo4", "Poly LFO4", true);
 
-    modSrcEnv1 = modMatrix.addPolyModSource("env1", "Env1", false);
-    modSrcEnv2 = modMatrix.addPolyModSource("env2", "Env2", false);
+    modSrcEnv1 = modMatrix.addPolyModSource("env1", "ENV1", false);
+    modSrcEnv2 = modMatrix.addPolyModSource("env2", "ENV2", false);
     modSrcEnv3 = modMatrix.addPolyModSource("env3", "Env3", false);
     modSrcEnv4 = modMatrix.addPolyModSource("env4", "Env4", false);
 
