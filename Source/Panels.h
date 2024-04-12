@@ -82,7 +82,7 @@ public:
 		addAndMakeVisible(fixedHz);
 
 		fixedHz.setJustificationType(Justification::centred);
-		fixedHz.setFont(regularFont);
+        fixedHz.setLookAndFeel(&lnf1);
     }
 
     ~OscillatorBox() override
@@ -90,6 +90,7 @@ public:
 		c->setLookAndFeel(nullptr);
 		f->setLookAndFeel(nullptr);
 		r->setLookAndFeel(nullptr);
+        fixedHz.setLookAndFeel(nullptr);
     }
 
 	class APLookAndFeel1 : public APKnobLNF
@@ -140,7 +141,7 @@ public:
 	void resized() override {
 		gin::ParamBox::resized();
 
-		fixedHz.setBounds(56, 76+23, 56, 35);
+		fixedHz.setBounds(56, 76+23+15, 56, 15);
 		phaseKnob->setBounds(56*4, 23, 56, 70);
 	}
 	APLookAndFeel1 lnf1;

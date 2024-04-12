@@ -346,16 +346,16 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
     auto& notes = gin::NoteDuration::getNoteDurations();
 
     
-    attack = p.addExtParam(id + "attack", id + "Attack", "A", "", { 0.0, 60.0, 0.0, 0.2f }, 0.01f, 0.0f, secondsTextFunction);
+    attack = p.addExtParam(id + "attack", id + "Attack", "Attack", "", { 0.0, 60.0, 0.0, 0.2f }, 0.01f, 0.0f, secondsTextFunction);
     if (numStr.getIntValue() == 2) {
-        decay = p.addExtParam(id + "decay", id + "Decay", "D", "", { 0.0, 60.0, 0.0, 0.2f }, 0.45f, 0.0f, secondsTextFunction);
+        decay = p.addExtParam(id + "decay", id + "Decay", "Decay", "", { 0.0, 60.0, 0.0, 0.2f }, 0.45f, 0.0f, secondsTextFunction);
     }
     else {
-        decay = p.addExtParam(id + "decay", id + "Decay", "D", "", { 0.0, 60.0, 0.0, 0.2f }, 0.07f, 0.0f, secondsTextFunction);
+        decay = p.addExtParam(id + "decay", id + "Decay", "Decay", "", { 0.0, 60.0, 0.0, 0.2f }, 0.07f, 0.0f, secondsTextFunction);
     }
-    sustain = p.addExtParam(id + "sustain", id + "Sustain", "S", "%", { 0.0, 100.0, 0.0, 1.0 }, 50.0f, 0.0f);
-    release = p.addExtParam(id + "release", id + "Release", "R", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
-    acurve = p.addExtParam(id + "acurve", id + "ACurve", "A Curve", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
+    sustain = p.addExtParam(id + "sustain", id + "Sustain", "Sustain", "%", { 0.0, 100.0, 0.0, 1.0 }, 50.0f, 0.0f);
+    release = p.addExtParam(id + "release", id + "Release", "Release", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
+    acurve = p.addExtParam(id + "acurve", id + "ACurve", "At Curve", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
     drcurve = p.addExtParam(id + "drcurve", id + "DRCurve", "DR Curve", "", { -1.0, 1.0, 0.0, 1.0 }, -1.0f, 0.0f);
     syncrepeat = p.addExtParam(id + "syncrepeat", id + " SyncRepeat", "Repeat", "", { 0.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, syncrepeatTextFunction);
     time = p.addExtParam(id + "time", id + " Time", "Time", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);

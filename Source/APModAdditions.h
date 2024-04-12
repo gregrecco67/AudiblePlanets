@@ -407,7 +407,7 @@ private:
     int depthWidth = 50;
 };
 
-class APKnobLNF : public juce::LookAndFeel_V4 {
+class APKnobLNF : public APLNF {
 public:
     APKnobLNF() {
         setColour (juce::Slider::thumbColourId, juce::Colour(0xffCC8866));
@@ -676,8 +676,12 @@ public:
         value.setBounds (rc);
         knob.setBounds (r.reduced (2));
 		auto height = value.getHeight();
-		value.setFont(regularFont.withHeight(height*0.8f));
-		name.setFont(regularFont.withHeight(height*0.8f));
+
+        //value.setFont(regularFont.withHeight(height*0.8f));
+		//name.setFont(regularFont.withHeight(height*0.8f));
+        
+        value.setFont(height*0.8f);
+        name.setFont(height*0.8f);
 
 
         modDepthSlider.setBounds (knob.getBounds().removeFromTop (7).removeFromRight (7).reduced (-3));
@@ -971,7 +975,7 @@ protected:
     juce::Array<float> modValues;
     std::function<juce::Array<float> ()> liveValuesCallback;
     APModulationDepthSlider modDepthSlider;
-    juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+    //juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APKnob)
 };

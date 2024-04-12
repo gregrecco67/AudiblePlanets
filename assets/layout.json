@@ -3,12 +3,12 @@
     [
         { "id": "env1", "x": 0, "y": 0, "w": "224", "h": "163", "children":
             [
-                { "id": "A", "x": 0, "y": 23, "w": 56, "h": 70 },
-                { "id": "D", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "S", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "R", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Attack", "x": 0, "y": 23, "w": 56, "h": 70 },
+                { "id": "Decay", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Sustain", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Release", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 
-                { "id": "A Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
+                { "id": "At Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
                 { "id": "DR Curve", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "Repeat", "x":  "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id":  "Time", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70},
@@ -17,12 +17,12 @@
         },
         { "id": "env2", "x": 0, "y": "getB('env1')", "w": "224", "h": "163", "children":
             [
-                { "id": "A", "x": 0, "y": 23, "w": 56, "h": 70 },
-                { "id": "D", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "S", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "R", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Attack", "x": 0, "y": 23, "w": 56, "h": 70 },
+                { "id": "Decay", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Sustain", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Release", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 
-                { "id": "A Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
+                { "id": "At Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
                 { "id": "DR Curve", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "Repeat", "x":  "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id":  "Time", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70},
@@ -31,12 +31,12 @@
         },
         { "id": "env3", "x": 0, "y": "getB('env2')", "w": "224", "h": "163", "children":
             [
-                { "id": "A", "x": 0, "y": 23, "w": 56, "h": 70 },
-                { "id": "D", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "S", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "R", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Attack", "x": 0, "y": 23, "w": 56, "h": 70 },
+                { "id": "Decay", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Sustain", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Release", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 
-                { "id": "A Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
+                { "id": "At Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
                 { "id": "DR Curve", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "Repeat", "x":  "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id":  "Time", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70},
@@ -45,12 +45,12 @@
         },
         { "id": "env4", "x": 0, "y": "getB('env3')", "w": "224", "h": "163", "children":
             [
-                { "id": "A", "x": 0, "y": 23, "w": 56, "h": 70 },
-                { "id": "D", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "S", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
-                { "id": "R", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Attack", "x": 0, "y": 23, "w": 56, "h": 70 },
+                { "id": "Decay", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Sustain", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
+                { "id": "Release", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 
-                { "id": "A Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
+                { "id": "At Curve", "x": 0, "y": "prevB()", "w": 56, "h": 70 },
                 { "id": "DR Curve", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id": "Repeat", "x":  "prevR()", "y": "prevY()", "w": 56, "h": 70 },
                 { "id":  "Time", "x": "prevR()", "y": "prevY()", "w": 56, "h": 70},

@@ -987,10 +987,10 @@ void RandEditor::resized()
 	randomizeButton.setBounds(5*56 , 5, 3*56, 20);
 	clearAllButton.setBounds(5 * 56 + 173, 5, 3*56, 20);
 
-    randNumber.setBounds(5 * 56 , 40, 3*56, 20);
-	randNumberLabel.setBounds(5* 56 + 173, 40, 2*56, 20);
-    randAmount.setBounds(5 * 56 , 65, 3*56, 20);
-	randAmountLabel.setBounds(5 * 56 + 173, 65, 2*56, 20);
+    randNumber.setBounds(5 * 56 , 42, 3*56, 16);
+	randNumberLabel.setBounds(5* 56 + 173, 40, 2*56, 16);
+    randAmount.setBounds(5 * 56 , 67, 3*56, 16);
+	randAmountLabel.setBounds(5 * 56 + 173, 66, 2*56, 16);
 
     randOSCsButton.setBounds(5 * 56 , 105, 3*56, 20);
 	inharmonic.setBounds(5 * 56 + 173, 105, 2 * 56, 20);

@@ -107,7 +107,7 @@ public:
     }
     
 
-	class MIDILearnLNF : public gin::CopperLookAndFeel
+	class MIDILearnLNF : public APLNF
 	{
 	public:
 		MIDILearnLNF()
@@ -124,7 +124,7 @@ public:
         
         juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 	} midilearnLNF;
-
+    
 	juce::String currentAssignment;
 	APAudioProcessor& proc;
 	bool learning{ false };
@@ -787,6 +787,7 @@ public:
 		addControl(knob = new APKnob(macroDst_), 0, 0, 1.5, 1.5);
 		addAndMakeVisible(paramSelector);
 		addAndMakeVisible(midiLearnButton);
+        //midiLearnButton.setFont(20.f);
 		addControl(new MacrosModMatrixBox(proc, proc.modMatrix, macroSrc, name, 70), 2, 0, 6, 4);
 		midiLearnButton.setMacroNumber(macroNumber);
 		macroCC->addListener(this);
