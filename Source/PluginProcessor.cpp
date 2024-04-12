@@ -683,8 +683,8 @@ void APAudioProcessor::setupModMatrix()
 
     modSrcEnv1 = modMatrix.addPolyModSource("env1", "ENV1", false);
     modSrcEnv2 = modMatrix.addPolyModSource("env2", "ENV2", false);
-    modSrcEnv3 = modMatrix.addPolyModSource("env3", "Env3", false);
-    modSrcEnv4 = modMatrix.addPolyModSource("env4", "Env4", false);
+    modSrcEnv3 = modMatrix.addPolyModSource("env3", "ENV3", false);
+    modSrcEnv4 = modMatrix.addPolyModSource("env4", "ENV4", false);
 
     modSrcMSEG1 = modMatrix.addPolyModSource("mseg1", "MSEG1", false);
     modSrcMSEG2 = modMatrix.addPolyModSource("mseg2", "MSEG2", false);
