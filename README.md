@@ -51,11 +51,11 @@ Then, if on Mac OS:
 cmake -B build -G Xcode
 open build/AudiblePlanets.xcodeproj/
 ```
-On Linux:
+On Linux (using Ninja):
 ```
-cmake -B build .
-cd build/release
-make
+cmake -B build -DCMAKE_BUILD_TYPE=Release -G Ninja .
+cd build
+ninja
 ```
 On Windows, using Visual Studio, just open the folder and wait for it to parse the CMake file. The CMake project defaults to producing a standalone version of the plugin, too, but on Windows at least, the performance is poor. If you don't want it or any other particular format built, just remove the entry from the `FORMAT` line in `juce_add_plugin` in `CMakeLists.txt`. The project is configured to copy the plugin to the right place after building it.
 
