@@ -152,6 +152,7 @@ public:
 	gin::ParamComponent::Ptr c = nullptr, f = nullptr, r = nullptr;
 	Label fixedHz;
 	MoonKnob* phaseKnob;
+    juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 };
 
 //==============================================================================

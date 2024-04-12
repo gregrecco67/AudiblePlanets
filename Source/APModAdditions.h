@@ -971,6 +971,7 @@ protected:
     juce::Array<float> modValues;
     std::function<juce::Array<float> ()> liveValuesCallback;
     APModulationDepthSlider modDepthSlider;
+    juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APKnob)
 };

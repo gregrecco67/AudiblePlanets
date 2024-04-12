@@ -90,6 +90,7 @@ public:
 		return regularFont;
 	}
 
+    juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 };
 
 
