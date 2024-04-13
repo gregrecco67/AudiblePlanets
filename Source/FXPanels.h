@@ -399,7 +399,29 @@ public:
 		setName("mtx");
 
 		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.1);
+		addAndMakeVisible(clearAllButton);
+		clearAllButton.onClick = [this] { clearAll(); };
 	}
+
+	void resized() override {
+		gin::ParamBox::resized();
+		clearAllButton.setBounds(getWidth() - 60, 0, 55, 23);
+	}
+
+	void clearAll() {
+		auto& params = proc.getPluginParameters();
+		for (auto* param : params) {
+			if (param->getModIndex() == -1) continue;
+			if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
+				auto modSrcs = proc.modMatrix.getModSources(param);
+				for (auto& modSrc : modSrcs) {
+					proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+				}
+			}
+		}
+	}
+
+	TextButton clearAllButton{ "Clear All" };
 
 	APAudioProcessor& proc;
 };

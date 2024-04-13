@@ -34,9 +34,9 @@ private:
 
 	MsegMatrixBox msegMatrixBox{"Mod Matrix", proc};
 	MsegModBox msegModBox{"Mod Sources", proc};
-	MsegBox mseg1Box{"MSEG1", proc, proc.mseg1Params, proc.mseg1Data};
-	MsegBox mseg2Box{"MSEG2", proc, proc.mseg2Params, proc.mseg2Data};
-	MsegBox mseg3Box{"MSEG3", proc, proc.mseg3Params, proc.mseg3Data};
-	MsegBox mseg4Box{"MSEG4", proc, proc.mseg4Params, proc.mseg4Data};
+	MsegBox mseg1Box{"MSEG1", proc, proc.mseg1Params, proc.mseg1Data, proc.modSrcMSEG1};
+	MsegBox mseg2Box{"MSEG2", proc, proc.mseg2Params, proc.mseg2Data, proc.modSrcMSEG2};
+	MsegBox mseg3Box{"MSEG3", proc, proc.mseg3Params, proc.mseg3Data, proc.modSrcMSEG3};
+	MsegBox mseg4Box{"MSEG4", proc, proc.mseg4Params, proc.mseg4Data, proc.modSrcMSEG4};
 
 };

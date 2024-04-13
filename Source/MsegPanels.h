@@ -41,10 +41,30 @@ public:
 		: gin::ParamBox(name), proc(proc_)
 	{
 		setName("msegmtx");
-
+		addAndMakeVisible(clearAllButton);
 		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.286);
+		clearAllButton.onClick = [this] { clearAll(); };
 	}
 
+	void resized() override {
+		gin::ParamBox::resized();
+		clearAllButton.setBounds(getWidth() - 60, 0, 55, 23);
+	}
+
+	void clearAll() {
+		auto& params = proc.getPluginParameters();
+		for (auto* param : params) {
+			if (param->getModIndex() == -1) continue;
+			if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
+				auto modSrcs = proc.modMatrix.getModSources(param);
+				for (auto& modSrc : modSrcs) {
+					proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+				}
+			}
+		}
+	}
+
+	TextButton clearAllButton{ "Clear All" };
 	APAudioProcessor& proc;
 
 };
@@ -52,8 +72,12 @@ public:
 class MsegBox : public gin::ParamBox
 {
 public:
-	MsegBox(const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::MSEGParams& msegParams_, gin::MSEG::Data& data_)
-		: gin::ParamBox(name), proc(proc_), msegParams(msegParams_), msegComponent(data_)
+	MsegBox(const juce::String& name,
+		APAudioProcessor& proc_,
+		APAudioProcessor::MSEGParams& msegParams_,
+		gin::MSEG::Data& data_,
+		gin::ModSrcId msegSrc_)
+		: gin::ParamBox(name), proc(proc_), msegParams(msegParams_), msegComponent(data_), msegSrc(msegSrc_)
 	{
 		setName(name);
 		//addMouseListener(this, false);
@@ -69,25 +93,26 @@ public:
 		addControl(new APKnob(msegParams.offset), 4, 0);
 		addControl(new gin::Select(msegParams.draw), 5, 0);
 		addControl(new gin::Select(msegParams.drawmode), 6, 0);
-        addControl(x = new gin::Select(msegParams.xgrid));
-        addControl(y = new gin::Select(msegParams.ygrid));
+		addControl(x = new gin::Select(msegParams.xgrid));
+		addControl(y = new gin::Select(msegParams.ygrid));
 		watchParam(msegParams.sync);
 		watchParam(msegParams.draw);
 		watchParam(msegParams.drawmode);
 		addAndMakeVisible(msegComponent);
+		addAndMakeVisible(msegDstSelector);
 		switch (msegParams.num) {
-			case 1:
-				msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG1Phases(); };
-				break;
-			case 2:
-				msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG2Phases(); };
-				break;
-			case 3:
-				msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG3Phases(); };
-				break;
-			case 4:
-				msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG4Phases(); };
-				break;
+		case 1:
+			msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG1Phases(); };
+			break;
+		case 2:
+			msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG2Phases(); };
+			break;
+		case 3:
+			msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG3Phases(); };
+			break;
+		case 4:
+			msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG4Phases(); };
+			break;
 		}
 	}
 
@@ -166,15 +191,18 @@ public:
 	void resized() override {
 		gin::ParamBox::resized();
 		msegComponent.setBounds(0, 93, getWidth(), getHeight() - 93);
-        x->setBounds(7 * 56, 23, 56, 35);
-        y->setBounds(7 * 56, 58, 56, 35);
+		x->setBounds(7 * 56, 23, 56, 35);
+		y->setBounds(7 * 56, 58, 56, 35);
+		msegDstSelector.setBounds(5, 0, 55, 23);
 	}
 
 	APAudioProcessor& proc;
 	gin::ParamComponent::Ptr r = nullptr;
 	gin::ParamComponent::Ptr b = nullptr;
-    gin::ParamComponent::Ptr x = nullptr;
-    gin::ParamComponent::Ptr y = nullptr;
+	gin::ParamComponent::Ptr x = nullptr;
+	gin::ParamComponent::Ptr y = nullptr;
+	gin::ModSrcId msegSrc;
+	ParameterSelector msegDstSelector{proc, msegSrc};
 	APAudioProcessor::MSEGParams& msegParams;
 	gin::MSEGComponent msegComponent;
 };
