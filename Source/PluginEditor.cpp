@@ -28,7 +28,6 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	tabbed.addTab("5. Macros", APColors::tabBkgd, &tab5, false, 4);
 
     tabbed.setLookAndFeel(&tabLNF);
-//    tab1.setLookAndFeel(&tabLNF);
     
     tab1.addAndMakeVisible(editor);
 	tab2.addAndMakeVisible(fxEditor);

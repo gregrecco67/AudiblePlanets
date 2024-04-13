@@ -69,7 +69,7 @@ public:
 			g.setColour(juce::Colour(0xffCC8866).brighter(0.6f));
 		}
 		else {
-			g.setColour(button.findColour(button.getToggleState() ? TextButton::textColourOnId : TextButton::textColourOffId));
+			g.setColour(button.findColour(button.getToggleState() ? TextButton::textColourOnId : TextButton::textColourOffId).brighter(0.5f));
 		}
 		const int yIndent = jmin(4, button.proportionOfHeight(0.3f));
 		const int cornerSize = jmin(button.getHeight(), button.getWidth()) / 2;

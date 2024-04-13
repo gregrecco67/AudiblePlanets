@@ -407,7 +407,7 @@ private:
     int depthWidth = 50;
 };
 
-class APKnobLNF : public APLNF {
+class APKnobLNF : public juce::LookAndFeel_V4 {
 public:
     APKnobLNF() {
         setColour (juce::Slider::thumbColourId, juce::Colour(0xffCC8866));

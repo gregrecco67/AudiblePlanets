@@ -82,7 +82,8 @@ public:
 		addAndMakeVisible(fixedHz);
 
 		fixedHz.setJustificationType(Justification::centred);
-        fixedHz.setLookAndFeel(&lnf1);
+		juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+		fixedHz.setFont(regularFont.withHeight(12));
     }
 
     ~OscillatorBox() override
@@ -131,7 +132,7 @@ public:
 		gin::ParamBox::paramChanged();
 		if (osc.fixed->isOn()) {
 			fixedHz.setVisible(true);
-			fixedHz.setText(String((osc.coarse->getUserValue() + osc.fine->getUserValue()) * 100) + String(" Hz"), juce::dontSendNotification);
+			fixedHz.setText(String((osc.coarse->getUserValue() + osc.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
 		}
 		else {
 			fixedHz.setVisible(false);
