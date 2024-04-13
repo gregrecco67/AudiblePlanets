@@ -415,6 +415,14 @@ public:
         setColour (juce::Slider::trackColourId, juce::Colour(0xff797C84));
     }
     
+	juce::Font getLabelFont(juce::Label& label) override
+	{
+		return regularFont.withHeight(label.getHeight() * 0.8f);
+		//return regularFont.withHeight(11);
+	}
+
+	juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+
     void drawRotarySlider (juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
                                            const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider)
     {
@@ -530,6 +538,9 @@ public:
         addAndMakeVisible (knob);
         addChildComponent (modDepthSlider);
         setLookAndFeel(&knobLNF);
+
+		value.setFont(regularFont);
+		name.setFont(regularFont);
         
         modDepthSlider.setRange (-1.0, 1.0, 0.001);
         modDepthSlider.setPopupDisplayEnabled (true, true, findParentComponentOfClass<juce::AudioProcessorEditor>());
@@ -677,8 +688,7 @@ public:
         knob.setBounds (r.reduced (2));
 		auto height = value.getHeight();
 
-        //value.setFont(regularFont.withHeight(height*0.8f));
-		//name.setFont(regularFont.withHeight(height*0.8f));
+
         
         value.setFont(height*0.8f);
         name.setFont(height*0.8f);
@@ -974,7 +984,7 @@ protected:
     juce::Array<float> modValues;
     std::function<juce::Array<float> ()> liveValuesCallback;
     APModulationDepthSlider modDepthSlider;
-    //juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+    juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APKnob)
 };
