@@ -3,16 +3,15 @@
 
 An expressive, quasi-Ptolemaic semi-modular synthesizer.
 
-![page1](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/78278e55-f174-4492-b56b-a9d59bdc3cd6)
+![page1](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/d4871f44-aaa1-4d55-a1bb-35076aaa8151)
 
-![page2](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/48b1f6f5-b148-496e-a3cf-c009202ebd02)
+![page2](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/3d99cfb0-53d5-4360-ad62-f8834a5d27dd)
 
-![page3](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/1c74e79c-fcd1-4025-9138-389d88145902)
+![page3](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/77f21438-c39b-43c8-8e44-87383a12191d)
 
-![page4](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/f9c1549a-1501-48c8-b99e-cab07ccccdb1)
+![page4](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/d98944ea-9654-4706-b3cd-5db130f362bf)
 
-![page5](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/6ddbacf2-edd9-4cb3-b803-98a868b20ad4)
-
+![page5](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/4ac4314b-9c92-4756-8b09-0731ffd1f935)
 
 ## Features
 
