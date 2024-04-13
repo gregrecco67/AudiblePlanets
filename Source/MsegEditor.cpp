@@ -14,18 +14,12 @@ MsegEditor::MsegEditor(APAudioProcessor& proc_) : proc(proc_)
 void MsegEditor::resized()
 {
 	mseg1Box.setBounds(0, 0, 450, 323);
-	mseg2Box.setBounds(455, 0, 435, 323);
+	mseg2Box.setBounds(452, 0, 450, 323);
 	mseg3Box.setBounds(0, 329, 450, 323);
-	mseg4Box.setBounds(455, 329, 435, 323);
-	msegModBox.setBounds(895, 0, 280, 303);
-	msegMatrixBox.setBounds(895, 313, 280, 303);
+	mseg4Box.setBounds(452, 329, 450, 323);
+	msegModBox.setBounds(905, 0, 270, 323);
+	msegMatrixBox.setBounds(905, 329, 270, 323);
 }
-
-
-
-//void MsegEditor::valueUpdated(gin::Parameter* param)
-//{
-//}
 
 void MsegEditor::timerCallback()
 {

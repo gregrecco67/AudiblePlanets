@@ -45,7 +45,6 @@ public:
 		}
 		float t = rc.getY();
 		float h = rc.getHeight();
-		auto c = rc.getCentreX();
 		g.fillRect(juce::Rectangle<float>(0, t, sliderPos, h));
 
 	}
@@ -66,7 +65,7 @@ public:
 		setLookAndFeel(nullptr);
 	}
 
-	void mouseDown(const juce::MouseEvent& ev) override
+	void mouseDown(const juce::MouseEvent& /*ev*/) override
 	{
         if (thisMacroNumber == 1) {
             if (proc.macroParams.macro1cc->getUserValue() > 0.f) { return; }
@@ -238,16 +237,14 @@ private:
 				{
 					auto& a = owner.assignments.getReference(row);
 					auto parameter = a.dst;
-					auto dstId = gin::ModDstId(parameter->getModIndex());
 					auto range = parameter->getUserRange();
 					auto userValue = range.convertFrom0to1(float(paramSlider.getValue()));
 					parameter->setUserValue(userValue);
 					auto legalValue = range.snapToLegalValue(userValue);
 					paramSlider.setValue(range.convertTo0to1(legalValue));
-					auto defaultValue = parameter->getUserDefaultValue();
 				};
 
-			paramSlider.onTextFromValue = [this](double value)
+			paramSlider.onTextFromValue = [this](double /*value*/)
 				{
 					auto& a = owner.assignments.getReference(row);
 					auto parameter = a.dst;

@@ -25,9 +25,10 @@ public:
 	{
 		setName("msegmod");
 		setTitle("mod sources");
-		addControl(new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 4);
+		addControl(srclist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 4.286);
+        srclist->setRowHeight(20);
 	}
-
+    gin::ModSrcListBox* srclist;
 	APAudioProcessor& proc;
 };
 
@@ -41,7 +42,7 @@ public:
 	{
 		setName("msegmtx");
 
-		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.224);
+		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.286);
 	}
 
 	APAudioProcessor& proc;
@@ -68,6 +69,8 @@ public:
 		addControl(new APKnob(msegParams.offset), 4, 0);
 		addControl(new gin::Select(msegParams.draw), 5, 0);
 		addControl(new gin::Select(msegParams.drawmode), 6, 0);
+        addControl(x = new gin::Select(msegParams.xgrid));
+        addControl(y = new gin::Select(msegParams.ygrid));
 		watchParam(msegParams.sync);
 		watchParam(msegParams.draw);
 		watchParam(msegParams.drawmode);
@@ -163,11 +166,15 @@ public:
 	void resized() override {
 		gin::ParamBox::resized();
 		msegComponent.setBounds(0, 93, getWidth(), getHeight() - 93);
+        x->setBounds(7 * 56, 23, 56, 35);
+        y->setBounds(7 * 56, 58, 56, 35);
 	}
 
 	APAudioProcessor& proc;
 	gin::ParamComponent::Ptr r = nullptr;
 	gin::ParamComponent::Ptr b = nullptr;
+    gin::ParamComponent::Ptr x = nullptr;
+    gin::ParamComponent::Ptr y = nullptr;
 	APAudioProcessor::MSEGParams& msegParams;
 	gin::MSEGComponent msegComponent;
 };

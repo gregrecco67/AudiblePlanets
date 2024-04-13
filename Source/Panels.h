@@ -336,9 +336,11 @@ public:
     {
         setName("mod");
         setTitle("mod sources");
-        addControl(new gin::ModSrcListBox(proc.modMatrix), 0, 0, 3, 2);
+        addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 3, 2);
+        modlist->setRowHeight(20);
     }
 
+    gin::ModSrcListBox* modlist;
     APAudioProcessor& proc;
 };
 

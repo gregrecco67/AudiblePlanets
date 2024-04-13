@@ -51,7 +51,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 }
 
 bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*originatingComponent*/) {
-        if (key.isKeyCode(49) || key.isKeyCode(juce::KeyPress::numberPad1)) {
+        if (key.isKeyCode(49) || key.isKeyCode(juce::KeyPress::numberPad1)) { // 1-5 for tab select
             tabbed.setCurrentTabIndex(0);
             return true;
         }
@@ -71,9 +71,9 @@ bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*origin
 			tabbed.setCurrentTabIndex(4);
 			return true;
 		}
-		if (key.isKeyCode(juce::KeyPress::escapeKey)) {
+		if (key.isKeyCode(juce::KeyPress::escapeKey) || key.isKeyCode(76)) { // "L" for learning
 			proc.modMatrix.disableLearn();
-			return true;
+			return !key.isKeyCode(76); // let the "L" through, since it's often a note
 		}
         return false;
 }

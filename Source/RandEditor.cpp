@@ -164,6 +164,21 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
 	decreaseAllButton.onClick = [this] { decreaseAll(); };
 	decreaseAllButton.setLookAndFeel(&laf);
 
+    addAndMakeVisible(level);
+    addAndMakeVisible(again);
+    addAndMakeVisible(bgain);
+    again.setDisplayName("A Gain");
+    bgain.setDisplayName("B Gain");
+    
+    addAndMakeVisible(fxa1Selector);
+    addAndMakeVisible(fxb1Selector);
+    addAndMakeVisible(fxa2Selector);
+    addAndMakeVisible(fxb2Selector);
+    addAndMakeVisible(fxa3Selector);
+    addAndMakeVisible(fxb3Selector);
+    addAndMakeVisible(fxa4Selector);
+    addAndMakeVisible(fxb4Selector);
+    
 	addAndMakeVisible(env1Box);
 	addAndMakeVisible(env2Box);
 	addAndMakeVisible(env3Box);
@@ -982,15 +997,18 @@ void RandEditor::clearFXSelect()
 
 void RandEditor::resized()
 {
-	matrix.setBounds(0, 5, 5*56, 8*70+23);
+	matrix.setBounds(0, 0, 5*56, 8*70+23);
 
-	randomizeButton.setBounds(5*56 , 5, 3*56, 20);
-	clearAllButton.setBounds(5 * 56 + 173, 5, 3*56, 20);
+	randomizeButton.setBounds(5*56 , 0, 3*56, 20);
+	clearAllButton.setBounds(5 * 56 + 173, 0, 3*56, 20);
+    
+    increaseAllButton.setBounds(5 * 56      , 22, 3*56, 20);
+    decreaseAllButton.setBounds(5 * 56 + 173, 22, 3*56, 20);
 
-    randNumber.setBounds(5 * 56 , 42, 3*56, 16);
-	randNumberLabel.setBounds(5* 56 + 173, 40, 2*56, 16);
-    randAmount.setBounds(5 * 56 , 67, 3*56, 16);
-	randAmountLabel.setBounds(5 * 56 + 173, 66, 2*56, 16);
+    randNumber.setBounds        (5 * 56     , 52, 3*56, 16);
+	randNumberLabel.setBounds   (5* 56 + 173, 50, 2*56, 16);
+    randAmount.setBounds        (5 * 56     , 77, 3*56, 16);
+	randAmountLabel.setBounds   (5* 56 + 173, 76, 2*56, 16);
 
     randOSCsButton.setBounds(5 * 56 , 105, 3*56, 20);
 	inharmonic.setBounds(5 * 56 + 173, 105, 2 * 56, 20);
@@ -1046,17 +1064,29 @@ void RandEditor::resized()
 	randFXSelectButton.setBounds(5 * 56, 530, 3*56, 20);
 	clearFXSelectButton.setBounds(5 * 56 + 173, 530, 3*56, 20);
 
-	increaseAllButton.setBounds(5 * 56 , 570, 3*56, 20);
-	decreaseAllButton.setBounds(5 * 56 + 173, 570, 3*56, 20);
     
-	env1Box.setBounds(624, 0,   56 * 6, 70 * 2 + 23);
-	env2Box.setBounds(624, 163, 56 * 6, 70 * 2 + 23);
-	env3Box.setBounds(624, 326, 56 * 6, 70 * 2 + 23);
-	env4Box.setBounds(624, 489, 56 * 6, 70 * 2 + 23);
+    // gutter  588-652
+    level.setBounds(0,   590, 48, 60);
+    again.setBounds(50,  590, 48, 60);
+    bgain.setBounds(100, 590, 48, 60);
+    
+    fxa1Selector.setBounds(149, 590, 117, 30 );
+    fxb1Selector.setBounds(149, 620, 117, 30 );
+    fxa2Selector.setBounds(266, 590, 117, 30 );
+    fxb2Selector.setBounds(266, 620, 117, 30 );
+    fxa3Selector.setBounds(383, 590, 117, 30 );
+    fxb3Selector.setBounds(383, 620, 117, 30 );
+    fxa4Selector.setBounds(500, 590, 117, 30 );
+    fxb4Selector.setBounds(500, 620, 117, 30 );
 
-	osc1Box.setBounds(626 + 56 * 6, 0, 56 * 4, 70 * 2 + 23);
-	osc2Box.setBounds(626 + 56 * 6, 163, 56 * 4, 70 * 2 + 23);
-	osc3Box.setBounds(626 + 56 * 6, 326, 56 * 4, 70 * 2 + 23);
-	osc4Box.setBounds(626 + 56 * 6, 489, 56 * 4, 70 * 2 + 23);
+	env1Box.setBounds(621, 0,   56 * 6, 70 * 2 + 23);
+	env2Box.setBounds(621, 163, 56 * 6, 70 * 2 + 23);
+	env3Box.setBounds(621, 326, 56 * 6, 70 * 2 + 23);
+	env4Box.setBounds(621, 489, 56 * 6, 70 * 2 + 23);
+
+	osc1Box.setBounds(623 + 56 * 6, 0, 56 * 4, 70 * 2 + 23);
+	osc2Box.setBounds(623 + 56 * 6, 163, 56 * 4, 70 * 2 + 23);
+	osc3Box.setBounds(623 + 56 * 6, 326, 56 * 4, 70 * 2 + 23);
+	osc4Box.setBounds(623 + 56 * 6, 489, 56 * 4, 70 * 2 + 23);
 
 }

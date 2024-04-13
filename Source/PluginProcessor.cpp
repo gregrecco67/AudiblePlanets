@@ -233,6 +233,10 @@ static juce::String msegDrawModeTextFunction(const gin::Parameter&, float v)
     }
 }
 
+static juce::String gridTextFunction(const gin::Parameter&, float v)
+{
+    return juce::String (v, 0);
+}
 
 //==============================================================================
 void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr)
@@ -330,8 +334,8 @@ void APAudioProcessor::MSEGParams::setup(APAudioProcessor& p, juce::String numbe
     depth = p.addExtParam("mseg" + number + "depth", "MSEG" + number + " Depth", "Depth", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
     phase = p.addExtParam("mseg" + number + "phase", "MSEG" + number + " Phase", "Phase", "", { -1.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
     offset = p.addExtParam("mseg" + number + "offset", "MSEG" + number + " Offset", "Offset", "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-    xgrid = p.addExtParam("mseg" + number + "xgrid", "MSEG" + number + "XGrid", "X Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 10.0, 0.0f);
-    ygrid = p.addExtParam("mseg" + number + "ygrid", "MSEG" + number + "YGrid", "Y Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 8.0, 0.0f);
+    xgrid = p.addExtParam("mseg" + number + "xgrid", "MSEG" + number + "XGrid", "X Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 10.0, 0.0f, gridTextFunction);
+    ygrid = p.addExtParam("mseg" + number + "ygrid", "MSEG" + number + "YGrid", "Y Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 8.0, 0.0f, gridTextFunction);
     loop = p.addExtParam("mseg" + number + "loop", "MSEG" + number + "Loop", "Loop", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
     enable = p.addIntParam("mseg" + number + "enable", "MSEG" + number + "Enable", "Enable", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
     draw = p.addIntParam("mseg" + number + "draw", "MSEG" + number + "Draw", "Draw", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
@@ -450,7 +454,7 @@ void APAudioProcessor::StereoDelayParams::setup(APAudioProcessor& p)
     feedback = p.addExtParam(pfx + "feedback",   name + "Feedback", "Feedback", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f, percentTextFunction);
     wet = p.addExtParam(pfx + "wet",        name + "Wet", "Wet", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f, percentTextFunction);
     dry = p.addExtParam(pfx + "dry",        name + "Dry", "Dry", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f, percentTextFunction);
-    cutoff = p.addExtParam(pfx + "cutoff",     name + "Cutoff", "Cutoff", " Hz", { 20.0f, 20000.0f, 0.0, 0.3f }, 10000.0f, 0.0f);
+    cutoff = p.addExtParam(pfx + "cutoff",     name + "Cutoff", "LP Cutoff", " Hz", { 20.0f, 20000.0f, 0.0, 0.3f }, 10000.0f, 0.0f);
 }
 
 //==============================================================================

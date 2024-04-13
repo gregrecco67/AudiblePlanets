@@ -133,6 +133,17 @@ public:
 private:
 	APAudioProcessor& proc;
 	RandMatrixBox matrix{ "matrix", proc };
+    gin::Select fxa1Selector{proc.fxOrderParams.fxa1},
+        fxa2Selector{ proc.fxOrderParams.fxa2 },
+        fxa3Selector{ proc.fxOrderParams.fxa3 },
+        fxa4Selector{ proc.fxOrderParams.fxa4 },
+        fxb1Selector{ proc.fxOrderParams.fxb1 },
+        fxb2Selector{ proc.fxOrderParams.fxb2 },
+        fxb3Selector{ proc.fxOrderParams.fxb3 },
+        fxb4Selector{ proc.fxOrderParams.fxb4 };
+    APKnob again{ proc.fxOrderParams.laneAGain };
+    APKnob bgain{ proc.fxOrderParams.laneBGain };
+    APKnob level{ proc.globalParams.level };
 	juce::TextButton randomizeButton{ "Randomize All" }, clearAllButton{ "Clear All" },
 		randOSCsButton{ "Randomize OSCs" }, // toggle button here for inharmonic
 		randInharmonicButton{ "Randomize Inharm." }, resetInharmonicButton{ "Reset Inharmonic" },

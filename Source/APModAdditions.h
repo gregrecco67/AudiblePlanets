@@ -874,7 +874,6 @@ protected:
             auto dst = gin::ModDstId (parameter->getModIndex());
 			for (auto src : mm->getModSources(parameter))
 			{
-				bool current{ false };
 				if (currentModSrc == gin::ModSrcId{ -1 }) { currentModSrc = src; }
 			}
 
