@@ -46,7 +46,7 @@ private:
 			float max = (float)getMaximum();
 			auto height = (float)getHeight();
 			auto width = (float)getWidth();
-			int sliderVal = std::clamp((int)((val - min) / (max - min) * (numFrames_ - 1)), 0, 125);
+			int sliderVal = std::clamp((int)((max - val) / (max - min) * (numFrames_ - 1)), 0, 125);
 			g.drawImage(filmStrip, 0, 0, (int)width, (int)height, sliderVal * frameWidth, 0, 128, 128);
 			g.setColour(juce::Colours::white.withAlpha(0.9f));
 
