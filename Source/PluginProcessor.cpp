@@ -346,24 +346,25 @@ void APAudioProcessor::MSEGParams::setup(APAudioProcessor& p, juce::String numbe
 //==============================================================================
 void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
 {
-    String id = "ENV" + numStr;
+    String id = "env" + numStr;
+	String nm = "ENV" + numStr;
     auto& notes = gin::NoteDuration::getNoteDurations();
 
     
-    attack = p.addExtParam(id + "attack", id + " Attack", "Attack", "", { 0.0, 60.0, 0.0, 0.2f }, 0.01f, 0.0f, secondsTextFunction);
+    attack = p.addExtParam(id + "attack",	nm + " Attack", "Attack", "", { 0.0, 60.0, 0.0, 0.2f }, 0.01f, 0.0f, secondsTextFunction);
     if (numStr.getIntValue() == 2) {
-        decay = p.addExtParam(id + "decay", id + " Decay", "Decay", "", { 0.0, 60.0, 0.0, 0.2f }, 0.45f, 0.0f, secondsTextFunction);
+        decay = p.addExtParam(id + "decay", nm + " Decay", "Decay", "", { 0.0, 60.0, 0.0, 0.2f }, 0.45f, 0.0f, secondsTextFunction);
     }
     else {
-        decay = p.addExtParam(id + "decay", id + " Decay", "Decay", "", { 0.0, 60.0, 0.0, 0.2f }, 0.07f, 0.0f, secondsTextFunction);
+        decay = p.addExtParam(id + "decay", nm + " Decay", "Decay", "", { 0.0, 60.0, 0.0, 0.2f }, 0.07f, 0.0f, secondsTextFunction);
     }
-    sustain = p.addExtParam(id + "sustain", id + " Sustain", "Sustain", "%", { 0.0, 100.0, 0.0, 1.0 }, 50.0f, 0.0f);
-    release = p.addExtParam(id + "release", id + " Release", "Release", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
-    acurve = p.addExtParam(id + "acurve", id + " ACurve", "At Curve", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
-    drcurve = p.addExtParam(id + "drcurve", id + " DRCurve", "DR Curve", "", { -1.0, 1.0, 0.0, 1.0 }, -1.0f, 0.0f);
-    syncrepeat = p.addExtParam(id + "syncrepeat", id + " SyncRepeat", "Repeat", "", { 0.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, syncrepeatTextFunction);
-    time = p.addExtParam(id + "time", id + " Time", "Time", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
-    duration = p.addExtParam(id + "beat", id + " Beat", "Beat", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
+    sustain = p.addExtParam(id + "sustain", nm + " Sustain", "Sustain", "%", { 0.0, 100.0, 0.0, 1.0 }, 50.0f, 0.0f);
+    release = p.addExtParam(id + "release", nm + " Release", "Release", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
+    acurve = p.addExtParam(id + "acurve",	nm + " ACurve", "At Curve", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
+    drcurve = p.addExtParam(id + "drcurve", nm + " DRCurve", "DR Curve", "", { -1.0, 1.0, 0.0, 1.0 }, -1.0f, 0.0f);
+    syncrepeat = p.addExtParam(id + "syncrepeat", nm + " SyncRepeat", "Repeat", "", { 0.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, syncrepeatTextFunction);
+    time = p.addExtParam(id + "time", nm + " Time", "Time", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
+    duration = p.addExtParam(id + "beat", nm + " Beat", "Beat", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
 
     sustain->conversionFunction = [](float in) { return in / 100.0f; };
     this->num = numStr.getIntValue();
