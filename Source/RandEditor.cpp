@@ -157,6 +157,20 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
 	clearFXSelectButton.onClick = [this] { clearFXSelect(); };
 	clearFXSelectButton.setLookAndFeel(&laf);
 
+    addAndMakeVisible(randMSEGButton);
+	randMSEGButton.onClick = [this] { randomizeMSEG(); };
+	randMSEGButton.setLookAndFeel(&laf);
+	addAndMakeVisible(clearMSEGButton);
+	clearMSEGButton.onClick = [this] { clearMSEG(); };
+	clearMSEGButton.setLookAndFeel(&laf);
+    
+    addAndMakeVisible(randMacrosButton);
+	randMacrosButton.onClick = [this] { randomizeMacros(); };
+	randMacrosButton.setLookAndFeel(&laf);
+	addAndMakeVisible(clearMacrosButton);
+	clearMacrosButton.onClick = [this] { clearMacros(); };
+	clearMacrosButton.setLookAndFeel(&laf);
+    
 	addAndMakeVisible(increaseAllButton);
 	increaseAllButton.onClick = [this] { increaseAll(); };
 	increaseAllButton.setLookAndFeel(&laf);
@@ -204,16 +218,17 @@ void RandEditor::randomize()
     
 	// below is useful to get the number of modifiable parameters
 // ----------------
-/*    auto& params = proc.getPluginParameters();
+/*   auto& params = proc.getPluginParameters();
     for (auto& param : params) {
 		std::cout << param->getModIndex() << std::endl;
     }
 // ----------------*/
 	
-	std::uniform_int_distribution<> paramsDist{0, 239};
+	std::uniform_int_distribution<> paramsDist{0, 243};
     auto numSrcs = proc.modMatrix.getNumModSources();
     std::uniform_int_distribution<> srcsDist{0, numSrcs - 1};
 	std::uniform_int_distribution<> functionDist{ 0, 19 };
+    
     
     int numMods = (int)randNumber.getValue();
     for (int i = 0; i < numMods; i++) {
@@ -221,7 +236,9 @@ void RandEditor::randomize()
         auto modDst = gin::ModDstId(paramsDist(gen));
 		auto depth = proc.modMatrix.getModDepth(modSrc, modDst);
 		auto sign = modDist(gen) >= 0 ? 1 : -1;
-		proc.modMatrix.setModDepth(modSrc, modDst, (float)std::clamp(depth + sign * randAmount.getValue(), -1., 1.));
+		proc.modMatrix.setModDepth(modSrc, modDst, (float)std::clamp(depth +
+            sign * modDist(gen) * randAmount.getValue() * .5f + randAmount.getValue() * 0.5f,
+            -1., 1.));
 		proc.modMatrix.setModFunction(modSrc, modDst, gin::ModMatrix::Function(functionDist(gen)));
     }
 }
@@ -364,7 +381,6 @@ void RandEditor::resetENVs()
 			proc.env4Params.acurve, proc.env4Params.drcurve}) {
 			param->setValue(param->getDefaultValue());
 		}
-
 }
 
 void RandEditor::randomizeLFOs() {
@@ -963,10 +979,110 @@ void RandEditor::clearFXMods()
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		if (modSrcs.size() == 0) continue;
 		for (auto& modSrc : modSrcs) {
-			if (envSrcs.contains(modSrc) || keySrcs.contains(modSrc) || lfoSrcs.contains(modSrc))
-				proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+            proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 		}
 	}
+}
+
+void RandEditor::randomizeMacros() {
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> fullDist(-1.f, 1.f);
+    auto randVal = randAmount.getValue();
+    auto randNum = randNumber.getValue();
+    // msegSrcs
+    std::uniform_int_distribution<> macroDist(0, 3);
+    std::uniform_int_distribution<> paramsDist{0, 235};
+    std::uniform_int_distribution<> functionDist{ 0, 19 };
+    std::uniform_real_distribution<> modDist(-1.f, 1.f);
+    for (int i = 0; i < randNum; i++) {
+        auto macroSrc = macroSrcs[macroDist(gen)];
+        auto fullDst = gin::ModDstId(paramsDist(gen));
+        auto depth = proc.modMatrix.getModDepth(macroSrc, fullDst);
+        auto sign = fullDist(gen) >= 0 ? 1 : -1;
+        proc.modMatrix.setModDepth(macroSrc, fullDst,
+            (float)std::clamp(depth + sign * randVal * fullDist(gen) * 0.5f + randVal * 0.5f,
+            -1., 1.));
+        proc.modMatrix.setModFunction(macroSrc, fullDst, gin::ModMatrix::Function(functionDist(gen)));
+    }
+}
+
+void RandEditor::randomizeMSEG() {
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> fullDist(-1.f, 1.f);
+    auto randVal = randAmount.getValue();
+    auto randNum = randNumber.getValue();
+    // msegSrcs
+    std::uniform_int_distribution<> msegDist(0, 3);
+    std::uniform_int_distribution<> paramsDist{0, 235};
+    std::uniform_int_distribution<> functionDist{ 0, 19 };
+    std::uniform_real_distribution<> modDist(-1.f, 1.f);
+    for (int i = 0; i < randNum; i++) {
+        auto msegSrc = msegSrcs[msegDist(gen)];
+        auto fullDst = gin::ModDstId(paramsDist(gen));
+        auto depth = proc.modMatrix.getModDepth(msegSrc, fullDst);
+        auto sign = fullDist(gen) >= 0 ? 1 : -1;
+        proc.modMatrix.setModDepth(msegSrc, fullDst,
+            (float)std::clamp(depth + sign * randVal * fullDist(gen) * 0.5f + randVal * 0.5f,
+            -1., 1.));
+        proc.modMatrix.setModFunction(msegSrc, fullDst, gin::ModMatrix::Function(functionDist(gen)));
+    }
+    
+    /*
+     
+     std::uniform_int_distribution<> paramsDist{0, 235};
+     std::uniform_int_distribution<> functionDist{ 0, 19 };
+     std::uniform_int_distribution<> msegSrcsDst{ 19, 22 };
+     int numMods = (int)randNumber.getValue();
+     for (int i = 0; i < numMods; i++) {
+         auto modSrc = gin::ModSrcId(srcsDist(gen));
+         auto modDst = gin::ModDstId(paramsDist(gen));
+         auto depth = proc.modMatrix.getModDepth(modSrc, modDst);
+         auto sign = modDist(gen) >= 0 ? 1 : -1;
+         proc.modMatrix.setModDepth(modSrc, modDst, (float)std::clamp(depth +
+             sign * modDist(gen) * randAmount.getValue() * .5f + randAmount.getValue() * 0.5f,
+             -1., 1.));
+         proc.modMatrix.setModFunction(modSrc, modDst, gin::ModMatrix::Function(functionDist(gen)));
+     }
+     
+      auto modDst = gin::ModDstId(paramsDist(gen));
+      auto depth = proc.modMatrix.getModDepth(modSrc, modDst);
+      auto sign = modDist(gen) >= 0 ? 1 : -1;
+      proc.modMatrix.setModDepth(modSrc, modDst, (float)std::clamp(depth +
+          sign * modDist(gen) * randAmount.getValue() * .5f + randAmount.getValue() * 0.5f,
+          -1., 1.));
+      proc.modMatrix.setModFunction(modSrc, modDst, gin::ModMatrix::Function(functionDist(gen)));
+      */
+    
+}
+
+void RandEditor::clearMacros() {
+    auto& params = proc.getPluginParameters();
+    for (auto* param : params) {
+        if (param->getModIndex() == -1) continue;
+        if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
+            auto modSrcs = proc.modMatrix.getModSources(param);
+            for (auto& modSrc : modSrcs) {
+                if (macroSrcs.contains(modSrc))
+                    proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+            }
+        }
+    }
+    
+
+}
+
+void RandEditor::clearMSEG() {
+    auto& params = proc.getPluginParameters();
+    for (auto* param : params) {
+        if (param->getModIndex() == -1) continue;
+        if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
+            auto modSrcs = proc.modMatrix.getModSources(param);
+            for (auto& modSrc : modSrcs) {
+                if (msegSrcs.contains(modSrc))
+                    proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+            }
+        }
+    }
 }
 
 void RandEditor::randomizeFXSelect()
@@ -1010,61 +1126,66 @@ void RandEditor::resized()
     randAmount.setBounds        (5 * 56     , 77, 3*56, 16);
 	randAmountLabel.setBounds   (5* 56 + 173, 76, 2*56, 16);
 
-    randOSCsButton.setBounds(5 * 56 , 105, 3*56, 20);
-	inharmonic.setBounds(5 * 56 + 173, 105, 2 * 56, 20);
+    randOSCsButton.setBounds(5 * 56 , 100, 3*56, 20);
+	inharmonic.setBounds(5 * 56 + 173, 100, 2 * 56, 20);
 	
-    randInharmonicButton.setBounds(5 * 56 , 130, 3*56, 20);
-	resetInharmonicButton.setBounds(5 * 56 + 173, 130, 3 * 56, 20);
+    randInharmonicButton.setBounds(5 * 56 , 124, 3*56, 20);
+	resetInharmonicButton.setBounds(5 * 56 + 173, 124, 3 * 56, 20);
 
-    randENVsButton.setBounds(5 * 56 , 155, 3*56, 20);
-	resetENVsButton.setBounds(5 * 56 + 173, 155, 3*56, 20);
+    randENVsButton.setBounds(5 * 56 , 148, 3*56, 20);
+	resetENVsButton.setBounds(5 * 56 + 173, 148, 3*56, 20);
 	
-	randLFOsButton.setBounds(5 * 56 , 180, 3*56, 20);
-	resetLFOsButton.setBounds(5 * 56 + 173, 180, 3*56, 20);
+	randLFOsButton.setBounds(5 * 56 , 172, 3*56, 20);
+	resetLFOsButton.setBounds(5 * 56 + 173, 172, 3*56, 20);
 
-	randLFOToOSCButton.setBounds(5 * 56 , 205, 3*56, 20);
-	clearLFOToOSCButton.setBounds(5 * 56 + 173, 205, 3*56, 20);
+	randLFOToOSCButton.setBounds(5 * 56 , 196, 3*56, 20);
+	clearLFOToOSCButton.setBounds(5 * 56 + 173, 196, 3*56, 20);
 
-	randENVToOSCButton.setBounds(5 * 56 , 230, 3*56, 20);
-	clearENVToOSCButton.setBounds(5 * 56 + 173, 230, 3*56, 20);
+	randENVToOSCButton.setBounds(5 * 56 , 220, 3*56, 20);
+	clearENVToOSCButton.setBounds(5 * 56 + 173, 220, 3*56, 20);
 
-	randKeysToOSCButton.setBounds(5 * 56 , 255, 3*56, 20);
-	clearKeysToOSCButton.setBounds(5 * 56 + 173, 255, 3*56, 20);
+	randKeysToOSCButton.setBounds(5 * 56 , 244, 3*56, 20);
+	clearKeysToOSCButton.setBounds(5 * 56 + 173, 244, 3*56, 20);
 
-	randLFOToTimbreButton.setBounds(5 * 56, 280, 3*56, 20);
-	clearLFOToTimbreButton.setBounds(5 * 56 + 173, 280, 3*56, 20);
+	randLFOToTimbreButton.setBounds(5 * 56, 268, 3*56, 20);
+	clearLFOToTimbreButton.setBounds(5 * 56 + 173, 268, 3*56, 20);
 
-	randENVToTimbreButton.setBounds(5 * 56 , 305, 3*56, 20);
-	clearENVToTimbreButton.setBounds(5 * 56 + 173, 305, 3*56, 20);
+	randENVToTimbreButton.setBounds(5 * 56 , 292, 3*56, 20);
+	clearENVToTimbreButton.setBounds(5 * 56 + 173, 292, 3*56, 20);
 
-	randKeysToTimbreButton.setBounds(5 * 56 , 330, 3*56, 20);
-	clearKeysToTimbreButton.setBounds(5 * 56 + 173, 330, 3*56, 20);
+	randKeysToTimbreButton.setBounds(5 * 56 , 316, 3*56, 20);
+	clearKeysToTimbreButton.setBounds(5 * 56 + 173, 316, 3*56, 20);
 
-	randLFOToENVButton.setBounds(5 * 56 , 355, 3*56, 20);
-	clearLFOToENVButton.setBounds(5 * 56 + 173, 355, 3*56, 20);
+	randLFOToENVButton.setBounds(5 * 56 , 340, 3*56, 20);
+	clearLFOToENVButton.setBounds(5 * 56 + 173, 340, 3*56, 20);
 
-	randENVToENVButton.setBounds(5 * 56 , 380, 3*56, 20);
-	clearENVToENVButton.setBounds(5 * 56 + 173, 380, 3*56, 20);
+	randENVToENVButton.setBounds(5 * 56 , 364, 3*56, 20);
+	clearENVToENVButton.setBounds(5 * 56 + 173, 364, 3*56, 20);
 
-	randKeysToENVButton.setBounds(5 * 56 , 405, 3*56, 20);
-	clearKeysToENVButton.setBounds(5 * 56 + 173, 405, 3*56, 20);
+	randKeysToENVButton.setBounds(5 * 56 , 388, 3*56, 20);
+	clearKeysToENVButton.setBounds(5 * 56 + 173, 388, 3*56, 20);
 
-	randLFOToLfoButton.setBounds(5 * 56 , 430, 3*56, 20);
-	clearLFOToLFOButton.setBounds(5 * 56 + 173, 430, 3*56, 20);
+	randLFOToLfoButton.setBounds(5 * 56 , 412, 3*56, 20);
+	clearLFOToLFOButton.setBounds(5 * 56 + 173, 412, 3*56, 20);
 
-	randENVToLFOButton.setBounds(5 * 56 , 455, 3*56, 20);
-	clearENVToLFOButton.setBounds(5 * 56 + 173, 455, 3*56, 20);
+	randENVToLFOButton.setBounds(5 * 56 , 436, 3*56, 20);
+	clearENVToLFOButton.setBounds(5 * 56 + 173, 436, 3*56, 20);
 
-	randKeysToLFOButton.setBounds(5 * 56 , 480, 3*56, 20);
-	clearKeysToLFOButton.setBounds(5 * 56 + 173, 480, 3*56, 20);
+	randKeysToLFOButton.setBounds(5 * 56 , 460, 3*56, 20);
+	clearKeysToLFOButton.setBounds(5 * 56 + 173, 460, 3*56, 20);
 
-	randFXModsButton.setBounds(5 * 56 , 505, 3*56, 20);
-	clearFXModsButton.setBounds(5 * 56 + 173, 505, 3*56, 20);
+	randMSEGButton.setBounds(5 * 56, 484, 3*56, 20);
+	clearMSEGButton.setBounds(5 * 56 + 173, 484, 3*56, 20);
 
-	randFXSelectButton.setBounds(5 * 56, 530, 3*56, 20);
-	clearFXSelectButton.setBounds(5 * 56 + 173, 530, 3*56, 20);
-
+	randMacrosButton.setBounds(5 * 56, 508, 3*56, 20);
+	clearMacrosButton.setBounds(5 * 56 + 173, 508, 3*56, 20);
     
+	randFXModsButton.setBounds(5 * 56 , 532, 3*56, 20);
+	clearFXModsButton.setBounds(5 * 56 + 173, 532, 3*56, 20);
+
+	randFXSelectButton.setBounds(5 * 56, 556, 3*56, 20);
+	clearFXSelectButton.setBounds(5 * 56 + 173, 556, 3*56, 20);
+
     // gutter  588-652
     level.setBounds(0,   590, 48, 60);
     again.setBounds(50,  590, 48, 60);

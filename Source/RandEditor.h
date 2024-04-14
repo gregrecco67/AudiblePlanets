@@ -123,7 +123,8 @@ public:
 	void randKeystoLFO(); void resetKeystoLFO();
 	void randKeystoENV(); void resetKeystoENV();
 	
-
+    void randomizeMSEG(); void clearMSEG();
+    void randomizeMacros(); void clearMacros();
 	void randomizeFXMods(); void clearFXMods();
 	void randomizeFXSelect(); void clearFXSelect();
 	void randomizeInharmonic(); void resetInharmonic();
@@ -165,6 +166,9 @@ private:
 		randKeysToLFOButton{ "Keys -> LFO" }, clearKeysToLFOButton{ "Clear Keys -> LFO" },
 		randKeysToENVButton{ "Keys -> ENV" }, clearKeysToENVButton{ "Clear Keys -> ENV" },
 
+        randMSEGButton{ "Randomize MSEG" }, clearMSEGButton { "Clear MSEG" },
+        randMacrosButton{ "Randomize Macros" }, clearMacrosButton{ "Clear Macros" },
+    
 		randFXModsButton{ "Randomize FX Mods" }, clearFXModsButton{ "Clear FX Mods" },
 		randFXSelectButton{ "Randomize FX Choice" }, clearFXSelectButton{ "Clear All FX Choice" },
 		
@@ -180,6 +184,8 @@ private:
 	juce::Array<gin::ModSrcId> envSrcs{ proc.modSrcEnv1, proc.modSrcEnv2, proc.modSrcEnv3, proc.modSrcEnv4 };
 	juce::Array<gin::ModSrcId> keySrcs{ proc.modSrcPressure, proc.modSrcModwheel, proc.modSrcMonoPitchbend, proc.modSrcVelocity,
 		proc.modSrcNote, proc.modSrcTimbre, proc.modSrcModwheel };
+    juce::Array<gin::ModSrcId> macroSrcs{ proc.macroSrc1, proc.macroSrc2, proc.macroSrc3, proc.macroSrc4 };
+    juce::Array<gin::ModSrcId> msegSrcs{ proc.modSrcMSEG1, proc.modSrcMSEG2, proc.modSrcMSEG3, proc.modSrcMSEG4 };
 	
 	std::array<gin::Parameter::Ptr, 32> oscDstsBasic{
 	proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, proc.osc1Params.env,
@@ -215,13 +221,6 @@ private:
 		proc.env4Params.attack, proc.env4Params.decay, proc.env4Params.sustain, proc.env4Params.release, proc.env4Params.acurve, proc.env4Params.drcurve
 	};
 
-//	std::array<gin::Parameter::Ptr, 16> msegDsts{
-//		proc.mseg1Params.rate, proc.mseg1Params.beat, proc.mseg1Params.depth, proc.mseg1Params.offset,
-//		proc.mseg2Params.rate, proc.mseg2Params.beat, proc.mseg2Params.depth, proc.mseg2Params.offset,
-//		proc.mseg3Params.rate, proc.mseg3Params.beat, proc.mseg3Params.depth, proc.mseg3Params.offset,
-//		proc.mseg4Params.rate, proc.mseg4Params.beat, proc.mseg4Params.depth, proc.mseg4Params.offset
-//	};
-
 	std::array<gin::Parameter::Ptr, 24> lfoDsts{
 		proc.lfo1Params.rate, proc.lfo1Params.depth, proc.lfo1Params.phase, proc.lfo1Params.delay, proc.lfo1Params.fade, proc.lfo1Params.offset, 
 		proc.lfo2Params.rate, proc.lfo2Params.depth, proc.lfo2Params.phase, proc.lfo2Params.delay, proc.lfo2Params.fade, proc.lfo2Params.offset, 
@@ -230,7 +229,7 @@ private:
 	};
 
 	APLookAndFeel6 laf;
-	//EnvelopeComponent env1, env2, env3, env4;
+	
 	RandENVBox env1Box{ "ENV1", proc, proc.env1Params }, env2Box{"ENV2", proc, proc.env2Params}, 
 		env3Box{ "ENV3", proc, proc.env3Params }, env4Box{"ENV4", proc, proc.env4Params };
 	RandOSCBox osc1Box{ "OSC1", proc, proc.osc1Params }, osc2Box{ "OSC2", proc, proc.osc2Params },

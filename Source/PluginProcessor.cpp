@@ -538,14 +538,14 @@ static juce::String fxPrePostFunction(const gin::Parameter&, float v)
 void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 {
     float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
-    fxa1 = p.addExtParam("fxa1", "FX A1", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa2 = p.addExtParam("fxa2", "FX A2", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa3 = p.addExtParam("fxa3", "FX A3", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa4 = p.addExtParam("fxa4", "FX A4", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb1 = p.addExtParam("fxb1", "FX B1", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb2 = p.addExtParam("fxb2", "FX B2", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb3 = p.addExtParam("fxb3", "FX B3", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb4 = p.addExtParam("fxb4", "FX B4", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa1 = p.addIntParam("fxa1", "FX A1", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa2 = p.addIntParam("fxa2", "FX A2", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa3 = p.addIntParam("fxa3", "FX A3", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa4 = p.addIntParam("fxa4", "FX A4", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb1 = p.addIntParam("fxb1", "FX B1", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb2 = p.addIntParam("fxb2", "FX B2", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb3 = p.addIntParam("fxb3", "FX B3", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb4 = p.addIntParam("fxb4", "FX B4", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
     chainAtoB = p.addIntParam("chainAtoB", "FX Chain Routing", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, fxRouteFunction);
     laneAGain = p.addExtParam("laneAGain", "FX A Pre-Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 0.0f, 0.0f);
     laneBGain = p.addExtParam("laneBGain", "FX B Pre-Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 0.0f, 0.0f);
