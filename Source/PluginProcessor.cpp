@@ -619,7 +619,8 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 
     timbreParams.setup(*this);
     filterParams.setup(*this);
-    globalParams.setup(*this);
+	// mono params begin in the middle of this block
+    globalParams.setup(*this); 
     orbitParams.setup(*this);
 
     gainParams.setup(*this);
@@ -1247,7 +1248,7 @@ gin::ProcessorOptions APAudioProcessor::getOptions()
     options.programmingCredits = { "Greg Recco" };
     options.url = "https://github.com/gregrecco67/AudiblePlanets";
     options.urlTitle = "Visit https://github.com/gregrecco67/AudiblePlanets";
-    return options;
+    return options.withoutNewsChecker().withoutUpdateChecker();
 }
 
 
