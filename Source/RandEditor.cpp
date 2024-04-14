@@ -29,6 +29,7 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
     randNumber.setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 20);
 	randNumber.setNumDecimalPlacesToDisplay(0);
 	randNumber.setValue(2.0, juce::dontSendNotification);
+	randNumber.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
 	addAndMakeVisible(randNumberLabel);
 	randNumberLabel.setLookAndFeel(&laf);
 
@@ -37,6 +38,7 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
 	randAmount.setValue(0.15);
 	randAmount.setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 20);
 	randAmount.setNumDecimalPlacesToDisplay(2);
+	randAmount.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
 	addAndMakeVisible(randAmountLabel);
 	randAmountLabel.setLookAndFeel(&laf);
 

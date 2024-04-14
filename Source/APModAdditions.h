@@ -144,10 +144,11 @@ public:
 		timbreMenu.addItem("Equant", [this]() { setDest(proc.timbreParams.equant); });
 		timbreMenu.addItem("Pitch", [this]() { setDest(proc.timbreParams.pitch); });
 		timbreMenu.addItem("Blend", [this]() { setDest(proc.timbreParams.blend); });
-		timbreMenu.addItem("Demod Mix", [this]() { setDest(proc.timbreParams.demodmix); });
+		timbreMenu.addItem("Demodulate", [this]() { setDest(proc.timbreParams.demodmix); });
 		timbreMenu.addItem("Demod Vol", [this]() { setDest(proc.timbreParams.demodVol); });
 		timbreMenu.addItem("Algorithm", [this]() { setDest(proc.timbreParams.algo); });
 		timbreMenu.addItem("Squash", [this]() { setDest(proc.globalParams.squash); });
+		timbreMenu.addItem("Vel. Sens", [this]() { setDest(proc.globalParams.velSens); });
 
 		filterMenu.addItem("Cutoff", [this]() { setDest(proc.filterParams.frequency); });
 		filterMenu.addItem("Resonance", [this]() { setDest(proc.filterParams.resonance); });
@@ -253,10 +254,16 @@ public:
 	public:
 		PopupLNF()
 		{
+			//setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
+			//setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
+			//setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
+			//setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::darkgrey);
+
 			setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
 			setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
+			setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
+			setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffCC8866));
 			setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
-			setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::darkgrey);
 		}
 	};
 
@@ -276,7 +283,7 @@ class APModulationDepthSlider : public juce::Slider
 public:
     APModulationDepthSlider() : juce::Slider(RotaryHorizontalVerticalDrag, NoTextBox)
     {
-
+		
     }
 
     ~APModulationDepthSlider() override
@@ -563,10 +570,11 @@ private:
         public:
             PopupLNF()
             {
-                setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
-                setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
-                setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
-                setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::darkgrey);
+				setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
+				setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
+				setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
+				setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffCC8866));
+				setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
             }
         };
 
@@ -612,6 +620,11 @@ private:
             APModDepthLookAndFeel()
             {
                 setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+				setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
+				setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
+				setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
+				setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffCC8866));
+				setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
             }
 
             void drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
@@ -675,12 +688,23 @@ public:
         setColour (juce::Slider::thumbColourId, juce::Colour(0xffCC8866));
         setColour (juce::Slider::rotarySliderFillColourId, juce::Colour(0xffCC8866));
         setColour (juce::Slider::trackColourId, juce::Colour(0xff797C84));
+		setColour (juce::BubbleComponent::backgroundColourId, juce::Colour(0xff16171A));
+		setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
+		setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
+		setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
+		setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffCC8866));
+		setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
     }
     
 	juce::Font getLabelFont(juce::Label& label) override
 	{
 		return regularFont.withHeight(label.getHeight() * 0.8f);
 		//return regularFont.withHeight(11);
+	}
+
+	juce::Font getSliderPopupFont(Slider&) override
+	{
+		return regularFont.withHeight(12);
 	}
 
 	juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
@@ -800,6 +824,7 @@ public:
         addAndMakeVisible (knob);
         addChildComponent (modDepthSlider);
         setLookAndFeel(&knobLNF);
+		modDepthSlider.setLookAndFeel(&knobLNF);
 
 		value.setFont(regularFont);
 		name.setFont(regularFont);
@@ -1195,7 +1220,7 @@ protected:
     {
         juce::PopupMenu m;
         m.setLookAndFeel (&getLookAndFeel());
-
+		
         auto& mm = *parameter->getModMatrix();
         for (auto src : mm.getModSources (parameter))
         {

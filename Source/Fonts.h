@@ -22,5 +22,10 @@ public:
 		return regularFont.withHeight(12);
 	}
     
+	juce::Font getSliderPopupFont(Slider&) override
+	{
+		return regularFont.withHeight(12);
+	}
+
     juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 };
