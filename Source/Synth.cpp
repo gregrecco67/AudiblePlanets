@@ -114,16 +114,16 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
 			}
 			proc.macroParams.learning->setValue(0.f);
 		}
-		if (m.getControllerNumber() == proc.macroParams.macro1cc->getUserValue()) {
+		if (m.getControllerNumber() == proc.macroParams.macro1cc->getUserValueInt()) {
 			proc.macroParams.macro1->setValue(m.getControllerValue()/127.0f);
 		}
-		if (m.getControllerNumber() == proc.macroParams.macro2cc->getUserValue()) {
+		if (m.getControllerNumber() == proc.macroParams.macro2cc->getUserValueInt()) {
 			proc.macroParams.macro2->setValue(m.getControllerValue()/127.0f);
 		}
-		if (m.getControllerNumber() == proc.macroParams.macro3cc->getUserValue()) {
+		if (m.getControllerNumber() == proc.macroParams.macro3cc->getUserValueInt()) {
 			proc.macroParams.macro3->setValue(m.getControllerValue()/127.0f);
 		}
-		if (m.getControllerNumber() == proc.macroParams.macro4cc->getUserValue()) {
+		if (m.getControllerNumber() == proc.macroParams.macro4cc->getUserValueInt()) {
 			proc.macroParams.macro4->setValue(m.getControllerValue()/127.0f);
 		}
     }
