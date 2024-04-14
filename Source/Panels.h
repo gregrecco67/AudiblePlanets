@@ -232,6 +232,7 @@ public:
 		addControl(new APKnob(timbreparams.demodVol, true), 2, 1);
 		addControl(new APKnob(globalParams.squash), 3, 0);
 	}
+
 };
 
 //==============================================================================

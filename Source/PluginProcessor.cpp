@@ -371,25 +371,6 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
 
 
 //==============================================================================
-void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
-{
-    mono           = p.addIntParam("mono",    "Mono",       "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
-    glideMode      = p.addIntParam("gMode",   "Glide Mode", "Glide", "",   { 0.0, 2.0, 0.0, 1.0 }, 0.0f, 0.0f, glideModeTextFunction);
-    glideRate      = p.addExtParam("gRate",   "Glide Rate", "Rate",  " s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
-    legato         = p.addIntParam("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
-    level          = p.addExtParam("level",   "Level",      "",      " dB", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
-    velSens        = p.addExtParam("velSens", "Vel. Sens.",   "",      "%",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
-    voices         = p.addIntParam("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
-    mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-    pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
-    sidechainEnable = p.addIntParam("sidechain", "Sidechain", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-    squash         = p.addExtParam("squash", "Squash", "", "", {0.0f, 1.0f, 0.0f, 1.0f}, 0.0f, 0.0f);
-
-    level->conversionFunction     = [](float in) { return juce::Decibels::decibelsToGain (in); };
-    velSens->conversionFunction   = [](float in) { return in / 100.0f; };
-}
-
-//==============================================================================
 void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 {
     equant = p.addExtParam("equant", "Equant", "", "", { -0.5, 0.5, 0.0, 1.0 }, 0.0, 0.0f);
@@ -398,6 +379,25 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
     demodmix = p.addExtParam("demodmix", "Demodulate", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, percentTextFunction);
     algo = p.addExtParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0, 0.f, algoTextFunction);
     demodVol = p.addExtParam("demodVol", "Demod Vol", "", "", { 0.0f, 4.0f, 0.0f, 1.0f }, 2.0f, 0.0f);
+}
+
+//==============================================================================
+void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
+{
+    velSens        = p.addExtParam("velSens", "Vel. Sens.",   "",      "%",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
+    squash         = p.addExtParam("squash", "Squash", "", "", {0.0f, 1.0f, 0.0f, 1.0f}, 0.0f, 0.0f);
+    mono           = p.addIntParam("mono",    "Mono",       "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
+    glideMode      = p.addIntParam("gMode",   "Glide Mode", "Glide", "",   { 0.0, 2.0, 0.0, 1.0 }, 0.0f, 0.0f, glideModeTextFunction);
+    glideRate      = p.addExtParam("gRate",   "Glide Rate", "Rate",  " s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
+    legato         = p.addIntParam("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
+    level          = p.addExtParam("level",   "Level",      "",      " dB", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
+    voices         = p.addIntParam("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
+    mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+    pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
+    sidechainEnable = p.addIntParam("sidechain", "Sidechain", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+
+    level->conversionFunction     = [](float in) { return juce::Decibels::decibelsToGain (in); };
+    velSens->conversionFunction   = [](float in) { return in / 100.0f; };
 }
 
 //==============================================================================
@@ -617,9 +617,9 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     lfo3Params.setup(*this, String{ "3" });
     lfo4Params.setup(*this, String{ "4" });
 
-    globalParams.setup(*this);
-    filterParams.setup(*this);
     timbreParams.setup(*this);
+    filterParams.setup(*this);
+    globalParams.setup(*this);
     orbitParams.setup(*this);
 
     gainParams.setup(*this);
