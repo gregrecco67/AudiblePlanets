@@ -6,7 +6,7 @@ APSynth::APSynth(APAudioProcessor& proc_) : proc(proc_)
     enableLegacyMode(12);
     setVoiceStealingEnabled(true);
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 16; i++)
     {
         auto voice = new SynthVoice(proc);
         proc.modMatrix.addVoice(voice);
