@@ -52,8 +52,8 @@ private:
     FXModBox mod{"mod", proc};
 	MatrixBox matrix{"matrix", proc};
 	APKnob laneAGain{ proc.fxOrderParams.laneAGain },  laneAFreq{proc.fxOrderParams.laneAFreq}, laneARes{proc.fxOrderParams.laneARes}, laneAPan{proc.fxOrderParams.laneAPan},
-		laneBGain{ proc.fxOrderParams.laneBGain }, laneBFreq{proc.fxOrderParams.laneBFreq}, laneBRes{proc.fxOrderParams.laneBRes}, laneBPan{proc.fxOrderParams.laneBPan},
-		outLevel{ proc.globalParams.level };
+		laneBGain{ proc.fxOrderParams.laneBGain }, laneBFreq{proc.fxOrderParams.laneBFreq}, laneBRes{proc.fxOrderParams.laneBRes}, laneBPan{proc.fxOrderParams.laneBPan};
 	gin::Select laneAType{ proc.fxOrderParams.laneAType }, laneBType{ proc.fxOrderParams.laneBType }, 
 		laneAPrePost{ proc.fxOrderParams.laneAPrePost }, laneBPrePost{ proc.fxOrderParams.laneBPrePost };
+	Label laneALabel{ "Lane A", "Lane A"}, laneBLabel{"Lane B", "Lane B"};
 };

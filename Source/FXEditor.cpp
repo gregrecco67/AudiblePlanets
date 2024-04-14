@@ -68,8 +68,8 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	valueUpdated(proc.fxOrderParams.fxb3);
 	valueUpdated(proc.fxOrderParams.fxb4);
     
-	addAndMakeVisible(outLevel);
-
+	addAndMakeVisible(laneALabel);
+	
 	addAndMakeVisible(laneAGain);
 	addAndMakeVisible(laneBGain);
 	addAndMakeVisible(laneAFreq);
@@ -83,8 +83,9 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(laneAPan);
 	addAndMakeVisible(laneBPan);
 
-	setAllControls();
+	addAndMakeVisible(laneBLabel);
 
+	setAllControls();
 }
 
 
@@ -92,6 +93,7 @@ void FXEditor::resized()
 {
 	mod.setBounds(900, 7, 280, 303);
 	matrix.setBounds(900, 320, 280, 320);
+
 
 	fxa1Selector.setBounds(188, 7, 168, 15); 
 	fxa2Selector.setBounds(366, 7, 168, 15);
@@ -113,9 +115,7 @@ void FXEditor::resized()
 	fxb3Box.setBounds(544, 343, 168, 233);
 	fxb4Box.setBounds(722, 343, 168, 233);
 
-	outLevel.setBounds(10, 3, 42, 57);
-
-	chainSetting.setBounds(10, 289, 168, 35);
+	laneALabel.setBounds(20, 23, 168, 30);
 
 	laneAFreq.setBounds   (20, 60, 56, 70);
 	laneARes.setBounds    (90, 60, 56, 70);
@@ -124,12 +124,16 @@ void FXEditor::resized()
 	laneAType.setBounds   (20, 200, 56, 70);
 	laneAPrePost.setBounds(90, 200, 56, 70);
 
-	laneBFreq.setBounds   (20, 360, 56, 70);
-	laneBRes.setBounds    (90, 360, 56, 70);
-	laneBGain.setBounds   (20, 430, 56, 70);
-	laneBPan.setBounds    (90, 430, 56, 70);
-	laneBType.setBounds   (20, 500, 56, 70);
-	laneBPrePost.setBounds(90, 500, 56, 70);
+	chainSetting.setBounds(10, 289, 168, 35);
+
+	laneBFreq.setBounds   (20, 343, 56, 70);
+	laneBRes.setBounds    (90, 343, 56, 70);
+	laneBGain.setBounds   (20, 413, 56, 70);
+	laneBPan.setBounds    (90, 413, 56, 70);
+	laneBType.setBounds   (20, 487, 56, 70);
+	laneBPrePost.setBounds(90, 487, 56, 70);
+
+	laneBLabel.setBounds(20, 564, 168, 30);
 
 	setAllControls();
 }

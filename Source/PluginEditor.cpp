@@ -38,7 +38,8 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     usage.panic.onClick = [this] { proc.presetLoaded = true; };
     addAndMakeVisible(usage);
 	addAndMakeVisible(scaleName);
-    
+	addAndMakeVisible(levelKnob);
+
 	meter.setBounds(1130, 5, 15, 30);
     usage.setBounds(45, 12, 80, 16);
 	scaleName.setFont(juce::Font(12.0f, juce::Font::plain));
@@ -115,6 +116,8 @@ void APAudioProcessorEditor::resized()
     editorArea.removeFromBottom(tabbed.getTabBarDepth());
     editor.setBounds(editorArea);
     patchBrowser.setBounds(rc);
+	//	meter.setBounds(1130, 5, 15, 30);
+	levelKnob.setBounds(1095, 0, 32, 40);
 	fxEditor.setBounds(editorArea);
 	randEditor.setBounds(editorArea);
 	msegEditor.setBounds(editorArea);
