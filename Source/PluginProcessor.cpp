@@ -1251,8 +1251,6 @@ gin::ProcessorOptions APAudioProcessor::getOptions()
     return options.withoutNewsChecker().withoutUpdateChecker();
 }
 
-
-
 void APAudioProcessor::updateParams(int newBlockSize)
 {
     // Update Mono LFOs

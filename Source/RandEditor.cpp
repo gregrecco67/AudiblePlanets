@@ -43,7 +43,6 @@ RandEditor::RandEditor(APAudioProcessor& proc_) : proc(proc_) //, env1(proc, 1),
     addAndMakeVisible(randOSCsButton);
     randOSCsButton.onClick = [this] { randomizeOSCs(); };
 	randOSCsButton.setLookAndFeel(&laf);
-    //addAndMakeVisible(test);
     addAndMakeVisible(inharmonic);
 	inharmonic.setLookAndFeel(&laf);
 	
@@ -216,15 +215,18 @@ void RandEditor::randomize()
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<> modDist(-1.f, 1.f);
     
-	// below is useful to get the number of modifiable parameters
-// ----------------
-/*   auto& params = proc.getPluginParameters();
-    for (auto& param : params) {
-		std::cout << param->getModIndex() << std::endl;
-    }
-// ----------------*/
+	// below is useful to get the number of modifiable parameters 
+	// (hard-coded in several places below to 236)
 	
-	std::uniform_int_distribution<> paramsDist{0, 243};
+	// ----------------
+	/*   auto& params = proc.getPluginParameters();
+		for (auto& param : params) {
+			std::cout << param->getModIndex() << std::endl;
+		}
+	*/
+	// ----------------
+
+	std::uniform_int_distribution<> paramsDist{0, 235};
     auto numSrcs = proc.modMatrix.getNumModSources();
     std::uniform_int_distribution<> srcsDist{0, numSrcs - 1};
 	std::uniform_int_distribution<> functionDist{ 0, 19 };
@@ -1026,33 +1028,6 @@ void RandEditor::randomizeMSEG() {
             -1., 1.));
         proc.modMatrix.setModFunction(msegSrc, fullDst, gin::ModMatrix::Function(functionDist(gen)));
     }
-    
-    /*
-     
-     std::uniform_int_distribution<> paramsDist{0, 235};
-     std::uniform_int_distribution<> functionDist{ 0, 19 };
-     std::uniform_int_distribution<> msegSrcsDst{ 19, 22 };
-     int numMods = (int)randNumber.getValue();
-     for (int i = 0; i < numMods; i++) {
-         auto modSrc = gin::ModSrcId(srcsDist(gen));
-         auto modDst = gin::ModDstId(paramsDist(gen));
-         auto depth = proc.modMatrix.getModDepth(modSrc, modDst);
-         auto sign = modDist(gen) >= 0 ? 1 : -1;
-         proc.modMatrix.setModDepth(modSrc, modDst, (float)std::clamp(depth +
-             sign * modDist(gen) * randAmount.getValue() * .5f + randAmount.getValue() * 0.5f,
-             -1., 1.));
-         proc.modMatrix.setModFunction(modSrc, modDst, gin::ModMatrix::Function(functionDist(gen)));
-     }
-     
-      auto modDst = gin::ModDstId(paramsDist(gen));
-      auto depth = proc.modMatrix.getModDepth(modSrc, modDst);
-      auto sign = modDist(gen) >= 0 ? 1 : -1;
-      proc.modMatrix.setModDepth(modSrc, modDst, (float)std::clamp(depth +
-          sign * modDist(gen) * randAmount.getValue() * .5f + randAmount.getValue() * 0.5f,
-          -1., 1.));
-      proc.modMatrix.setModFunction(modSrc, modDst, gin::ModMatrix::Function(functionDist(gen)));
-      */
-    
 }
 
 void RandEditor::clearMacros() {
