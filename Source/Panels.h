@@ -231,6 +231,7 @@ public:
 		addControl(new APKnob(timbreparams.demodmix), 2, 0);
 		addControl(new APKnob(timbreparams.demodVol, true), 2, 1);
 		addControl(new APKnob(globalParams.squash), 3, 0);
+		addControl(new APKnob(proc.globalParams.velSens), 3, 1);
 	}
 
 };
@@ -357,11 +358,12 @@ public:
         addControl(new APKnob(proc.globalParams.level), 2, 1);
         addControl(new gin::Select(proc.globalParams.glideMode), 1, 0);
         addControl(new APKnob(proc.globalParams.glideRate), 2, 0);
-        addControl(new APKnob(proc.globalParams.velSens), 1, 1);
+		addControl(new gin::Switch(proc.globalParams.mpe), 0, 1);
+		addControl(new APKnob(proc.globalParams.pitchbendRange), 1, 1);
+        //  velsens
         addControl(new gin::Select(proc.globalParams.legato), 1, 1);
         addControl(new gin::Select(proc.globalParams.mono), 2, 1);
 		addControl(new gin::Select(proc.globalParams.sidechainEnable), 2, 0);
-		addControl(new APKnob(proc.globalParams.pitchbendRange), 1, 0);
     }
 
     APAudioProcessor& proc;
