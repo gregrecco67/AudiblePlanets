@@ -1,3 +1,17 @@
+/*
+ * Audible Planets - an expressive, quasi-Ptolemaic semi-modular synthesizer
+ *
+ * Copyright 2024, Greg Recco
+ *
+ * Audible Planets is released under the GNU General Public Licence v3
+ * or later (GPL-3.0-or-later). The license is found in the "LICENSE"
+ * file in the root of this repository, or at
+ * https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ * All source for Audible Planets is available at
+ * https://github.com/gregrecco67/AudiblePlanets
+ */
+
 #pragma once
 
 #include <JuceHeader.h>
@@ -219,8 +233,6 @@ public:
 		ringmodMenu.addItem("Low Cut", [this]() { setDest(proc.ringmodParams.lowcut); });
 		ringmodMenu.addItem("High Cut", [this]() { setDest(proc.ringmodParams.highcut); });
 
-
-
 		fxModulesMenu.addSubMenu("Waveshaper", waveshaperMenu);
 		fxModulesMenu.addSubMenu("Compressor", compressorMenu);
 		fxModulesMenu.addSubMenu("Delay", delayMenu);
@@ -254,11 +266,6 @@ public:
 	public:
 		PopupLNF()
 		{
-			//setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
-			//setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
-			//setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
-			//setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::darkgrey);
-
 			setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
 			setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
 			setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
