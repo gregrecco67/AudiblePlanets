@@ -16,7 +16,7 @@ endforeach()
 
 juce_add_plugin (${PROJECT_NAME}
 				PRODUCT_NAME "Audible Planets" 
-				VERSION 1.0.15
+				VERSION 1.0.16
 				COMPANY_NAME "Void-Star"
 				COMPANY_WEBSITE "https://void-star.com/"
     				ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
