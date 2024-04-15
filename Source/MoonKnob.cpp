@@ -330,13 +330,13 @@ void MoonKnob::modMatrixChanged()
 	}
 }
 
-void MoonKnob::mouseDown(const juce::MouseEvent& e)
+void MoonKnob::mouseDown(const juce::MouseEvent& ev)
 {
 	if (!isEnabled())
 		return;
 
 	bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
-	if (shift || !learning || !knob.getBounds().contains(e.getMouseDownPosition()))
+	if (shift || !learning || !knob.getBounds().contains(ev.getMouseDownPosition()))
 		return;
 
 	auto& mm = *parameter->getModMatrix();
@@ -348,19 +348,19 @@ void MoonKnob::mouseDown(const juce::MouseEvent& e)
 	repaint();
 }
 
-void MoonKnob::mouseDrag(const juce::MouseEvent& e)
+void MoonKnob::mouseDrag(const juce::MouseEvent& ev)
 {
 	if (!isEnabled())
 		return;
 
 	bool shift = juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
-	if (shift || !learning || !knob.getBounds().contains(e.getMouseDownPosition()))
+	if (shift || !learning || !knob.getBounds().contains(ev.getMouseDownPosition()))
 		return;
 
-	if (e.getDistanceFromDragStart() >= 3)
+	if (ev.getDistanceFromDragStart() >= 3)
 	{
-		auto pt = e.getMouseDownPosition();
-		auto delta = (e.position.x - pt.getX()) + (pt.getY() - e.position.y);
+		auto pt = ev.getMouseDownPosition();
+		auto delta = (ev.position.x - pt.getX()) + (pt.getY() - ev.position.y);
 
 		float newModDepth = juce::jlimit(-1.0f, 1.0f, delta / 200.0f + modDepth);
 
