@@ -44,7 +44,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     usage.setBounds(45, 12, 80, 16);
 	scaleName.setFont(juce::Font(12.0f, juce::Font::plain));
 	scaleName.setColour(juce::Label::textColourId, juce::Colour(0xffE6E6E9));
-	scaleName.setBounds(130, 12, 100, 16);
+	scaleName.setBounds(130, 12, 200, 16);
     setSize(1186,725);
     startTimerHz(3);
     addKeyListener(this);
