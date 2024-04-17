@@ -15,10 +15,6 @@
 #include "AuxSynthVoice.h"
 #include "PluginProcessor.h"
 
- // TODO: move Squash knob to timbre section and re-expand algorithm selector.
- // -- update orbit viz to show squash
- // -- update randomization to include squash and anything else missing
-
  //==============================================================================
 AuxSynthVoice::AuxSynthVoice(APAudioProcessor& p)
 	: proc(p), osc(proc.analogTables, 8), mseg1(proc.mseg1Data), mseg2(proc.mseg2Data), mseg3(proc.mseg3Data), mseg4(proc.mseg4Data)
