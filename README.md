@@ -64,7 +64,7 @@ A few example presets are located [here](https://github.com/gregrecco67/Audible-
 
 ## Pages
 
-The synth has four main pages: "Main," "FX," "Rand," and "MSEG." The Main page contains the main controls for sound generation. The FX page contains the built-in effects arranged in one or two chains. The Randomization page contains controls for randomizing the main parameters and modulation settings in a variety of groups, as well as a slightly different interface for the envelopes and oscillators. The MSEG page contains controls for four multi-segment envelope generators, which can act as modulation sources.
+The synth has five pages: "Main," "Effects," "Randomization," "MSEG," and "Macros/Aux." The Main page contains the main controls for sound generation. The Effects page contains the built-in effects arranged in one or two chains. The Randomization page contains controls for randomizing the main parameters and modulation settings in a variety of groups, as well as a slightly different interface for the envelopes and oscillators. The MSEG page contains controls for four multi-segment envelope generators, which can act as modulation sources. The Macros/Aux page contains macros, controls that can be used to modulate several parameters at once, and an auxiliary oscillator distinct from the main orbital model.
 
 ### Main Page
 
@@ -96,9 +96,9 @@ Sound design can at times be a game of "almost, but not quite." At other times, 
 
 The MSEG page exposes controls for producing arbitrary control signals, single or repeating, with many of the same parameters as the LFOs on the main page. Double-click to create points, which you can click and drag to their desired locations, or turn on "Draw" and select a draw mode from the drop-down menu. All control points will snap to grid lines they are near. Scroll with the mouse wheel to adjust the number of horizontal divisions in the grid, and scroll with a modifier key held down (e.g., control, shift, alt) to adjust the vertical grid. 
 
-### Macros Page
+### Macros/Aux Page
 
-This page exposes controls for four sources of modulation that can be assigned to any number of parameters to modulate them all at once. Click on "Add" in the upper left of any one to assign modulation destinations. Each macro knob can be assigned to respond to a MIDI CC message. Just click "Learn" beneath the knob, and then activate the control you want to assign to it on your MIDI controller. A CC number will appear below the knob to indicate the assignment was successful. Click on the "Clear" button below it to remove the assignment.
+This page exposes controls for four sources of modulation that can be assigned to any number of parameters to modulate them all at once, and an auxiliary oscillator. Click on "Add" in the upper left of any one of the macro sections to assign modulation destinations. Each macro knob can be assigned to respond to a MIDI CC message. Just click "Learn" beneath the knob, and then activate the control you want to assign to it on your MIDI controller. A CC number will appear below the knob to indicate the assignment was successful. Click on the "Clear" button below it to remove the assignment. The auxiliary oscillator has a variety of waveforms, and can be placed in the signal chain either before or after the effects chains. Like the main oscillators, it can be controlled by any of the envelopes, and most of its controls can be modulated.
 
 # Motivation / Inspiration
 
