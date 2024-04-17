@@ -38,13 +38,18 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     usage.panic.onClick = [this] { proc.presetLoaded = true; };
     addAndMakeVisible(usage);
 	addAndMakeVisible(scaleName);
+	addAndMakeVisible(learningLabel);
 	addAndMakeVisible(levelKnob);
 
 	meter.setBounds(1130, 5, 15, 30);
     usage.setBounds(45, 12, 80, 16);
 	scaleName.setFont(juce::Font(12.0f, juce::Font::plain));
 	scaleName.setColour(juce::Label::textColourId, juce::Colour(0xffE6E6E9));
-	scaleName.setBounds(130, 12, 200, 16);
+	scaleName.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
+	scaleName.setJustificationType(juce::Justification::centred);
+	scaleName.setBounds(165, 12, 200, 16);
+	learningLabel.setBounds(850, 12, 200, 16);
+	learningLabel.setJustificationType(juce::Justification::centred);
     setSize(1186,725);
     startTimerHz(3);
     addKeyListener(this);
@@ -84,11 +89,15 @@ void APAudioProcessorEditor::timerCallback()
 	if (MTS_HasMaster(proc.client))
 	{
 		scaleName.setText(proc.scaleName, juce::dontSendNotification);
+		scaleName.setColour(juce::Label::backgroundColourId, juce::Colour(0xff16171A).brighter(0.3f));
 	}
 	else
 	{
 		scaleName.setText("", juce::dontSendNotification);
+		scaleName.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
 	}
+	learningLabel.setColour(juce::Label::backgroundColourId, (!proc.learningLabel.isEmpty()) ? juce::Colour(0xff16171A).brighter(0.3f) : juce::Colours::transparentBlack);
+	learningLabel.setText(proc.learningLabel, juce::dontSendNotification);
 }
 
 APAudioProcessorEditor::~APAudioProcessorEditor()

@@ -894,6 +894,13 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
         scaleName = MTS_GetScaleName(client);
     }
     
+	if (modMatrix.getLearn().id != -1) {
+		learningLabel = "Learning: " + modMatrix.getModSrcName(modMatrix.getLearn());
+	}
+	else {
+		learningLabel = "";
+	}
+
     if (presetLoaded)
     {
         presetLoaded = false;

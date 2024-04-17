@@ -335,7 +335,7 @@ public:
 	juce::AudioBuffer<float> auxSlice;
 
 	MTSClient* client;
-	String scaleName;
+	String scaleName, learningLabel;
 
 
 	AuxSynth auxSynth;

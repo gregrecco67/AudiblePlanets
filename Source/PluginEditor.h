@@ -162,7 +162,7 @@ private:
 	MacrosEditor macrosEditor{ proc };
 	APKnob levelKnob{ proc.globalParams.level };
 
-	Label scaleName;
+	Label scaleName, learningLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessorEditor)
 };
