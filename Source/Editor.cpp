@@ -38,6 +38,7 @@ Editor::Editor(APAudioProcessor& proc_)
     addAndMakeVisible(orbitViz);
     addAndMakeVisible(orbit);
 	proc.globalParams.pitchbendRange->addListener(this);
+	proc.globalParams.mpe->addListener(this);
     startTimerHz(frameRate);
 	addAndMakeVisible(liveViz);
 	liveViz.setLookAndFeel(&aplnf);
@@ -53,7 +54,7 @@ Editor::~Editor()
 
 void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
 {
-	if (param == proc.globalParams.pitchbendRange) {
+	if (param == proc.globalParams.pitchbendRange || param == proc.globalParams.mpe) {
 		proc.updatePitchbend();
 		return;
 	}

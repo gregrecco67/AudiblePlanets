@@ -218,17 +218,18 @@ void RandEditor::randomize()
 	std::uniform_real_distribution<> modDist(-1.f, 1.f);
     
 	// below is useful to get the number of modifiable parameters 
-	// (hard-coded in several places below to 236)
+	// (hard-coded in several places below to 247)
 	
 	// ----------------
 	/*   auto& params = proc.getPluginParameters();
 		for (auto& param : params) {
+			DBG(param->getModIndex());
 			std::cout << param->getModIndex() << std::endl;
 		}
 	*/
 	// ----------------
 
-	std::uniform_int_distribution<> paramsDist{0, 235};
+	std::uniform_int_distribution<> paramsDist{0, 246};
     auto numSrcs = proc.modMatrix.getNumModSources();
     std::uniform_int_distribution<> srcsDist{0, numSrcs - 1};
 	std::uniform_int_distribution<> functionDist{ 0, 19 };
@@ -995,7 +996,7 @@ void RandEditor::randomizeMacros() {
     auto randNum = randNumber.getValue();
     // msegSrcs
     std::uniform_int_distribution<> macroDist(0, 3);
-    std::uniform_int_distribution<> paramsDist{0, 235};
+    std::uniform_int_distribution<> paramsDist{0, 246};
     std::uniform_int_distribution<> functionDist{ 0, 19 };
     std::uniform_real_distribution<> modDist(-1.f, 1.f);
     for (int i = 0; i < randNum; i++) {
@@ -1017,7 +1018,7 @@ void RandEditor::randomizeMSEG() {
     auto randNum = randNumber.getValue();
     // msegSrcs
     std::uniform_int_distribution<> msegDist(0, 3);
-    std::uniform_int_distribution<> paramsDist{0, 235};
+    std::uniform_int_distribution<> paramsDist{0, 246};
     std::uniform_int_distribution<> functionDist{ 0, 19 };
     std::uniform_real_distribution<> modDist(-1.f, 1.f);
     for (int i = 0; i < randNum; i++) {

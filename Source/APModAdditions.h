@@ -31,7 +31,7 @@ public:
 		setText("Add", dontSendNotification);
 
 		// build hierarchical popup menu of parameters
-		PopupMenu oscsMenu, osc1Menu, osc2Menu, osc3Menu, osc4Menu;
+		PopupMenu oscsMenu, osc1Menu, osc2Menu, osc3Menu, osc4Menu, auxMenu;
 		PopupMenu lfosMenu, lfo1Menu, lfo2Menu, lfo3Menu, lfo4Menu;
 		PopupMenu envsMenu, env1Menu, env2Menu, env3Menu, env4Menu;
 		PopupMenu filterMenu;
@@ -84,10 +84,19 @@ public:
 		osc4Menu.addItem("OSC4 Spread", [this]() { setDest(proc.osc4Params.spread); });
 		osc4Menu.addItem("OSC4 Pan", [this]() { setDest(proc.osc4Params.pan); });
 
+		auxMenu.addItem("Aux Wave",   [this]() { setDest(proc.auxParams.wave); });
+		auxMenu.addItem("Aux Octave", [this]() { setDest(proc.auxParams.octave); });
+		auxMenu.addItem("Aux Volume", [this]() { setDest(proc.auxParams.volume); });
+		auxMenu.addItem("Aux Detune", [this]() { setDest(proc.auxParams.detune); });
+		auxMenu.addItem("Aux Spread", [this]() { setDest(proc.auxParams.spread); });
+		auxMenu.addItem("Aux Cutoff", [this]() { setDest(proc.auxParams.filtercutoff); });
+		auxMenu.addItem("Aux Reso",   [this]() { setDest(proc.auxParams.filterres); });
+
 		oscsMenu.addSubMenu("OSC1", osc1Menu);
 		oscsMenu.addSubMenu("OSC2", osc2Menu);
 		oscsMenu.addSubMenu("OSC3", osc3Menu);
 		oscsMenu.addSubMenu("OSC4", osc4Menu);
+		oscsMenu.addSubMenu("Aux", auxMenu);
 
 		lfo1Menu.addItem("LFO1 Rate", [this]() { setDest(proc.lfo1Params.rate); });
 		lfo1Menu.addItem("LFO1 Beats", [this]() { setDest(proc.lfo1Params.beat); });
@@ -357,6 +366,7 @@ public:
     ~APModMatrixBox() override
     {
         modMatrix.removeListener(this);
+		setModel(nullptr);
     }
 
 private:

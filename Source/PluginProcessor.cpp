@@ -238,6 +238,44 @@ static juce::String gridTextFunction(const gin::Parameter&, float v)
     return juce::String (v, 0);
 }
 
+static juce::String auxWaveTextFunction(const gin::Parameter&, float v)
+{
+	switch (int(v))
+	{
+		case 0: return "Sine";
+		case 1: return "Triangle";
+		case 2: return "Square";
+		case 3: return "Saw";
+		case 4: return "Pink Noise";
+		case 5: return "White Noise";
+		default:
+			jassertfalse;
+			return {};
+	}
+}
+
+static juce::String auxOctaveTextFunction(const gin::Parameter&, float v)
+{
+	if (v == 0.0f)
+		return "0";
+	if (v > 0.0f)
+		return "+" + juce::String(int(v));
+	else
+		return juce::String(int(v));
+}
+
+static juce::String auxPreFxTextFunction(const gin::Parameter&, float v) {
+		switch (int(v))
+	{
+	case 0: return "Post FX";
+	case 1: return "Pre FX";
+	default:
+		jassertfalse;
+		return {};
+	}
+}
+
+
 //==============================================================================
 void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr)
 {
@@ -380,6 +418,23 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
     demodmix = p.addExtParam("demodmix", "Demodulate", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, percentTextFunction);
     algo = p.addExtParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0, 0.f, algoTextFunction);
     demodVol = p.addExtParam("demodVol", "Demod Vol", "", "", { 0.0f, 4.0f, 0.0f, 1.0f }, 2.0f, 0.0f);
+}
+
+void APAudioProcessor::AuxParams::setup(APAudioProcessor& p) {
+	enable = p.addIntParam("auxenable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
+	wave = p.addExtParam("auxwave", "Aux Wave", "Wave", "", { 0.0, 5.0, 0.0, 1.0 }, 0.0f, 0.0f, auxWaveTextFunction);
+	env = p.addExtParam("auxenv", "Aux Env", "Env", "", { 0.0, 3.0, 1.0, 1.0 }, 0.0f, 0.0f, envSelectTextFunction);
+	octave = p.addExtParam("auxoctave", "Aux Octave", "Octave", "", { -2.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, auxOctaveTextFunction);
+	volume = p.addExtParam("auxvolume", "Aux Volume", "Volume", "", { 0.0, 2.0, 0.01f, 1.0 }, 0.5, 0.0f);
+	detune = p.addExtParam("auxdetune", "Aux Detune", "Detune", "", { 0.0, 0.5f, 0.0, 1.0 }, 0.0, 0.0f);
+	spread = p.addExtParam("auxspread", "Aux Spread", "Spread", "%", { 0.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
+	prefx = p.addExtParam("auxprefx", "Aux FX Order", "FX Order", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, auxPreFxTextFunction);
+	filtertype = p.addExtParam("auxfiltertype", "Aux Filter Type", "Filter Type", "", { 0.0, 7.0, 1.0, 1.0 }, 0.0, 0.0f, filterTextFunction);
+	float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
+	filtercutoff = p.addExtParam("auxfiltercutoff", "Aux Cutoff", "Cutoff", "", { 0.0, maxFreq, 0.0f, 1.0 }, 95.0, 0.0f, freqTextFunction);
+	filterres = p.addExtParam("auxres", "Aux Res", "Resonance", "", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
+	filterkeytrack = p.addExtParam("auxkeytrack", "Aux Keytrack", "Keytrack", "%", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
+	ignorepb = p.addIntParam("auxignorepb", "Aux Ignore PB", "Ignore PB", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 }
 
 //==============================================================================
@@ -579,6 +634,7 @@ void APAudioProcessor::MacroParams::setup(APAudioProcessor& p)
 
 void APAudioProcessor::updatePitchbend() {
     synth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
+	auxSynth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
 bool APAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
@@ -601,7 +657,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     .withInput("Sidechain", juce::AudioChannelSet::stereo(), true),
     false,
     getOptions()
-), synth(APSynth(*this))
+), synth(APSynth(*this)), auxSynth(AuxSynth(*this))
 {
     osc1Params.setup(*this, String{ "1" });
     osc2Params.setup(*this, String{ "2" });
@@ -620,6 +676,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 
     timbreParams.setup(*this);
     filterParams.setup(*this);
+	auxParams.setup(*this);
 	// mono params begin in the middle of this block
     globalParams.setup(*this); 
     orbitParams.setup(*this);
@@ -787,20 +844,8 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
     juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
 
-    //oversampler = std::make_unique<juce::dsp::Oversampling<float>>(
-    //    2, // channels
-    //    1, // 2^1 oversampling
-    //    dsp::Oversampling<float>::FilterType::filterHalfBandFIREquiripple,
-    //    true,
-    //    false);
-
-    //oversampler->reset();
-    //oversampler->initProcessing(spec.maximumBlockSize);
-    
-    //synth.setCurrentPlaybackSampleRate(newSampleRate * 2.0);
-
     synth.setCurrentPlaybackSampleRate(newSampleRate); // rollback to 1x
-
+	auxSynth.setCurrentPlaybackSampleRate(newSampleRate);
     modMatrix.setSampleRate(newSampleRate);
 
     stereoDelay.prepare(spec);
@@ -828,6 +873,8 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
 
     *dcFilter.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(newSampleRate, 5.0f);
     dcFilter.prepare(spec);
+
+	analogTables.setSampleRate(newSampleRate);
 }
 
 void APAudioProcessor::releaseResources()
@@ -840,30 +887,26 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
     auto numSamples = buffer.getNumSamples();
 
+	//auxMidiBuffer.clear();
+	//auxMidiBuffer.addEvents(midi, 0, numSamples, 0);
+
     if (MTS_HasMaster(client)) {
         scaleName = MTS_GetScaleName(client);
     }
     
-    //downsampledBuffer.setSize(2, numSamples);
-    //auto downsampledBlock = juce::dsp::AudioBlock<float>(downsampledBuffer);
-    
-    //juce::dsp::AudioBlock<float> block(buffer);
-    //
-    //juce::dsp::AudioBlock<float> oversampledBlock = oversampler->processSamplesUp(block);
-    //
-    //float* pointers[2];
-    //pointers[0] = oversampledBlock.getChannelPointer(0);
-    //pointers[1] = oversampledBlock.getChannelPointer(1);
-    //juce::AudioBuffer<float> oversampledBuffer{  pointers, 2, buffer.getNumSamples() * 2 };
-    //
     if (presetLoaded)
     {
         presetLoaded = false;
         synth.turnOffAllVoices(false);
+		auxSynth.turnOffAllVoices(false);
     }
 
     synth.startBlock();
     synth.setMPE(globalParams.mpe->isOn());
+
+	auxSynth.startBlock();
+	auxSynth.setMPE(globalParams.mpe->isOn());
+	auxBuffer.setSize(2, numSamples, false, false, true);
 
     playhead = getPlayHead();
 
@@ -873,15 +916,22 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     sidechainBuffer.setSize(2, numSamples, false, false, true);
     sidechainBuffer.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
     sidechainBuffer.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples()); // copy input
-
     buffer.clear(); // then clear it from output buffer
 
-    synth.setMono(globalParams.mono->isOn());
+	synth.setMono(globalParams.mono->isOn());
     synth.setLegato(globalParams.legato->isOn());
     synth.setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
     synth.setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
     synth.setGlideRate(globalParams.glideRate->getProcValue());
     synth.setNumVoices(int (globalParams.voices->getProcValue()));
+
+	auxSynth.setMono(globalParams.mono->isOn());
+	auxSynth.setLegato(globalParams.legato->isOn());
+	auxSynth.setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
+	auxSynth.setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
+	auxSynth.setGlideRate(globalParams.glideRate->getProcValue());
+	auxSynth.setNumVoices(int(globalParams.voices->getProcValue()));
+	auxBuffer.clear();
 
     while (todo > 0)
     {
@@ -889,18 +939,27 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
         updateParams(thisBlock);
         
-        //synth.renderNextBlock(oversampledBuffer, midi, pos * 2, thisBlock * 2);
-        
         sidechainSlice = gin::sliceBuffer(sidechainBuffer, pos, thisBlock);
-        synth.renderNextBlock(buffer, midi, pos, thisBlock); // rollback
-
-        //oversampler->processSamplesDown(downsampledBlock);
-        //
-        //buffer.copyFrom(0, pos, downsampledBuffer, 0, pos, thisBlock);
-        //buffer.copyFrom(1, pos, downsampledBuffer, 1, pos, thisBlock);
+		auxSynth.renderNextBlock(auxBuffer, midi, pos, thisBlock);
+        synth.renderNextBlock(buffer, midi, pos, thisBlock);
         
         auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);
-        applyEffects(bufferSlice);
+		auxSlice = gin::sliceBuffer(auxBuffer, pos, thisBlock);
+
+		if (auxParams.enable->isOn() && auxParams.prefx->isOn()) {
+			bufferSlice.addFrom(0, 0, auxBuffer, 0, pos, thisBlock);
+			bufferSlice.addFrom(1, 0, auxBuffer, 1, pos, thisBlock);
+			applyEffects(bufferSlice);
+		}
+		if (auxParams.enable->isOn() && !auxParams.prefx->isOn()) {
+			applyEffects(bufferSlice);
+			outputGain.process(auxSlice);
+			bufferSlice.addFrom(0, 0, auxBuffer, 0, pos, thisBlock);
+			bufferSlice.addFrom(1, 0, auxBuffer, 1, pos, thisBlock);
+		}
+		if (!auxParams.enable->isOn()) {
+			applyEffects(bufferSlice);
+		}
 
         modMatrix.finishBlock(thisBlock);
 
@@ -912,7 +971,8 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
     levelTracker.trackBuffer(buffer);
 
-    synth.endBlock(buffer.getNumSamples());
+    synth.endBlock(numSamples);
+	auxSynth.endBlock(numSamples);
 }
 
 juce::Array<float> APAudioProcessor::getLiveFilterCutoff()
@@ -1383,3 +1443,4 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new APAudioProcessor();
 }
+

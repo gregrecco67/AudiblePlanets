@@ -102,7 +102,12 @@ public:
 		addAndMakeVisible(msegDstSelector);
 		switch (msegParams.num) {
 		case 1:
-			msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG1Phases(); };
+			msegComponent.phaseCallback = [this]() { 
+				std::vector<float> auxVals = proc.auxSynth.getMSEG1Phases();
+				std::vector<float> synthVals = proc.synth.getMSEG1Phases();
+				synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
+				return synthVals;
+				};
 			break;
 		case 2:
 			msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG2Phases(); };

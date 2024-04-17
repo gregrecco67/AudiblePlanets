@@ -14,9 +14,11 @@ foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_sim
 	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
 endforeach()
 
+set(VersionString 1.0.17)
+
 juce_add_plugin (${PROJECT_NAME}
 				PRODUCT_NAME "Audible Planets" 
-				VERSION 1.0.16
+				VERSION ${VersionString}
 				COMPANY_NAME "Void-Star"
 				COMPANY_WEBSITE "https://void-star.com/"
     			ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
@@ -30,6 +32,7 @@ juce_add_plugin (${PROJECT_NAME}
 				NEEDS_MIDI_INPUT TRUE
 				NEEDS_MIDI_OUTPUT FALSE
 				COPY_PLUGIN_AFTER_BUILD TRUE
+				LV2URI "urn:void-star:audibleplanets:${VersionString}"
 			)
 
 if (APPLE)

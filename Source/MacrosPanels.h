@@ -17,6 +17,45 @@
 #include "PluginProcessor.h"
 #include "APModAdditions.h"
 
+class AuxBox : public gin::ParamBox
+{
+public:
+	AuxBox(const juce::String& name, APAudioProcessor& proc_)
+		: gin::ParamBox(name), proc(proc_)
+	{
+		
+		setName("aux");
+		addEnable(proc.auxParams.enable);
+		
+		addControl(wave = new gin::Select(proc.auxParams.wave), 0, 0);
+		addControl(env = new gin::Select(proc.auxParams.env), 0, 0);
+		addControl(new APKnob(proc.auxParams.octave), 1, 0);
+		addControl(new APKnob(proc.auxParams.volume), 2, 0);
+		addControl(new APKnob(proc.auxParams.detune), 3, 0);
+		addControl(new APKnob(proc.auxParams.spread), 4, 0);
+
+		addControl(prefx = new gin::Select(proc.auxParams.prefx), 0, 1);
+		addControl(filtertype = new gin::Select(proc.auxParams.filtertype), 0, 1);
+		addControl(new APKnob(proc.auxParams.filtercutoff), 1, 1);
+		addControl(new APKnob(proc.auxParams.filterres), 2, 1);
+		addControl(new APKnob(proc.auxParams.filterkeytrack), 3, 1);
+		addControl(new gin::Switch(proc.auxParams.ignorepb), 4, 1);
+	}
+
+	void resized() override
+	{
+		ParamBox::resized();
+		wave->setBounds(0, 23, 56, 35);
+		env->setBounds(0, 58, 56, 35);
+		prefx->setBounds(0, 93, 56, 35);
+		filtertype->setBounds(0, 128, 56, 35);
+	}
+
+	APAudioProcessor& proc;
+	gin::ParamComponent::Ptr wave, env, prefx, filtertype;
+};
+
+
 class APMacroParamSliderLNF : public gin::CopperLookAndFeel
 {
 public:
@@ -608,4 +647,20 @@ public:
 	ParameterSelector paramSelector{ proc, macroSrc };
 	MIDILearnButton midiLearnButton{ proc };
     TextButton clearButton{"Clear", "Clear"};
+};
+
+//==============================================================================
+class MacrosModBox : public gin::ParamBox
+{
+public:
+	MacrosModBox(const juce::String& name, APAudioProcessor& proc_)
+		: gin::ParamBox(name), proc(proc_)
+	{
+		setName("msegmod");
+		setTitle("mod sources");
+		addControl(srclist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 5);
+		srclist->setRowHeight(20);
+	}
+	gin::ModSrcListBox* srclist;
+	APAudioProcessor& proc;
 };

@@ -22,10 +22,10 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	addAndMakeVisible(meter);
     addAndMakeVisible(tabbed);
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
-    tabbed.addTab("2. FX", APColors::tabBkgd, &tab2, false, 1);
-    tabbed.addTab("3. Rand",   APColors::tabBkgd, &tab3, false, 2);
+    tabbed.addTab("2. Effects", APColors::tabBkgd, &tab2, false, 1);
+    tabbed.addTab("3. Randomization",   APColors::tabBkgd, &tab3, false, 2);
 	tabbed.addTab("4. MSEG", APColors::tabBkgd, &tab4, false, 3);
-	tabbed.addTab("5. Macros", APColors::tabBkgd, &tab5, false, 4);
+	tabbed.addTab("5. Macros/Aux", APColors::tabBkgd, &tab5, false, 4);
 
     tabbed.setLookAndFeel(&tabLNF);
     
