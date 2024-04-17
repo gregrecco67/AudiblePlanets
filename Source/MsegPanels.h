@@ -110,13 +110,28 @@ public:
 				};
 			break;
 		case 2:
-			msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG2Phases(); };
+                msegComponent.phaseCallback = [this]() {
+                    std::vector<float> auxVals = proc.auxSynth.getMSEG2Phases();
+                    std::vector<float> synthVals = proc.synth.getMSEG2Phases();
+                    synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
+                    return synthVals;
+                };
 			break;
 		case 3:
-			msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG3Phases(); };
+                msegComponent.phaseCallback = [this]() {
+                    std::vector<float> auxVals = proc.auxSynth.getMSEG3Phases();
+                    std::vector<float> synthVals = proc.synth.getMSEG3Phases();
+                    synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
+                    return synthVals;
+                };
 			break;
 		case 4:
-			msegComponent.phaseCallback = [this]() { return proc.synth.getMSEG4Phases(); };
+                msegComponent.phaseCallback = [this]() {
+                    std::vector<float> auxVals = proc.auxSynth.getMSEG4Phases();
+                    std::vector<float> synthVals = proc.synth.getMSEG4Phases();
+                    synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
+                    return synthVals;
+                };
 			break;
 		}
 	}
