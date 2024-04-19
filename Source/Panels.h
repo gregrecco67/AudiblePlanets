@@ -142,7 +142,7 @@ public:
 	void resized() override {
 		gin::ParamBox::resized();
 
-		fixedHz.setBounds(56, 76+23+15, 56, 15);
+		fixedHz.setBounds(56, 23+70+10, 56, 15); // 23/70/10 header, first row, padding
 		phaseKnob->setBounds(56*4, 23, 56, 70);
 	}
 	APLookAndFeel1 lnf1;
