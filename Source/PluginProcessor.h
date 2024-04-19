@@ -268,6 +268,17 @@ public:
 		JUCE_DECLARE_NON_COPYABLE(AuxParams)
 	};
 
+	struct SamplerParams {
+		SamplerParams() = default;
+
+		gin::Parameter::Ptr enable, volume, loop, key;
+		void setup(APAudioProcessor& p);
+
+		JUCE_DECLARE_NON_COPYABLE(SamplerParams)
+	};
+
+	void loadSample(const juce::String& path);
+
 	gin::ProcessorOptions getOptions();
 
     //==============================================================================
@@ -299,6 +310,7 @@ public:
 	MSEGParams mseg1Params, mseg2Params, mseg3Params, mseg4Params;
 	MacroParams macroParams;
 	AuxParams auxParams;
+	SamplerParams samplerParams;
 
     //==============================================================================
 	GainProcessor effectGain;
@@ -333,6 +345,8 @@ public:
 	juce::AudioBuffer<float> sidechainSlice;
 	juce::AudioBuffer<float> auxBuffer;
 	juce::AudioBuffer<float> auxSlice;
+	juce::AudioBuffer<float> samplerBuffer;
+	juce::AudioBuffer<float> samplerSlice;
 
 	MTSClient* client;
 	String scaleName, learningLabel;
@@ -341,9 +355,10 @@ public:
 	AuxSynth auxSynth;
 	gin::BandLimitedLookupTables analogTables;
 
-    //std::unique_ptr<juce::dsp::Oversampling<float>> oversampler;
-    //juce::AudioBuffer<float> downsampledBuffer;
-	
+	juce::Synthesiser sampler;
+	juce::AudioFormatManager formatManager;
+	juce::AudioFormatReader* reader{ nullptr };
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)
 };

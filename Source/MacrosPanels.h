@@ -55,6 +55,20 @@ public:
 	gin::ParamComponent::Ptr wave, env, prefx, filtertype;
 };
 
+class SamplerBox : public gin::ParamBox
+{
+public:
+	SamplerBox(const juce::String& name, APAudioProcessor& proc_)
+		: gin::ParamBox(name), proc(proc_) {
+		addEnable(proc.samplerParams.enable);
+		addControl(new APKnob(proc.samplerParams.volume), 0, 0);
+		addControl(new gin::Select(proc.samplerParams.loop), 1, 0);
+		addControl(new APKnob(proc.samplerParams.key), 2, 0);
+	}
+
+	APAudioProcessor& proc;
+};
+
 
 class APMacroParamSliderLNF : public gin::CopperLookAndFeel
 {
@@ -658,7 +672,7 @@ public:
 	{
 		setName("msegmod");
 		setTitle("mod sources");
-		addControl(srclist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 5);
+		addControl(srclist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 4);
 		srclist->setRowHeight(20);
 	}
 	gin::ModSrcListBox* srclist;
