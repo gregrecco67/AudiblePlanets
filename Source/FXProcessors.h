@@ -1089,7 +1089,7 @@ public:
 	{
 		drive = pre;
         preGain.setGainDecibels(pre);
-        postGain.setGainDecibels(post - (pre * 0.5f)); // compensate for preGain but only partly
+        postGain.setGainDecibels(jmin(post - (pre * 0.33f), -6.f)); // compensate for preGain but only partly
 	}
 	
 private:
