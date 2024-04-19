@@ -727,7 +727,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 		sampler.addVoice(new juce::SamplerVoice());
 	}
 
-	loadSample("D:\\dev\\JUCE Projects\\AudiblePlanets\\assets\\kalimba.wav");
+	//loadSample("D:\\dev\\JUCE Projects\\AudiblePlanets\\assets\\kalimba.wav");
 
     setupModMatrix();
     init();
