@@ -664,7 +664,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     .withInput("Sidechain", juce::AudioChannelSet::stereo(), true),
     false,
     getOptions()
-), synth(APSynth(*this)), auxSynth(AuxSynth(*this))
+), synth(APSynth(*this)), auxSynth(AuxSynth(*this)), sampler(APSampler(*this))
 {
     osc1Params.setup(*this, String{ "1" });
     osc2Params.setup(*this, String{ "2" });
@@ -724,11 +724,9 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	formatManager.registerBasicFormats();
 
 	for (int i = 0; i < 8; i++) {
-		sampler.addVoice(new juce::SamplerVoice());
+		sampler.addVoice(new APSamplerVoice(*this));
 	}
-
-	//loadSample("D:\\dev\\JUCE Projects\\AudiblePlanets\\assets\\kalimba.wav");
-
+    
     setupModMatrix();
     init();
 }
@@ -1333,14 +1331,8 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 }
 
 void APAudioProcessor::loadSample(const juce::String& path)
-{
-	reader = formatManager.createReaderFor(juce::File(path));
-
-	juce::BigInteger range;
-	range.setRange(0, 128, true);
-	int key = samplerParams.key->getUserValueInt();
-	sampler.clearSounds();
-	sampler.addSound(new juce::SamplerSound("Sample", *reader, range, key, 0.01, 0.1, 10));
+{    
+	sampler.loadSound(path);
 }
 
 gin::ProcessorOptions APAudioProcessor::getOptions()

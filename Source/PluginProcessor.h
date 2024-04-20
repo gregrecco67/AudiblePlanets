@@ -20,6 +20,7 @@
 #include "FXProcessors.h"
 #include "Synth.h"
 #include "AuxSynth.h"
+#include "APSampler.h"
 
 //==============================================================================
 class APAudioProcessor : public gin::Processor
@@ -278,7 +279,8 @@ public:
 	};
 
 	void loadSample(const juce::String& path);
-
+    
+    
 	gin::ProcessorOptions getOptions();
 
     //==============================================================================
@@ -355,7 +357,8 @@ public:
 	AuxSynth auxSynth;
 	gin::BandLimitedLookupTables analogTables;
 
-	juce::Synthesiser sampler;
+	//juce::Synthesiser sampler;
+    APSampler sampler;
 	juce::AudioFormatManager formatManager;
 	juce::AudioFormatReader* reader{ nullptr };
 
