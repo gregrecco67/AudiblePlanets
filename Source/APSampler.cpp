@@ -40,6 +40,26 @@ bool APSampler::loadSound(const juce::String& path) {
     else { return false; }
 }
 
+void APSampler::clearSound()
+{
+	sound = {};
+	for (auto voice : voices)
+	{
+		auto vav = dynamic_cast<APSamplerVoice*>(voice);
+		vav->setSound(nullptr);
+	}
+}
+
+void APSampler::updateBaseNote(int note)
+{
+	sound.midiRootNote = note;
+	for (auto voice : voices)
+	{
+		auto vav = dynamic_cast<APSamplerVoice*>(voice);
+		vav->setSound(&sound);
+	}
+}
+
 void APSampler::handleMidiEvent(const juce::MidiMessage& m) {
     MPESynthesiser::handleMidiEvent(m);
 }

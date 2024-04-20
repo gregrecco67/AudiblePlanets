@@ -12,10 +12,8 @@ public:
 
     void handleMidiEvent(const juce::MidiMessage& m) override;
     bool loadSound(const juce::String& path);
-    bool loadSoundFile(juce::File& file);
-    void updateRange(BigInteger range);
+	void clearSound();
     void updateBaseNote(int note);
-    bool shouldPlayNote(int note);
     
     APSamplerSound sound;
     APAudioProcessor& proc;

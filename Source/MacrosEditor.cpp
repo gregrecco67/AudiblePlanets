@@ -25,6 +25,7 @@ void MacrosEditor::resized()
 	macrosModBox.setBounds(905, 2*70 + 23, 5*56, 303);
 	samplerBox.setBounds(905, 466, 5*56, 140 + 23);
 	sampleFilenameLabel.setBounds(905, 466 + 23 + 70 + 23, 5*56, 23);
+	startTimerHz(4);
 }
 
 bool MacrosEditor::isInterestedInFileDrag(const juce::StringArray& files)
@@ -59,8 +60,20 @@ void MacrosEditor::filesDropped(const juce::StringArray& files, int /*x*/, int /
 
 void MacrosEditor::valueUpdated(gin::Parameter* param)
 {
-	if (param == proc.samplerParams.key && !sampleFilename.isEmpty()) {
-		proc.loadSample(sampleFilename);
+	if (param == proc.samplerParams.key && !sampleFilenameLabel.getText().isEmpty()) {
+		proc.sampler.updateBaseNote(proc.samplerParams.key->getUserValueInt());
+	}
+}
+
+void MacrosEditor::timerCallback()
+{
+	juce::String filename{ proc.sampler.sound.name };
+	if (!filename.isEmpty()) {
+		juce::File file{ filename };
+		sampleFilenameLabel.setText(file.getFileName(), juce::dontSendNotification);
+	}
+	else {
+		sampleFilenameLabel.setText("", juce::dontSendNotification);
 	}
 }
 

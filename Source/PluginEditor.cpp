@@ -102,6 +102,7 @@ void APAudioProcessorEditor::timerCallback()
 
 APAudioProcessorEditor::~APAudioProcessorEditor()
 {
+	tabbed.setLookAndFeel(nullptr);
 }
 
 //==============================================================================

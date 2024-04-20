@@ -34,23 +34,23 @@ class APSamplerVoice : public gin::SynthesiserVoice,
 public:
     APSamplerVoice(APAudioProcessor& p);
     
-    void noteStarted() override {}
-    void noteRetriggered() override {}
-    void noteStopped(bool allowTailOff) override {}
+	void noteStarted() override;
+	void noteRetriggered() override;
+	void noteStopped(bool allowTailOff) override;
 
     void notePressureChanged() override {}
     void noteTimbreChanged() override {}
     void notePitchbendChanged() override {}
     void noteKeyStateChanged() override {}
     
-    void setCurrentSampleRate(double newRate) override {}
+	void setCurrentSampleRate(double newRate) override;
 
-    void renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override {}
+	void renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override;
 
     float getCurrentNote() override { return noteSmoother.getCurrentValue() * 127.0f; }
 
-    bool isVoiceActive() override {}
-    
+	bool isVoiceActive() override { return isActive(); }
+
     void setSound(APSamplerSound* sound_) { sound = sound_; }
   
 private:
@@ -69,7 +69,12 @@ private:
     friend class APSampler;
     juce::MPENote curNote;
     
-    APSamplerSound* sound;
+	APSamplerSound* sound{ nullptr };
+
+	double pitchStride;
+	juce::ADSR adsr;
     
+	double sourceSamplePosition = 0;
+	float lgain = 0, rgain = 0;
 };
 
