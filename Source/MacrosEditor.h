@@ -42,6 +42,5 @@ private:
 	SamplerBox samplerBox{ "Sampler", proc };
 	Label sampleFilenameLabel{ "Drop a file" };
 	APLNF lookAndFeel;
-	juce::String sampleFilename;
 };
 

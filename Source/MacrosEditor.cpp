@@ -50,11 +50,9 @@ void MacrosEditor::filesDropped(const juce::StringArray& files, int /*x*/, int /
 	{
 		proc.loadSample(files[0]);
 		sampleFilenameLabel.setText(file.getFileName(), juce::dontSendNotification);
-		sampleFilename = files[0];
 	}
 	else { 
 		sampleFilenameLabel.setText("Invalid file", juce::dontSendNotification);
-		sampleFilename = "";
 	}
 }
 

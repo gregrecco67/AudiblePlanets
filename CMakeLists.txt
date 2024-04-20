@@ -70,6 +70,7 @@ file(GLOB_RECURSE AssetFiles CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.svg"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.otf"
 	"${CMAKE_CURRENT_SOURCE_DIR}/assets/*.json"
+	"${CMAKE_CURRENT_SOURCE_DIR}/assets/*.wav"
 )
 
 juce_add_binary_data(Assets SOURCES ${AssetFiles})
