@@ -16,7 +16,7 @@ void APSamplerVoice::noteStarted()
 	pitchStride = std::pow(2.0, (curNote.initialNote - sound->midiRootNote) / 12.0) 
 		* sound->sourceSampleRate / getSampleRate();
 
-	sourceSamplePosition = 0.0;
+	sourceSamplePosition = proc.samplerParams.start->getUserValue() * sound->length;
 	lgain = curNote.noteOnVelocity.asUnsignedFloat();
 	rgain = curNote.noteOnVelocity.asUnsignedFloat();
 
@@ -139,13 +139,13 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 
 			sourceSamplePosition += pitchStride;
 
-			if (sourceSamplePosition >= sound->length && proc.samplerParams.loop->isOn())
+			if (sourceSamplePosition >= int(sound->length * proc.samplerParams.end->getUserValue()) && proc.samplerParams.loop->isOn())
 			{
-				sourceSamplePosition = 0.0;
+				sourceSamplePosition = int(sound->length * proc.samplerParams.start->getUserValue());
 				continue;
 			}
 
-			if (sourceSamplePosition > sound->length || !adsr.isActive())
+			if (sourceSamplePosition > int(sound->length * proc.samplerParams.end->getUserValue()) || !adsr.isActive())
 			{
 				clearCurrentNote();
 				stopVoice();
