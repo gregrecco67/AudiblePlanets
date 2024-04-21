@@ -92,7 +92,7 @@ public:
 			{
 				smoothed.push_back(audioPoints[i - 1] * 0.333f + audioPoints[i] * 0.333f + audioPoints[i+1] * 0.333f);
 			}
-			smoothed.push_back(audioPoints[audioPoints.size()]);
+			smoothed.push_back(audioPoints[audioPoints.size() - 1]);
 			shouldRedraw = false;
 		}
 		juce::Path p;
@@ -132,15 +132,33 @@ public:
 		addControl(new APKnob(proc.samplerParams.loopstart), 0, 1);
 		addControl(new APKnob(proc.samplerParams.loopend), 1, 1);
 		addAndMakeVisible(waveform);
+		addAndMakeVisible(loadButton);
+		loadButton.onClick = [this] { chooseFile(); };
 	}
+
+	void chooseFile() {
+		chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
+			[this](const juce::FileChooser& fc)
+			{
+				auto file = fc.getResult();
+				if (!file.existsAsFile()) { return; }
+				proc.loadSample(file.getFullPathName());
+				waveform.shouldRedraw = true;
+				waveform.repaint();
+			});
+	};
 
 	void resized() override {
 		ParamBox::resized();
 		waveform.setBounds(0, 140 + 23, getWidth(), 93);
+		loadButton.setBounds(getWidth() - 55, 0, 55, 23);
 	}
 
 	Waveform waveform;
 	APAudioProcessor& proc;
+	TextButton loadButton{ "Load" };
+	std::unique_ptr<juce::FileChooser> chooser = std::make_unique<juce::FileChooser>("Select file",
+		juce::File{}, "*.wav,*.aif,*.mp3,*.aif,*.ogg,*.flac");
 };
 
 
