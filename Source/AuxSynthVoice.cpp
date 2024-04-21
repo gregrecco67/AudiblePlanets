@@ -203,7 +203,8 @@ void AuxSynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int 
 	}
 
 	osc.processAdding(osc1Note, oscParams, scratchBuffer);
-	auto gain = gin::velocityToGain(velocity, ampKeyTrack) * getValue(proc.auxParams.volume) * envOut * baseAmplitude;
+    auto volume = juce::Decibels::decibelsToGain(getValue(proc.auxParams.volume));
+	auto gain = gin::velocityToGain(velocity, ampKeyTrack) * volume * envOut * baseAmplitude;
 	scratchBuffer.applyGain(gain);
 	
 	filter.process(scratchBuffer);

@@ -110,7 +110,7 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 
 		float* outL = outputBuffer.getWritePointer(0, startSample);
 		float* outR = outputBuffer.getNumChannels() > 1 ? outputBuffer.getWritePointer(1, startSample) : nullptr;
-
+        
 		while (--numSamples >= 0)
 		{
 			auto pos = (int)sourceSamplePosition;
@@ -123,7 +123,7 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 				: l;
 
 			auto envelopeValue = adsr.getNextSample();
-
+            
 			l *= lgain * envelopeValue;
 			r *= rgain * envelopeValue;
 

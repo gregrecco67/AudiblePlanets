@@ -264,6 +264,14 @@ static juce::String auxOctaveTextFunction(const gin::Parameter&, float v)
 		return juce::String(int(v));
 }
 
+static juce::String decibelsTextFunction(const gin::Parameter&, float v)
+{
+    if (v > 0.f)
+        return "+" + juce::String(v, 1) + " dB";
+    else
+        return juce::String(v, 1) + " dB";
+}
+
 static juce::String auxPreFxTextFunction(const gin::Parameter&, float v) {
 		switch (int(v))
 	{
@@ -425,7 +433,8 @@ void APAudioProcessor::AuxParams::setup(APAudioProcessor& p) {
 	wave = p.addExtParam("auxwave", "Aux Wave", "Wave", "", { 0.0, 5.0, 0.0, 1.0 }, 0.0f, 0.0f, auxWaveTextFunction);
 	env = p.addExtParam("auxenv", "Aux Env", "Env", "", { 0.0, 3.0, 1.0, 1.0 }, 0.0f, 0.0f, envSelectTextFunction);
 	octave = p.addExtParam("auxoctave", "Aux Octave", "Octave", "", { -2.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, auxOctaveTextFunction);
-	volume = p.addExtParam("auxvolume", "Aux Volume", "Volume", "", { 0.0, 2.0, 0.01f, 1.0 }, 0.5, 0.0f);
+	volume = p.addExtParam("auxvolume", "Aux Volume", "Volume", "", { -40.0, 12.0, 0.0, 1.0 }, -12.f, 0.0f,
+                           decibelsTextFunction);
 	detune = p.addExtParam("auxdetune", "Aux Detune", "Detune", "", { 0.0, 0.5f, 0.0, 1.0 }, 0.0, 0.0f);
 	spread = p.addExtParam("auxspread", "Aux Spread", "Spread", "%", { 0.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
 	prefx = p.addExtParam("auxprefx", "Aux FX Order", "FX Order", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, auxPreFxTextFunction);
@@ -439,7 +448,8 @@ void APAudioProcessor::AuxParams::setup(APAudioProcessor& p) {
 
 void APAudioProcessor::SamplerParams::setup(APAudioProcessor& p) {
 	enable = p.addIntParam("samplenable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-	volume = p.addExtParam("samplvolume", "Volume", "", "", { 0.0, 2.0, 0.01f, 1.0 }, 0.5, 0.0f);
+	volume = p.addExtParam("samplvolume", "Volume", "", "", { -40.0, 12.0, 0.0f, 1.0 }, -12.f, 0.0f,
+                           decibelsTextFunction);
 	loop = p.addIntParam("samplloop", "Loop", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 	key = p.addExtParam("samplkey", "Key", "", "", { 0.0, 128.0, 1.0, 1.0 }, 60.0, 0.0f);
 	start = p.addExtParam("samplstart", "Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
@@ -991,8 +1001,10 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 		auxSlice = gin::sliceBuffer(auxBuffer, pos, thisBlock);
 		samplerSlice = gin::sliceBuffer(samplerBuffer, pos, thisBlock);
 
-		bufferSlice.addFrom(0, 0, samplerBuffer, 0, pos, thisBlock, modMatrix.getValue(samplerParams.volume));
-		bufferSlice.addFrom(1, 0, samplerBuffer, 1, pos, thisBlock, modMatrix.getValue(samplerParams.volume));
+		bufferSlice.addFrom(0, 0, samplerBuffer, 0, pos, thisBlock, 
+            juce::Decibels::decibelsToGain(modMatrix.getValue(samplerParams.volume)));
+		bufferSlice.addFrom(1, 0, samplerBuffer, 1, pos, thisBlock, 
+            juce::Decibels::decibelsToGain(modMatrix.getValue(samplerParams.volume)));
 
 		if (auxParams.prefx->isOn()) {
 			bufferSlice.addFrom(0, 0, auxBuffer, 0, pos, thisBlock);
