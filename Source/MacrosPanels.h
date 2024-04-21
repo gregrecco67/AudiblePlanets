@@ -106,6 +106,8 @@ public:
 		}
 		if (std::abs(min) > max) { max = std::abs(min); }
 		else { min = -max; }
+		min = jlimit(-1.f, -.3f, min);
+		max = jlimit(.3f, 1.f, max);
 		for (int sample = 0; sample < smoothed.size(); sample++) {
 			p.lineTo(sample, jmap(smoothed[sample], min, max, static_cast<float>(getHeight()), 0.f));
 		}
