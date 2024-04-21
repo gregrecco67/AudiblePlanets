@@ -114,9 +114,9 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 		auto endsamp = sound->length * proc.samplerParams.end->getUserValue();
 		auto startsamp = sound->length * proc.samplerParams.start->getUserValue();
 		auto loopstart = startsamp + std::abs(endsamp-startsamp) * proc.samplerParams.loopstart->getUserValue();
-		auto loopstartramp = loopstart + pitchStride * 32;
+		auto loopstartramp = loopstart + pitchStride * 200;
 		auto loopend = startsamp + std::abs(endsamp - startsamp) * proc.samplerParams.loopend->getUserValue();
-		auto loopendramp = loopend - pitchStride * 32;
+		auto loopendramp = loopend - pitchStride * 200;
 
 		while (--numSamples >= 0)
 		{
@@ -133,7 +133,7 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 			if (pos > loopstart && pos < loopstartramp)
 				envelopeValue *= jlimit(0.0, 1.0, (pos - loopstart) / (loopstartramp - loopstart));
 			else if (pos > loopendramp && pos < loopend)
-				envelopeValue *= jlimit(0.0, 1.0, (pos - loopendramp) / (loopend - loopendramp));
+				envelopeValue *= jlimit(0.0, 1.0, (1.0 - (pos - loopendramp)) / (loopend - loopendramp));
             
 			l *= lgain * envelopeValue;
 			r *= rgain * envelopeValue;
