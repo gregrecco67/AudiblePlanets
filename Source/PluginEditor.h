@@ -160,7 +160,7 @@ private:
 	RandEditor randEditor{ proc };
 	MsegEditor msegEditor{ proc };
 	MacrosEditor macrosEditor{ proc };
-	APKnob levelKnob{ proc.globalParams.level };
+	APKnob levelKnob{ proc.globalParams.level }, auxKnob{ proc.auxParams.volume }, samplerKnob{ proc.samplerParams.volume };
 
 	Label scaleName, learningLabel;
 

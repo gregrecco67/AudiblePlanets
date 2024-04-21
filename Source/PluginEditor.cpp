@@ -39,6 +39,10 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     addAndMakeVisible(usage);
 	addAndMakeVisible(scaleName);
 	addAndMakeVisible(learningLabel);
+	addAndMakeVisible(auxKnob);
+	auxKnob.setDisplayName("Aux");
+	addAndMakeVisible(samplerKnob);
+	samplerKnob.setDisplayName("Sampler");
 	addAndMakeVisible(levelKnob);
 
 	meter.setBounds(1130, 5, 15, 30);
@@ -48,7 +52,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	scaleName.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
 	scaleName.setJustificationType(juce::Justification::centred);
 	scaleName.setBounds(165, 12, 200, 16);
-	learningLabel.setBounds(850, 12, 200, 16);
+	learningLabel.setBounds(834, 12, 184, 16);
 	learningLabel.setJustificationType(juce::Justification::centred);
     setSize(1186,725);
     startTimerHz(3);
@@ -127,7 +131,10 @@ void APAudioProcessorEditor::resized()
     editor.setBounds(editorArea);
     patchBrowser.setBounds(rc);
 	//	meter.setBounds(1130, 5, 15, 30);
+	auxKnob.setBounds(1031, 0, 32, 40);
+	samplerKnob.setBounds(1063, 0, 32, 40);
 	levelKnob.setBounds(1095, 0, 32, 40);
+
 	fxEditor.setBounds(editorArea);
 	randEditor.setBounds(editorArea);
 	msegEditor.setBounds(editorArea);
