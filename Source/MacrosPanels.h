@@ -61,6 +61,15 @@ public:
 	Waveform(APAudioProcessor& p) : proc(p) {}
 	void paint(juce::Graphics& g) override
 	{
+		if (proc.sampler.sound.data != nullptr) {
+			g.setColour(juce::Colour(0xffCC8866).darker(0.5f));
+			int loopstart = proc.samplerParams.loopstart->getUserValue() * getWidth();
+			int loopend = proc.samplerParams.loopend->getUserValue() * getWidth();
+			g.fillRect(loopstart, 0, loopend - loopstart, getHeight());
+			g.setColour(juce::Colours::grey);
+			g.drawLine(loopstart, 0, loopstart, getHeight(), 1);
+			g.drawLine(loopend, 0, loopend, getHeight(), 1);
+		}
 		g.setColour(juce::Colours::darkgrey);
 		g.drawRect(getLocalBounds(), 1);
 		auto& audio = proc.sampler.sound.data;
@@ -70,6 +79,7 @@ public:
 		auto buffer = audio->getReadPointer(0);
 		if (shouldRedraw) {
 			audioPoints.clear();
+			smoothed.clear();
 			auto length = proc.sampler.sound.length;
 			int startSample = int(proc.samplerParams.start->getUserValue() * length);
 			int endSample = int(proc.samplerParams.end->getUserValue() * length);
@@ -77,28 +87,34 @@ public:
 			{
 				audioPoints.push_back(buffer[sample]);
 			}
+			smoothed.push_back(audioPoints[0]);
+			for (int i = 1; i < audioPoints.size() - 1; i++)
+			{
+				smoothed.push_back(audioPoints[i - 1] * 0.333f + audioPoints[i] * 0.333f + audioPoints[i+1] * 0.333f);
+			}
+			smoothed.push_back(audioPoints[audioPoints.size()]);
 			shouldRedraw = false;
 		}
 		juce::Path p;
 		p.clear();
 		p.startNewSubPath(0, getHeight() / 2);
 		float max{ 0 }, min{ 0 };
-		for (int sample = 0; sample < audioPoints.size(); sample++)
+		for (int sample = 0; sample < smoothed.size(); sample++)
 		{
-			if (audioPoints[sample] > max) { max = audioPoints[sample]; }
-			if (audioPoints[sample] < min) { min = audioPoints[sample]; }
+			if (smoothed[sample] > max) { max = smoothed[sample]; }
+			if (smoothed[sample] < min) { min = smoothed[sample]; }
 		}
 		if (std::abs(min) > max) { max = std::abs(min); }
 		else { min = -max; }
-		for (int sample = 0; sample < audioPoints.size(); sample++) {
-			p.lineTo(sample, jmap(audioPoints[sample], min, max, static_cast<float>(getHeight()), 0.f));
+		for (int sample = 0; sample < smoothed.size(); sample++) {
+			p.lineTo(sample, jmap(smoothed[sample], min, max, static_cast<float>(getHeight()), 0.f));
 		}
 
-		g.setColour(juce::Colours::grey);
+		g.setColour(juce::Colours::white);
 		g.strokePath(p, juce::PathStrokeType(1.0f));
 	}
 	APAudioProcessor& proc;
-	std::vector<float> audioPoints;
+	std::vector<float> audioPoints, smoothed;
 	bool shouldRedraw{ true };
 };
 
@@ -113,12 +129,14 @@ public:
 		addControl(new APKnob(proc.samplerParams.key), 2, 0);
 		addControl(new APKnob(proc.samplerParams.start), 3, 0);
 		addControl(new APKnob(proc.samplerParams.end), 4, 0);
+		addControl(new APKnob(proc.samplerParams.loopstart), 0, 1);
+		addControl(new APKnob(proc.samplerParams.loopend), 1, 1);
 		addAndMakeVisible(waveform);
 	}
 
 	void resized() override {
 		ParamBox::resized();
-		waveform.setBounds(0, 70 + 23, getWidth(), 93);
+		waveform.setBounds(0, 140 + 23, getWidth(), 93);
 	}
 
 	Waveform waveform;
@@ -728,7 +746,7 @@ public:
 	{
 		setName("msegmod");
 		setTitle("mod sources");
-		addControl(srclist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 4);
+		addControl(srclist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 3);
 		srclist->setRowHeight(20);
 	}
 	gin::ModSrcListBox* srclist;

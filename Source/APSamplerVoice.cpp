@@ -111,6 +111,13 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 		float* outL = outputBuffer.getWritePointer(0, startSample);
 		float* outR = outputBuffer.getNumChannels() > 1 ? outputBuffer.getWritePointer(1, startSample) : nullptr;
         
+		auto endsamp = sound->length * proc.samplerParams.end->getUserValue();
+		auto startsamp = sound->length * proc.samplerParams.start->getUserValue();
+		auto loopstart = startsamp + std::abs(endsamp-startsamp) * proc.samplerParams.loopstart->getUserValue();
+		auto loopstartramp = loopstart + pitchStride * 32;
+		auto loopend = startsamp + std::abs(endsamp - startsamp) * proc.samplerParams.loopend->getUserValue();
+		auto loopendramp = loopend - pitchStride * 32;
+
 		while (--numSamples >= 0)
 		{
 			auto pos = (int)sourceSamplePosition;
@@ -123,6 +130,10 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 				: l;
 
 			auto envelopeValue = adsr.getNextSample();
+			if (pos > loopstart && pos < loopstartramp)
+				envelopeValue *= jlimit(0.0, 1.0, (pos - loopstart) / (loopstartramp - loopstart));
+			else if (pos > loopendramp && pos < loopend)
+				envelopeValue *= jlimit(0.0, 1.0, (pos - loopendramp) / (loopend - loopendramp));
             
 			l *= lgain * envelopeValue;
 			r *= rgain * envelopeValue;
@@ -139,13 +150,13 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 
 			sourceSamplePosition += pitchStride;
 
-			if (sourceSamplePosition >= int(sound->length * proc.samplerParams.end->getUserValue()) && proc.samplerParams.loop->isOn())
+			if (sourceSamplePosition >= loopend && proc.samplerParams.loop->isOn())
 			{
-				sourceSamplePosition = int(sound->length * proc.samplerParams.start->getUserValue());
+				sourceSamplePosition = loopstart;
 				continue;
 			}
 
-			if (sourceSamplePosition > int(sound->length * proc.samplerParams.end->getUserValue()) || !adsr.isActive())
+			if (sourceSamplePosition > endsamp || !adsr.isActive())
 			{
 				clearCurrentNote();
 				stopVoice();

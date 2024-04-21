@@ -15,6 +15,8 @@ MacrosEditor::MacrosEditor(APAudioProcessor& proc_) : proc(proc_)
 	proc.samplerParams.key->addListener(this);
 	proc.samplerParams.start->addListener(this);
 	proc.samplerParams.end->addListener(this);
+	proc.samplerParams.loopstart->addListener(this);
+	proc.samplerParams.loopend->addListener(this);
 }
 
 void MacrosEditor::resized()
@@ -24,8 +26,8 @@ void MacrosEditor::resized()
 	macro3.setBounds(0, 329, 450, 323);
 	macro4.setBounds(455, 329, 450, 323);
 	aux.setBounds(905, 0, 5*56, 2*70 + 23);
-	macrosModBox.setBounds(905, 2*70 + 23, 5*56, 303);
-	samplerBox.setBounds(905, 466, 5*56, 140 + 23 + 23);
+	macrosModBox.setBounds(905, 2*70 + 23, 5*56, 233);
+	samplerBox.setBounds(905, 396, 5*56, 210 + 23 + 23);
 	sampleFilenameLabel.setBounds(905, 466 + 70 + 70 + 23, 5*56, 23);
 	startTimerHz(4);
 }
@@ -72,6 +74,14 @@ void MacrosEditor::valueUpdated(gin::Parameter* param)
 		samplerBox.waveform.repaint();
 	}
 	else if (param == proc.samplerParams.end) {
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
+	}
+	else if (param == proc.samplerParams.loopstart) {
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
+	}
+	else if (param == proc.samplerParams.loopend) {
 		samplerBox.waveform.shouldRedraw = true;
 		samplerBox.waveform.repaint();
 	}

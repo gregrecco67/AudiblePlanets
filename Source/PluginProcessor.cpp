@@ -283,6 +283,11 @@ static juce::String auxPreFxTextFunction(const gin::Parameter&, float v) {
 	}
 }
 
+static juce::String midiNoteNameTextFunction(const gin::Parameter&, float v)
+{
+	return String(int(v)) + " " + juce::MidiMessage::getMidiNoteName(int(v), true, true, 3);
+}
+
 
 //==============================================================================
 void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr)
@@ -451,7 +456,7 @@ void APAudioProcessor::SamplerParams::setup(APAudioProcessor& p) {
 	volume = p.addExtParam("samplvolume", "Volume", "", "", { -40.0, 12.0, 0.0f, 1.0 }, -12.f, 0.0f,
                            decibelsTextFunction);
 	loop = p.addIntParam("samplloop", "Loop", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-	key = p.addExtParam("samplkey", "Key", "", "", { 0.0, 128.0, 1.0, 1.0 }, 60.0, 0.0f);
+	key = p.addExtParam("samplkey", "Key", "", "", { 0.0, 127.0, 1.0, 1.0 }, 60.0, 0.0f, midiNoteNameTextFunction);
 	start = p.addExtParam("samplstart", "Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
 	end = p.addExtParam("samplend", "End", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
 	loopstart = p.addExtParam("samplloopstart", "Loop Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
