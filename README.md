@@ -3,15 +3,15 @@
 
 An expressive, quasi-Ptolemaic semi-modular synthesizer.
 
-![page1](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/5ea04d48-3868-4683-ba16-58116c0bff7e)
+![page1](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/1104473e-9191-4cc5-86b9-9d4211848c1d)
 
-![page2](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/e0d25b39-1aae-4d5c-86e7-86ecd2fdea4a)
+![page2](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/49b9f22d-27b2-42d4-adc4-86561dfe3bf7)
 
-![page3](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/f6cd94ee-5b26-4835-a613-74a29dd76d2f)
+![page3](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/43a3e698-2465-481f-ae91-9457956bb4d9)
 
-![page4](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/b258f250-9e69-4ef5-aeed-007ce973b550)
+![page4](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/1b868d02-7340-4313-a5cf-91cea0a95ebf)
 
-![page5](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/04086fc1-d1b9-4ba8-9009-a31dd2b4fa83)
+![page5](https://github.com/gregrecco67/AudiblePlanets/assets/127459177/98e86f25-7260-4823-8c71-eb2de549e8bd)
 
 ## Features
 
@@ -98,7 +98,7 @@ The MSEG page exposes controls for producing arbitrary control signals, single o
 
 ### Macros/Aux Page
 
-This page exposes controls for four sources of modulation that can be assigned to any number of parameters to modulate them all at once, and an auxiliary oscillator. Click on "Add" in the upper left of any one of the macro sections to assign modulation destinations. Each macro knob can be assigned to respond to a MIDI CC message. Just click "Learn" beneath the knob, and then activate the control you want to assign to it on your MIDI controller. A CC number will appear below the knob to indicate the assignment was successful. Click on the "Clear" button below it to remove the assignment. The auxiliary oscillator has a variety of waveforms, and can be placed in the signal chain either before or after the effects chains. Like the main oscillators, it can be controlled by any of the envelopes, and most of its controls can be modulated.
+This page exposes controls for four sources of modulation that can be assigned to any number of parameters to modulate them all at once, and two additional sounds sources for the sake of layering: an auxiliary oscillator and a rudimentary sampler. Click on "Add" in the upper left of any one of the macro sections to assign modulation destinations. Each macro knob can be assigned to respond to a MIDI CC message. Just click "Learn" beneath the knob, and then activate the control you want to assign to it on your MIDI controller. A CC number will appear below the knob to indicate the assignment was successful. Click on the "Clear" button below it to remove the assignment. The auxiliary oscillator has a variety of waveforms, and can be placed in the signal chain either before or after the effects chains. Like the main oscillators, it can be controlled by any of the envelopes, and most of its controls can be modulated. The sampler can load .wav, .aif, .mp3, .flac, and .ogg files and play back audio within them up to 10 seconds in length. Select files with the "Load" button, or just by dragging and dropping them onto the plugin.
 
 # Motivation / Inspiration
 
