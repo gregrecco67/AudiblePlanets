@@ -113,7 +113,7 @@ public:
 		}
 
 		g.setColour(juce::Colours::white);
-		g.strokePath(p, juce::PathStrokeType(1.0f));
+		g.strokePath(p, juce::PathStrokeType(.4f));
 	}
 	APAudioProcessor& proc;
 	std::vector<float> audioPoints, smoothed;
