@@ -20,7 +20,7 @@ APSampler::APSampler(APAudioProcessor& proc_) : proc(proc_)
 
 bool APSampler::loadSound(const juce::String& path) {
     reader = formatManager.createReaderFor(juce::File(path));
-
+	if (reader == nullptr) { return false; }
     sound.sourceSampleRate = reader->sampleRate;
     sound.length = jmin((int) reader->lengthInSamples,
                    (int) (MAX_SAMPLE_LENGTH_S * sound.sourceSampleRate));
@@ -32,7 +32,7 @@ bool APSampler::loadSound(const juce::String& path) {
     if (reader->read(sound.data.get(), 0, sound.length + 4, 0, true, true)) {
         for (auto voice : voices)
         {
-            auto vav = dynamic_cast<APSamplerVoice*>(voice);
+            auto vav = dynamic_cast<APSamplerVoice*>(voice); 
             vav->setSound(&sound);
         }
         return true;
