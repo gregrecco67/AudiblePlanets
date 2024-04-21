@@ -63,18 +63,22 @@ public:
 	{
 		g.setColour(juce::Colours::darkgrey);
 		g.drawRect(getLocalBounds(), 1);
-		if (!shouldRedraw) { return; }
 		auto& audio = proc.sampler.sound.data;
-		auto stride = proc.sampler.sound.length / getWidth();
+		auto stride = proc.sampler.sound.length * (proc.samplerParams.end->getValue() - proc.samplerParams.start->getValue()) / getWidth();
 		auto name = proc.sampler.sound.name;
 		if (stride < 1) { return; }
 		auto buffer = audio->getReadPointer(0);
-		audioPoints.clear();
-		for (int sample = 0; sample < proc.sampler.sound.length; sample += stride)
-		{
-			audioPoints.push_back(buffer[sample]);
+		if (shouldRedraw) {
+			audioPoints.clear();
+			auto length = proc.sampler.sound.length;
+			int startSample = int(proc.samplerParams.start->getUserValue() * length);
+			int endSample = int(proc.samplerParams.end->getUserValue() * length);
+			for (int sample = startSample; sample < endSample; sample += stride)
+			{
+				audioPoints.push_back(buffer[sample]);
+			}
+			shouldRedraw = false;
 		}
-
 		juce::Path p;
 		p.clear();
 		p.startNewSubPath(0, getHeight() / 2);
@@ -84,17 +88,18 @@ public:
 			if (audioPoints[sample] > max) { max = audioPoints[sample]; }
 			if (audioPoints[sample] < min) { min = audioPoints[sample]; }
 		}
+		if (std::abs(min) > max) { max = std::abs(min); }
+		else { min = -max; }
 		for (int sample = 0; sample < audioPoints.size(); sample++) {
 			p.lineTo(sample, jmap(audioPoints[sample], min, max, static_cast<float>(getHeight()), 0.f));
 		}
 
 		g.setColour(juce::Colours::grey);
 		g.strokePath(p, juce::PathStrokeType(1.0f));
-		shouldRedraw = false;
 	}
 	APAudioProcessor& proc;
 	std::vector<float> audioPoints;
-	bool shouldRedraw{ false };
+	bool shouldRedraw{ true };
 };
 
 class SamplerBox : public gin::ParamBox
@@ -106,6 +111,8 @@ public:
 		addControl(new APKnob(proc.samplerParams.volume), 0, 0);
 		addControl(new gin::Select(proc.samplerParams.loop), 1, 0);
 		addControl(new APKnob(proc.samplerParams.key), 2, 0);
+		addControl(new APKnob(proc.samplerParams.start), 3, 0);
+		addControl(new APKnob(proc.samplerParams.end), 4, 0);
 		addAndMakeVisible(waveform);
 	}
 

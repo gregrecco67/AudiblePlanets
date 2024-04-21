@@ -13,6 +13,8 @@ MacrosEditor::MacrosEditor(APAudioProcessor& proc_) : proc(proc_)
 	sampleFilenameLabel.setJustificationType(juce::Justification::centred);
 	sampleFilenameLabel.setLookAndFeel(&lookAndFeel);
 	proc.samplerParams.key->addListener(this);
+	proc.samplerParams.start->addListener(this);
+	proc.samplerParams.end->addListener(this);
 }
 
 void MacrosEditor::resized()
@@ -64,6 +66,14 @@ void MacrosEditor::valueUpdated(gin::Parameter* param)
 {
 	if (param == proc.samplerParams.key && !sampleFilenameLabel.getText().isEmpty()) {
 		proc.sampler.updateBaseNote(proc.samplerParams.key->getUserValueInt());
+	}
+	else if (param == proc.samplerParams.start) {
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
+	}
+	else if (param == proc.samplerParams.end) {
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
 	}
 }
 
