@@ -96,6 +96,14 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 
 	if (sound)
 	{
+		curNote = getCurrentlyPlayingNote();
+		float dummy;
+		float remainder = std::modf(currentMidiNote, &dummy);
+
+		pitchStride = std::pow(2.0, (curNote.initialNote - sound->midiRootNote) / 12.0)
+			* sound->sourceSampleRate / getSampleRate();
+		pitchStride *= MTS_RetuningAsRatio(proc.client, curNote.initialNote, curNote.midiChannel);
+		pitchStride *= std::pow(1.05946309436f, curNote.totalPitchbendInSemitones * (proc.globalParams.pitchbendRange->getUserValue()/2.0f) + remainder);
 		auto& data = *sound->data;
 		const float* const inL = data.getReadPointer(0);
 		const float* const inR = data.getNumChannels() > 1 ? data.getReadPointer(1) : nullptr;
@@ -130,6 +138,12 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 			}
 
 			sourceSamplePosition += pitchStride;
+
+			if (sourceSamplePosition >= sound->length && proc.samplerParams.loop->isOn())
+			{
+				sourceSamplePosition = 0.0;
+				continue;
+			}
 
 			if (sourceSamplePosition > sound->length || !adsr.isActive())
 			{

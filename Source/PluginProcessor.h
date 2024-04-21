@@ -272,7 +272,7 @@ public:
 	struct SamplerParams {
 		SamplerParams() = default;
 
-		gin::Parameter::Ptr enable, volume, loop, key;
+		gin::Parameter::Ptr enable, volume, loop, key, start, end, loopstart, loopend;
 		void setup(APAudioProcessor& p);
 
 		JUCE_DECLARE_NON_COPYABLE(SamplerParams)

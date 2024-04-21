@@ -55,17 +55,66 @@ public:
 	gin::ParamComponent::Ptr wave, env, prefx, filtertype;
 };
 
+class Waveform : public juce::Component
+{
+public:
+	Waveform(APAudioProcessor& p) : proc(p) {}
+	void paint(juce::Graphics& g) override
+	{
+		g.setColour(juce::Colours::darkgrey);
+		g.drawRect(getLocalBounds(), 1);
+		if (!shouldRedraw) { return; }
+		auto& audio = proc.sampler.sound.data;
+		auto stride = proc.sampler.sound.length / getWidth();
+		auto name = proc.sampler.sound.name;
+		if (stride < 1) { return; }
+		auto buffer = audio->getReadPointer(0);
+		audioPoints.clear();
+		for (int sample = 0; sample < proc.sampler.sound.length; sample += stride)
+		{
+			audioPoints.push_back(buffer[sample]);
+		}
+
+		juce::Path p;
+		p.clear();
+		p.startNewSubPath(0, getHeight() / 2);
+		float max{ 0 }, min{ 0 };
+		for (int sample = 0; sample < audioPoints.size(); sample++)
+		{
+			if (audioPoints[sample] > max) { max = audioPoints[sample]; }
+			if (audioPoints[sample] < min) { min = audioPoints[sample]; }
+		}
+		for (int sample = 0; sample < audioPoints.size(); sample++) {
+			p.lineTo(sample, jmap(audioPoints[sample], min, max, static_cast<float>(getHeight()), 0.f));
+		}
+
+		g.setColour(juce::Colours::grey);
+		g.strokePath(p, juce::PathStrokeType(1.0f));
+		shouldRedraw = false;
+	}
+	APAudioProcessor& proc;
+	std::vector<float> audioPoints;
+	bool shouldRedraw{ false };
+};
+
 class SamplerBox : public gin::ParamBox
 {
 public:
 	SamplerBox(const juce::String& name, APAudioProcessor& proc_)
-		: gin::ParamBox(name), proc(proc_) {
+		: gin::ParamBox(name), proc(proc_), waveform(proc_) {
 		addEnable(proc.samplerParams.enable);
 		addControl(new APKnob(proc.samplerParams.volume), 0, 0);
 		addControl(new gin::Select(proc.samplerParams.loop), 1, 0);
 		addControl(new APKnob(proc.samplerParams.key), 2, 0);
+		addAndMakeVisible(waveform);
 	}
 
+	void resized() override {
+		ParamBox::resized();
+		waveform.setBounds(0, 70 + 23, getWidth(), 93);
+	}
+
+	Waveform waveform;
 	APAudioProcessor& proc;
 };
 

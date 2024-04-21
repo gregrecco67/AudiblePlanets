@@ -23,8 +23,8 @@ void MacrosEditor::resized()
 	macro4.setBounds(455, 329, 450, 323);
 	aux.setBounds(905, 0, 5*56, 2*70 + 23);
 	macrosModBox.setBounds(905, 2*70 + 23, 5*56, 303);
-	samplerBox.setBounds(905, 466, 5*56, 140 + 23);
-	sampleFilenameLabel.setBounds(905, 466 + 23 + 70 + 23, 5*56, 23);
+	samplerBox.setBounds(905, 466, 5*56, 140 + 23 + 23);
+	sampleFilenameLabel.setBounds(905, 466 + 70 + 70 + 23, 5*56, 23);
 	startTimerHz(4);
 }
 
@@ -50,9 +50,13 @@ void MacrosEditor::filesDropped(const juce::StringArray& files, int /*x*/, int /
 	{
 		proc.loadSample(files[0]);
 		sampleFilenameLabel.setText(file.getFileName(), juce::dontSendNotification);
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
 	}
 	else { 
 		sampleFilenameLabel.setText("Invalid file", juce::dontSendNotification);
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
 	}
 }
 

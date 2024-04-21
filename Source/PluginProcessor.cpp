@@ -442,6 +442,10 @@ void APAudioProcessor::SamplerParams::setup(APAudioProcessor& p) {
 	volume = p.addExtParam("samplvolume", "Volume", "", "", { 0.0, 2.0, 0.01f, 1.0 }, 0.5, 0.0f);
 	loop = p.addIntParam("samplloop", "Loop", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 	key = p.addExtParam("samplkey", "Key", "", "", { 0.0, 128.0, 1.0, 1.0 }, 60.0, 0.0f);
+	start = p.addExtParam("samplstart", "Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+	end = p.addExtParam("samplend", "End", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
+	loopstart = p.addExtParam("samplloopstart", "Loop Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+	loopend = p.addExtParam("samplloopend", "Loop End", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f); 
 }
 
 //==============================================================================
