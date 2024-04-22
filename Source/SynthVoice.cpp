@@ -554,7 +554,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc1Params.detune = getValue(proc.osc1Params.detune);
 	osc1Params.phaseShift = getValue(proc.osc1Params.phase);
 	osc1Vol = getValue(proc.osc1Params.volume);
-	switch((int)getValue(proc.osc1Params.env))
+	switch(proc.osc1Params.env->getUserValueInt())
 	{
 	case 0:
 		envs[0] = &env1;
@@ -577,7 +577,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc2Params.detune = getValue(proc.osc2Params.detune);
 	osc2Params.phaseShift = getValue(proc.osc2Params.phase);
 	osc2Vol = getValue(proc.osc2Params.volume);
-	switch((int)getValue(proc.osc2Params.env))
+	switch(proc.osc2Params.env->getUserValueInt())
 	{
 	case 0:
 		envs[1] = &env1;
@@ -600,7 +600,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc3Params.detune = getValue(proc.osc3Params.detune);
 	osc3Params.phaseShift = getValue(proc.osc3Params.phase);
 	osc3Vol = getValue(proc.osc3Params.volume);
-	switch((int)getValue(proc.osc3Params.env))
+	switch(proc.osc3Params.env->getUserValueInt())
 	{
 	case 0:
 		envs[2] = &env1;
@@ -623,7 +623,7 @@ void SynthVoice::updateParams(int blockSize)
 	osc4Params.detune = getValue(proc.osc4Params.detune);
 	osc4Params.phaseShift = getValue(proc.osc4Params.phase);
 	osc4Vol = getValue(proc.osc4Params.volume);
-	switch((int)getValue(proc.osc4Params.env))
+	switch(proc.osc4Params.env->getUserValueInt())
 	{
 	case 0:
 		envs[3] = &env1;
@@ -764,7 +764,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env1Params.release);
 	p.aCurve = getValue(proc.env1Params.acurve);
 	p.dRCurve = getValue(proc.env1Params.drcurve);
-	int mode = (int)getValue(proc.env1Params.syncrepeat);
+	int mode = proc.env1Params.syncrepeat->getUserValueInt();
 	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
@@ -783,7 +783,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env2Params.release);
 	p.aCurve = getValue(proc.env2Params.acurve);
 	p.dRCurve = getValue(proc.env2Params.drcurve);
-	mode = (int)getValue(proc.env2Params.syncrepeat);
+	mode = proc.env2Params.syncrepeat->getUserValueInt();
 	p.sync = (mode != 0); p.repeat = (mode != 0);
 	if (mode == 1) {
 		p.sync = true;
@@ -802,7 +802,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env3Params.release);
 	p.aCurve = getValue(proc.env3Params.acurve);
 	p.dRCurve = getValue(proc.env3Params.drcurve);
-	mode = (int)getValue(proc.env3Params.syncrepeat);
+	mode = proc.env3Params.syncrepeat->getUserValueInt();
 	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
@@ -820,7 +820,7 @@ void SynthVoice::updateParams(int blockSize)
 	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env4Params.release);
 	p.aCurve = getValue(proc.env4Params.acurve);
 	p.dRCurve = getValue(proc.env4Params.drcurve);
-	mode = (int)getValue(proc.env4Params.syncrepeat);
+	mode = proc.env4Params.syncrepeat->getUserValueInt();
 	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;

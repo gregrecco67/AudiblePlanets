@@ -187,25 +187,25 @@ private:
     juce::Array<gin::ModSrcId> macroSrcs{ proc.macroSrc1, proc.macroSrc2, proc.macroSrc3, proc.macroSrc4 };
     juce::Array<gin::ModSrcId> msegSrcs{ proc.modSrcMSEG1, proc.modSrcMSEG2, proc.modSrcMSEG3, proc.modSrcMSEG4 };
 	
-	std::array<gin::Parameter::Ptr, 32> oscDstsBasic{
-	proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, proc.osc1Params.env,
+	std::array<gin::Parameter::Ptr, 28> oscDstsBasic{
+	proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, 
 		proc.osc1Params.pan, proc.osc1Params.spread, proc.osc1Params.phase,
-	proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, proc.osc2Params.env,
+	proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, 
 		proc.osc2Params.pan, proc.osc2Params.spread, proc.osc2Params.phase,
-	proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, proc.osc3Params.env,
+	proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, 
 		proc.osc3Params.pan, proc.osc3Params.spread, proc.osc3Params.phase,
-	proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, proc.osc4Params.env,
+	proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, 
 		proc.osc4Params.pan, proc.osc4Params.spread, proc.osc4Params.phase };
 
-	std::array<gin::Parameter::Ptr, 36> oscDstsPlus{
+	std::array<gin::Parameter::Ptr, 32> oscDstsPlus{
 		proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, 
-		proc.osc1Params.env, proc.osc1Params.pan, proc.osc1Params.spread, proc.osc1Params.phase, proc.osc1Params.fine,
+		proc.osc1Params.pan, proc.osc1Params.spread, proc.osc1Params.phase, proc.osc1Params.fine,
 		proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, 
-		proc.osc2Params.env, proc.osc2Params.pan, proc.osc2Params.spread, proc.osc2Params.phase, proc.osc2Params.fine,
+		proc.osc2Params.pan, proc.osc2Params.spread, proc.osc2Params.phase, proc.osc2Params.fine,
 		proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, 
-		proc.osc3Params.env, proc.osc3Params.pan, proc.osc3Params.spread, proc.osc3Params.phase, proc.osc3Params.fine,
+		proc.osc3Params.pan, proc.osc3Params.spread, proc.osc3Params.phase, proc.osc3Params.fine,
 		proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, 
-		proc.osc4Params.env, proc.osc4Params.pan, proc.osc4Params.spread, proc.osc4Params.phase, proc.osc4Params.fine
+			proc.osc4Params.pan, proc.osc4Params.spread, proc.osc4Params.phase, proc.osc4Params.fine
 	};
 
 
@@ -227,6 +227,18 @@ private:
 		proc.lfo3Params.rate, proc.lfo3Params.depth, proc.lfo3Params.phase, proc.lfo3Params.delay, proc.lfo3Params.fade, proc.lfo3Params.offset, 
 		proc.lfo4Params.rate, proc.lfo4Params.depth, proc.lfo4Params.phase, proc.lfo4Params.delay, proc.lfo4Params.fade, proc.lfo4Params.offset
 	};
+
+	std::array<gin::Parameter::Ptr, 36> lfoDstsAll{
+		proc.lfo1Params.rate, proc.lfo1Params.depth, proc.lfo1Params.phase, proc.lfo1Params.delay, proc.lfo1Params.fade, 
+		proc.lfo1Params.offset, proc.lfo1Params.sync, proc.lfo1Params.wave, proc.lfo1Params.beat,
+		proc.lfo2Params.rate, proc.lfo2Params.depth, proc.lfo2Params.phase, proc.lfo2Params.delay, proc.lfo2Params.fade, 
+		proc.lfo2Params.offset, proc.lfo2Params.sync, proc.lfo2Params.wave, proc.lfo2Params.beat,
+		proc.lfo3Params.rate, proc.lfo3Params.depth, proc.lfo3Params.phase, proc.lfo3Params.delay, proc.lfo3Params.fade, 
+		proc.lfo3Params.offset, proc.lfo3Params.sync, proc.lfo3Params.wave, proc.lfo3Params.beat,
+		proc.lfo4Params.rate, proc.lfo4Params.depth, proc.lfo4Params.phase, proc.lfo4Params.delay, proc.lfo4Params.fade, 
+		proc.lfo4Params.offset, proc.lfo4Params.sync, proc.lfo4Params.wave, proc.lfo4Params.beat
+	};
+
 
 	APLookAndFeel6 laf;
 	

@@ -329,9 +329,9 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
     detune    = p.addExtParam(id + "detune",     nm + " Detune",      "Detune",    "", { 0.0, 0.5, 0.0f, 1.0 }, 0.0, 0.0f);
     spread    = p.addExtParam(id + "spread",     nm + " Spread",      "Spread",    "%", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
     pan       = p.addExtParam(id + "pan",        nm + " Pan",         "Pan",       "", { -1.0, 1.0, 0.0f, 1.0 }, 0.0, 0.0f);
-    env       = p.addExtParam(id + "env",        nm + " Env",         "Env",       "", { 0.0, 3.0, 1.0f, 1.0 }, (float)(numStr.getIntValue() - 1), 0.0f, envSelectTextFunction);
     saw       = p.addExtParam(id + "saw",        nm + " Saw",         "Saw",       "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
     fixed     = p.addExtParam(id + "fixed",      nm + " Fixed",       "Fixed",     "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
+    env       = p.addIntParam(id + "env",        nm + " Env",         "Env",       "", { 0.0, 3.0, 1.0f, 1.0 }, (float)(numStr.getIntValue() - 1), 0.0f, envSelectTextFunction);
     this->num = numStr.getIntValue();
 }
 
@@ -344,7 +344,7 @@ void APAudioProcessor::FilterParams::setup(APAudioProcessor& p)
     float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
 
     enable           = p.addIntParam(id + "enable",  nm + " Enable",  "",      "", { 0.0, 1.0, 1.0f, 1.0 }, 1.0f, 0.0f);
-    type             = p.addExtParam(id + "type",    nm + " Type",    "Type",  "", { 0.0, 7.0, 1.0f, 1.0 }, 0.0, 0.0f, filterTextFunction);
+    type             = p.addIntParam(id + "type",    nm + " Type",    "Type",  "", { 0.0, 7.0, 1.0f, 1.0 }, 0.0, 0.0f, filterTextFunction);
     keyTracking      = p.addExtParam(id + "key",     nm + " Key",     "Key",   "%", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
     frequency        = p.addExtParam(id + "freq",    nm + " Freq",    "Freq",  " Hz", { 0.0, maxFreq, 0.0f, 1.0 }, 95.0, 0.0f, freqTextFunction);
     resonance        = p.addExtParam(id + "res",     nm + " Res",     "Res",   "", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
@@ -363,8 +363,8 @@ void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr)
 
     enable = p.addIntParam(id + "enable", id + "Enable", "Enable", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 
-    sync             = p.addExtParam(id + "sync",    nm + " Sync",    "Sync",   "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
-    wave             = p.addExtParam(id + "wave",    nm + " Wave",    "Wave",   "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
+    sync             = p.addIntParam(id + "sync",    nm + " Sync",    "Sync",   "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
+    wave             = p.addIntParam(id + "wave",    nm + " Wave",    "Wave",   "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
     rate             = p.addExtParam(id + "rate",    nm + " Rate",    "Rate",   " Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
     beat             = p.addExtParam(id + "beat",    nm + " Beat",    "Beat",   "", { 0.0, float (notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);						   
     depth            = p.addExtParam(id + "depth",   nm + " Depth",   "Depth",  "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
@@ -379,14 +379,14 @@ void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr)
 
 void APAudioProcessor::MSEGParams::setup(APAudioProcessor& p, juce::String number)
 {
-    sync = p.addExtParam("mseg" + number + "sync", "MSEG" + number + " Sync", "Sync", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
+    sync = p.addIntParam("mseg" + number + "sync", "MSEG" + number + " Sync", "Sync", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
     rate = p.addExtParam("mseg" + number + "rate", "MSEG" + number + " Rate", "Rate", " Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
     beat = p.addExtParam("mseg" + number + "beat", "MSEG" + number + " Beat", "Beat", "", { 0.0, float(gin::NoteDuration::getNoteDurations().size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
     depth = p.addExtParam("mseg" + number + "depth", "MSEG" + number + " Depth", "Depth", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
     phase = p.addExtParam("mseg" + number + "phase", "MSEG" + number + " Phase", "Phase", "", { -1.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
     offset = p.addExtParam("mseg" + number + "offset", "MSEG" + number + " Offset", "Offset", "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-    xgrid = p.addExtParam("mseg" + number + "xgrid", "MSEG" + number + "XGrid", "X Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 10.0, 0.0f, gridTextFunction);
-    ygrid = p.addExtParam("mseg" + number + "ygrid", "MSEG" + number + "YGrid", "Y Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 8.0, 0.0f, gridTextFunction);
+    xgrid = p.addIntParam("mseg" + number + "xgrid", "MSEG" + number + "XGrid", "X Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 10.0, 0.0f, gridTextFunction);
+    ygrid = p.addIntParam("mseg" + number + "ygrid", "MSEG" + number + "YGrid", "Y Grid", "", { 1.0, 20.0, 0.0, 1.0 }, 8.0, 0.0f, gridTextFunction);
     loop = p.addExtParam("mseg" + number + "loop", "MSEG" + number + "Loop", "Loop", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
     enable = p.addIntParam("mseg" + number + "enable", "MSEG" + number + "Enable", "Enable", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
     draw = p.addIntParam("mseg" + number + "draw", "MSEG" + number + "Draw", "Draw", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
@@ -413,7 +413,7 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
     release = p.addExtParam(id + "release", nm + " Release", "Release", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
     acurve = p.addExtParam(id + "acurve",	nm + " ACurve", "At Curve", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
     drcurve = p.addExtParam(id + "drcurve", nm + " DRCurve", "DR Curve", "", { -1.0, 1.0, 0.0, 1.0 }, -1.0f, 0.0f);
-    syncrepeat = p.addExtParam(id + "syncrepeat", nm + " SyncRepeat", "Repeat", "", { 0.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, syncrepeatTextFunction);
+    syncrepeat = p.addIntParam(id + "syncrepeat", nm + " SyncRepeat", "Repeat", "", { 0.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, syncrepeatTextFunction);
     time = p.addExtParam(id + "time", nm + " Time", "Time", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
     duration = p.addExtParam(id + "beat", nm + " Beat", "Beat", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
 
@@ -436,14 +436,14 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 void APAudioProcessor::AuxParams::setup(APAudioProcessor& p) {
 	enable = p.addIntParam("auxenable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 	wave = p.addExtParam("auxwave", "Aux Wave", "Wave", "", { 0.0, 5.0, 0.0, 1.0 }, 0.0f, 0.0f, auxWaveTextFunction);
-	env = p.addExtParam("auxenv", "Aux Env", "Env", "", { 0.0, 3.0, 1.0, 1.0 }, 0.0f, 0.0f, envSelectTextFunction);
+	env = p.addIntParam("auxenv", "Aux Env", "Env", "", { 0.0, 3.0, 1.0, 1.0 }, 0.0f, 0.0f, envSelectTextFunction);
 	octave = p.addExtParam("auxoctave", "Aux Octave", "Octave", "", { -2.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, auxOctaveTextFunction);
 	volume = p.addExtParam("auxvolume", "Aux Volume", "Volume", "", { -40.0, 12.0, 0.0, 1.0 }, -12.f, 0.0f,
                            decibelsTextFunction);
 	detune = p.addExtParam("auxdetune", "Aux Detune", "Detune", "", { 0.0, 0.5f, 0.0, 1.0 }, 0.0, 0.0f);
 	spread = p.addExtParam("auxspread", "Aux Spread", "Spread", "%", { 0.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
-	prefx = p.addExtParam("auxprefx", "Aux FX Order", "FX Order", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, auxPreFxTextFunction);
-	filtertype = p.addExtParam("auxfiltertype", "Aux Filter Type", "Filter Type", "", { 0.0, 7.0, 1.0, 1.0 }, 0.0, 0.0f, filterTextFunction);
+	prefx = p.addIntParam("auxprefx", "Aux FX Order", "FX Order", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, auxPreFxTextFunction);
+	filtertype = p.addIntParam("auxfiltertype", "Aux Filter Type", "Filter Type", "", { 0.0, 7.0, 1.0, 1.0 }, 0.0, 0.0f, filterTextFunction);
 	float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
 	filtercutoff = p.addExtParam("auxfiltercutoff", "Aux Cutoff", "Cutoff", "", { 0.0, maxFreq, 0.0f, 1.0 }, 95.0, 0.0f, freqTextFunction);
 	filterres = p.addExtParam("auxres", "Aux Res", "Resonance", "", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
@@ -499,7 +499,7 @@ void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor& p)
     gain = p.addExtParam(pfx + "gain",  name + "Gain", "Gain", "", { -12.0f, 12.0f, 0.0f, 1.0 }, 0.0, 0.0f);
     dry = p.addExtParam(pfx + "dry",   name + "Dry", "Dry", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, percentTextFunction);
     wet = p.addExtParam(pfx + "wet",   name + "Wet", "Wet", "", { 0.0, 1.0, 0.0, 1.0 }, 0.25, 0.0f, percentTextFunction);
-    type = p.addExtParam(pfx + "func",  name + "Function", "Function", "", { 0.0, 16.0, 1.0, 1.0 }, 0.0f, 0.0f, waveshaperTypeTextFunction);
+    type = p.addIntParam(pfx + "func",  name + "Function", "Function", "", { 0.0, 16.0, 1.0, 1.0 }, 0.0f, 0.0f, waveshaperTypeTextFunction);
     highshelf = p.addExtParam(pfx + "highshelf", name + "High Shelf", "High Shelf", " Hz", { 3000.0f, 12000.0f, 0.0, 1.3f }, 6500.0f, 0.0f);
     hsq = p.addExtParam(pfx + "hsq", name + "HShelf Q", "High Shelf Q", "", { 0.5f, 5.0f, 0.0, 1.0 }, 1.0f, 0.0f);
     lp = p.addExtParam(pfx + "lp", name + "Low Pass", "Low Pass", "", { 20.0f, 20000.0f, 0.0, 0.3f }, 20000.0f, 0.0f);
@@ -517,7 +517,7 @@ void APAudioProcessor::CompressorParams::setup(APAudioProcessor& p)
     knee = p.addExtParam(pfx + "knee",      name + "Knee", "Knee", " dB", { 0.0, 20.0, 0.01f, 1.0 }, 0.0f, 0.0f);
     input = p.addExtParam(pfx + "input",     name + "Input", "Input", "", { 0.0, 5.0, 0.0, 1.0 }, 1.0f, 0.0f);
     output = p.addExtParam(pfx + "output",    name + "Output", "Output", "", { 0.0, 5.0, 0.0, 1.0 }, 1.0f, 0.0f);
-    type = p.addExtParam(pfx + "type",      name + "Type", "Type", "", { 0.0, 3.0, 1.0, 1.0 }, 0.0f, 0.0f, compressorTypeTextFunction);
+    type = p.addIntParam(pfx + "type",      name + "Type", "Type", "", { 0.0, 3.0, 1.0, 1.0 }, 0.0f, 0.0f, compressorTypeTextFunction);
 }
 
 //==============================================================================
@@ -1416,7 +1416,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
     waveshaper.setGain(modMatrix.getValue(waveshaperParams.drive), modMatrix.getValue(waveshaperParams.gain));
     waveshaper.setDry(modMatrix.getValue(waveshaperParams.dry));
     waveshaper.setWet(modMatrix.getValue(waveshaperParams.wet));
-    waveshaper.setFunctionToUse(int(modMatrix.getValue(waveshaperParams.type)));
+    waveshaper.setFunctionToUse(int(waveshaperParams.type->getValue()));
     waveshaper.setHighShelfFreqAndQ(modMatrix.getValue(waveshaperParams.highshelf), modMatrix.getValue(waveshaperParams.hsq));
     waveshaper.setLPCutoff(modMatrix.getValue(waveshaperParams.lp));
 
@@ -1430,7 +1430,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
     );
     compressor.setInputGain(modMatrix.getValue(compressorParams.input));
     compressor.setOutputGain(modMatrix.getValue(compressorParams.output));
-    compressor.setMode((gin::Dynamics::Type)(int)modMatrix.getValue(compressorParams.type));
+    compressor.setMode((gin::Dynamics::Type)(int)compressorParams.type->getValue());
 
     auto& notes = gin::NoteDuration::getNoteDurations();
 

@@ -221,15 +221,15 @@ void RandEditor::randomize()
 	// (hard-coded in several places below to 247)
 	
 	// ----------------
-	/*   auto& params = proc.getPluginParameters();
+	   auto& params = proc.getPluginParameters();
 		for (auto& param : params) {
 			DBG(param->getModIndex());
 			std::cout << param->getModIndex() << std::endl;
 		}
-	*/
+	
 	// ----------------
 
-	std::uniform_int_distribution<> paramsDist{0, 246};
+	std::uniform_int_distribution<> paramsDist{0, 218};
     auto numSrcs = proc.modMatrix.getNumModSources();
     std::uniform_int_distribution<> srcsDist{0, numSrcs - 1};
 	std::uniform_int_distribution<> functionDist{ 0, 19 };
@@ -417,7 +417,7 @@ void RandEditor::randomizeLFOs() {
 }
 void RandEditor::resetLFOs()
 {
-	for (gin::Parameter::Ptr param : lfoDsts) {
+	for (gin::Parameter::Ptr param : lfoDstsAll) {
 		param->setValue(param->getDefaultValue());
 	}
 }
@@ -432,13 +432,13 @@ void RandEditor::randLFOtoOSC() {
 		proc.modSrcLFO1, proc.modSrcLFO2, proc.modSrcLFO3, proc.modSrcLFO4};
 	std::uniform_int_distribution<> lfoDist(0, 7);
 	std::vector<gin::Parameter::Ptr> oscsBasic{
-		proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, proc.osc1Params.env, 
+		proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, 
 			proc.osc1Params.pan, proc.osc1Params.spread, proc.osc1Params.phase, 
-		proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, proc.osc2Params.env, 
+		proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, 
 			proc.osc2Params.pan, proc.osc2Params.spread, proc.osc2Params.phase,
-		proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, proc.osc3Params.env, 
+		proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, 
 			proc.osc3Params.pan, proc.osc3Params.spread, proc.osc3Params.phase,
-		proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, proc.osc4Params.env, 
+		proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, 
 			proc.osc4Params.pan, proc.osc4Params.spread, proc.osc4Params.phase
 	};
 	if (inharmonic.getToggleState()) {
@@ -460,7 +460,7 @@ void RandEditor::randLFOtoOSC() {
 }
 void RandEditor::resetLFOtoOSC()
 {
-	for (gin::Parameter::Ptr param : oscDstsBasic) {
+	for (gin::Parameter::Ptr param : oscDstsPlus) {
 		auto modSrcs = proc.modMatrix.getModSources(param);
 		for (auto& modSrc : modSrcs) {
 			if (lfoSrcs.contains(modSrc))
@@ -477,13 +477,13 @@ void RandEditor::randENVtoOSC() {
 	std::array<gin::ModSrcId, 4> envs{ proc.modSrcEnv1, proc.modSrcEnv2, proc.modSrcEnv3, proc.modSrcEnv4 };
 	std::uniform_int_distribution<> envsDist(0, 3);
 	std::vector<gin::Parameter::Ptr> oscsBasic{
-		proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, proc.osc1Params.env,
+		proc.osc1Params.coarse, proc.osc1Params.volume, proc.osc1Params.tones, proc.osc1Params.fixed, 
 			proc.osc1Params.pan, proc.osc1Params.spread, proc.osc1Params.phase,
-		proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, proc.osc2Params.env,
+		proc.osc2Params.coarse, proc.osc2Params.volume, proc.osc2Params.tones, proc.osc2Params.fixed, 
 			proc.osc2Params.pan, proc.osc2Params.spread, proc.osc2Params.phase,
-		proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, proc.osc3Params.env,
+		proc.osc3Params.coarse, proc.osc3Params.volume, proc.osc3Params.tones, proc.osc3Params.fixed, 
 			proc.osc3Params.pan, proc.osc3Params.spread, proc.osc3Params.phase,
-		proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, proc.osc4Params.env,
+		proc.osc4Params.coarse, proc.osc4Params.volume, proc.osc4Params.tones, proc.osc4Params.fixed, 
 			proc.osc4Params.pan, proc.osc4Params.spread, proc.osc4Params.phase
 	};
 	if (inharmonic.getToggleState()) {
@@ -635,7 +635,8 @@ void RandEditor::randKeystoOSC()
 		std::uniform_int_distribution<> oscDist(0, (int)oscDstsBasic.size() - 1);
 		for (int i = 0; i < randNum; i++) {
 			auto keySrc = keySrcs[keyDist(gen)];
-			auto oscDst = gin::ModDstId(oscDstsBasic[oscDist(gen)]->getModIndex());
+			int oscDistNumber = oscDist(gen);
+			auto oscDst = gin::ModDstId(oscDstsBasic[oscDistNumber]->getModIndex());
 			auto depth = proc.modMatrix.getModDepth(keySrc, oscDst);
 			auto sign = fullDist(gen) >= 0 ? 1 : -1;
 			proc.modMatrix.setModDepth(keySrc, oscDst, (float)std::clamp(depth + sign * randVal, -1., 1.));
@@ -996,7 +997,7 @@ void RandEditor::randomizeMacros() {
     auto randNum = randNumber.getValue();
     // msegSrcs
     std::uniform_int_distribution<> macroDist(0, 3);
-    std::uniform_int_distribution<> paramsDist{0, 246};
+    std::uniform_int_distribution<> paramsDist{0, 218};
     std::uniform_int_distribution<> functionDist{ 0, 19 };
     std::uniform_real_distribution<> modDist(-1.f, 1.f);
     for (int i = 0; i < randNum; i++) {
@@ -1018,7 +1019,7 @@ void RandEditor::randomizeMSEG() {
     auto randNum = randNumber.getValue();
     // msegSrcs
     std::uniform_int_distribution<> msegDist(0, 3);
-    std::uniform_int_distribution<> paramsDist{0, 246};
+    std::uniform_int_distribution<> paramsDist{0, 218};
     std::uniform_int_distribution<> functionDist{ 0, 19 };
     std::uniform_real_distribution<> modDist(-1.f, 1.f);
     for (int i = 0; i < randNum; i++) {

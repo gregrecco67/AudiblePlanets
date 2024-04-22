@@ -257,7 +257,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch) * std::pow(2.0f, proc.auxParams.octave->getProcValue()));
 	osc1Note = gin::getMidiNoteFromHertz(baseFreq);
 
-	currentEnv = int(getValue(proc.auxParams.env));
+	currentEnv = proc.auxParams.env->getUserValueInt();
 
 	gin::Wave wave;
 	switch (int(getValue(proc.auxParams.wave)))
@@ -410,7 +410,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env1Params.release);
 	p.aCurve = getValue(proc.env1Params.acurve);
 	p.dRCurve = getValue(proc.env1Params.drcurve);
-	int mode = (int)getValue(proc.env1Params.syncrepeat);
+	int mode = proc.env1Params.syncrepeat->getUserValueInt();
 	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
@@ -429,7 +429,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env2Params.release);
 	p.aCurve = getValue(proc.env2Params.acurve);
 	p.dRCurve = getValue(proc.env2Params.drcurve);
-	mode = (int)getValue(proc.env2Params.syncrepeat);
+	mode = proc.env2Params.syncrepeat->getUserValueInt();
 	p.sync = (mode != 0); p.repeat = (mode != 0);
 	if (mode == 1) {
 		p.sync = true;
@@ -448,7 +448,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env3Params.release);
 	p.aCurve = getValue(proc.env3Params.acurve);
 	p.dRCurve = getValue(proc.env3Params.drcurve);
-	mode = (int)getValue(proc.env3Params.syncrepeat);
+	mode = proc.env3Params.syncrepeat->getUserValueInt();
 	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
@@ -466,7 +466,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 	p.releaseTimeMs = fastKill ? 0.01f : getValue(proc.env4Params.release);
 	p.aCurve = getValue(proc.env4Params.acurve);
 	p.dRCurve = getValue(proc.env4Params.drcurve);
-	mode = (int)getValue(proc.env4Params.syncrepeat);
+	mode = proc.env4Params.syncrepeat->getUserValueInt();
 	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
