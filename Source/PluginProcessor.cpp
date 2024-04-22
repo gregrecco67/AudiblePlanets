@@ -659,8 +659,8 @@ void APAudioProcessor::MacroParams::setup(APAudioProcessor& p)
 
 
 void APAudioProcessor::updatePitchbend() {
-    synth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
-	auxSynth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
+ //   synth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
+	//auxSynth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
 bool APAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
