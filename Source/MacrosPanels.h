@@ -58,7 +58,14 @@ public:
 class Waveform : public juce::Component
 {
 public:
-	Waveform(APAudioProcessor& p) : proc(p) {}
+	Waveform(APAudioProcessor& p) : proc(p) {
+        addAndMakeVisible(fileInfo);
+    }
+    
+    void resized() override {
+        fileInfo.setBounds(getWidth() - 65, 0, 65, 20);
+    }
+    
 	void paint(juce::Graphics& g) override
 	{
 		if (proc.sampler.sound.data != nullptr) {
@@ -118,6 +125,7 @@ public:
 	APAudioProcessor& proc;
 	std::vector<float> audioPoints, smoothed;
 	bool shouldRedraw{ true };
+    Label fileInfo{"", ""};
 };
 
 class SamplerBox : public gin::ParamBox

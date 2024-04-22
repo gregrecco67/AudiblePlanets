@@ -52,10 +52,15 @@ void MacrosEditor::filesDropped(const juce::StringArray& files, int /*x*/, int /
 	juce::File file{ files[0] };
 	if (isInterestedInFileDrag(files[0]))
 	{
-		proc.loadSample(files[0]);
-		sampleFilenameLabel.setText(file.getFileName(), juce::dontSendNotification);
-		samplerBox.waveform.shouldRedraw = true;
-		samplerBox.waveform.repaint();
+        if (proc.sampler.loadSound(files[0])) {
+            sampleFilenameLabel.setText(file.getFileName(), juce::dontSendNotification);
+            samplerBox.waveform.shouldRedraw = true;
+            auto ch = proc.sampler.sound.data.get()->getNumChannels();
+            auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
+            auto fileInfo = String(ch) + " ch: " + String(time,2) + " s";
+            samplerBox.waveform.fileInfo.setText(fileInfo, juce::dontSendNotification);
+            samplerBox.waveform.repaint();
+        }
 	}
 	else { 
 		sampleFilenameLabel.setText("Invalid file", juce::dontSendNotification);
