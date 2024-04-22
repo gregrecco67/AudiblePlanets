@@ -88,6 +88,19 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	setAllControls();
 }
 
+FXEditor::~FXEditor()
+{
+	proc.fxOrderParams.chainAtoB->removeListener(this);
+	proc.fxOrderParams.fxa1->removeListener(this);
+	proc.fxOrderParams.fxa2->removeListener(this);
+	proc.fxOrderParams.fxa3->removeListener(this);
+	proc.fxOrderParams.fxa4->removeListener(this);
+	proc.fxOrderParams.fxb1->removeListener(this);
+	proc.fxOrderParams.fxb2->removeListener(this);
+	proc.fxOrderParams.fxb3->removeListener(this);
+	proc.fxOrderParams.fxb4->removeListener(this);
+}
+
 
 void FXEditor::resized()
 {

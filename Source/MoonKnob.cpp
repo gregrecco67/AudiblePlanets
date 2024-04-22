@@ -128,6 +128,7 @@ MoonKnob::~MoonKnob()
 		auto& mm = *parameter->getModMatrix();
 		mm.removeListener(this);
 	}
+	removeMouseListener(this);
 }
 
 void MoonKnob::showModMenu()

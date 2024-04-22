@@ -19,6 +19,15 @@ MacrosEditor::MacrosEditor(APAudioProcessor& proc_) : proc(proc_)
 	proc.samplerParams.loopend->addListener(this);
 }
 
+MacrosEditor::~MacrosEditor()
+{
+	proc.samplerParams.key->removeListener(this);
+	proc.samplerParams.start->removeListener(this);
+	proc.samplerParams.end->removeListener(this);
+	proc.samplerParams.loopstart->removeListener(this);
+	proc.samplerParams.loopend->removeListener(this);
+}
+
 void MacrosEditor::resized()
 {
 	macro1.setBounds(0, 0, 450, 323);

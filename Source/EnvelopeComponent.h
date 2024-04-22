@@ -66,6 +66,40 @@ public:
 
     ~EnvelopeComponent() override
     {
+		switch (envelopeNumber) {
+		case 1:
+			proc.env1Params.acurve->removeListener(this);
+			proc.env1Params.attack->removeListener(this);
+			proc.env1Params.decay->removeListener(this);
+			proc.env1Params.drcurve->removeListener(this);
+			proc.env1Params.release->removeListener(this);
+			proc.env1Params.sustain->removeListener(this);
+			break;
+		case 2:
+			proc.env2Params.acurve->removeListener(this);
+			proc.env2Params.attack->removeListener(this);
+			proc.env2Params.decay->removeListener(this);
+			proc.env2Params.drcurve->removeListener(this);
+			proc.env2Params.release->removeListener(this);
+			proc.env2Params.sustain->removeListener(this);
+			break;
+		case 3:
+			proc.env3Params.acurve->removeListener(this);
+			proc.env3Params.attack->removeListener(this);
+			proc.env3Params.decay->removeListener(this);
+			proc.env3Params.drcurve->removeListener(this);
+			proc.env3Params.release->removeListener(this);
+			proc.env3Params.sustain->removeListener(this);
+			break;
+		case 4:
+			proc.env4Params.acurve->removeListener(this);
+			proc.env4Params.attack->removeListener(this);
+			proc.env4Params.decay->removeListener(this);
+			proc.env4Params.drcurve->removeListener(this);
+			proc.env4Params.release->removeListener(this);
+			proc.env4Params.sustain->removeListener(this);
+			break;
+		}
     }
 
     float attack{ 1.f }, decay{ 1.f }, sustain{ 0.5f }, release{ 1.f }, attackCurve{ 1.0f }, decayCurve{ -1.0f };

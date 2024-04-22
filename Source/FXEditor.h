@@ -25,6 +25,7 @@ class FXEditor : public juce::Component, public gin::Parameter::ParameterListene
 {
 public:
 	FXEditor(APAudioProcessor& proc_);
+	~FXEditor() override;
 	void resized() override;
 	void valueUpdated(gin::Parameter* param) override;
 	void removeDuplicates(int effect, int componentToSkip);

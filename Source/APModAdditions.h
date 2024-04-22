@@ -521,6 +521,7 @@ private:
         ~Row() override
         {
             depth.setLookAndFeel(nullptr);
+			depth.removeListener(this);
         }
 
         void sliderValueChanged(juce::Slider*) override

@@ -23,7 +23,7 @@ class MacrosEditor : public juce::Component, public juce::FileDragAndDropTarget,
 {
 public:
 	MacrosEditor(APAudioProcessor& proc_);
-
+	~MacrosEditor() override;
 	void resized() override;
 	bool isInterestedInFileDrag(const juce::StringArray& files) override;
 	void filesDropped(const juce::StringArray& files, int x, int y) override;

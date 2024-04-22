@@ -492,6 +492,7 @@ private:
 		~Row() override
 		{
 			depth.setLookAndFeel(nullptr);
+			depth.removeListener(this);
 		}
 
 		void sliderValueChanged(juce::Slider*) override
@@ -707,6 +708,11 @@ public:
         valueUpdated(macroCC);
 		addAndMakeVisible(clearAllButton);
 		clearAllButton.onClick = [this]() { clearAll(); };
+	}
+
+	~MacrosMatrixBox() override
+	{
+		macroCC->removeListener(this);
 	}
 
 	void clearAll() {
