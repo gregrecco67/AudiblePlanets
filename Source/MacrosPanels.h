@@ -144,6 +144,7 @@ public:
 		addAndMakeVisible(waveform);
 		addAndMakeVisible(loadButton);
 		loadButton.onClick = [this] { chooseFile(); };
+        setFileName();
 	}
 
 	void chooseFile() {
@@ -160,12 +161,22 @@ public:
 				waveform.fileInfo.setText(fileInfoString, juce::dontSendNotification);
 				waveform.repaint();
 			});
-	};
+	}
 
+    void setFileName() {
+        if (proc.sampler.sound.data == nullptr) { return; }
+        auto ch = proc.sampler.sound.data.get()->getNumChannels();
+        auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
+        auto fileInfoString = String(ch) + " ch: " + String(time,2) + " s";
+        waveform.fileInfo.setText(fileInfoString, juce::dontSendNotification);
+        waveform.repaint();
+    }
+    
 	void resized() override {
 		ParamBox::resized();
 		waveform.setBounds(0, 140 + 23, getWidth(), 93);
 		loadButton.setBounds(getWidth() - 55, 0, 55, 23);
+        setFileName();
 	}
 
 	Waveform waveform;
