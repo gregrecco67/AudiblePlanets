@@ -1,7 +1,7 @@
 #include "APSampler.h"
 #include "APSamplerVoice.h"
 #include "PluginProcessor.h"
-#define MAX_SAMPLE_LENGTH_S 10
+#define MAX_SAMPLE_LENGTH_S 30
 
 APSampler::APSampler(APAudioProcessor& proc_) : proc(proc_)
 {
