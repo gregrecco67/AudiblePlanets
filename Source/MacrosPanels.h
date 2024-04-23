@@ -154,6 +154,10 @@ public:
 				if (!file.existsAsFile()) { return; }
 				proc.loadSample(file.getFullPathName());
 				waveform.shouldRedraw = true;
+				auto ch = proc.sampler.sound.data.get()->getNumChannels();
+            	auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
+				auto fileInfoString = String(ch) + " ch: " + String(time,2) + " s";
+				waveform.fileInfo.setText(fileInfoString, juce::dontSendNotification);
 				waveform.repaint();
 			});
 	};
