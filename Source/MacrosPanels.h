@@ -60,14 +60,21 @@ class Waveform : public juce::Component
 public:
 	Waveform(APAudioProcessor& p) : proc(p) {
         addAndMakeVisible(fileInfo);
+		addAndMakeVisible(sampleFilenameLabel);
+		sampleFilenameLabel.setJustificationType(juce::Justification::centred);
     }
     
     void resized() override {
         fileInfo.setBounds(getWidth() - 65, 0, 65, 20);
+		sampleFilenameLabel.setBounds(0, getHeight() - 23, getWidth(), 23);
     }
     
 	void paint(juce::Graphics& g) override
 	{
+		if (juce::File(proc.sampler.sound.name).getFileName() != sampleFilenameLabel.getText())
+		{
+			shouldRedraw = true;
+		}
 		if (proc.sampler.sound.data != nullptr) {
 			g.setColour(juce::Colour(0xffCC8866).darker(0.5f));
 			int loopstart = proc.samplerParams.loopstart->getUserValue() * getWidth();
@@ -76,6 +83,17 @@ public:
 			g.setColour(juce::Colours::grey);
 			g.drawLine(loopstart, 0, loopstart, getHeight(), 1);
 			g.drawLine(loopend, 0, loopend, getHeight(), 1);
+			auto soundFile = juce::File(proc.sampler.sound.name);
+			sampleFilenameLabel.setText(soundFile.getFileName(), juce::dontSendNotification);
+			auto ch = proc.sampler.sound.data.get()->getNumChannels();
+			auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
+			auto fileInfoString = String(ch) + " ch: " + String(time, 2) + " s";
+			fileInfo.setText(fileInfoString, juce::dontSendNotification);
+		}
+		else { 
+			sampleFilenameLabel.setText("", juce::dontSendNotification);
+			fileInfo.setText("", juce::dontSendNotification);
+			g.setColour(juce::Colours::black); g.fillAll(); 
 		}
 		g.setColour(juce::Colours::darkgrey);
 		g.drawRect(getLocalBounds(), 1);
@@ -125,7 +143,7 @@ public:
 	APAudioProcessor& proc;
 	std::vector<float> audioPoints, smoothed;
 	bool shouldRedraw{ true };
-    Label fileInfo{"", ""};
+	Label fileInfo{ "", "" }, sampleFilenameLabel{"", ""};
 };
 
 class SamplerBox : public gin::ParamBox
@@ -155,10 +173,6 @@ public:
 				if (!file.existsAsFile()) { return; }
 				proc.loadSample(file.getFullPathName());
 				waveform.shouldRedraw = true;
-				auto ch = proc.sampler.sound.data.get()->getNumChannels();
-            	auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
-				auto fileInfoString = String(ch) + " ch: " + String(time,2) + " s";
-				waveform.fileInfo.setText(fileInfoString, juce::dontSendNotification);
 				waveform.repaint();
 			});
 	}

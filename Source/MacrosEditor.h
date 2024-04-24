@@ -19,7 +19,7 @@
 #include "MacrosPanels.h"
 
  //==============================================================================
-class MacrosEditor : public juce::Component, public juce::FileDragAndDropTarget, public gin::Parameter::ParameterListener, public juce::Timer
+class MacrosEditor : public juce::Component, public juce::FileDragAndDropTarget, public gin::Parameter::ParameterListener
 {
 public:
 	MacrosEditor(APAudioProcessor& proc_);
@@ -28,7 +28,6 @@ public:
 	bool isInterestedInFileDrag(const juce::StringArray& files) override;
 	void filesDropped(const juce::StringArray& files, int x, int y) override;
     void valueUpdated(gin::Parameter* param) override;
-	void timerCallback() override;
 
 private:
 	APAudioProcessor& proc;
@@ -40,7 +39,6 @@ private:
 	AuxBox aux{ "Aux Oscillator", proc };
 	MacrosModBox macrosModBox{ "Mod Sources", proc };
 	SamplerBox samplerBox{ "Sampler", proc };
-	Label sampleFilenameLabel{ "Drop a file" };
 	APLNF lookAndFeel;
 };
 

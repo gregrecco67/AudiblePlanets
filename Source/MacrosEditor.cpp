@@ -9,9 +9,6 @@ MacrosEditor::MacrosEditor(APAudioProcessor& proc_) : proc(proc_)
 	addAndMakeVisible(aux);
 	addAndMakeVisible(macrosModBox);
 	addAndMakeVisible(samplerBox);
-	addAndMakeVisible(sampleFilenameLabel);
-	sampleFilenameLabel.setJustificationType(juce::Justification::centred);
-	sampleFilenameLabel.setLookAndFeel(&lookAndFeel);
 	proc.samplerParams.key->addListener(this);
 	proc.samplerParams.start->addListener(this);
 	proc.samplerParams.end->addListener(this);
@@ -37,8 +34,6 @@ void MacrosEditor::resized()
 	aux.setBounds(905, 0, 5*56, 2*70 + 23);
 	macrosModBox.setBounds(905, 2*70 + 23, 5*56, 233);
 	samplerBox.setBounds(905, 396, 5*56, 210 + 23 + 23);
-	sampleFilenameLabel.setBounds(905, 466 + 70 + 70 + 23, 5*56, 23);
-	startTimerHz(4);
 }
 
 bool MacrosEditor::isInterestedInFileDrag(const juce::StringArray& files)
@@ -61,18 +56,7 @@ void MacrosEditor::filesDropped(const juce::StringArray& files, int /*x*/, int /
 	juce::File file{ files[0] };
 	if (isInterestedInFileDrag(files[0]))
 	{
-        if (proc.sampler.loadSound(files[0])) {
-            sampleFilenameLabel.setText(file.getFileName(), juce::dontSendNotification);
-            samplerBox.waveform.shouldRedraw = true;
-            auto ch = proc.sampler.sound.data.get()->getNumChannels();
-            auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
-            auto fileInfo = String(ch) + " ch: " + String(time,2) + " s";
-            samplerBox.waveform.fileInfo.setText(fileInfo, juce::dontSendNotification);
-            samplerBox.waveform.repaint();
-        }
-	}
-	else { 
-		sampleFilenameLabel.setText("Invalid file", juce::dontSendNotification);
+		proc.sampler.loadSound(files[0]);
 		samplerBox.waveform.shouldRedraw = true;
 		samplerBox.waveform.repaint();
 	}
@@ -80,7 +64,7 @@ void MacrosEditor::filesDropped(const juce::StringArray& files, int /*x*/, int /
 
 void MacrosEditor::valueUpdated(gin::Parameter* param)
 {
-	if (param == proc.samplerParams.key && !sampleFilenameLabel.getText().isEmpty()) {
+	if (param == proc.samplerParams.key && proc.sampler.sound.data != nullptr) {
 		proc.sampler.updateBaseNote(proc.samplerParams.key->getUserValueInt());
 	}
 	else if (param == proc.samplerParams.start) {
@@ -98,18 +82,6 @@ void MacrosEditor::valueUpdated(gin::Parameter* param)
 	else if (param == proc.samplerParams.loopend) {
 		samplerBox.waveform.shouldRedraw = true;
 		samplerBox.waveform.repaint();
-	}
-}
-
-void MacrosEditor::timerCallback()
-{
-	juce::String filename{ proc.sampler.sound.name };
-	if (!filename.isEmpty()) {
-		juce::File file{ filename };
-		sampleFilenameLabel.setText(file.getFileName(), juce::dontSendNotification);
-	}
-	else {
-		sampleFilenameLabel.setText("", juce::dontSendNotification);
 	}
 }
 
