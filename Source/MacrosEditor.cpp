@@ -54,7 +54,6 @@ bool MacrosEditor::isInterestedInFileDrag(const juce::StringArray& files)
 
 void MacrosEditor::filesDropped(const juce::StringArray& files, int /*x*/, int /*y*/)
 {
-	juce::File file{ files[0] };
 	if (isInterestedInFileDrag(files[0]))
 	{
 		proc.sampler.loadSound(files[0]);
