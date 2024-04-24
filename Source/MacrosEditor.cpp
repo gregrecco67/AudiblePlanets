@@ -43,6 +43,7 @@ bool MacrosEditor::isInterestedInFileDrag(const juce::StringArray& files)
 		juce::File file{ files[0] };
 		if (file.hasFileExtension("wav") 
 			|| file.hasFileExtension("aif") 
+			|| file.hasFileExtension("aiff")
 			|| file.hasFileExtension("mp3") 
 			|| file.hasFileExtension("flac") 
 			|| file.hasFileExtension("ogg")) { return true; }
