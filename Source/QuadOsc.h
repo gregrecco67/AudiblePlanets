@@ -102,7 +102,7 @@ public:
 	reg normalizePhases(reg input) {
 		for (int i = 0; i < 4; i++) {
 			while (input[i] >= pi) {
-				input[i] = input[i] - pi;
+				input[i] = input[i] - pi * 2.f;
 			}
 		}
 		//while (input[0] >= pi || input[1] >= pi || input[2] >= pi || input[3] >= pi) {
@@ -119,6 +119,14 @@ public:
 	reg a5 = reg(2.75239710746326498401791551303359689e-6f);
 	reg a6 = reg(-2.3868346521031027639830001794722295e-8f);
 
+
+	// return x1 * (0.99999999997884898600402426033768998f
+	// + x2 * (-0.166666666088260696413164261885310067f
+	// + x2 * (0.00833333072055773645376566203656709979f
+	// + x2 * (-0.000198408328232619552901560108010257242f
+	// + x2 * (2.75239710746326498401791551303359689e-6f
+	// - 2.3868346521031027639830001794722295e-8f * x2)))));
+
 	reg sinesForPhases(reg x1) {
 		x1 = normalizePhases(x1);
 		reg x2 = x1 * x1;
@@ -128,7 +136,7 @@ public:
 		+ x2 * (a3
 		+ x2 * (a4
 		+ x2 * (a5
-		- x2 * a6)))));
+		+ x2 * a6)))));
 	}
 
 	reg sinesForPhasesAndTones(reg p, float t) {
