@@ -140,28 +140,58 @@ public:
 	}
 
 	reg sinesForPhasesAndTones(reg p, float t) {
-		reg values{ 0.f };
 		float fullTones{ 0.f }; float partialToneFraction = std::modf(t, &fullTones);
-		values += sinesForPhases(p);
+		reg values = sinesForPhases(p);
 
-		if (t < 2.0f)
-			return values += sinesForPhases(p * 2.0f) * partialToneFraction * 0.5f;
-		values += sinesForPhases(p * 2.0f) * 0.5f;
+
+        if (t > 1.0f && t < 2.0f)
+            values += sinesForPhases(p * 2.0f) * partialToneFraction * 0.5f;
+        else if (t > 1.0f)
+            values += sinesForPhases(p * 2.0f) * 0.5f; // we're over 2, so add the max level of this partial
+
+        if (t > 2.0f && t < 3.0f)
+            values += sinesForPhases(p * 3.0f) * partialToneFraction * 0.33f;
+        else if (t > 2.0f)
+            values += sinesForPhases(p * 3.0f) * 0.33f;
+
+        if (t > 3.0f && t < 4.0f)
+            values += sinesForPhases(p * 4.0f) * partialToneFraction * 0.25f;
+        else if (t > 3.0f)
+            values += sinesForPhases(p * 4.0f) * 0.25f;
+
+        if (t > 4.0f && t < 5.0f)
+            values += sinesForPhases(p * 5.0f) * partialToneFraction * 0.2f;
+        else if (t > 4.0f)
+            values += sinesForPhases(p * 5.0f) * 0.2f;
+
+        if (t > 5.0f)
+            values += sinesForPhases(p * 6.0f) * partialToneFraction * 0.16f;
+        
+        return values;
+        
+/*		if (t > 1.0f && t < 2.0f)
+			values += sinesForPhases(p * 2.0f) * partialToneFraction * 0.5f;
+		else if (t > 1.0f)
+            values += sinesForPhases(p * 2.0f) * 0.5f;
 
 		if (t >= 2.0f && t < 3.0f)
-			return values += sinesForPhases(p * 3.0f) * partialToneFraction * 0.33f;
-		values += sinesForPhases(p * 3.0f) * 0.33f;
+			values += sinesForPhases(p * 3.0f) * partialToneFraction * 0.33f;
+		else if (t > 2.0f)
+            values += sinesForPhases(p * 3.0f) * 0.33f;
 
 		if (t >= 3.0f && t < 4.0f)
-			return values += sinesForPhases(p * 4.0f) * partialToneFraction * 0.25f;
-		values += sinesForPhases(p * 4.0f) * 0.25f;
+			values += sinesForPhases(p * 4.0f) * partialToneFraction * 0.25f;
+		else if (t > 3.0f)
+            values += sinesForPhases(p * 4.0f) * 0.25f;
 
 		if (t >= 4.0f && t < 5.0f)
-			return values += sinesForPhases(p * 5.0f) * partialToneFraction * 0.2f;
-
-		values += sinesForPhases(p * 5.0f) * 0.2f;
+			values += sinesForPhases(p * 5.0f) * partialToneFraction * 0.2f;
+        else if (t > 4.0f)
+            values += sinesForPhases(p * 5.0f) * 0.2f;
 		return values += sinesForPhases(p * 6.0f) * partialToneFraction * 0.16f;
+ */
 	}
+    
 	juce::dsp::SIMDRegister<float> freqs, phases, phaseIncs, gainsL, gainsR;
 	float freq, pan, tones, sampleRate;
 
