@@ -115,18 +115,22 @@ public:
 
 		// osc 3 -------------------------
 		juce::Point<float> osc3;
-		juce::Path circ3;
+		juce::Path circ3;		
+		vector = juce::Point<float>(osc2.x - equantPos.x, osc2.y - equantPos.y);
+		angle = std::atan2(vector.y, vector.x);
+		auto squash3 = juce::AffineTransform::rotation(-angle, osc2.x, osc2.y).scaled(1.f - squash, 1.f, osc2.x, osc2.y).rotated(angle, osc2.x, osc2.y);
 		if (algo == 0 || algo == 1) {
 			osc3 = juce::Point<float>(osc2.x + r3 * std::cos(p3), osc2.y + r3 * std::sin(p3));
-			osc3.applyTransform(squash2);
+			osc3.applyTransform(squash3);
 			addCircle(circ3, osc2, r3 * 2.f);
+			circ3.applyTransform(squash3);
 		}
 		if (algo == 2 || algo == 3) {
 			osc3 = juce::Point<float>(osc1.x + r3 * std::cos(p3), osc1.y + r3 * std::sin(p3));
 			osc3.applyTransform(squash2);
 			addCircle(circ3, osc1, r3 * 2.f);
+			circ3.applyTransform(squash2);
 		}
-		circ3.applyTransform(squash2);
 		g.setColour(orbitColor);
 		shadow.render(g, circ3, stroketype);
 		g.strokePath(circ3, stroketype, {}); // osc3 orbit
@@ -136,20 +140,27 @@ public:
 		// osc 4 -------------------------
 		juce::Point<float> osc4;
 		juce::Path circ4;
+		vector = juce::Point<float>(osc3.x - equantPos.x, osc3.y - equantPos.y);
+		angle = std::atan2(vector.y, vector.x);
+		auto squash4 = juce::AffineTransform::rotation(-angle, osc3.x, osc3.y).scaled(1.f - squash, 1.f, osc3.x, osc3.y).rotated(angle, osc3.x, osc3.y);
 		if (algo == 0 || algo == 2) {
 			osc4 = juce::Point<float>(osc3.x + r4 * std::cos(p4), osc3.y + r4 * std::sin(p4));
-			addCircle(circ4, osc3, r4 * 2.f);
+			osc4.applyTransform(squash4);
+			addCircle(circ4, osc3, r4 * 2.f); 
+			circ4.applyTransform(squash4);
 		}
 		if (algo == 1) {
 			osc4 = juce::Point<float>(osc2.x + r4 * std::cos(p4), osc2.y + r4 * std::sin(p4));
+			osc4.applyTransform(squash3);
 			addCircle(circ4, osc2, r4 * 2.f);
+			circ4.applyTransform(squash3);
 		}
 		if (algo == 3) {
 			osc4 = juce::Point<float>(osc1.x + r4 * std::cos(p4), osc1.y + r4 * std::sin(p4));
+			osc4.applyTransform(squash2);
 			addCircle(circ4, osc1, r4 * 2.f);
+			circ4.applyTransform(squash2);
 		}
-		circ4.applyTransform(squash2);
-		osc4.applyTransform(squash2);
 		g.setColour(orbitColor);
 		shadow.render(g, circ4, stroketype);
 		g.strokePath(circ4, stroketype, {}); // osc4 orbit

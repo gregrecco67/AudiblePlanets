@@ -108,9 +108,6 @@ public:
                 std::swap (length, depth);
 
             TextLayout textLayout;
-            //createTabTextLayout (button, length, depth, col, textLayout);
-            
-            
 
             Font font = regularFont.withHeight(depth * 0.5f);
             font.setUnderline (button.hasKeyboardFocus (false));
@@ -139,8 +136,6 @@ public:
         juce::Font getTabButtonFont(TabBarButton&, float height) override {
             return regularFont.withHeight(height * 0.6f);
         }
-        
-        //juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
         
     } tabLNF;
     
