@@ -221,13 +221,13 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 		// calculate squash matrix
 		// get distances in order to normalize vectors
-		float distanceL = std::sqrt(osc1Positions[i].xL * osc1Positions[i].xL + (osc1Positions[i].yL - equant) * (osc1Positions[i].yL - equant));
-		float distanceR = std::sqrt(osc1Positions[i].xR * osc1Positions[i].xR + (osc1Positions[i].yR - equant) * (osc1Positions[i].yR - equant));
+		float distanceL = std::sqrt(osc1Positions[i].xL * osc1Positions[i].xL + (osc1Positions[i].yL - equant) * (osc1Positions[i].yL - equant)) + .000000001f;
+		float distanceR = std::sqrt(osc1Positions[i].xR * osc1Positions[i].xR + (osc1Positions[i].yR - equant) * (osc1Positions[i].yR - equant)) + .000000001f;
 		// normalized vectors
-		float cosThetaL = (osc1Positions[i].yL - equant) /  (distanceL + .000001f); // what we want is the tangent to the orbit at this point
-		float sinThetaL = -osc1Positions[i].xL / (distanceL + .000001f); // so swap x and y and negate y
-		float cosThetaR = (osc1Positions[i].yR - equant) /  (distanceR + .000001f);
-		float sinThetaR = -osc1Positions[i].xR / (distanceR + .000001f); // +.000001f to avoid divide by zero
+		float cosThetaL = (osc1Positions[i].yL - equant) /  (distanceL + .000000001f); // what we want is the tangent to the orbit at this point
+		float sinThetaL = -osc1Positions[i].xL / (distanceL + .000000001f); // so swap x and y and negate y
+		float cosThetaR = (osc1Positions[i].yR - equant) /  (distanceR + .000000001f);
+		float sinThetaR = -osc1Positions[i].xR / (distanceR + .000000001f); // +.000001f to avoid divide by zero
 		float cos2ThetaL = cosThetaL * cosThetaL;
 		float cos2ThetaR = cosThetaR * cosThetaR;
 		float sin2ThetaL = sinThetaL * sinThetaL;
@@ -245,13 +245,13 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			}
 		};
 
-		distanceL = std::sqrt(osc2Positions[i].xL * osc2Positions[i].xL + (osc2Positions[i].yL - equant) * (osc2Positions[i].yL - equant));
-		distanceR = std::sqrt(osc2Positions[i].xR * osc2Positions[i].xR + (osc2Positions[i].yR - equant) * (osc2Positions[i].yR - equant));
+		distanceL = std::sqrt(osc2Positions[i].xL * osc2Positions[i].xL + (osc2Positions[i].yL - equant) * (osc2Positions[i].yL - equant)) + .000000001f;
+		distanceR = std::sqrt(osc2Positions[i].xR * osc2Positions[i].xR + (osc2Positions[i].yR - equant) * (osc2Positions[i].yR - equant)) + .000000001f;
 
-		cosThetaL =  (osc2Positions[i].yL - equant) / (distanceL + .000001f); 
-		sinThetaL = -osc2Positions[i].xL / (distanceL + .000001f); 
-		cosThetaR =  (osc2Positions[i].yR - equant) / (distanceR + .000001f);
-		sinThetaR = -osc2Positions[i].xR / (distanceR + .000001f); 
+		cosThetaL =  (osc2Positions[i].yL - equant) / (distanceL + .000000001f);
+		sinThetaL = -osc2Positions[i].xL / (distanceL + .000000001f);
+		cosThetaR =  (osc2Positions[i].yR - equant) / (distanceR + .000000001f);
+		sinThetaR = -osc2Positions[i].xR / (distanceR + .000000001f);
 		cos2ThetaL = cosThetaL * cosThetaL;
 		cos2ThetaR = cosThetaR * cosThetaR;
 		sin2ThetaL = sinThetaL * sinThetaL;
@@ -268,13 +268,13 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			}
 		};
 
-		distanceL = std::sqrt(osc3Positions[i].xL * osc3Positions[i].xL + (osc3Positions[i].yL - equant) * (osc3Positions[i].yL - equant));
-		distanceR = std::sqrt(osc3Positions[i].xR * osc3Positions[i].xR + (osc3Positions[i].yR - equant) * (osc3Positions[i].yR - equant));
+		distanceL = std::sqrt(osc3Positions[i].xL * osc3Positions[i].xL + (osc3Positions[i].yL - equant) * (osc3Positions[i].yL - equant)) + .000000001f;
+		distanceR = std::sqrt(osc3Positions[i].xR * osc3Positions[i].xR + (osc3Positions[i].yR - equant) * (osc3Positions[i].yR - equant)) + .000000001f;
 		
-		cosThetaL =  (osc3Positions[i].yL - equant) / (distanceL + .000001f); 
-		sinThetaL = -osc3Positions[i].xL / (distanceL + .000001f); 
-		cosThetaR =  (osc3Positions[i].yR - equant) / (distanceR + .000001f);
-		sinThetaR = -osc3Positions[i].xR / (distanceR + .000001f); 
+		cosThetaL =  (osc3Positions[i].yL - equant) / (distanceL + .000000001f);
+		sinThetaL = -osc3Positions[i].xL / (distanceL + .000000001f);
+		cosThetaR =  (osc3Positions[i].yR - equant) / (distanceR + .000000001f);
+		sinThetaR = -osc3Positions[i].xR / (distanceR + .000000001f);
 		cos2ThetaL = cosThetaL * cosThetaL;
 		cos2ThetaR = cosThetaR * cosThetaR;
 		sin2ThetaL = sinThetaL * sinThetaL;

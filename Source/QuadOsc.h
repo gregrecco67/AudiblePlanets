@@ -100,10 +100,15 @@ public:
 	reg regtwopi = reg(2.f * pi);
 
 	reg normalizePhases(reg input) {
-		while (input[0] >= pi || input[1] >= pi || input[2] >= pi || input[3] >= pi) {
-			auto mask = reg::greaterThanOrEqual(input, regpi);
-			input = input - (regtwopi & mask);
+		for (int i = 0; i < 4; i++) {
+			while (input[i] >= pi) {
+				input[i] = input[i] - pi;
+			}
 		}
+		//while (input[0] >= pi || input[1] >= pi || input[2] >= pi || input[3] >= pi) {
+		//	auto mask = reg::greaterThanOrEqual(input, regpi);
+		//	input = input - (regtwopi & mask);
+		//}
 		return input;
 	}
 
