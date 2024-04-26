@@ -151,9 +151,9 @@ public:
 		}
 		if (algo == 1) {
 			osc4 = juce::Point<float>(osc2.x + r4 * std::cos(p4), osc2.y + r4 * std::sin(p4));
-			osc4.applyTransform(squash2);
+			osc4.applyTransform(squash3);
 			addCircle(circ4, osc2, r4 * 2.f);
-			circ4.applyTransform(squash2);
+			circ4.applyTransform(squash3);
 		}
 		if (algo == 3) {
 			osc4 = juce::Point<float>(osc1.x + r4 * std::cos(p4), osc1.y + r4 * std::sin(p4));

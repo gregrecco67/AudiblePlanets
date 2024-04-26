@@ -96,8 +96,8 @@ public:
 	QuadOscillator() = default;
 	~QuadOscillator() = default;
 
-	reg regpi = reg(pi);
-	reg regtwopi = reg(2.f * pi);
+	const reg regpi = reg(pi);
+	const reg regtwopi = reg(2.f * pi);
 
 	reg normalizePhases(reg input) {
 		for (int i = 0; i < 4; i++) {
@@ -111,12 +111,12 @@ public:
 		return input;
 	}
 
-	reg a1 = reg(0.99999999997884898600402426033768998f);
-	reg a2 = reg(-0.166666666088260696413164261885310067f);
-	reg a3 = reg(0.00833333072055773645376566203656709979f);
-	reg a4 = reg(-0.000198408328232619552901560108010257242f);
-	reg a5 = reg(2.75239710746326498401791551303359689e-6f);
-	reg a6 = reg(-2.3868346521031027639830001794722295e-8f);
+	const reg a1 = reg(0.99999999997884898600402426033768998f);
+	const reg a2 = reg(-0.166666666088260696413164261885310067f);
+	const reg a3 = reg(0.00833333072055773645376566203656709979f);
+	const reg a4 = reg(-0.000198408328232619552901560108010257242f);
+	const reg a5 = reg(2.75239710746326498401791551303359689e-6f);
+	const reg a6 = reg(-2.3868346521031027639830001794722295e-8f);
 
 	reg sinesForPhases(reg x1) {
 		x1 = normalizePhases(x1);
@@ -159,28 +159,6 @@ public:
             values += sinesForPhases(p * 6.0f) * partialToneFraction * 0.16f;
         
         return values;
-        
-/*		if (t > 1.0f && t < 2.0f)
-			values += sinesForPhases(p * 2.0f) * partialToneFraction * 0.5f;
-		else if (t > 1.0f)
-            values += sinesForPhases(p * 2.0f) * 0.5f;
-
-		if (t >= 2.0f && t < 3.0f)
-			values += sinesForPhases(p * 3.0f) * partialToneFraction * 0.33f;
-		else if (t > 2.0f)
-            values += sinesForPhases(p * 3.0f) * 0.33f;
-
-		if (t >= 3.0f && t < 4.0f)
-			values += sinesForPhases(p * 4.0f) * partialToneFraction * 0.25f;
-		else if (t > 3.0f)
-            values += sinesForPhases(p * 4.0f) * 0.25f;
-
-		if (t >= 4.0f && t < 5.0f)
-			values += sinesForPhases(p * 5.0f) * partialToneFraction * 0.2f;
-        else if (t > 4.0f)
-            values += sinesForPhases(p * 5.0f) * 0.2f;
-		return values += sinesForPhases(p * 6.0f) * partialToneFraction * 0.16f;
- */
 	}
     
 	juce::dsp::SIMDRegister<float> freqs, phases, phaseIncs, gainsL, gainsR;
@@ -210,9 +188,9 @@ public:
 	{
 		// calculate frequencies and pan positions for our four voices
 		float baseFreq = freq * semitonePower(-params.detune); // faster std::pow(SEMITONE, params.detune);
-		float freqFactor = semitonePower(params.detune / (params.voices - 1));
+		float freqFactor = semitonePower(params.detune / 3.f);
 		float basePan = params.pan - params.spread;
-		float panDelta = 2.f * params.spread / (params.voices - 1);
+		float panDelta = 2.f * params.spread / 3.f;
 		
 		for (int i = 0; i < 4; i++)
 		{

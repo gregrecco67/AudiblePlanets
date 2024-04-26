@@ -84,7 +84,7 @@ private:
 	int algo{ 0 };
 	float equant{ 0.f }, demodVol{ 2.0f };
     
-	float baseAmplitude = 0.12f; 
+	static constexpr float baseAmplitude = 0.12f; 
 
     gin::EasedValueSmoother<float> noteSmoother;
     
