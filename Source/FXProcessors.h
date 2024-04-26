@@ -1190,11 +1190,8 @@ public:
         // do processing in oversampledBuffer
 
         // 1. prepare derived parameters
-        juce::dsp::SIMDRegister<float> mod1freqs{ params.mod1freq }, mod2freqs{ params.mod2freq }, spread{ params.spread }, unity{ 1.f }, semitones;
-        semitones[0] = 0.12f;
-        semitones[1] = 0.06f;
-        semitones[2] = -0.0566f;
-        semitones[3] = -0.1071f;
+		juce::dsp::SIMDRegister<float> mod1freqs{ params.mod1freq }, mod2freqs{ params.mod2freq }, spread{ params.spread }, unity{ 1.f };
+
         
         mod1freqs = mod1freqs * (unity + spread * semitones);
         mod2freqs = mod2freqs * (unity + spread * semitones);
@@ -1376,6 +1373,10 @@ private:
     juce::dsp::StateVariableTPTFilter<float> highCut1, highCut2, highCut3, highCut4, lowCut1, lowCut2, lowCut3, lowCut4; // post multiply, pre-stagemix
     juce::dsp::SIMDRegister<float> mod1Phases{ 0.0f }, mod2Phases{ 0.0f };
     juce::dsp::SIMDRegister<float> mod1PhaseIncs{ 0.0f }, mod2PhaseIncs{ 0.0f };
+
+	float semis[4] = { 0.12f, 0.06f, -0.0566f, -0.1071f };
+	const juce::dsp::SIMDRegister<float> semitones = juce::dsp::SIMDRegister<float>::fromRawArray(semis);
+
 
     juce::SmoothedValue<float> mod1LPCutoff, mod2LPCutoff;
 };

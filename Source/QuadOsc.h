@@ -121,19 +121,12 @@ public:
 	reg sinesForPhases(reg x1) {
 		x1 = normalizePhases(x1);
 		reg x2 = x1 * x1;
-
-		return x1 * (a1
-		+ x2 * (a2
-		+ x2 * (a3
-		+ x2 * (a4
-		+ x2 * (a5
-		+ x2 * a6)))));
+		return x1 * reg::multiplyAdd(a1, x2, reg::multiplyAdd(a2, x2, reg::multiplyAdd(a3, x2, reg::multiplyAdd(a4, x2, reg::multiplyAdd(a5, x2, a6)))));
 	}
 
 	reg sinesForPhasesAndTones(reg p, float t) {
 		float fullTones{ 0.f }; float partialToneFraction = std::modf(t, &fullTones);
 		reg values = sinesForPhases(p);
-
 
         if (t > 1.0f && t < 2.0f)
             values += sinesForPhases(p * 2.0f) * partialToneFraction * 0.5f;
