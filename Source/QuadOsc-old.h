@@ -4,7 +4,6 @@
 
 using std::numbers::pi;
 using std::numbers::inv_pi;
-using reg = juce::dsp::SIMDRegister<float>;
 
 struct Matrix {
 	friend Matrix operator*(const Matrix& m, const float s) { // scalar multiplication
@@ -56,8 +55,6 @@ static inline float semitonePower(float x) { // about 2x faster than std::pow(SE
 	return u * x + 1.f;
 }
 
-
-
 static inline float sineValueForPhaseAndTones(float phase_, float tones) {
 	float fullTones{ 0.f }, value{ 0.0f };
 	float partialToneFraction = std::clamp(std::modf(tones, &fullTones), 0.0f, 1.0f);
@@ -96,60 +93,7 @@ public:
 	QuadOscillator() = default;
 	~QuadOscillator() = default;
 
-	reg regpi = reg(pi);
-	reg regtwopi = reg(2.f * pi);
-
-	reg normalizePhases(reg input) {
-		while (input[0] >= pi || input[1] >= pi || input[2] >= pi || input[3] >= pi) {
-			auto mask = reg::greaterThanOrEqual(input, regpi);
-			input = input - (regtwopi & mask);
-		}
-		return input;
-	}
-
-	reg a1 = reg(0.99999999997884898600402426033768998f);
-	reg a2 = reg(-0.166666666088260696413164261885310067f);
-	reg a3 = reg(0.00833333072055773645376566203656709979f);
-	reg a4 = reg(-0.000198408328232619552901560108010257242f);
-	reg a5 = reg(2.75239710746326498401791551303359689e-6f);
-	reg a6 = reg(-2.3868346521031027639830001794722295e-8f);
-
-	reg sinesForPhases(reg x1) {
-		x1 = normalizePhases(x1);
-		reg x2 = x1 * x1;
-
-		return x1 * (a1
-		+ x2 * (a2
-		+ x2 * (a3
-		+ x2 * (a4
-		+ x2 * (a5
-		- x2 * a6)))));
-	}
-
-	reg sinesForPhasesAndTones(reg p, float t) {
-		reg values{ 0.f };
-		float fullTones{ 0.f }; float partialToneFraction = std::modf(t, &fullTones);
-		values += sinesForPhases(p);
-
-		if (t < 2.0f)
-			return values += sinesForPhases(p * 2.0f) * partialToneFraction * 0.5f;
-		values += sinesForPhases(p * 2.0f) * 0.5f;
-
-		if (t >= 2.0f && t < 3.0f)
-			return values += sinesForPhases(p * 3.0f) * partialToneFraction * 0.33f;
-		values += sinesForPhases(p * 3.0f) * 0.33f;
-
-		if (t >= 3.0f && t < 4.0f)
-			return values += sinesForPhases(p * 4.0f) * partialToneFraction * 0.25f;
-		values += sinesForPhases(p * 4.0f) * 0.25f;
-
-		if (t >= 4.0f && t < 5.0f)
-			return values += sinesForPhases(p * 5.0f) * partialToneFraction * 0.2f;
-
-		values += sinesForPhases(p * 5.0f) * 0.2f;
-		return values += sinesForPhases(p * 6.0f) * partialToneFraction * 0.16f;
-	}
-	juce::dsp::SIMDRegister<float> freqs, phases, phaseIncs, gainsL, gainsR;
+	float freqs[4]{ 200.f }, phases[4]{ 0.f }, phaseIncs[4]{ 0.f }, gainsL[4]{ 0.f }, gainsR[4]{ 0.f };
 	float freq, pan, tones, sampleRate;
 
 	void setSampleRate(double sampleRate_)
@@ -172,6 +116,13 @@ public:
 		recalculate();
 	}
 
+	void normalizePhases()
+	{
+		for (int i = 0; i < 4; i++) {
+			if (phases[i] > pi) { phases[i] -= 2.f * (float)pi; }
+		}
+	}
+
 	void recalculate()
 	{
 		// calculate frequencies and pan positions for our four voices
@@ -179,8 +130,8 @@ public:
 		float freqFactor = semitonePower(params.detune / (params.voices - 1));
 		float basePan = params.pan - params.spread;
 		float panDelta = 2.f * params.spread / (params.voices - 1);
-		
-		for (int i = 0; i < 4; i++)
+
+		for (int i = 0; i < params.voices; i++)
 		{
 			float thisPan = juce::jlimit(-1.0f, 1.0f, basePan + panDelta * i);
 			gainsL[i] = (1.0f - thisPan) / 2;
@@ -208,26 +159,29 @@ public:
 		params = params_;
 		recalculate();
 		for (int i = 0; i < numSamples; i++) {
+			positions[i] = { 0.f, 0.f, 0.f, 0.f };
 			if (params.wave == Wavetype::sine) {
-				auto xs = sinesForPhasesAndTones(phases + (params.phaseShift + 0.5f) * (float)pi, params.tones);
-				auto ys = sinesForPhasesAndTones(phases + params.phaseShift * (float)pi, params.tones);
-				positions[i].xL = (xs * gainsL).sum() * 0.25f;
-				positions[i].yL = (ys * gainsL).sum() * 0.25f;
-				positions[i].xR = (xs * gainsR).sum() * 0.25f;
-				positions[i].yR = (ys * gainsR).sum() * 0.25f;
+				for (int v = 0; v < 4; v++) {
+					positions[i].xL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + (params.phaseShift + 0.5f) * (float)pi, params.tones)) * .25f;
+					positions[i].yL += (gainsL[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift * (float)pi, params.tones)) * .25f;
+					positions[i].xR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + (params.phaseShift + 0.5f) * (float)pi, params.tones)) * .25f;
+					positions[i].yR += (gainsR[v] * sineValueForPhaseAndTones(phases[v] + params.phaseShift * (float)pi, params.tones)) * .25f;
+					phases[v] += phaseIncs[v];
+					if (phases[v] > pi) { phases[v] -= 2.f * (float)pi; }
+				}
 			}
 			if (params.wave == Wavetype::sawUp) {
-				auto quarterPhases = phases + 0.25f * (float)pi;
-				quarterPhases = normalizePhases(quarterPhases);
-				auto xs = quarterPhases * reg(inv_pi);
-				auto ys = phases * reg(inv_pi);
-				positions[i].xL = (xs * gainsL).sum() * 0.25f;
-				positions[i].yL = (ys * gainsL).sum() * 0.25f;
-				positions[i].xR = (xs * gainsR).sum() * 0.25f;
-				positions[i].yR = (ys * gainsR).sum() * 0.25f;
+				for (int v = 0; v < 4; v++) {
+					float quarterPhase = phases[v] + 0.25f * (float)pi;
+					if (quarterPhase > pi) { quarterPhase -= 2.f * (float)pi; }
+					positions[i].xL += (gainsL[v] * (quarterPhase * (float)inv_pi)) * .25f;
+					positions[i].yL += (gainsL[v] * (phases[v]    * (float)inv_pi)) * .25f;
+					positions[i].xR += (gainsR[v] * (quarterPhase * (float)inv_pi)) * .25f;
+					positions[i].yR += (gainsR[v] * (phases[v]    * (float)inv_pi)) * .25f;
+					phases[v] += phaseIncs[v];
+					if (phases[v] > pi) { phases[v] -= 2.f * (float)pi; }
+				}
 			}
-			phases += phaseIncs;
-			phases = normalizePhases(phases);
 		}
 	}
 

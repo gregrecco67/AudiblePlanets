@@ -111,10 +111,10 @@ void SynthVoice::noteRetriggered()
 
 	updateParams(0);
 
-	osc1.noteOn(0.f);
-	osc2.noteOn(0.f);
-	osc3.noteOn(0.f);
-	osc4.noteOn(0.f);
+	osc1.noteOn();
+	osc2.noteOn();
+	osc3.noteOn();
+	osc4.noteOn();
 
 	env1.noteOn();
 	env2.noteOn();
@@ -227,7 +227,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		float cosThetaL = (osc1Positions[i].yL - equant) /  (distanceL + .000001f); // what we want is the tangent to the orbit at this point
 		float sinThetaL = -osc1Positions[i].xL / (distanceL + .000001f); // so swap x and y and negate y
 		float cosThetaR = (osc1Positions[i].yR - equant) /  (distanceR + .000001f);
-		float sinThetaR = -osc1Positions[i].xR / (distanceR + .000001f); // +.001f to avoid divide by zero
+		float sinThetaR = -osc1Positions[i].xR / (distanceR + .000001f); // +.000001f to avoid divide by zero
 		float cos2ThetaL = cosThetaL * cosThetaL;
 		float cos2ThetaR = cosThetaR * cosThetaR;
 		float sin2ThetaL = sinThetaL * sinThetaL;
@@ -245,21 +245,17 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			}
 		};
 
-		// separate matrix for each orbit that can be the basis for another
 		distanceL = std::sqrt(osc2Positions[i].xL * osc2Positions[i].xL + (osc2Positions[i].yL - equant) * (osc2Positions[i].yL - equant));
 		distanceR = std::sqrt(osc2Positions[i].xR * osc2Positions[i].xR + (osc2Positions[i].yR - equant) * (osc2Positions[i].yR - equant));
-		// normalized vectors
-		cosThetaL =  (osc2Positions[i].yL - equant) / (distanceL + .000001f); // what we want is the tangent to the orbit at this point
-		sinThetaL = -osc2Positions[i].xL / (distanceL + .000001f); // so swap x and y and negate y
+
+		cosThetaL =  (osc2Positions[i].yL - equant) / (distanceL + .000001f); 
+		sinThetaL = -osc2Positions[i].xL / (distanceL + .000001f); 
 		cosThetaR =  (osc2Positions[i].yR - equant) / (distanceR + .000001f);
-		sinThetaR = -osc2Positions[i].xR / (distanceR + .000001f); // +.001f to avoid divide by zero
+		sinThetaR = -osc2Positions[i].xR / (distanceR + .000001f); 
 		cos2ThetaL = cosThetaL * cosThetaL;
 		cos2ThetaR = cosThetaR * cosThetaR;
 		sin2ThetaL = sinThetaL * sinThetaL;
 		sin2ThetaR = sinThetaR * sinThetaR;
-		
-		//if (i == 0)
-		//	DBG(String(sin2ThetaL + cos2ThetaL));
 
 		StereoMatrix squash2 = {
 			.left = {
@@ -272,14 +268,13 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			}
 		};
 
-		// separate matrix for each orbit that can be the basis for another
 		distanceL = std::sqrt(osc3Positions[i].xL * osc3Positions[i].xL + (osc3Positions[i].yL - equant) * (osc3Positions[i].yL - equant));
 		distanceR = std::sqrt(osc3Positions[i].xR * osc3Positions[i].xR + (osc3Positions[i].yR - equant) * (osc3Positions[i].yR - equant));
-		// normalized vectors
-		cosThetaL =  (osc3Positions[i].yL - equant) / (distanceL + .000001f); // what we want is the tangent to the orbit at this point
-		sinThetaL = -osc3Positions[i].xL / (distanceL + .000001f); // so swap x and y and negate y
+		
+		cosThetaL =  (osc3Positions[i].yL - equant) / (distanceL + .000001f); 
+		sinThetaL = -osc3Positions[i].xL / (distanceL + .000001f); 
 		cosThetaR =  (osc3Positions[i].yR - equant) / (distanceR + .000001f);
-		sinThetaR = -osc3Positions[i].xR / (distanceR + .000001f); // +.001f to avoid divide by zero
+		sinThetaR = -osc3Positions[i].xR / (distanceR + .000001f); 
 		cos2ThetaL = cosThetaL * cosThetaL;
 		cos2ThetaR = cosThetaR * cosThetaR;
 		sin2ThetaL = sinThetaL * sinThetaL;
@@ -297,7 +292,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		};
 
 
-		epi1 = osc1Positions[i] * (a * osc1Vol); // position of body on first circle, scaled by osc1 selected envelope
+		epi1 = osc1Positions[i] * (a * osc1Vol);
 		
 		// apply the squash matrix to squash secondary orbits along the tangent of the one they're orbiting
 		epi2 = epi1 + ((osc2Positions[i] * squash1) * (b * osc2Vol)); 
