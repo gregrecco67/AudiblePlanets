@@ -7,7 +7,7 @@ using std::numbers::inv_pi;
 using reg = juce::dsp::SIMDRegister<float>;
 
 struct Matrix {
-	friend Matrix operator*(const Matrix& m, const float s) { // scalar multiplication
+	inline friend Matrix operator*(const Matrix& m, const float s) { // scalar multiplication
 		return { m.a * s, m.b * s, m.c * s, m.d * s };
 	}
 	float a, b, c, d;
@@ -15,7 +15,7 @@ struct Matrix {
 
 struct StereoMatrix {
 	Matrix left, right;
-	friend StereoMatrix operator*(const StereoMatrix& m, const float s) { // scalar multiplication
+	inline friend StereoMatrix operator*(const StereoMatrix& m, const float s) { // scalar multiplication
 			return { m.left * s, m.right * s };
 		}
 };
@@ -23,18 +23,18 @@ struct StereoMatrix {
 struct StereoPosition {
 	float xL{ 0.f }, yL{ 0.f }, xR{ 0.f }, yR{ 0.f };
 	
-	friend StereoPosition operator*(const StereoPosition& p, const StereoMatrix& m) { // apply matrix to position
+	inline friend StereoPosition operator*(const StereoPosition& p, const StereoMatrix& m) { // apply matrix to position
 		return {.xL = m.left.a * p.xL + m.left.b * p.yL,
 				.yL = m.left.c * p.xL + m.left.d * p.yL,
 				.xR = m.right.a * p.xR + m.right.b * p.yR,
 				.yR = m.right.c * p.xR + m.right.d * p.yR };
 	}
 
-	friend StereoPosition operator*(const StereoPosition& p, const float s) { // scalar multiplication
+	inline friend StereoPosition operator*(const StereoPosition& p, const float s) { // scalar multiplication
 			return { p.xL * s, p.yL * s, p.xR * s, p.yR * s };
 		}
 
-	StereoPosition operator+(const StereoPosition otherPos) {
+	inline StereoPosition operator+(const StereoPosition otherPos) {
 		return { this->xL + otherPos.xL, this->yL + otherPos.yL,
 			this->xR + otherPos.xR, this->yR + otherPos.yR };
 	}
@@ -99,17 +99,17 @@ public:
 	const reg regpi = reg(pi);
 	const reg regtwopi = reg(2.f * pi);
 
-	reg normalizePhases(reg input) {
-		for (int i = 0; i < 4; i++) {
-			while (input[i] >= pi) {
-				input[i] = input[i] - pi * 2.f;
-			}
-            while (input[i] < -pi) {
-                input[i] = input[i] + pi * 2.f;
-            }
-		}
-		return input;
-	}
+	//reg normalizePhases(reg input) {
+	//	for (int i = 0; i < 4; i++) {
+	//		while (input[i] >= pi) {
+	//			input[i] = input[i] - pi * 2.f;
+	//		}
+ //           while (input[i] < -pi) {
+ //               input[i] = input[i] + pi * 2.f;
+ //           }
+	//	}
+	//	return input;
+	//}
 
 	const reg a1 = reg(0.99999999997884898600402426033768998f);
 	const reg a2 = reg(-0.166666666088260696413164261885310067f);
@@ -216,7 +216,7 @@ public:
                     break;
             }
 		}
-        phaseIncs = freqs * invSampleRate;
+        phaseIncs = freqs * invSampleRate; // phases now [0, 1]
 	}
 
 	void renderPositions(const float freq_, const Params params_, StereoPosition positions[], const int numSamples) {

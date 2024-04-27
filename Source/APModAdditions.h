@@ -97,6 +97,7 @@ public:
 		oscsMenu.addSubMenu("OSC3", osc3Menu);
 		oscsMenu.addSubMenu("OSC4", osc4Menu);
 		oscsMenu.addSubMenu("Aux", auxMenu);
+		oscsMenu.addItem("Sampler Vol", [this]() { setDest(proc.samplerParams.volume); });
 
 		lfo1Menu.addItem("LFO1 Rate", [this]() { setDest(proc.lfo1Params.rate); });
 		lfo1Menu.addItem("LFO1 Beats", [this]() { setDest(proc.lfo1Params.beat); });

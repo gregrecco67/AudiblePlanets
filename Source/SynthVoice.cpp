@@ -184,7 +184,8 @@ void SynthVoice::setCurrentSampleRate(double newRate)
 void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
 {
 	updateParams(numSamples);
-	gin::ScratchBuffer synthBuffer(2, numSamples);
+
+	synthBuffer.setSize(2, numSamples, false, false, true);
 
 	// we do this to advance phase, even if we have to overwrite with sidechain (rare)
 	osc1.renderPositions(osc1Freq, osc1Params, osc1Positions, numSamples); 
@@ -204,7 +205,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	osc3.renderPositions(osc3Freq, osc3Params, osc3Positions, numSamples);
 	osc4.renderPositions(osc4Freq, osc4Params, osc4Positions, numSamples);
 
-	// more squash = smaller k, which scales about the tangent to the deferent
+	// more squash = smaller k, which scales about the perpendicular to the vector to the equant
 	float k = 1.f - getValue(proc.globalParams.squash); 
     
 	// the whole enchilada
@@ -223,11 +224,13 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		// get distances in order to normalize vectors
 		float distanceL = std::sqrt(osc1Positions[i].xL * osc1Positions[i].xL + (osc1Positions[i].yL - equant) * (osc1Positions[i].yL - equant));
 		float distanceR = std::sqrt(osc1Positions[i].xR * osc1Positions[i].xR + (osc1Positions[i].yR - equant) * (osc1Positions[i].yR - equant));
+		float invDistanceL = 1.f / (distanceL + .000001f);
+		float invDistanceR = 1.f / (distanceR + .000001f);
 		// normalized vectors
-		float cosThetaL = (osc1Positions[i].yL - equant) /  (distanceL + .000001f); // what we want is the tangent to the orbit at this point
-		float sinThetaL = -osc1Positions[i].xL / (distanceL + .000001f); // so swap x and y and negate y
-		float cosThetaR = (osc1Positions[i].yR - equant) /  (distanceR + .000001f);
-		float sinThetaR = -osc1Positions[i].xR / (distanceR + .000001f); // +.000001f to avoid divide by zero
+		float cosThetaL = (osc1Positions[i].yL - equant) * invDistanceL; // what we want is the tangent to the orbit at this point
+		float sinThetaL = -osc1Positions[i].xL * invDistanceL; // so swap x and y and negate y
+		float cosThetaR = (osc1Positions[i].yR - equant) * invDistanceR;
+		float sinThetaR = -osc1Positions[i].xR * invDistanceR; // +.000001f to avoid divide by zero
 		float cos2ThetaL = cosThetaL * cosThetaL;
 		float cos2ThetaR = cosThetaR * cosThetaR;
 		float sin2ThetaL = sinThetaL * sinThetaL;
@@ -247,11 +250,13 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 		distanceL = std::sqrt(osc2Positions[i].xL * osc2Positions[i].xL + (osc2Positions[i].yL - equant) * (osc2Positions[i].yL - equant));
 		distanceR = std::sqrt(osc2Positions[i].xR * osc2Positions[i].xR + (osc2Positions[i].yR - equant) * (osc2Positions[i].yR - equant));
+		invDistanceL = 1.f / (distanceL + .000001f);
+		invDistanceR = 1.f / (distanceR + .000001f);
 
-		cosThetaL =  (osc2Positions[i].yL - equant) / (distanceL + .000001f);
-		sinThetaL = -osc2Positions[i].xL / (distanceL + .000001f);
-		cosThetaR =  (osc2Positions[i].yR - equant) / (distanceR + .000001f);
-		sinThetaR = -osc2Positions[i].xR / (distanceR + .000001f);
+		cosThetaL =  (osc2Positions[i].yL - equant) * invDistanceL;
+		sinThetaL = -osc2Positions[i].xL			* invDistanceL;
+		cosThetaR =  (osc2Positions[i].yR - equant) * invDistanceR;
+		sinThetaR = -osc2Positions[i].xR			* invDistanceR;
 		cos2ThetaL = cosThetaL * cosThetaL;
 		cos2ThetaR = cosThetaR * cosThetaR;
 		sin2ThetaL = sinThetaL * sinThetaL;
@@ -270,11 +275,13 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 		distanceL = std::sqrt(osc3Positions[i].xL * osc3Positions[i].xL + (osc3Positions[i].yL - equant) * (osc3Positions[i].yL - equant));
 		distanceR = std::sqrt(osc3Positions[i].xR * osc3Positions[i].xR + (osc3Positions[i].yR - equant) * (osc3Positions[i].yR - equant));
+		invDistanceL = 1.f / (distanceL + .000001f);
+		invDistanceR = 1.f / (distanceR + .000001f);
 		
-		cosThetaL =  (osc3Positions[i].yL - equant) / (distanceL + .000001f);
-		sinThetaL = -osc3Positions[i].xL / (distanceL + .000001f);
-		cosThetaR =  (osc3Positions[i].yR - equant) / (distanceR + .000001f);
-		sinThetaR = -osc3Positions[i].xR / (distanceR + .000001f);
+		cosThetaL =  (osc3Positions[i].yL - equant) * invDistanceL;
+		sinThetaL = -osc3Positions[i].xL			* invDistanceL;
+		cosThetaR =  (osc3Positions[i].yR - equant) * invDistanceR;
+		sinThetaR = -osc3Positions[i].xR			* invDistanceR;
 		cos2ThetaL = cosThetaL * cosThetaL;
 		cos2ThetaR = cosThetaR * cosThetaR;
 		sin2ThetaL = sinThetaL * sinThetaL;
@@ -316,7 +323,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			epi4 = epi1 + ((osc4Positions[i] * squash1) * (d * osc4Vol));
 		}
 
-
+		
 		// ----------------------------------------
 		// interpret bodies' positions by algorithm
 		// ----------------------------------------

@@ -88,6 +88,8 @@ private:
 
     gin::EasedValueSmoother<float> noteSmoother;
     
+	juce::AudioBuffer<float> synthBuffer;
+
     friend class APSynth;
     juce::MPENote curNote;
 	
