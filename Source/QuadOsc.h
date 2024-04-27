@@ -119,7 +119,10 @@ public:
 	const reg a6 = reg(-2.3868346521031027639830001794722295e-8f);
 
 	reg sinesForPhases(reg x1) {
-		x1 = normalizePhases(x1);
+		// normalize [0, ?] (on [0,1]) to [-pi, pi]
+		x1 = x1 - reg::truncate(x1); 
+		x1 *= regtwopi;
+		x1 -= regpi;
 		reg x2 = x1 * x1;
 		return x1 * reg::multiplyAdd(a1, x2, reg::multiplyAdd(a2, x2, reg::multiplyAdd(a3, x2, reg::multiplyAdd(a4, x2, reg::multiplyAdd(a5, x2, a6)))));
 	}
@@ -128,38 +131,46 @@ public:
 		float fullTones{ 0.f }; float partialToneFraction = std::modf(t, &fullTones);
 		reg values = sinesForPhases(p);
 
-        if (t > 1.0f && t < 2.0f)
-            values += sinesForPhases(p * 2.0f) * partialToneFraction * 0.5f;
-        else if (t > 1.0f)
-            values += sinesForPhases(p * 2.0f) * 0.5f; // we're over 2, so add the max level of this partial
+		if (t > 1.0f && t < 2.0f) {
+			values += sinesForPhases(p * 2.0f) * partialToneFraction * 0.5f;
+		}
 
-        if (t > 2.0f && t < 3.0f)
-            values += sinesForPhases(p * 3.0f) * partialToneFraction * 0.33f;
-        else if (t > 2.0f)
-            values += sinesForPhases(p * 3.0f) * 0.33f;
+		if (t >= 2.0f && t < 3.0f) {
+			values += sinesForPhases(p * 2.0f) * 0.5f; // we're over 2, so add the max level of this partial
+			values += sinesForPhases(p * 3.0f) * partialToneFraction * 0.33f;
+		}
 
-        if (t > 3.0f && t < 4.0f)
-            values += sinesForPhases(p * 4.0f) * partialToneFraction * 0.25f;
-        else if (t > 3.0f)
-            values += sinesForPhases(p * 4.0f) * 0.25f;
+		if (t >= 3.0f && t < 4.0f) {
+			values += sinesForPhases(p * 2.0f) * 0.5f;
+			values += sinesForPhases(p * 3.0f) * 0.33f;  // we're over 3, so add the max level of this partial, etc.
+			values += sinesForPhases(p * 4.0f) * partialToneFraction * 0.25f;
+		}
 
-        if (t > 4.0f && t < 5.0f)
-            values += sinesForPhases(p * 5.0f) * partialToneFraction * 0.2f;
-        else if (t > 4.0f)
-            values += sinesForPhases(p * 5.0f) * 0.2f;
+		if (t >= 4.0f && t < 5.0f) {
+			values += sinesForPhases(p * 2.0f) * 0.5f;
+			values += sinesForPhases(p * 3.0f) * 0.33f;
+			values += sinesForPhases(p * 4.0f) * 0.25f;
+			values += sinesForPhases(p * 5.0f) * partialToneFraction * 0.2f;
+		}
 
-        if (t > 5.0f)
-            values += sinesForPhases(p * 6.0f) * partialToneFraction * 0.16f;
+		if (t >= 5.0f) {
+			values += sinesForPhases(p * 2.0f) * 0.5f;
+			values += sinesForPhases(p * 3.0f) * 0.33f;
+			values += sinesForPhases(p * 4.0f) * 0.25f;
+			values += sinesForPhases(p * 5.0f) * 0.2f;
+			values += sinesForPhases(p * 6.0f) * partialToneFraction * 0.16f;
+		}
         
         return values;
 	}
     
 	juce::dsp::SIMDRegister<float> freqs, phases, phaseIncs, gainsL, gainsR;
-	float freq, pan, tones, sampleRate;
+	float freq, pan, tones, sampleRate, invSampleRate;
 
 	void setSampleRate(double sampleRate_)
 	{
-		sampleRate = (float)sampleRate_;
+		sampleRate = static_cast<float>(sampleRate_);
+		invSampleRate = static_cast<float>(1.f / sampleRate);
 		recalculate();
 	}
 
@@ -204,8 +215,8 @@ public:
                     freqs[i] = baseFreq * freqFactor * freqFactor * freqFactor;
                     break;
             }
-            phaseIncs[i] = freqs[i] * (float)pi * 2.0f / sampleRate;
 		}
+        phaseIncs = freqs * invSampleRate;
 	}
 
 	void renderPositions(const float freq_, const Params params_, StereoPosition positions[], const int numSamples) {
@@ -214,25 +225,25 @@ public:
 		recalculate();
 		for (int i = 0; i < numSamples; i++) {
 			if (params.wave == Wavetype::sine) {
-				auto xs = sinesForPhasesAndTones(phases + (params.phaseShift + 0.5f) * (float)pi, params.tones);
-				auto ys = sinesForPhasesAndTones(phases + params.phaseShift * (float)pi, params.tones);
+				auto xs = sinesForPhasesAndTones(phases + params.phaseShift + .5f,	params.tones);
+				auto ys = sinesForPhasesAndTones(phases + params.phaseShift,		params.tones);
 				positions[i].xL = (xs * gainsL).sum() * 0.25f;
 				positions[i].yL = (ys * gainsL).sum() * 0.25f;
 				positions[i].xR = (xs * gainsR).sum() * 0.25f;
 				positions[i].yR = (ys * gainsR).sum() * 0.25f;
 			}
 			if (params.wave == Wavetype::sawUp) {
-				auto quarterPhases = phases + 0.25f * (float)pi;
-				quarterPhases = normalizePhases(quarterPhases);
-				auto xs = quarterPhases * reg(inv_pi);
-				auto ys = phases * reg(inv_pi);
+				auto quarterPhases = phases + 0.25f;
+				quarterPhases = reg::truncate(quarterPhases);
+				auto xs = quarterPhases * 2.f - 1.f;
+				auto ys = phases * 2.f - 1.f;
 				positions[i].xL = (xs * gainsL).sum() * 0.25f;
 				positions[i].yL = (ys * gainsL).sum() * 0.25f;
 				positions[i].xR = (xs * gainsR).sum() * 0.25f;
 				positions[i].yR = (ys * gainsR).sum() * 0.25f;
 			}
 			phases += phaseIncs;
-			phases = normalizePhases(phases);
+			phases = phases - reg::truncate(phases);
 		}
 	}
 
