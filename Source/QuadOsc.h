@@ -4,7 +4,6 @@
 
 using std::numbers::pi;
 using std::numbers::inv_pi;
-using reg = juce::dsp::SIMDRegister<float>;
 
 struct Matrix {
 	inline friend Matrix operator*(const Matrix& m, const float s) { // scalar multiplication
@@ -96,40 +95,26 @@ public:
 	QuadOscillator() = default;
 	~QuadOscillator() = default;
 
-	const reg regpi = reg(pi);
-	const reg regtwopi = reg(2.f * pi);
+	const mipp::Reg<float> a1 = 0.99999999997884898600402426033768998f;
+	const mipp::Reg<float> a2 = -0.166666666088260696413164261885310067f;
+	const mipp::Reg<float> a3 = 0.00833333072055773645376566203656709979f;
+	const mipp::Reg<float> a4 = -0.000198408328232619552901560108010257242f;
+	const mipp::Reg<float> a5 = 2.75239710746326498401791551303359689e-6f;
+	const mipp::Reg<float> a6 = -2.3868346521031027639830001794722295e-8f;
 
-	//reg normalizePhases(reg input) {
-	//	for (int i = 0; i < 4; i++) {
-	//		while (input[i] >= pi) {
-	//			input[i] = input[i] - pi * 2.f;
-	//		}
- //           while (input[i] < -pi) {
- //               input[i] = input[i] + pi * 2.f;
- //           }
-	//	}
-	//	return input;
-	//}
-
-	const reg a1 = reg(0.99999999997884898600402426033768998f);
-	const reg a2 = reg(-0.166666666088260696413164261885310067f);
-	const reg a3 = reg(0.00833333072055773645376566203656709979f);
-	const reg a4 = reg(-0.000198408328232619552901560108010257242f);
-	const reg a5 = reg(2.75239710746326498401791551303359689e-6f);
-	const reg a6 = reg(-2.3868346521031027639830001794722295e-8f);
-
-	reg sinesForPhases(reg x1) {
+	mipp::Reg<float> sinesForPhases(mipp::Reg<float> x1) {
 		// normalize [0, ?] (on [0,1]) to [-pi, pi]
-		x1 = x1 - reg::truncate(x1); 
-		x1 *= regtwopi;
-		x1 -= regpi;
-		reg x2 = x1 * x1;
-		return x1 * reg::multiplyAdd(a1, x2, reg::multiplyAdd(a2, x2, reg::multiplyAdd(a3, x2, reg::multiplyAdd(a4, x2, reg::multiplyAdd(a5, x2, a6)))));
+		x1 = x1 - mipp::trunc(x1);
+		x1 *= 2.f * pi;
+		x1 -= pi;
+		mipp::Reg<float> x2 = x1 * x1;
+		return mipp::mul(x1, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(a6, x2, a5), a4), a3), a2), a1));
 	}
 
-	reg sinesForPhasesAndTones(reg p, float t) {
+
+	mipp::Reg<float> sinesForPhasesAndTones(mipp::Reg<float> p, float t) {
 		float fullTones{ 0.f }; float partialToneFraction = std::modf(t, &fullTones);
-		reg values = sinesForPhases(p);
+		mipp::Reg<float> values = sinesForPhases(p);
 
 		if (t > 1.0f && t < 2.0f) {
 			values += sinesForPhases(p * 2.0f) * partialToneFraction * 0.5f;
@@ -160,11 +145,11 @@ public:
 			values += sinesForPhases(p * 5.0f) * 0.2f;
 			values += sinesForPhases(p * 6.0f) * partialToneFraction * 0.16f;
 		}
-        
-        return values;
+
+		return values;
 	}
     
-	juce::dsp::SIMDRegister<float> freqs, phases, phaseIncs, gainsL, gainsR;
+	mipp::Reg<float> freqs, phases, phaseIncs, gainsL, gainsR;
 	float freq, pan, tones, sampleRate, invSampleRate;
 
 	void setSampleRate(double sampleRate_)
@@ -196,26 +181,31 @@ public:
 		float basePan = params.pan - params.spread;
 		float panDelta = 2.f * params.spread / 3.f;
 		
+		float leftGains[4], rightGains[4], freqsRaw[4];
 		for (int i = 0; i < 4; i++)
 		{
 			float thisPan = juce::jlimit(-1.0f, 1.0f, basePan + panDelta * i);
-			gainsL[i] = (1.0f - thisPan) / 2;
-			gainsR[i] = (1.0f + thisPan) / 2;
+			leftGains[i] = (1.0f - thisPan) / 2;
+			rightGains[i] = (1.0f + thisPan) / 2;
             switch(i) {
                 case 0:
-                    freqs[i] = baseFreq;
+                    freqsRaw[i] = baseFreq;
                     break;
                 case 1:
-                    freqs[i] = baseFreq * freqFactor;
+                    freqsRaw[i] = baseFreq * freqFactor;
                     break;
                 case 2:
-                    freqs[i] = baseFreq * freqFactor * freqFactor;
+                    freqsRaw[i] = baseFreq * freqFactor * freqFactor;
                     break;
                 case 3:
-                    freqs[i] = baseFreq * freqFactor * freqFactor * freqFactor;
+                    freqsRaw[i] = baseFreq * freqFactor * freqFactor * freqFactor;
                     break;
             }
 		}
+		gainsL.set(leftGains);
+		gainsR.set(rightGains);
+		freqs.set(freqsRaw);
+
         phaseIncs = freqs * invSampleRate; // phases now [0, 1]
 	}
 
@@ -234,7 +224,7 @@ public:
 			}
 			if (params.wave == Wavetype::sawUp) {
 				auto quarterPhases = phases + 0.25f;
-				quarterPhases = reg::truncate(quarterPhases);
+				quarterPhases = quarterPhases - mipp::trunc(quarterPhases);
 				auto xs = quarterPhases * 2.f - 1.f;
 				auto ys = phases * 2.f - 1.f;
 				positions[i].xL = (xs * gainsL).sum() * 0.25f;
@@ -243,15 +233,13 @@ public:
 				positions[i].yR = (ys * gainsR).sum() * 0.25f;
 			}
 			phases += phaseIncs;
-			phases = phases - reg::truncate(phases);
+			phases = phases - mipp::trunc(phases);
 		}
 	}
 
 	void noteOn(float initPhase = 0.f)
 	{
-		for (int i = 0; i < 4; i++) {
-			phases[i] = initPhase;
-		}
+		phases = initPhase;
 	}
 
 };
