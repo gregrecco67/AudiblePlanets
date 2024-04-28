@@ -225,7 +225,7 @@ public:
 		recalculate();
 		for (int i = 0; i < numSamples; i++) {
 			if (params.wave == Wavetype::sine) {
-				auto xs = sinesForPhasesAndTones(phases + params.phaseShift + .5f,	params.tones);
+				auto xs = sinesForPhasesAndTones(phases + params.phaseShift + .25f,	params.tones);
 				auto ys = sinesForPhasesAndTones(phases + params.phaseShift,		params.tones);
 				positions[i].xL = (xs * gainsL).sum() * 0.25f;
 				positions[i].yL = (ys * gainsL).sum() * 0.25f;

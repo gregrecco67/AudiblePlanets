@@ -429,12 +429,12 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		float modSample4L{ sample4L }, demodSample4L{ sample4L }, modSample4R{ sample4R }, demodSample4R{ sample4R };
 
 		// 5. demodulate by considering not just angle, but also magnitude of planet vector
-		auto atanDistance2L = (float)std::sqrt(epi2.xL * epi2.xL + (epi2.yL - equant) * (epi2.yL - equant));
-		auto atanDistance2R = (float)std::sqrt(epi2.xR * epi2.xR + (epi2.yR - equant) * (epi2.yR - equant));
-		auto atanDistance3L = (float)std::sqrt(epi3.xL * epi3.xL + (epi3.yL - equant) * (epi3.yL - equant));
-		auto atanDistance3R = (float)std::sqrt(epi3.xR * epi3.xR + (epi3.yR - equant) * (epi3.yR - equant));
-		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL - equant) * (epi4.yL - equant));
-		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR - equant) * (epi4.yR - equant));
+		auto atanDistance2L = (float)std::sqrt(epi2.xL * epi2.xL + (epi2.yL + equant) * (epi2.yL + equant));
+		auto atanDistance2R = (float)std::sqrt(epi2.xR * epi2.xR + (epi2.yR + equant) * (epi2.yR + equant));
+		auto atanDistance3L = (float)std::sqrt(epi3.xL * epi3.xL + (epi3.yL + equant) * (epi3.yL + equant));
+		auto atanDistance3R = (float)std::sqrt(epi3.xR * epi3.xR + (epi3.yR + equant) * (epi3.yR + equant));
+		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL + equant) * (epi4.yL + equant));
+		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR + equant) * (epi4.yR + equant));
 
 		demodSample2L *= (atanDistance2L * demodVol); // adjustable balancing term
 		demodSample2R *= (atanDistance2R * demodVol);
