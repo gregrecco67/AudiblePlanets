@@ -90,6 +90,10 @@ private:
     
 	juce::AudioBuffer<float> synthBuffer;
 
+    float epi2xls[32], epi2yls[32], epi2xrs[32], epi2yrs[32],
+        epi3xls[32], epi3yls[32], epi3xrs[32], epi3yrs[32],
+        epi4xls[32], epi4yls[32], epi4xrs[32], epi4yrs[32];
+    
     friend class APSynth;
     juce::MPENote curNote;
 	

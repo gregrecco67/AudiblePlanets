@@ -14,6 +14,24 @@ MacrosEditor::MacrosEditor(APAudioProcessor& proc_) : proc(proc_)
 	proc.samplerParams.end->addListener(this);
 	proc.samplerParams.loopstart->addListener(this);
 	proc.samplerParams.loopend->addListener(this);
+    
+//    addAndMakeVisible(textEditor);
+//    int n = mipp::N<float>();
+//    std::vector<float> myVector{1.f, 2.f, 3.f, 4.f};
+//    int i = 0;
+//    mipp::Reg<float> r1;
+//    r1.load(&myVector[i*mipp::N<float>()]);
+//    float output[4];
+//    myVector.clear();
+//    myVector[1] = 3.f;
+//    
+//    r1.store(&myVector[i*mipp::N<float>()]);
+//    
+//    textEditor.setText(String(myVector[0]) + " " +
+//                       String(myVector[1]) + " " +
+//                       String(myVector[2]) + " " +
+//                       String(myVector[3])
+//                       );
 }
 
 MacrosEditor::~MacrosEditor()
@@ -28,6 +46,8 @@ MacrosEditor::~MacrosEditor()
 void MacrosEditor::resized()
 {
 	macro1.setBounds(0, 0, 450, 323);
+    
+    textEditor.setBounds(150, 50, 200, 200);
 	macro2.setBounds(455, 0, 450, 323);
 	macro3.setBounds(0, 329, 450, 323);
 	macro4.setBounds(455, 329, 450, 323);

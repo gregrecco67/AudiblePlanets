@@ -40,5 +40,6 @@ private:
 	MacrosModBox macrosModBox{ "Mod Sources", proc };
 	SamplerBox samplerBox{ "Sampler", proc };
 	APLNF lookAndFeel;
+    TextEditor textEditor;
 };
 
