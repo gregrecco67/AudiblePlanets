@@ -117,16 +117,23 @@ template <class F> class FastMath {
 		- juce::dsp::SIMDRegister<float>(2.3868346521031027639830001794722295e-8f) * x2)))));
 	}
 
-	static inline float minimaxAtan(float a) {
-		float b = a * a;
-		float u = -0.011719135406045413f;
-		u = u * b + 0.052647350616021903f;
-		u = u * b + -0.11642648118471723f;
-		u = u * b + 0.19354037577295979f;
-		u = u * b + -0.33262282784074959f;
-		u = u * b + 0.99997721907991632f;
-		return u * a;
+	//static inline float minimaxAtan(float a) {
+	//	float b = a * a;
+	//	float u = -0.011719135406045413f;
+	//	u = u * b + 0.052647350616021903f;
+	//	u = u * b + -0.11642648118471723f;
+	//	u = u * b + 0.19354037577295979f;
+	//	u = u * b + -0.33262282784074959f;
+	//	u = u * b + 0.99997721907991632f;
+	//	return u * a;
+	//}
+
+	static inline float minimaxAtan(float x1) {
+		float x2 = x1 * x1;
+		return (((((-.011719135f * x2 + .052647351f) * x2 - .11642648f) * x2 + .19354038f) * x2 - .33262283f) * x2 + .99997722f) * x1;
+
 	}
+
 
 	static inline float fastAtan2(float x, float y) {
 		if (x != 0.0f)
