@@ -12,8 +12,39 @@
  * https://github.com/gregrecco67/AudiblePlanets
  */
 
+#define MIPP_ALIGNED_LOADS
 #include "SynthVoice.h"
 #include "PluginProcessor.h"
+
+inline mipp::Reg<float> SynthVoice::minimaxSin(mipp::Reg<float> x1) {
+	mipp::Reg<float> x2 = x1 * x1;
+	return mipp::mul(x1, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(s6, x2, s5), s4), s3), s2), s1));
+}
+
+
+inline mipp::Reg<float> SynthVoice::mmAtan(mipp::Reg<float> x1) {
+	mipp::Reg<float> x2 = x1 * x1;
+	return mipp::mul(x1, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, t1, t2), t3), t4), t5), t6));
+}
+inline mipp::Reg<float> SynthVoice::fastAtan2(mipp::Reg<float> x, mipp::Reg<float> y) {
+	mipp::Reg<float> out = 0.f;
+	mipp::Msk<mipp::N<float>()> xEqZero = mipp::cmpeq<float>(x, 0.0f);
+	mipp::Msk<mipp::N<float>()> yEqZero = mipp::cmpeq<float>(y, 0.0f);
+	mipp::Msk<mipp::N<float>()> xGtZero = mipp::cmpgt<float>(x, 0.0f);
+	mipp::Msk<mipp::N<float>()> yGtEqZero = mipp::cmpge<float>(y, 0.0f);
+	mipp::Msk<mipp::N<float>()> yGtZero = mipp::cmpgt<float>(y, 0.0f);
+	mipp::Msk<mipp::N<float>()> xGty = mipp::cmpgt<float>(mipp::abs(x), mipp::abs(y));
+	mipp::Reg<float> z = mipp::blend<float>(y / x, x / y, xGty);
+	out = mipp::blend<float>(piReg * 0.5f, out, yGtZero & xEqZero); // #1
+	out = mipp::blend<float>(piReg * -.5f, out, ~yGtZero & xEqZero); // #2
+	out = mipp::blend<float>(mmAtan(z), out, xGty & xGtZero); // #3
+	out = mipp::blend<float>(mmAtan(z) + piReg, out, xGty & ~xGtZero & yGtEqZero); // #4
+	out = mipp::blend<float>(mmAtan(z) - piReg, out, xGty & ~xGtZero & ~yGtEqZero); // #5
+	out = mipp::blend<float>(mmAtan(z) * -1.f + piReg * 0.5f, out, ~xGty & yGtZero); // #6
+	out = mipp::blend<float>(mmAtan(z) * -1.f - piReg * 0.5f, out, ~xGty & ~yGtZero); // #7
+	out = mipp::blend<float>(0.f, out, xEqZero & yEqZero); // #8
+	return out;
+}
 
 //==============================================================================
 SynthVoice::SynthVoice(APAudioProcessor& p)
@@ -323,87 +354,117 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
             epi4 = epi1 + ((osc4Positions[i] * squash1) * (d * osc4Vol));
         }
         
-//        epi2xls[i] = epi2.xL; epi2yls[i] = epi2.yL; epi2xrs[i] = epi2.xR; epi2yrs[i] = epi2.yR;
-//		epi3xls[i] = epi3.xL; epi3yls[i] = epi3.yL; epi3xrs[i] = epi3.xR; epi3yrs[i] = epi3.yR;
-//		epi4xls[i] = epi4.xL; epi4yls[i] = epi4.yL; epi4xrs[i] = epi4.xR; epi4yrs[i] = epi4.yR;
-//        
-//		mipp::Reg<float> r1;       // r1 = | unknown | unknown | unknown | unknown |
-//		r1 = {1.0, 2.0, 3.0, 4.0};
-//    }
-//
-//	for (int i = 0; i < numSamples; i++)
-//    {
+        epi2xls[i] = epi2.xL; epi2yls[i] = epi2.yL; epi2xrs[i] = epi2.xR; epi2yrs[i] = epi2.yR;
+		epi3xls[i] = epi3.xL; epi3yls[i] = epi3.yL; epi3xrs[i] = epi3.xR; epi3yrs[i] = epi3.yR;
+		epi4xls[i] = epi4.xL; epi4yls[i] = epi4.yL; epi4xrs[i] = epi4.xR; epi4yrs[i] = epi4.yR;
+    }
+
+	auto synthBufferL = synthBuffer.getWritePointer(0);
+	auto synthBufferR = synthBuffer.getWritePointer(1);
+
+
+
+	for (int i = 0; i < std::ceil(((float)numSamples)/4.f); i++)
+    {
+		epi2xL = { epi2xls[i * 4], epi2xls[i * 4 + 1], epi2xls[i * 4 + 2], epi2xls[i * 4 + 3] };
+		epi2yL = { epi2yls[i * 4], epi2yls[i * 4 + 1], epi2yls[i * 4 + 2], epi2yls[i * 4 + 3] };
+		epi2xR = { epi2xrs[i * 4], epi2xrs[i * 4 + 1], epi2xrs[i * 4 + 2], epi2xrs[i * 4 + 3] };
+		epi2yR = { epi2yrs[i * 4], epi2yrs[i * 4 + 1], epi2yrs[i * 4 + 2], epi2yrs[i * 4 + 3] };
+		epi3xL = { epi3xls[i * 4], epi3xls[i * 4 + 1], epi3xls[i * 4 + 2], epi3xls[i * 4 + 3] };
+		epi3yL = { epi3yls[i * 4], epi3yls[i * 4 + 1], epi3yls[i * 4 + 2], epi3yls[i * 4 + 3] };
+		epi3xR = { epi3xrs[i * 4], epi3xrs[i * 4 + 1], epi3xrs[i * 4 + 2], epi3xrs[i * 4 + 3] };
+		epi3yR = { epi3yrs[i * 4], epi3yrs[i * 4 + 1], epi3yrs[i * 4 + 2], epi3yrs[i * 4 + 3] };
+		epi4xL = { epi4xls[i * 4], epi4xls[i * 4 + 1], epi4xls[i * 4 + 2], epi4xls[i * 4 + 3] };
+		epi4yL = { epi4yls[i * 4], epi4yls[i * 4 + 1], epi4yls[i * 4 + 2], epi4yls[i * 4 + 3] };
+		epi4xR = { epi4xrs[i * 4], epi4xrs[i * 4 + 1], epi4xrs[i * 4 + 2], epi4xrs[i * 4 + 3] };
+		epi4yR = { epi4yrs[i * 4], epi4yrs[i * 4 + 1], epi4yrs[i * 4 + 2], epi4yrs[i * 4 + 3] };
         
-        
+		float hmax = mipp::hmax<float>(epi2xL);
+		float hmin = mipp::hmin<float>(epi2xL);
+		if (hmax > maxPos) {
+			maxPos = hmax;
+			DBG(String(minPos) + "\t" + String(maxPos));
+		}
+		if (hmin < minPos) {
+			minPos = hmin;
+			DBG(String(minPos) + "\t" + String(maxPos));
+		}
+
     // ----------------------------------------
 		// interpret bodies' positions by algorithm
 		// ----------------------------------------
 		
 		// 1. get angles
-        float atanAngle2L{0}, atanAngle2R{0}, atanAngle3L{0}, atanAngle3R{0}, atanAngle4L, atanAngle4R;
+		atanAngle2L = { 0.f, 0.f, 0.f, 0.f };
+		atanAngle2R = { 0.f, 0.f, 0.f, 0.f };
+		atanAngle3L = { 0.f, 0.f, 0.f, 0.f };
+		atanAngle3R = { 0.f, 0.f, 0.f, 0.f };
+		atanAngle4L = { 0.f, 0.f, 0.f, 0.f };
+		atanAngle4R = { 0.f, 0.f, 0.f, 0.f };
 
-		atanAngle4L = FastMath<float>::fastAtan2(epi4.yL - equant, epi4.xL);
-		atanAngle4R = FastMath<float>::fastAtan2(epi4.yR - equant, epi4.xR);
+		atanAngle4L = fastAtan2(epi4yL - equant, epi4xL);
+		atanAngle4R = fastAtan2(epi4yR - equant, epi4xR);
 		if (algo == 1)
 		{
-			atanAngle3L = FastMath<float>::fastAtan2(epi3.yL - equant, epi3.xL);
-			atanAngle3R = FastMath<float>::fastAtan2(epi3.yR - equant, epi3.xR);
+			atanAngle3L = fastAtan2(epi3yL - equant, epi3xL);
+			atanAngle3R = fastAtan2(epi3yR - equant, epi3xR);
 		}
 		if (algo == 2) {
-			atanAngle2L = FastMath<float>::fastAtan2(epi2.yL - equant, epi2.xL);
-			atanAngle2R = FastMath<float>::fastAtan2(epi2.yR - equant, epi2.xR);
+			atanAngle2L = fastAtan2(epi2yL - equant, epi2xL);
+			atanAngle2R = fastAtan2(epi2yR - equant, epi2xR);
 		}
 		if (algo == 3) {
-			atanAngle2L = FastMath<float>::fastAtan2(epi2.yL - equant, epi2.xL);
-			atanAngle2R = FastMath<float>::fastAtan2(epi2.yR - equant, epi2.xR);
-			atanAngle3L = FastMath<float>::fastAtan2(epi3.yL - equant, epi3.xL);
-			atanAngle3R = FastMath<float>::fastAtan2(epi3.yR - equant, epi3.xR);
+			atanAngle2L = fastAtan2(epi2yL - equant, epi2xL);
+			atanAngle2R = fastAtan2(epi2yR - equant, epi2xR);
+			atanAngle3L = fastAtan2(epi3yL - equant, epi3xL);
+			atanAngle3R = fastAtan2(epi3yR - equant, epi3xR);
 		}
 
 		// 2. generate component waveforms from angles
-		float sine2L{ 0.f }, sine2R{ 0.f }, sine3L{ 0.f }, sine3R{ 0.f }, sine4L{ 0.f }, sine4R{ 0.f };
-		float square2L{ 0.f }, square2R{ 0.f }, square3L{ 0.f }, square3R{ 0.f }, square4L{ 0.f }, square4R{ 0.f };
-		float saw2L{ 0.f }, saw2R{ 0.f }, saw3L{ 0.f }, saw3R{ 0.f }, saw4L{ 0.f }, saw4R{ 0.f };
 
-		sine4L = FastMath<float>::minimaxSin(atanAngle4L);
-		sine4R = FastMath<float>::minimaxSin(atanAngle4R);
-		square4L = (atanAngle4L > 0.f) ? 1.0f : -1.0f;
-		square4R = (atanAngle4R > 0.f) ? 1.0f : -1.0f;
+
+		sine4L = minimaxSin(atanAngle4L);
+		sine4R = minimaxSin(atanAngle4R);
+
+		auto atan4LGtZero = atanAngle4L > 0.f;
+		auto atan4RGtZero = atanAngle4R > 0.f;
+		square4L = mipp::blend<float>(1.0f, -1.0f, atanAngle4L > 0.f);
+		square4R = mipp::blend<float>(1.0f, -1.0f, atanAngle4R > 0.f);
 		saw4L = (atanAngle4L * (float)inv_pi) * 2.0f - 1.0f;
 		saw4R = (atanAngle4R * (float)inv_pi) * 2.0f - 1.0f;
 		if (algo == 1) {
-			sine3L = FastMath<float>::minimaxSin(atanAngle3L);
-			sine3R = FastMath<float>::minimaxSin(atanAngle3R);
-			square3L = (atanAngle3L > 0.f) ? 1.0f : -1.0f;
-			square3R = (atanAngle3R > 0.f) ? 1.0f : -1.0f;
+			sine3L = minimaxSin(atanAngle3L);
+			sine3R = minimaxSin(atanAngle3R);
+			square3L = mipp::blend<float>(1.0f, -1.0f, atanAngle3L > 0.f);
+			square3R = mipp::blend<float>(1.0f, -1.0f, atanAngle3R > 0.f);
 			saw3L = (atanAngle3L * (float)inv_pi) * 2.0f - 1.0f;
 			saw3R = (atanAngle3R * (float)inv_pi) * 2.0f - 1.0f;
 		}
 		if (algo == 2) {
-			sine2L = FastMath<float>::minimaxSin(atanAngle2L);
-			sine2R = FastMath<float>::minimaxSin(atanAngle2R);
-			square2L = (atanAngle2L > 0.f) ? 1.0f : -1.0f;
-			square2R = (atanAngle2R > 0.f) ? 1.0f : -1.0f;
+			sine2L = minimaxSin(atanAngle2L);
+			sine2R = minimaxSin(atanAngle2R);
+			square2L = mipp::blend<float>(1.0f, -1.0f, atanAngle2L > 0.f);
+			square2R = mipp::blend<float>(1.0f, -1.0f, atanAngle2R > 0.f);
 			saw2L = (atanAngle2L * (float)inv_pi) * 2.0f - 1.0f;
 			saw2R = (atanAngle2R * (float)inv_pi) * 2.0f - 1.0f;
 		}
 		if (algo == 3) {
-			sine2L = FastMath<float>::minimaxSin(atanAngle2L);
-			sine2R = FastMath<float>::minimaxSin(atanAngle2R);
-			square2L = (atanAngle2L > 0.f) ? 1.0f : -1.0f;
-			square2R = (atanAngle2R > 0.f) ? 1.0f : -1.0f;
+			sine2L = minimaxSin(atanAngle2L);
+			sine2R = minimaxSin(atanAngle2R);
+			square2L = mipp::blend<float>(1.0f, -1.0f, atanAngle2L > 0.f);
+			square2R = mipp::blend<float>(1.0f, -1.0f, atanAngle2R > 0.f);
 			saw2L = (atanAngle2L * (float)inv_pi) * 2.0f - 1.0f;
 			saw2R = (atanAngle2R * (float)inv_pi) * 2.0f - 1.0f;
-			sine3L = FastMath<float>::minimaxSin(atanAngle3L);
-			sine3R = FastMath<float>::minimaxSin(atanAngle3R);
-			square3L = (atanAngle3L > 0.f) ? 1.0f : -1.0f;
-			square3R = (atanAngle3R > 0.f) ? 1.0f : -1.0f;
+			sine3L = minimaxSin(atanAngle3L);
+			sine3R = minimaxSin(atanAngle3R);
+			square3L = mipp::blend<float>(1.0f, -1.0f, atanAngle3L > 0.f);
+			square3R = mipp::blend<float>(1.0f, -1.0f, atanAngle3R > 0.f);
 			saw3L = (atanAngle3L * (float)inv_pi) * 2.0f - 1.0f;
 			saw3R = (atanAngle3R * (float)inv_pi) * 2.0f - 1.0f;
 		}
 
 		// 3. mix component waveforms by blend value
-		float sample2L, sample2R, sample3L, sample3R, sample4L, sample4R;
+
 		auto blend = getValue(proc.timbreParams.blend);
 		if (blend < 0.5f)
 		{
@@ -424,17 +485,17 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		}
 
 		// 4. compute modulated and demodulated samples, and mix them by demodmix
-		float modSample2L{ sample2L }, demodSample2L{ sample2L }, modSample2R{ sample2R }, demodSample2R{ sample2R };
-		float modSample3L{ sample3L }, demodSample3L{ sample3L }, modSample3R{ sample3R }, demodSample3R{ sample3R };
-		float modSample4L{ sample4L }, demodSample4L{ sample4L }, modSample4R{ sample4R }, demodSample4R{ sample4R };
+		modSample2L = sample2L; demodSample2L = sample2L; modSample2R = sample2R; demodSample2R = sample2R;
+		modSample3L = sample3L; demodSample3L = sample3L; modSample3R = sample3R; demodSample3R = sample3R;
+		modSample4L = sample4L; demodSample4L = sample4L; modSample4R = sample4R; demodSample4R = sample4R;
 
 		// 5. demodulate by considering not just angle, but also magnitude of planet vector
-		auto atanDistance2L = (float)std::sqrt(epi2.xL * epi2.xL + (epi2.yL + equant) * (epi2.yL + equant));
-		auto atanDistance2R = (float)std::sqrt(epi2.xR * epi2.xR + (epi2.yR + equant) * (epi2.yR + equant));
-		auto atanDistance3L = (float)std::sqrt(epi3.xL * epi3.xL + (epi3.yL + equant) * (epi3.yL + equant));
-		auto atanDistance3R = (float)std::sqrt(epi3.xR * epi3.xR + (epi3.yR + equant) * (epi3.yR + equant));
-		auto atanDistance4L = (float)std::sqrt(epi4.xL * epi4.xL + (epi4.yL + equant) * (epi4.yL + equant));
-		auto atanDistance4R = (float)std::sqrt(epi4.xR * epi4.xR + (epi4.yR + equant) * (epi4.yR + equant));
+		auto atanDistance2L = mipp::sqrt(epi2xL * epi2xL + (epi2yL + equant) * (epi2yL + equant));
+		auto atanDistance2R = mipp::sqrt(epi2xR * epi2xR + (epi2yR + equant) * (epi2yR + equant));
+		auto atanDistance3L = mipp::sqrt(epi3xL * epi3xL + (epi3yL + equant) * (epi3yL + equant));
+		auto atanDistance3R = mipp::sqrt(epi3xR * epi3xR + (epi3yR + equant) * (epi3yR + equant));
+		auto atanDistance4L = mipp::sqrt(epi4xL * epi4xL + (epi4yL + equant) * (epi4yL + equant));
+		auto atanDistance4R = mipp::sqrt(epi4xR * epi4xR + (epi4yR + equant) * (epi4yR + equant));
 
 		demodSample2L *= (atanDistance2L * demodVol); // adjustable balancing term
 		demodSample2R *= (atanDistance2R * demodVol);
@@ -452,7 +513,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		modSample4R *= envs[3]->getOutput();
 
 		// 6. mix by demodmix AND ALGO
-		float sampleL{ 0.f }, sampleR{ 0.f };
+
 		auto demodmix = getValue(proc.timbreParams.demodmix);
 		if (algo == 0) {
 			sampleL = (modSample4L * (1.0f - demodmix) + demodSample4L * demodmix);
@@ -471,9 +532,12 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 			sampleR = ((modSample2R + modSample3R + modSample4R) * 0.333f * (1.0f - demodmix) + (demodSample2R + demodSample3L + demodSample4R) * 0.333f * demodmix);
 		}
 
+		sampleL = mipp::sat(sampleL, -1.0f, 1.0f);
+		sampleR = mipp::sat(sampleR, -1.0f, 1.0f);
+
 		// 7. SHIP IT OUT
-		synthBuffer.setSample(0, i, sampleL);
-		synthBuffer.setSample(1, i, sampleR);
+		sampleL.store(&synthBufferL[i * mipp::N<float>()]);
+		sampleR.store(&synthBufferR[i * mipp::N<float>()]);
 	}
 
 	// Get and apply velocity according to keytrack param

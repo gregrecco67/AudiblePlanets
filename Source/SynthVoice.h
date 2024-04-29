@@ -27,7 +27,10 @@ class SynthVoice : public gin::SynthesiserVoice,
                    public gin::ModVoice
 {
 public:
-    SynthVoice(APAudioProcessor& p);
+	inline mipp::Reg<float> minimaxSin(mipp::Reg<float> x1);
+	inline mipp::Reg<float> mmAtan(mipp::Reg<float> x1);
+	inline mipp::Reg<float> fastAtan2(mipp::Reg<float> x, mipp::Reg<float> y);
+	SynthVoice(APAudioProcessor& p);
     
     void noteStarted() override;
     void noteRetriggered() override;
@@ -90,10 +93,65 @@ private:
     
 	juce::AudioBuffer<float> synthBuffer;
 
-    float epi2xls[32], epi2yls[32], epi2xrs[32], epi2yrs[32],
+	int n = mipp::N<float>() * 8;
+	float epi2xls[32], epi2yls[32], epi2xrs[32], epi2yrs[32],
         epi3xls[32], epi3yls[32], epi3xrs[32], epi3yrs[32],
         epi4xls[32], epi4yls[32], epi4xrs[32], epi4yrs[32];
     
+	// constants for minimaxSin
+	const mipp::Reg<float> s1 = 0.99999999997884898600402426033768998f;
+	const mipp::Reg<float> s2 = -0.166666666088260696413164261885310067f;
+	const mipp::Reg<float> s3 = 0.00833333072055773645376566203656709979f;
+	const mipp::Reg<float> s4 = -0.000198408328232619552901560108010257242f;
+	const mipp::Reg<float> s5 = 2.75239710746326498401791551303359689e-6f;
+	const mipp::Reg<float> s6 = -2.3868346521031027639830001794722295e-8f;
+
+	const mipp::Reg<float> t1 = -.011719135f; // constants for mmAtan 
+	const mipp::Reg<float> t2 = .052647351f;
+	const mipp::Reg<float> t3 = -.11642648f;
+	const mipp::Reg<float> t4 = .19354038f;
+	const mipp::Reg<float> t5 = -.33262283f;
+	const mipp::Reg<float> t6 = .99997722f;
+
+	mipp::Reg<float> epi2xL;
+	mipp::Reg<float> epi2yL;
+	mipp::Reg<float> epi2xR;
+	mipp::Reg<float> epi2yR;
+	mipp::Reg<float> epi3xL;
+	mipp::Reg<float> epi3yL;
+	mipp::Reg<float> epi3xR;
+	mipp::Reg<float> epi3yR;
+	mipp::Reg<float> epi4xL;
+	mipp::Reg<float> epi4yL;
+	mipp::Reg<float> epi4xR;
+	mipp::Reg<float> epi4yR;
+
+	mipp::Reg<float> atanAngle2L;
+	mipp::Reg<float> atanAngle2R;
+	mipp::Reg<float> atanAngle3L;
+	mipp::Reg<float> atanAngle3R;
+	mipp::Reg<float> atanAngle4L;
+	mipp::Reg<float> atanAngle4R;
+
+	mipp::Reg<float> sine2L{ 0.f, 0.f, 0.f, 0.f }, sine2R{ 0.f, 0.f, 0.f, 0.f }, sine3L{ 0.f, 0.f, 0.f, 0.f }, sine3R{ 0.f, 0.f, 0.f, 0.f },
+		sine4L{ 0.f, 0.f, 0.f, 0.f }, sine4R{ 0.f, 0.f, 0.f, 0.f };
+	mipp::Reg<float> square2L{ 0.f, 0.f, 0.f, 0.f }, square2R{ 0.f, 0.f, 0.f, 0.f }, square3L{ 0.f, 0.f, 0.f, 0.f }, square3R{ 0.f, 0.f, 0.f, 0.f },
+		square4L{ 0.f, 0.f, 0.f, 0.f }, square4R{ 0.f, 0.f, 0.f, 0.f };
+	mipp::Reg<float> saw2L{ 0.f, 0.f, 0.f, 0.f }, saw2R{ 0.f, 0.f, 0.f, 0.f }, saw3L{ 0.f, 0.f, 0.f, 0.f }, saw3R{ 0.f, 0.f, 0.f, 0.f },
+		saw4L{ 0.f, 0.f, 0.f, 0.f }, saw4R{ 0.f, 0.f, 0.f, 0.f };
+
+	mipp::Reg<float> sample2L, sample2R, sample3L, sample3R, sample4L, sample4R;
+
+	mipp::Reg<float> modSample2L, demodSample2L, modSample2R, demodSample2R;
+	mipp::Reg<float> modSample3L, demodSample3L, modSample3R, demodSample3R;
+	mipp::Reg<float> modSample4L, demodSample4L, modSample4R, demodSample4R;
+
+	mipp::Reg<float> sampleL{ 0.f, 0.f, 0.f, 0.f }, sampleR{ 0.f, 0.f, 0.f, 0.f };
+	mipp::Reg<float> piReg = pi;
+
+	float maxPos = 0.0f;
+	float minPos = 0.0f;
+
     friend class APSynth;
     juce::MPENote curNote;
 	
