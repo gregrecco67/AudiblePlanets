@@ -35,13 +35,14 @@ inline mipp::Reg<float> SynthVoice::fastAtan2(mipp::Reg<float> x, mipp::Reg<floa
 	mipp::Msk<mipp::N<float>()> yGtZero = mipp::cmpgt<float>(y, 0.0f);
 	mipp::Msk<mipp::N<float>()> xGty = mipp::cmpgt<float>(mipp::abs(x), mipp::abs(y));
 	mipp::Reg<float> z = mipp::blend<float>(y / x, x / y, xGty);
+    mipp::Reg<float> atanZ = mmAtan(z);
 	out = mipp::blend<float>(piReg * 0.5f, out, yGtZero & xEqZero); // #1
 	out = mipp::blend<float>(piReg * -.5f, out, ~yGtZero & xEqZero); // #2
-	out = mipp::blend<float>(mmAtan(z), out, xGty & xGtZero); // #3
-	out = mipp::blend<float>(mmAtan(z) + piReg, out, xGty & ~xGtZero & yGtEqZero); // #4
-	out = mipp::blend<float>(mmAtan(z) - piReg, out, xGty & ~xGtZero & ~yGtEqZero); // #5
-	out = mipp::blend<float>(mmAtan(z) * -1.f + piReg * 0.5f, out, ~xGty & yGtZero); // #6
-	out = mipp::blend<float>(mmAtan(z) * -1.f - piReg * 0.5f, out, ~xGty & ~yGtZero); // #7
+	out = mipp::blend<float>(atanZ, out, xGty & xGtZero); // #3
+	out = mipp::blend<float>(atanZ + piReg, out, xGty & ~xGtZero & yGtEqZero); // #4
+	out = mipp::blend<float>(atanZ - piReg, out, xGty & ~xGtZero & ~yGtEqZero); // #5
+	out = mipp::blend<float>(atanZ * -1.f + piReg * 0.5f, out, ~xGty & yGtZero); // #6
+	out = mipp::blend<float>(atanZ * -1.f - piReg * 0.5f, out, ~xGty & ~yGtZero); // #7
 	out = mipp::blend<float>(0.f, out, xEqZero & yEqZero); // #8
 	return out;
 }
