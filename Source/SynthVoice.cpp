@@ -12,7 +12,7 @@
  * https://github.com/gregrecco67/AudiblePlanets
  */
 
-#define MIPP_ALIGNED_LOADS
+//#define MIPP_ALIGNED_LOADS
 #include "SynthVoice.h"
 #include "PluginProcessor.h"
 

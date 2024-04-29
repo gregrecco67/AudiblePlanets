@@ -50,6 +50,7 @@ if (MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE 
 			/wd26495
 		)
+    add_compile_definitions(MIPP_ALIGNED_LOADS)
 endif ()
 
 # Binary Data
