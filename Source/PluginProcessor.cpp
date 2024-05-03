@@ -1428,9 +1428,9 @@ void APAudioProcessor::updateParams(int newBlockSize)
 
 	if (activeEffects.contains(1)) {
 		waveshaper.setGain(modMatrix.getValue(waveshaperParams.drive), modMatrix.getValue(waveshaperParams.gain));
-		waveshaper.setDry(modMatrix.getValue(waveshaperParams.dry));
+		waveshaper.setDry(modMatrix.getValue(waveshaperParams.dry)); 
 		waveshaper.setWet(modMatrix.getValue(waveshaperParams.wet));
-		waveshaper.setFunctionToUse(int(waveshaperParams.type->getValue()));
+		waveshaper.setFunctionToUse(waveshaperParams.type->getUserValueInt());
 		waveshaper.setHighShelfFreqAndQ(modMatrix.getValue(waveshaperParams.highshelf), modMatrix.getValue(waveshaperParams.hsq));
 		waveshaper.setLPCutoff(modMatrix.getValue(waveshaperParams.lp));
 	}
@@ -1446,7 +1446,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
 		);
 		compressor.setInputGain(modMatrix.getValue(compressorParams.input));
 		compressor.setOutputGain(modMatrix.getValue(compressorParams.output));
-		compressor.setMode((gin::Dynamics::Type)(int)compressorParams.type->getValue());
+		compressor.setMode((gin::Dynamics::Type)compressorParams.type->getUserValueInt());
 	}
 
     auto& notes = gin::NoteDuration::getNoteDurations();
