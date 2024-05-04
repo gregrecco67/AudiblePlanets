@@ -221,11 +221,10 @@ void RandEditor::randomize()
 	// (hard-coded in several places below to 247)
 	
 	// ----------------
-	   auto& params = proc.getPluginParameters();
-		for (auto& param : params) {
-			DBG(param->getModIndex());
-			std::cout << param->getModIndex() << std::endl;
-		}
+	 //  auto& params = proc.getPluginParameters();
+		//for (auto& param : params) {
+		//	std::cout << param->getModIndex() << std::endl;
+		//}
 	
 	// ----------------
 

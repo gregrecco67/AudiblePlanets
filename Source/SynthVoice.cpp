@@ -380,17 +380,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		epi4xR = { epi4xrs[i * 4], epi4xrs[i * 4 + 1], epi4xrs[i * 4 + 2], epi4xrs[i * 4 + 3] };
 		epi4yR = { epi4yrs[i * 4], epi4yrs[i * 4 + 1], epi4yrs[i * 4 + 2], epi4yrs[i * 4 + 3] };
         
-		float hmax = mipp::hmax<float>(epi2xL);
-		float hmin = mipp::hmin<float>(epi2xL);
-		if (hmax > maxPos) {
-			maxPos = hmax;
-			DBG(String(minPos) + "\t" + String(maxPos));
-		}
-		if (hmin < minPos) {
-			minPos = hmin;
-			DBG(String(minPos) + "\t" + String(maxPos));
-		}
-
     // ----------------------------------------
 		// interpret bodies' positions by algorithm
 		// ----------------------------------------
