@@ -129,6 +129,7 @@ MoonKnob::~MoonKnob()
 		mm.removeListener(this);
 	}
 	removeMouseListener(this);
+    stopTimer();
 }
 
 void MoonKnob::showModMenu()

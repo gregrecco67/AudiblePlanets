@@ -23,6 +23,7 @@ class MsegEditor : public juce::Component, public juce::Timer
 {
 public:
 	MsegEditor(APAudioProcessor& proc_);
+    ~MsegEditor() override;
 
 	void resized() override;
 	//void valueUpdated(gin::Parameter* param) override;

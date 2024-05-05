@@ -336,6 +336,7 @@ public:
 	~MacrosModMatrixBox() override
 	{
 		modMatrix.removeListener(this);
+        stopTimer();
 	}
 
 	void timerCallback() override

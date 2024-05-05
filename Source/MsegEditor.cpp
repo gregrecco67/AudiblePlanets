@@ -11,6 +11,10 @@ MsegEditor::MsegEditor(APAudioProcessor& proc_) : proc(proc_)
 	startTimerHz(4);
 }
 
+MsegEditor::~MsegEditor() {
+    stopTimer();
+}
+
 void MsegEditor::resized()
 {
 	mseg1Box.setBounds(0, 0, 450, 323);
