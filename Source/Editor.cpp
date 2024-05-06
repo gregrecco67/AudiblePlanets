@@ -125,7 +125,26 @@ void Editor::resized()
     orbitViz.setBounds(area.getRight() - (394), (int)(height * 0.5f), 394, (int)(height * 0.5f));
 	liveViz.setBounds(area.getRight() - 389, (int)(height * 0.5f) + 5, 55, 25);
     
-    auto f = juce::File (__FILE__).getChildFile("../../assets/layout.json");
+    env1.setBounds(0,0,224,163);
+    env2.setBounds(0,163,224,163);
+    env3.setBounds(0,326,224,163);
+    env4.setBounds(0,489,224,163);
+    osc1.setBounds(226,0,280,163);
+    osc2.setBounds(226,163,280,163);
+    osc3.setBounds(226,326,280,163);
+    osc4.setBounds(226,491,280,163);
+    lfo1.setBounds(508,0,280,163);
+    lfo2.setBounds(508,163,280,163);
+    lfo3.setBounds(508,326,280,163);
+    lfo4.setBounds(508,491,280,163);
+    timbre.setBounds(790,0,224,162);
+    filter.setBounds(790,163,112,163);
+    mod.setBounds(1014,0,170,163);
+    global.setBounds(904,163,168,163);
+    orbit.setBounds(1074,163,110,163);
+    
+    
+    //auto f = juce::File (__FILE__).getChildFile("../../assets/layout.json");
 
-    layout.setLayout("layout.json", f);
+    //layout.setLayout("layout.json", f);
 }

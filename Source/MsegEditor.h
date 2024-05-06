@@ -31,7 +31,7 @@ public:
 
 private:
 	APAudioProcessor& proc;
-	gin::Layout layout{ *this };
+	//gin::Layout layout{ *this };
 
 	MsegMatrixBox msegMatrixBox{"Mod Matrix", proc};
 	MsegModBox msegModBox{"Mod Sources", proc};

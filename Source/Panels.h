@@ -40,8 +40,7 @@ public:
 		}
         addControl(r = new APKnob(osc.volume), 2, 0);
         addControl(new APKnob(osc.tones), 3, 0);
-		addControl(new gin::Select(osc.saw), 4, 0);
-		addControl(phaseKnob = new MoonKnob(osc.phase), 5, 0);
+		addControl(phaseKnob = new MoonKnob(osc.phase), 4, 0);
 
 		
 		switch (osc.num) {
@@ -67,12 +66,13 @@ public:
 			break;
 		}
 
-        addControl(new APKnob(osc.detune), 2, 2);
-        addControl(new APKnob(osc.spread), 3, 2);
-        addControl(new APKnob(osc.pan, true), 4, 2);
+        addControl(new APKnob(osc.detune), 2, 1);
+        addControl(new APKnob(osc.spread), 3, 1);
+        addControl(new APKnob(osc.pan, true), 4, 1);
 
-        addControl(new gin::Select(osc.env));
-		addControl(new gin::Select(osc.fixed));
+        addControl(saw = new gin::Select(osc.saw));
+        addControl(env = new gin::Select(osc.env));
+		addControl(fixed = new gin::Select(osc.fixed));
 		
 		watchParam(osc.fixed);
 		watchParam(osc.saw);
@@ -127,7 +127,6 @@ public:
 		}
 	};
 
-
 	void paramChanged() override {
 		gin::ParamBox::paramChanged();
 		if (osc.fixed->isOn()) {
@@ -141,17 +140,22 @@ public:
 
 	void resized() override {
 		gin::ParamBox::resized();
-
 		fixedHz.setBounds(56, 23+70+10, 56, 15); // 23/70/10 header, first row, padding
 		phaseKnob->setBounds(56*4, 23, 56, 70);
+        saw->setBounds(0, 93, 56, 35);
+        env->setBounds(0, 128, 56, 35);
+        fixed->setBounds(56, 128, 56, 35);
+        
 	}
+    
 	APLookAndFeel1 lnf1;
 	APLookAndFeel2 lnf2;
 	APLookAndFeel3 lnf3;
 	APLookAndFeel4 lnf4;
     APAudioProcessor& proc;
     APAudioProcessor::OSCParams& osc;
-	gin::ParamComponent::Ptr c = nullptr, f = nullptr, r = nullptr;
+	gin::ParamComponent::Ptr c = nullptr, f = nullptr, r = nullptr, saw = nullptr,
+        env = nullptr, fixed = nullptr;
 	Label fixedHz;
 	MoonKnob* phaseKnob;
     juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
@@ -183,15 +187,16 @@ public:
 
         //auto& preset = envparams;
 
-        addControl(new APKnob(envparams.attack), 0, 1);
-        addControl(new APKnob(envparams.decay), 1, 1);
-        addControl(new APKnob(envparams.sustain), 2, 1);
-        addControl(new APKnob(envparams.release), 3, 1);
-		addControl(new APKnob(envparams.acurve, true), 0, 2);
-		addControl(new APKnob(envparams.drcurve, true), 1, 2);
-		addControl(r = new APKnob(envparams.time), 2, 2);
-		addControl(b =new gin::Select(envparams.duration), 3, 2);
-		addControl(new gin::Select(envparams.syncrepeat), 4, 2);
+        addControl(new APKnob(envparams.attack), 0, 0);
+        addControl(new APKnob(envparams.decay), 1, 0);
+        addControl(new APKnob(envparams.sustain), 2, 0);
+        addControl(new APKnob(envparams.release), 3, 0);
+		addControl(new APKnob(envparams.acurve, true), 0, 1);
+		addControl(new APKnob(envparams.drcurve, true), 1, 1);
+        addControl(new gin::Select(envparams.syncrepeat), 2, 1);
+        addControl(r = new APKnob(envparams.time), 3, 1);
+		addControl(b =new gin::Select(envparams.duration), 3, 1);
+		
 		watchParam(envparams.syncrepeat);
 	}
 
@@ -356,16 +361,25 @@ public:
         setName("global");
 
         addControl(new APKnob(proc.globalParams.level), 2, 1);
-        addControl(new gin::Select(proc.globalParams.glideMode), 1, 0);
         addControl(new APKnob(proc.globalParams.glideRate), 2, 0);
 		addControl(new gin::Switch(proc.globalParams.mpe), 0, 1);
 		addControl(new APKnob(proc.globalParams.pitchbendRange), 1, 1);
         //  velsens
-        addControl(new gin::Select(proc.globalParams.legato), 1, 1);
-        addControl(new gin::Select(proc.globalParams.mono), 2, 1);
-		addControl(new gin::Select(proc.globalParams.sidechainEnable), 2, 0);
+        addControl(legato = new gin::Select(proc.globalParams.legato));
+        addControl(mono = new gin::Select(proc.globalParams.mono));
+        addControl(glideMode = new gin::Select(proc.globalParams.glideMode));
+        addControl(sidechain = new gin::Select(proc.globalParams.sidechainEnable));
     }
 
+    void resized() override {
+        gin::ParamBox::resized();
+        legato->setBounds(0, 23, 56, 35);
+        mono->setBounds(0, 58, 56, 35);
+        glideMode->setBounds(56, 23, 56, 35);
+        sidechain->setBounds(56, 58, 56, 35);
+    }
+    
+    gin::ParamComponent::Ptr legato = nullptr, mono = nullptr, glideMode = nullptr, sidechain = nullptr;
     APAudioProcessor& proc;
 };
 
@@ -380,9 +394,15 @@ public:
 
 		addControl(new APKnob(proc.orbitParams.speed), 0, 0);
 		addControl(new APKnob(proc.orbitParams.scale), 1, 0);
-		addControl(new gin::Select(proc.timbreParams.algo), 0, 1);
+		addControl(algo = new gin::Select(proc.timbreParams.algo));
 	}
 
+    void resized() override {
+        gin::ParamBox::resized();
+        algo->setBounds(0, 93, 112, 70);
+    }
+    
+    gin::ParamComponent::Ptr algo = nullptr;
 	APAudioProcessor& proc;
 };
 
