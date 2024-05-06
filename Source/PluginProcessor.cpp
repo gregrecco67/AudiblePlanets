@@ -738,7 +738,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 
     client = MTS_RegisterClient();
 
-    lf = std::make_unique<APLNF>();
+    //lf = std::make_unique<APLNF>();
 
 	formatManager.registerBasicFormats();
 
