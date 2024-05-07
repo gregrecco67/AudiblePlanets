@@ -42,29 +42,28 @@ public:
 	
 	juce::Font getLabelFont(juce::Label& label) override
 	{
-		return regularFont.withHeight(label.getHeight() * 0.8f);
- //     return regularFont.withHeight(11);
-	}
+        return label.getFont().withHeight(label.getHeight() * 0.8f);
+ 	}
 
-	juce::Font getTextButtonFont(juce::TextButton& button, int height) override
-	{
-		return regularFont.withHeight(12);
-	}
- // 
-	juce::Font getSliderPopupFont(Slider&) override
-	{
-		return regularFont.withHeight(12);
-	}
-
-	juce::Font getComboBoxFont(ComboBox&) override
-	{
-		return regularFont.withHeight(12);
-	}
-
-	juce::Font getPopupMenuFont() override
-	{
-		return regularFont.withHeight(12);
-	}
+//	juce::Font getTextButtonFont(juce::TextButton& button, int height) override
+//	{
+//		return regularFont.withHeight(12);
+//	}
+// //
+//	juce::Font getSliderPopupFont(Slider&) override
+//	{
+//		return regularFont.withHeight(12);
+//	}
+//
+//	juce::Font getComboBoxFont(ComboBox&) override
+//	{
+//		return regularFont.withHeight(12);
+//	}
+//
+//	juce::Font getPopupMenuFont() override
+//	{
+//		return regularFont.withHeight(12);
+//	}
 
 	void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
 		const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider)
@@ -158,6 +157,4 @@ public:
 			}
 		}
 	}
-
-	juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 };

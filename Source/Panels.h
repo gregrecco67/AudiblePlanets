@@ -288,10 +288,10 @@ public:
         addModSource(new gin::ModulationSourceButton(proc.modMatrix, monoID, false));
         addModSource(new gin::ModulationSourceButton(proc.modMatrix, modsrcID, true));
 
-        addControl(new gin::Select(lfoparams.sync), 0, 0);
-        addControl(new gin::Select(lfoparams.wave), 0, 1);
-        addControl(r = new APKnob(lfoparams.rate), 1, 0);
-        addControl(b = new gin::Select(lfoparams.beat), 1, 0);
+        addControl(r = new APKnob(lfoparams.rate), 0, 0);
+        addControl(b = new gin::Select(lfoparams.beat), 0, 0);
+        addControl(sync = new gin::Select(lfoparams.sync));
+        addControl(wave = new gin::Select(lfoparams.wave));
         addControl(new APKnob(lfoparams.depth, true), 1, 1);
 
         addControl(offset = new APKnob(lfoparams.offset, true));
@@ -309,7 +309,7 @@ public:
         };
         l->setParams(lfoparams.wave, lfoparams.sync, lfoparams.rate, lfoparams.beat, lfoparams.depth, 
             lfoparams.offset, lfoparams.phase, lfoparams.enable);
-        addControl(l, 2, 0, 4, 1);
+        addControl(l, 1, 0, 4, 1);
 
         watchParam(lfoparams.sync);
 
@@ -329,6 +329,8 @@ public:
     
     void resized() override {
         gin::ParamBox::resized();
+        sync->setBounds(0, 93, 56, 35);
+        wave->setBounds(0, 128, 56, 35);
         offset->setBounds(112, 108, 42, 57);
         phase->setBounds(158,  108, 42, 57);
         delay->setBounds(200,  108, 42, 57);
@@ -337,7 +339,7 @@ public:
 
     APAudioProcessor& proc;
     gin::ParamComponent::Ptr r = nullptr, b = nullptr, offset = nullptr, phase = nullptr,
-        delay = nullptr, fade = nullptr;
+        delay = nullptr, fade = nullptr, sync = nullptr, wave = nullptr;
     APAudioProcessor::LFOParams& lfoparams;
 };
 
