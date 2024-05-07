@@ -40,7 +40,7 @@ public:
     using juce::Component::keyPressed; // above is overloaded
 	void timerCallback() override;
     
-    class TabLNF : public APLNF {
+   /* class TabLNF : public APLNF {
     public:
         TabLNF() = default;
 
@@ -137,7 +137,7 @@ public:
             return regularFont.withHeight(height * 0.6f);
         }
         
-    } tabLNF;
+    } tabLNF;*/
     
 
 private:

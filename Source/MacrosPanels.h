@@ -301,11 +301,11 @@ public:
 		{
 			auto rc = label.getLocalBounds();
 			g.setColour(juce::Colours::white);
-			g.setFont(regularFont.withHeight(20.0f));
+			g.setFont(20.f);
 			g.drawText(label.getText(), rc, juce::Justification::centred);
 		}
         
-        juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+        //juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 	} midilearnLNF;
     
 	juce::String currentAssignment;

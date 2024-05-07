@@ -21,7 +21,7 @@
 #include "EnvelopeComponent.h"
 
 
-class APLookAndFeel6 : public gin::CopperLookAndFeel
+class APLookAndFeel6 : public APLNF
 {
 public:
 	APLookAndFeel6() {
@@ -47,7 +47,7 @@ public:
 			c = c.brighter();
 		
 		g.setColour(c);
-		g.setFont(regularFont);
+//		g.setFont(regularFont);
 
 		if (!button.isEnabled())
 			g.setOpacity(0.5f);
@@ -61,7 +61,7 @@ public:
 	void drawButtonText(Graphics& g, TextButton& button, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override 
 	{
 		Font font(getTextButtonFont(button, button.getHeight()));
-		g.setFont(regularFont);
+//		g.setFont(regularFont);
 		if (shouldDrawButtonAsHighlighted && ! shouldDrawButtonAsDown) {
 			g.setColour(juce::Colour(0xffCC8866));
 		}
@@ -85,12 +85,12 @@ public:
 				Justification::centredLeft, 2);
 	}
 
-	juce::Font getLabelFont(juce::Label& label) override
-	{
-		return regularFont;
-	}
+	//juce::Font getLabelFont(juce::Label& label) override
+	//{
+	//	return regularFont;
+	//}
 
-    juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+    //juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 };
 
 

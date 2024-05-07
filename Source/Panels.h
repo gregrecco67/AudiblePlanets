@@ -82,8 +82,8 @@ public:
 		addAndMakeVisible(fixedHz);
 
 		fixedHz.setJustificationType(Justification::centred);
-		juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
-		fixedHz.setFont(regularFont.withHeight(12));
+		//juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+		//fixedHz.setFont(regularFont.withHeight(12));
     }
 
     ~OscillatorBox() override
@@ -91,7 +91,7 @@ public:
 		c->setLookAndFeel(nullptr);
 		f->setLookAndFeel(nullptr);
 		r->setLookAndFeel(nullptr);
-        fixedHz.setLookAndFeel(nullptr);
+        //fixedHz.setLookAndFeel(nullptr);
     }
 
 	class APLookAndFeel1 : public APKnobLNF
@@ -158,7 +158,7 @@ public:
         env = nullptr, fixed = nullptr;
 	Label fixedHz;
 	MoonKnob* phaseKnob;
-    juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+    //juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 };
 
 //==============================================================================

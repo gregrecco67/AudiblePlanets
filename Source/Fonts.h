@@ -25,31 +25,31 @@ public:
 		return juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize);
 	}
 	
-	juce::Font getLabelFont(juce::Label& label) override
-	{
-        return regularFont.withHeight(label.getHeight() * 0.8f);
-        //return regularFont.withHeight(11);
-	}
+	//juce::Font getLabelFont(juce::Label& label) override
+	//{
+ //       //return regularFont.withHeight(label.getHeight() * 0.8f);
+ //       return regularFont.withHeight(11);
+	//}
 
-	juce::Font getTextButtonFont(juce::TextButton& button, int height) override
-	{
-		return regularFont.withHeight(12);
-	}
-    
-	juce::Font getSliderPopupFont(Slider&) override
-	{
-		return regularFont.withHeight(12);
-	}
+	//juce::Font getTextButtonFont(juce::TextButton& button, int height) override
+	//{
+	//	return regularFont.withHeight(12);
+	//}
+ //   
+	//juce::Font getSliderPopupFont(Slider&) override
+	//{
+	//	return regularFont.withHeight(12);
+	//}
 
-	juce::Font getComboBoxFont(ComboBox&) override
-	{
-		return regularFont.withHeight(12);
-	}
+	//juce::Font getComboBoxFont(ComboBox&) override
+	//{
+	//	return regularFont.withHeight(12);
+	//}
 
-	juce::Font getPopupMenuFont() override
-	{
-		return regularFont.withHeight(12);
-	}
+	//juce::Font getPopupMenuFont() override
+	//{
+	//	return regularFont.withHeight(12);
+	//}
 
-    juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+ //   juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 };

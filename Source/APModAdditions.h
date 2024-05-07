@@ -353,7 +353,8 @@ class APModMatrixBox : public juce::ListBox,
     private gin::ModMatrix::Listener
 {
 public:
-    APModMatrixBox(APAudioProcessor& p, gin::ModMatrix& m, int dw = 50)
+    //APModMatrixBox(APAudioProcessor& p, gin::ModMatrix& m, int dw = 50)
+	APModMatrixBox(gin::Processor& p, gin::ModMatrix& m, int dw = 50)
         : proc(p), modMatrix(m), depthWidth(dw)
     {
         setName("matrix");
@@ -695,7 +696,7 @@ private:
         gin::Parameter* dst = nullptr;
     };
 
-    APAudioProcessor& proc;
+    gin::Processor& proc;
     gin::ModMatrix& modMatrix;
     juce::Array<Assignment> assignments;
     int depthWidth = 50;
@@ -714,19 +715,6 @@ public:
 		setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffCC8866));
 		setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
     }
-    
-	juce::Font getLabelFont(juce::Label& label) override
-	{
-		return regularFont.withHeight(label.getHeight() * 0.8f);
-		//return regularFont.withHeight(11);
-	}
-
-	juce::Font getSliderPopupFont(Slider&) override
-	{
-		return regularFont.withHeight(12);
-	}
-
-	juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 
     void drawRotarySlider (juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
                                            const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider)

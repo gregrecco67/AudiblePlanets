@@ -40,8 +40,8 @@ MoonKnob::MoonKnob(gin::Parameter* p, bool fromCentre)
 
 	name.setText(parameter->getShortName(), juce::dontSendNotification);
 	name.setJustificationType(juce::Justification::centred);
-	name.setFont(regularFont);
-	value.setFont(regularFont);
+	//name.setFont(regularFont);
+	//value.setFont(regularFont);
 
 #if JUCE_IOS
 	knob.setMouseDragSensitivity(500);
