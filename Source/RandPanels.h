@@ -137,7 +137,7 @@ public:
 		r->setLookAndFeel(nullptr);
 	}
 
-	class rAPLookAndFeel1 : public APKnobLNF
+	class rAPLookAndFeel1 : public APLNF
 	{
 	public:
 		rAPLookAndFeel1() {
@@ -145,7 +145,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::redMuted);
 		}
 	};
-	class rAPLookAndFeel2 : public APKnobLNF
+	class rAPLookAndFeel2 : public APLNF
 	{
 	public:
 		rAPLookAndFeel2() {
@@ -153,7 +153,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::yellowMuted);
 		}
 	};
-	class rAPLookAndFeel3 : public APKnobLNF
+	class rAPLookAndFeel3 : public APLNF
 	{
 	public:
 		rAPLookAndFeel3() {
@@ -161,7 +161,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::greenMuted);
 		}
 	};
-	class rAPLookAndFeel4 : public APKnobLNF
+	class rAPLookAndFeel4 : public APLNF
 	{
 	public:
 		rAPLookAndFeel4() {

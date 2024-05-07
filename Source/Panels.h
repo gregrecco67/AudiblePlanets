@@ -94,7 +94,7 @@ public:
         //fixedHz.setLookAndFeel(nullptr);
     }
 
-	class APLookAndFeel1 : public APKnobLNF
+	class APLookAndFeel1 : public APLNF
 	{
 	public:
 		APLookAndFeel1(){
@@ -102,7 +102,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::redMuted);
 		}
 	};
-	class APLookAndFeel2 : public APKnobLNF
+	class APLookAndFeel2 : public APLNF
 	{
 	public:
 		APLookAndFeel2() {
@@ -110,7 +110,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::yellowMuted);
 		}
 	};
-	class APLookAndFeel3 : public APKnobLNF
+	class APLookAndFeel3 : public APLNF
 	{
 	public:
 		APLookAndFeel3() {
@@ -118,7 +118,7 @@ public:
 			setColour(juce::Slider::trackColourId, APColors::greenMuted);
 		}
 	};
-	class APLookAndFeel4 : public APKnobLNF
+	class APLookAndFeel4 : public APLNF
 	{
 	public:
 		APLookAndFeel4() {
