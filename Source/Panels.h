@@ -288,18 +288,17 @@ public:
         addModSource(new gin::ModulationSourceButton(proc.modMatrix, monoID, false));
         addModSource(new gin::ModulationSourceButton(proc.modMatrix, modsrcID, true));
 
-        addControl(new gin::Select(lfoparams.sync), 3, 1);
-        addControl(new gin::Select(lfoparams.wave), 2, 1);
-        addControl(r = new APKnob(lfoparams.rate), 0, 0);
-        addControl(b = new gin::Select(lfoparams.beat), 0, 0);
-        addControl(new APKnob(lfoparams.depth, true), 1, 0);
+        addControl(new gin::Select(lfoparams.sync), 0, 0);
+        addControl(new gin::Select(lfoparams.wave), 0, 1);
+        addControl(r = new APKnob(lfoparams.rate), 1, 0);
+        addControl(b = new gin::Select(lfoparams.beat), 1, 0);
+        addControl(new APKnob(lfoparams.depth, true), 1, 1);
 
-        addControl(new APKnob(lfoparams.phase, true), 4, 1);
-        addControl(new APKnob(lfoparams.offset, true), 5, 1);
-        addControl(new APKnob(lfoparams.fade, true), 0, 1);
-        addControl(new APKnob(lfoparams.delay), 1, 1);
-
-
+        addControl(offset = new APKnob(lfoparams.offset, true));
+        addControl(phase = new APKnob(lfoparams.phase, true));
+        addControl(delay = new APKnob(lfoparams.delay));
+        addControl(fade = new APKnob(lfoparams.fade, true));
+        
         auto l = new gin::LFOComponent();
         l->phaseCallback = [this, num]   
         {
@@ -327,10 +326,18 @@ public:
             b->setVisible(lfoparams.sync->isOn());
         }
     }
+    
+    void resized() override {
+        gin::ParamBox::resized();
+        offset->setBounds(112, 108, 42, 57);
+        phase->setBounds(158,  108, 42, 57);
+        delay->setBounds(200,  108, 42, 57);
+        fade->setBounds(242,   108, 42, 57);
+    }
 
     APAudioProcessor& proc;
-    gin::ParamComponent::Ptr r = nullptr;
-    gin::ParamComponent::Ptr b = nullptr;
+    gin::ParamComponent::Ptr r = nullptr, b = nullptr, offset = nullptr, phase = nullptr,
+        delay = nullptr, fade = nullptr;
     APAudioProcessor::LFOParams& lfoparams;
 };
 

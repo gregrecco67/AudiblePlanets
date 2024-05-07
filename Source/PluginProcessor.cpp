@@ -1369,7 +1369,9 @@ gin::ProcessorOptions APAudioProcessor::getOptions()
     options.programmingCredits = { "Greg Recco" };
     options.url = "https://github.com/gregrecco67/AudiblePlanets";
     options.urlTitle = "Visit https://github.com/gregrecco67/AudiblePlanets";
-    return options.withoutNewsChecker().withoutUpdateChecker();
+    options.useNewsChecker = false;
+    options.useUpdateChecker = false;
+    return options;
 }
 
 void APAudioProcessor::updateParams(int newBlockSize)
