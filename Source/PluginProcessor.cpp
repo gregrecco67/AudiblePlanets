@@ -840,7 +840,7 @@ void APAudioProcessor::stateUpdated() // called when loading a preset
     }
 
 	if (state.getOrCreateChildWithName("sample", nullptr).isValid()) {
-		String sampleName = state.getProperty("sample");
+		String sampleName = state.getOrCreateChildWithName("sample", nullptr).getProperty("sampleName");
 		if (!sampleName.isEmpty()) {
 			sampler.loadSound(sampleName);
 		}
@@ -866,8 +866,9 @@ void APAudioProcessor::updateState() // called when saving a preset
     state.getOrCreateChildWithName("mseg4", nullptr).removeAllChildren(nullptr);
     mseg4Data.toValueTree(state.getChildWithName("mseg4"));
 
-	state.getOrCreateChildWithName("sample", nullptr).removeAllChildren(nullptr);
-	state.setProperty("sample", sampler.sound.name, nullptr);
+	ValueTree sampleTree = state.getOrCreateChildWithName("sample", nullptr);
+	sampleTree.removeAllChildren(nullptr);
+	sampleTree.setProperty("sampleName", sampler.sound.name, nullptr);
     
 }
 
