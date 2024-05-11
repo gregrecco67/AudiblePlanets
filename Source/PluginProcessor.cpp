@@ -747,7 +747,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	}
     
     setupModMatrix();
-    init();
+    init(); 
 }
 
 APAudioProcessor::~APAudioProcessor()

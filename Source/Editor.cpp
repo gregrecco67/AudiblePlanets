@@ -62,6 +62,7 @@ void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any ot
 }
 
 void Editor::timerCallback() {
+	if (!isVisible()) return;
     auto speed = proc.orbitParams.speed->getUserValue();
 	bool live = liveViz.getToggleState();
     auto defRatio = live ? 
@@ -121,6 +122,11 @@ void Editor::timerCallback() {
 void Editor::resized()
 {
     auto area = getLocalBounds();
+
+	if (area.getWidth() > 1186 || area.getHeight() > 725) {
+		return;
+	}
+
     auto height = area.getHeight();
     orbitViz.setBounds(area.getRight() - (394), (int)(height * 0.5f), 394, (int)(height * 0.5f));
 	liveViz.setBounds(area.getRight() - 389, (int)(height * 0.5f) + 5, 55, 25);
@@ -132,19 +138,14 @@ void Editor::resized()
     osc1.setBounds(226,0,280,163);
     osc2.setBounds(226,163,280,163);
     osc3.setBounds(226,326,280,163);
-    osc4.setBounds(226,491,280,163);
+    osc4.setBounds(226,489,280,163);
     lfo1.setBounds(508,0,280,163);
     lfo2.setBounds(508,163,280,163);
     lfo3.setBounds(508,326,280,163);
-    lfo4.setBounds(508,491,280,163);
+    lfo4.setBounds(508,489,280,163);
     timbre.setBounds(790,0,224,162);
     filter.setBounds(790,163,112,163);
     mod.setBounds(1014,0,170,163);
     global.setBounds(904,163,168,163);
     orbit.setBounds(1074,163,110,163);
-    
-    
-    //auto f = juce::File (__FILE__).getChildFile("../../assets/layout.json");
-
-    //layout.setLayout("layout.json", f);
 }

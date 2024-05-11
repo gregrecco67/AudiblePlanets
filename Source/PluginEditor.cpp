@@ -56,6 +56,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     startTimerHz(3);
     addKeyListener(this);
     this->setWantsKeyboardFocus(true);
+	titleBar.setShowBrowser(true);
 }
 
 bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*originatingComponent*/) {
@@ -88,6 +89,7 @@ bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*origin
 
 void APAudioProcessorEditor::timerCallback()
 {
+	if (!isVisible()) return;
 	if (MTS_HasMaster(proc.client))
 	{
 		scaleName.setText(proc.scaleName, juce::dontSendNotification);
@@ -98,8 +100,16 @@ void APAudioProcessorEditor::timerCallback()
 		scaleName.setText("", juce::dontSendNotification);
 		scaleName.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
 	}
-	learningLabel.setColour(juce::Label::backgroundColourId, (!proc.learningLabel.isEmpty()) ? juce::Colour(0xff16171A).brighter(0.3f) : juce::Colours::transparentBlack);
-	learningLabel.setText(proc.learningLabel, juce::dontSendNotification);
+	if (proc.learningLabel.isEmpty())
+	{
+		learningLabel.setText("", juce::dontSendNotification);
+		learningLabel.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
+	}
+	else
+	{
+		learningLabel.setText(proc.learningLabel, juce::dontSendNotification);
+		learningLabel.setColour(juce::Label::backgroundColourId, juce::Colour(0xff16171A).brighter(0.3f));
+	}
 }
 
 APAudioProcessorEditor::~APAudioProcessorEditor()
@@ -112,15 +122,18 @@ APAudioProcessorEditor::~APAudioProcessorEditor()
 void APAudioProcessorEditor::paint(juce::Graphics& g)
 {
     ProcessorEditor::paint(g);
-	titleBar.setShowBrowser(true);
+	//titleBar.setShowBrowser(true);
 	//g.fillAll(findColour(gin::PluginLookAndFeel::blackColourId));
 }
 
 void APAudioProcessorEditor::resized()
 {
+    auto rc = getLocalBounds().reduced(1); 
+	if (rc.getWidth() > 1186 || rc.getHeight() > 725) {
+		return;
+	}
     ProcessorEditor::resized();
 
-    auto rc = getLocalBounds().reduced(1); 
     rc.removeFromTop(40);
     tabbed.setBounds(rc);
     auto editorArea = tabbed.getLocalBounds();

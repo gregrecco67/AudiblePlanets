@@ -211,6 +211,7 @@ void MoonKnob::mouseEnter(const juce::MouseEvent&)
 
 void MoonKnob::timerCallback()
 {
+	if (!isVisible()) return;
 	auto p = getMouseXYRelative();
 	if (!getLocalBounds().contains(p) &&
 		!juce::ModifierKeys::getCurrentModifiers().isAnyMouseButtonDown() &&

@@ -27,6 +27,7 @@ void MsegEditor::resized()
 
 void MsegEditor::timerCallback()
 {
+	if (!isVisible()) return;
 	mseg1Box.msegComponent.markDirty();
 	mseg2Box.msegComponent.markDirty();
 	mseg3Box.msegComponent.markDirty();

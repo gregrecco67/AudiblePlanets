@@ -341,6 +341,7 @@ public:
 
 	void timerCallback() override
 	{
+		if (!isVisible()) return;
 		refresh();
 	}
 
