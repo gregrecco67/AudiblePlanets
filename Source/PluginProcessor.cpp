@@ -752,6 +752,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 
 APAudioProcessor::~APAudioProcessor()
 {
+	LookAndFeel::setDefaultLookAndFeel(nullptr);
     MTS_DeregisterClient(client);
 	reader = nullptr;
 }

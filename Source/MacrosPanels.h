@@ -524,6 +524,8 @@ private:
 		{
 			depth.setLookAndFeel(nullptr);
 			depth.removeListener(this);
+			paramSlider.setLookAndFeel(nullptr);
+			setLookAndFeel(nullptr);
 		}
 
 		void sliderValueChanged(juce::Slider*) override

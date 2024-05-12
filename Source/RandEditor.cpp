@@ -210,6 +210,53 @@ RandEditor::~RandEditor()
 	inharmonic.setLookAndFeel(nullptr);
 	randNumberLabel.setLookAndFeel(nullptr);
 	randAmountLabel.setLookAndFeel(nullptr);
+	randomizeButton.setLookAndFeel(nullptr);
+	clearAllButton.setLookAndFeel(nullptr);
+	randNumberLabel.setLookAndFeel(nullptr);
+	randAmountLabel.setLookAndFeel(nullptr);
+	randOSCsButton.setLookAndFeel(nullptr);
+	inharmonic.setLookAndFeel(nullptr);
+	randInharmonicButton.setLookAndFeel(nullptr);
+	resetInharmonicButton.setLookAndFeel(nullptr);
+	randENVsButton.setLookAndFeel(nullptr);
+	resetENVsButton.setLookAndFeel(nullptr);
+	randLFOsButton.setLookAndFeel(nullptr);
+	resetLFOsButton.setLookAndFeel(nullptr);
+	randLFOToOSCButton.setLookAndFeel(nullptr);
+	clearLFOToOSCButton.setLookAndFeel(nullptr);
+	randENVToOSCButton.setLookAndFeel(nullptr);
+	clearENVToOSCButton.setLookAndFeel(nullptr);
+	randKeysToOSCButton.setLookAndFeel(nullptr);
+	clearKeysToOSCButton.setLookAndFeel(nullptr);
+	randLFOToTimbreButton.setLookAndFeel(nullptr);
+	clearLFOToTimbreButton.setLookAndFeel(nullptr);
+	randENVToTimbreButton.setLookAndFeel(nullptr);
+	clearENVToTimbreButton.setLookAndFeel(nullptr);
+	randKeysToTimbreButton.setLookAndFeel(nullptr);
+	clearKeysToTimbreButton.setLookAndFeel(nullptr);
+	randENVToENVButton.setLookAndFeel(nullptr);
+	clearENVToENVButton.setLookAndFeel(nullptr);
+	randLFOToENVButton.setLookAndFeel(nullptr);
+	clearLFOToENVButton.setLookAndFeel(nullptr);
+	randKeysToENVButton.setLookAndFeel(nullptr);
+	clearKeysToENVButton.setLookAndFeel(nullptr);
+	randENVToLFOButton.setLookAndFeel(nullptr);
+	clearENVToLFOButton.setLookAndFeel(nullptr);
+	randLFOToLfoButton.setLookAndFeel(nullptr);
+	clearLFOToLFOButton.setLookAndFeel(nullptr);
+	randKeysToLFOButton.setLookAndFeel(nullptr);
+	clearKeysToLFOButton.setLookAndFeel(nullptr);
+	randFXModsButton.setLookAndFeel(nullptr);
+	clearFXModsButton.setLookAndFeel(nullptr);
+	randFXSelectButton.setLookAndFeel(nullptr);
+	clearFXSelectButton.setLookAndFeel(nullptr);
+	randMSEGButton.setLookAndFeel(nullptr);
+	clearMSEGButton.setLookAndFeel(nullptr);
+	randMacrosButton.setLookAndFeel(nullptr);
+	clearMacrosButton.setLookAndFeel(nullptr);
+	increaseAllButton.setLookAndFeel(nullptr);
+	decreaseAllButton.setLookAndFeel(nullptr);
+
 }
 
 void RandEditor::randomize()

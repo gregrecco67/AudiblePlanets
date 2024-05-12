@@ -50,6 +50,7 @@ Editor::~Editor()
 	proc.globalParams.pitchbendRange->removeListener(this);
 	proc.globalParams.mpe->removeListener(this);
 	liveViz.setLookAndFeel(nullptr);
+	setLookAndFeel(nullptr);
 }
 
 

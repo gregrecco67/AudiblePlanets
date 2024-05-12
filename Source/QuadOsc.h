@@ -102,7 +102,7 @@ public:
 	const mipp::Reg<float> a5 = 2.75239710746326498401791551303359689e-6f;
 	const mipp::Reg<float> a6 = -2.3868346521031027639830001794722295e-8f;
 
-	mipp::Reg<float> sinesForPhases(mipp::Reg<float> x1) {
+	inline mipp::Reg<float> sinesForPhases(mipp::Reg<float> x1) {
 		// normalize [0, ?] (on [0,1]) to [-pi, pi]
 		x1 = x1 - mipp::trunc(x1);
 		x1 *= 2.f * pi;
@@ -112,7 +112,7 @@ public:
 	}
 
 
-	mipp::Reg<float> sinesForPhasesAndTones(mipp::Reg<float> p, float t) {
+	inline mipp::Reg<float> sinesForPhasesAndTones(mipp::Reg<float> p, float t) {
 		float fullTones{ 0.f }; float partialToneFraction = std::modf(t, &fullTones);
 		mipp::Reg<float> values = sinesForPhases(p);
 

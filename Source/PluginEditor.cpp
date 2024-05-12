@@ -114,7 +114,8 @@ void APAudioProcessorEditor::timerCallback()
 
 APAudioProcessorEditor::~APAudioProcessorEditor()
 {
-	tabbed.setLookAndFeel(nullptr);
+	//tabbed.setLookAndFeel(nullptr);
+	setLookAndFeel(nullptr);
     stopTimer();
 }
 
