@@ -42,7 +42,7 @@ public:
 	
 	juce::Font getLabelFont(juce::Label& label) override
 	{
-        return label.getFont().withHeight(label.getHeight() * 0.8f);
+        return label.getFont().withHeight(label.getHeight() * 0.7f);
  	}
 
 //	juce::Font getTextButtonFont(juce::TextButton& button, int height) override
