@@ -8,7 +8,7 @@ Envelope::Envelope()
 {
 	if (!isInitialized)
 	{
-		// generate lookup tables for MMA curves, and linear mapping for convenience
+		// generate lookup tables for MMA curves
 		for (int i = 1; i < 1999; i++)
 		{
 			// MMA curve transforms

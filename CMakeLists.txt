@@ -103,6 +103,7 @@ target_link_libraries (${PROJECT_NAME}
 					PUBLIC
 						Assets
 						juce::juce_recommended_config_flags
+						juce::juce_recommended_lto_flags
 					)
 
 if (APPLE)
