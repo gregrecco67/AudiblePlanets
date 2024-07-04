@@ -305,7 +305,6 @@ public:
 			g.drawText(label.getText(), rc, juce::Justification::centred);
 		}
         
-        //juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 	} midilearnLNF;
     
 	juce::String currentAssignment;

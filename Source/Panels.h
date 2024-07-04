@@ -82,8 +82,6 @@ public:
 		addAndMakeVisible(fixedHz);
 
 		fixedHz.setJustificationType(Justification::centred);
-		//juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
-		//fixedHz.setFont(regularFont.withHeight(12));
     }
 
     ~OscillatorBox() override

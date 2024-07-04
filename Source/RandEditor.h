@@ -85,12 +85,6 @@ public:
 				Justification::centredLeft, 2);
 	}
 
-	//juce::Font getLabelFont(juce::Label& label) override
-	//{
-	//	return regularFont;
-	//}
-
-    //juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
 };
 
 

@@ -35,10 +35,12 @@ public:
 		setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
 	}
 
-	juce::Typeface::Ptr getTypefaceForFont(const juce::Font& font) override
-	{
-		return juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize);
-	}
+	//juce::Typeface::Ptr getTypefaceForFont(const juce::Font& font) override
+	//{
+	//	return juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize);
+	//}
+
+	TypefaceMetricsKind getDefaultMetricsKind() const { return TypefaceMetricsKind::legacy; }
 	
 	juce::Font getLabelFont(juce::Label& label) override
 	{
