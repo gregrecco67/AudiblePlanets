@@ -34,15 +34,9 @@ public:
 private:
     APAudioProcessor& proc;
 
-	OscillatorBox osc1{ "osc1", proc, proc.osc1Params };
-	OscillatorBox osc2{ "osc2", proc, proc.osc2Params };
-	OscillatorBox osc3{ "osc3", proc, proc.osc3Params };
-	OscillatorBox osc4{ "osc4", proc, proc.osc4Params };
-
-	ENVBox env1{ "env1", proc, proc.env1Params };
-	ENVBox env2{ "env2", proc, proc.env2Params };
-	ENVBox env3{ "env3", proc, proc.env3Params };
-	ENVBox env4{ "env4", proc, proc.env4Params };
+	OscillatorBox osc{ proc };
+	
+	ENVBox env{ proc };
 
     FilterBox filter                        { "flt", proc };
 

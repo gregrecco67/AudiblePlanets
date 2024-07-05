@@ -19,18 +19,12 @@
 Editor::Editor(APAudioProcessor& proc_)
     : proc(proc_)
 {
-    addAndMakeVisible(osc1);
-	addAndMakeVisible(osc2);
-	addAndMakeVisible(osc3);
-	addAndMakeVisible(osc4);
-	addAndMakeVisible(lfo1);
+    addAndMakeVisible(osc);
+	addAndMakeVisible(env);
+
 	addAndMakeVisible(lfo2);
 	addAndMakeVisible(lfo3);
 	addAndMakeVisible(lfo4);
-	addAndMakeVisible(env1);
-	addAndMakeVisible(env2);
-	addAndMakeVisible(env3);
-	addAndMakeVisible(env4);
 	addAndMakeVisible(filter);
 	addAndMakeVisible(mod);
 	addAndMakeVisible(global);
@@ -132,15 +126,10 @@ void Editor::resized()
     orbitViz.setBounds(area.getRight() - (394), (int)(height * 0.5f), 394, (int)(height * 0.5f));
 	liveViz.setBounds(area.getRight() - 389, (int)(height * 0.5f) + 5, 55, 25);
     
-    env1.setBounds(0,0,224,163);
-    env2.setBounds(0,163,224,163);
-    env3.setBounds(0,326,224,163);
-    env4.setBounds(0,489,224,163);
-    osc1.setBounds(226,0,280,163);
-    osc2.setBounds(226,163,280,163);
-    osc3.setBounds(226,326,280,163);
-    osc4.setBounds(226,489,280,163);
-    lfo1.setBounds(508,0,280,163);
+    osc.setBounds(0,0,280,163);
+    env.setBounds(280,0,336,163);
+    
+	lfo1.setBounds(508,0,280,163);
     lfo2.setBounds(508,163,280,163);
     lfo3.setBounds(508,326,280,163);
     lfo4.setBounds(508,489,280,163);
