@@ -3,6 +3,7 @@
 libs/
 out/
 build/
+ninja-build/
 # Prerequisites
 *.d
 

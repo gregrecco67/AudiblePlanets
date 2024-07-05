@@ -20,8 +20,6 @@
 #include "MoonKnob.h"
 #include "APModAdditions.h"
 
-
-
 //==============================================================================
 class OscillatorBox : public gin::ParamBox
 {

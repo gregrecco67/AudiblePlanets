@@ -25,17 +25,9 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     addAndMakeVisible(tabbed);
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
     tabbed.addTab("2. Effects", APColors::tabBkgd, &tab2, false, 1);
-    tabbed.addTab("3. Randomization",   APColors::tabBkgd, &tab3, false, 2);
-	tabbed.addTab("4. MSEG", APColors::tabBkgd, &tab4, false, 3);
-	tabbed.addTab("5. Macros/Aux", APColors::tabBkgd, &tab5, false, 4);
 
-    //tabbed.setLookAndFeel(&tabLNF);
-    
     tab1.addAndMakeVisible(editor);
 	tab2.addAndMakeVisible(fxEditor);
-	tab3.addAndMakeVisible(randEditor);
-	tab4.addAndMakeVisible(msegEditor);
-	tab5.addAndMakeVisible(macrosEditor);
     
     usage.panic.onClick = [this] { proc.presetLoaded = true; };
     addAndMakeVisible(usage);
@@ -68,18 +60,6 @@ bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*origin
             tabbed.setCurrentTabIndex(1);
             return true;
         }
-        if (key.isKeyCode(51) || key.isKeyCode(juce::KeyPress::numberPad3)) {
-            tabbed.setCurrentTabIndex(2);
-            return true;
-        }
-		if (key.isKeyCode(52) || key.isKeyCode(juce::KeyPress::numberPad4)) {
-			tabbed.setCurrentTabIndex(3);
-			return true;
-		}
-		if (key.isKeyCode(53) || key.isKeyCode(juce::KeyPress::numberPad5)) {
-			tabbed.setCurrentTabIndex(4);
-			return true;
-		}
 		if (key.isKeyCode(juce::KeyPress::escapeKey) || key.isKeyCode(76)) { // "L" for learning
 			proc.modMatrix.disableLearn();
 			return !key.isKeyCode(76); // let the "L" through, since it's often a note
@@ -151,9 +131,6 @@ void APAudioProcessorEditor::resized()
 	learningLabel.setBounds(834, 12, 184, 16);
 
 	fxEditor.setBounds(editorArea);
-	randEditor.setBounds(editorArea);
-	msegEditor.setBounds(editorArea);
-	macrosEditor.setBounds(editorArea);
 }
 
 void APAudioProcessorEditor::addMenuItems(juce::PopupMenu& m)
