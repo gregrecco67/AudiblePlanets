@@ -141,6 +141,10 @@ public:
 		{
 			c->setVisible(false);
 		}
+		for (auto& viz : {&fixedHz1, &fixedHz2, &fixedHz3, &fixedHz4})
+		{
+			viz->setVisible(false);
+		}
 		switch(osc) {
 		case 1:
 			currentOsc = 1;
@@ -199,6 +203,7 @@ public:
 			fixed4->setVisible(true);
 			break;
 		}
+		paramChanged();
 	}
 
     ~OscillatorBox() override
@@ -404,7 +409,7 @@ public:
 		show(1);
 	}
 
-	void show(int osc) {
+	void show(int env) {
 		for (gin::ParamComponent::Ptr c : {a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1,
 			a2, d2, s2, r2, ac2, dc2, rpt2, beats2, rate2,
 			a3, d3, s3, r3, ac3, dc3, rpt3, beats3, rate3,
@@ -418,7 +423,7 @@ public:
 			viz->setVisible(false);
 		}
 		int choice;
-		switch (osc) {
+		switch (env) {
 		case 1:
 			currentEnv = 1;
 			a1->setVisible(true);
@@ -544,8 +549,6 @@ public:
 
         auto& flt = proc.filterParams;
 
-        addEnable(flt.enable);
-
         auto freq = new APKnob(flt.frequency);
         addControl(freq, 0, 0);
         addControl(new APKnob(flt.resonance), 1, 0);
@@ -569,69 +572,263 @@ public:
 class LFOBox : public gin::ParamBox
 {
 public:
-    LFOBox(const juce::String& num, APAudioProcessor& proc_, APAudioProcessor::LFOParams& lfoparams_, gin::ModSrcId& modsrcID, gin::ModSrcId& monoID)
-        : gin::ParamBox(num), proc(proc_), lfoparams(lfoparams_)
+    LFOBox(APAudioProcessor& proc_)
+        : gin::ParamBox("LFO"), proc(proc_)
     {
-        setName(num);
+        setName("lfo");
 
-		addEnable(lfoparams.enable);
+		// switch to mini menus to enable learning: "LFO1 Mono, LFO1 Poly," etc.
+        // addModSource(new gin::ModulationSourceButton(proc.modMatrix, monoID, false));
+        // addModSource(new gin::ModulationSourceButton(proc.modMatrix, modsrcID, true));
 
-        addModSource(new gin::ModulationSourceButton(proc.modMatrix, monoID, false));
-        addModSource(new gin::ModulationSourceButton(proc.modMatrix, modsrcID, true));
+        addControl(r1 = new APKnob(proc.lfo1Params.rate), 0, 0);
+		addControl(r2 = new APKnob(proc.lfo2Params.rate), 0, 0);
+		addControl(r3 = new APKnob(proc.lfo3Params.rate), 0, 0);
+		addControl(r4 = new APKnob(proc.lfo4Params.rate), 0, 0);
+        addControl(b1 = new gin::Select(proc.lfo1Params.beat), 0, 0);
+		addControl(b2 = new gin::Select(proc.lfo2Params.beat), 0, 0);
+		addControl(b3 = new gin::Select(proc.lfo3Params.beat), 0, 0);
+		addControl(b4 = new gin::Select(proc.lfo4Params.beat), 0, 0);
 
-        addControl(r = new APKnob(lfoparams.rate), 0, 0);
-        addControl(b = new gin::Select(lfoparams.beat), 0, 0);
-        addControl(sync = new gin::Select(lfoparams.sync));
-        addControl(wave = new gin::Select(lfoparams.wave));
-        addControl(new APKnob(lfoparams.depth, true), 1, 1);
+        addControl(s1 = new gin::Select(proc.lfo1Params.sync));
+		addControl(s2 = new gin::Select(proc.lfo2Params.sync));
+		addControl(s3 = new gin::Select(proc.lfo3Params.sync));
+		addControl(s4 = new gin::Select(proc.lfo4Params.sync));
 
-        addControl(offset = new APKnob(lfoparams.offset, true));
-        addControl(phase = new APKnob(lfoparams.phase, true));
-        addControl(delay = new APKnob(lfoparams.delay));
-        addControl(fade = new APKnob(lfoparams.fade, true));
+		addControl(w1 = new gin::Select(proc.lfo1Params.wave));
+		addControl(w2 = new gin::Select(proc.lfo2Params.wave));
+		addControl(w3 = new gin::Select(proc.lfo3Params.wave));
+		addControl(w4 = new gin::Select(proc.lfo4Params.wave));
+
+        addControl(dp1 = new APKnob(proc.lfo1Params.depth, true), 1, 1);
+		addControl(dp2 = new APKnob(proc.lfo2Params.depth, true), 1, 1);
+		addControl(dp3 = new APKnob(proc.lfo3Params.depth, true), 1, 1);
+		addControl(dp4 = new APKnob(proc.lfo4Params.depth, true), 1, 1);
+
+        addControl(o1 = new APKnob(proc.lfo1Params.offset, true), 1, 2);
+		addControl(o2 = new APKnob(proc.lfo2Params.offset, true), 1, 2);
+		addControl(o3 = new APKnob(proc.lfo3Params.offset, true), 1, 2);
+		addControl(o4 = new APKnob(proc.lfo4Params.offset, true), 1, 2);
+
+        addControl(p1 = new APKnob(proc.lfo1Params.phase, true), 1, 3);
+		addControl(p2 = new APKnob(proc.lfo2Params.phase, true), 1, 3);
+		addControl(p3 = new APKnob(proc.lfo3Params.phase, true), 1, 3);
+		addControl(p4 = new APKnob(proc.lfo4Params.phase, true), 1, 3);
+
+        addControl(dl1 = new APKnob(proc.lfo1Params.delay), 1, 4);
+		addControl(dl2 = new APKnob(proc.lfo2Params.delay), 1, 4);
+		addControl(dl3 = new APKnob(proc.lfo3Params.delay), 1, 4);
+		addControl(dl4 = new APKnob(proc.lfo4Params.delay), 1, 4);
+
+        addControl(f1 = new APKnob(proc.lfo1Params.fade, true), 1, 5);
+		addControl(f2 = new APKnob(proc.lfo2Params.fade, true), 1, 5);
+		addControl(f3 = new APKnob(proc.lfo3Params.fade, true), 1, 5);
+		addControl(f4 = new APKnob(proc.lfo4Params.fade, true), 1, 5);
         
-        auto l = new gin::LFOComponent();
-        l->phaseCallback = [this, num]   
+        l1 = new gin::LFOComponent();
+        l1->phaseCallback = [this]   
         {
             std::vector<float> res;
-			auto unit = num.getTrailingIntValue() - 1;
-            res.push_back(proc.monoLFOs[unit]->getCurrentPhase());
+            res.push_back(proc.monoLFOs[0]->getCurrentPhase());
             return res;
         };
-        l->setParams(lfoparams.wave, lfoparams.sync, lfoparams.rate, lfoparams.beat, lfoparams.depth, 
-            lfoparams.offset, lfoparams.phase, lfoparams.enable);
-        addControl(l, 1, 0, 4, 1);
+        l1->setParams(proc.lfo1Params.wave, proc.lfo1Params.sync, proc.lfo1Params.rate, proc.lfo1Params.beat, proc.lfo1Params.depth, 
+            proc.lfo1Params.offset, proc.lfo1Params.phase, proc.lfo1Params.enable);
+        addControl(l1, 1, 0, 4, 1);
 
-        watchParam(lfoparams.sync);
+		l2 = new gin::LFOComponent();
+		l2->phaseCallback = [this]   
+		{
+			std::vector<float> res;
+			res.push_back(proc.monoLFOs[1]->getCurrentPhase());
+			return res;
+		};
+		l2->setParams(proc.lfo2Params.wave, proc.lfo2Params.sync, proc.lfo2Params.rate, proc.lfo2Params.beat, proc.lfo2Params.depth,
+			proc.lfo2Params.offset, proc.lfo2Params.phase, proc.lfo2Params.enable);
+		addControl(l2, 1, 0, 4, 1);
 
-        setSize(112, 163);
+		l3 = new gin::LFOComponent();
+		l3->phaseCallback = [this]
+		{
+			std::vector<float> res;
+			res.push_back(proc.monoLFOs[2]->getCurrentPhase());
+			return res;
+		};
+		l3->setParams(proc.lfo3Params.wave, proc.lfo3Params.sync, proc.lfo3Params.rate, proc.lfo3Params.beat, proc.lfo3Params.depth,
+			proc.lfo3Params.offset, proc.lfo3Params.phase, proc.lfo3Params.enable);
+		addControl(l3, 1, 0, 4, 1);
+
+		l4 = new gin::LFOComponent();
+		l4->phaseCallback = [this]
+		{
+			std::vector<float> res;
+			res.push_back(proc.monoLFOs[3]->getCurrentPhase());
+			return res;
+		};
+		l4->setParams(proc.lfo4Params.wave, proc.lfo4Params.sync, proc.lfo4Params.rate, proc.lfo4Params.beat, proc.lfo4Params.depth,
+			proc.lfo4Params.offset, proc.lfo4Params.phase, proc.lfo4Params.enable);
+		addControl(l4, 1, 0, 4, 1);
+
+		addAndMakeVisible(select1);
+		addAndMakeVisible(select2);
+		addAndMakeVisible(select3);
+		addAndMakeVisible(select4);
+
+		select1.onClick = [this]() {show(1);};
+		select2.onClick = [this]() {show(2);};
+		select3.onClick = [this]() {show(3);};
+		select4.onClick = [this]() {show(4);};
+
+        watchParam(proc.lfo1Params.sync);
+		watchParam(proc.lfo2Params.sync);
+		watchParam(proc.lfo3Params.sync);
+		watchParam(proc.lfo4Params.sync);
+
+        show(1);
     }
+
+	void show(int lfo) {
+		for (gin::ParamComponent::Ptr c : {
+			r1, b1, s1, w1, dp1, p1, o1, f1, dl1,
+			r2, b2, s2, w2, dp2, p2, o2, f2, dl2,
+			r3, b3, s3, w3, dp3, p3, o3, f3, dl3,
+			r4, b4, s4, w4, dp4, p4, o4, f4, dl4
+		})
+		{
+			c->setVisible(false);
+		}
+		for (auto viz : {l1, l2, l3, l4})
+		{
+			viz->setVisible(false);
+		}
+		bool choice;
+		switch (lfo) {
+		case 1:
+			currentLFO = 1;
+			choice = proc.lfo1Params.sync->isOn();
+			r1->setVisible(!choice);
+			b1->setVisible(choice);
+			s1->setVisible(true);
+			w1->setVisible(true);
+			dp1->setVisible(true);
+			p1->setVisible(true);
+			o1->setVisible(true);
+			f1->setVisible(true);
+			dl1->setVisible(true);
+			l1->setVisible(true);
+			break;
+		case 2:
+			currentLFO = 2;
+			choice = proc.lfo2Params.sync->isOn();
+			r2->setVisible(!choice);
+			b2->setVisible(choice);
+			s2->setVisible(true);
+			w2->setVisible(true);
+			dp2->setVisible(true);
+			p2->setVisible(true);
+			o2->setVisible(true);
+			f2->setVisible(true);
+			dl2->setVisible(true);
+			l2->setVisible(true);
+			break;
+		case 3:
+			currentLFO = 3;
+			choice = proc.lfo3Params.sync->isOn();
+			r3->setVisible(!choice);
+			b3->setVisible(choice);
+			s3->setVisible(true);
+			w3->setVisible(true);
+			dp3->setVisible(true);
+			p3->setVisible(true);
+			o3->setVisible(true);
+			f3->setVisible(true);
+			dl3->setVisible(true);
+			l3->setVisible(true);
+			break;
+		case 4:
+			currentLFO = 4;
+			choice = proc.lfo4Params.sync->isOn();
+			r4->setVisible(!choice);
+			b4->setVisible(choice);
+			s4->setVisible(true);
+			w4->setVisible(true);
+			dp4->setVisible(true);
+			p4->setVisible(true);
+			o4->setVisible(true);
+			f4->setVisible(true);
+			dl4->setVisible(true);
+			l4->setVisible(true);
+			break;
+		}
+		paramChanged();
+	}
 
     void paramChanged() override
     {
         gin::ParamBox::paramChanged();
-
-        if (r && b)
+		switch (currentLFO)
         {
-            r->setVisible(!lfoparams.sync->isOn());
-            b->setVisible(lfoparams.sync->isOn());
+		case 1:
+            r1->setVisible(!proc.lfo1Params.sync->isOn());
+            b1->setVisible(proc.lfo1Params.sync->isOn());
+			break;
+		case 2:
+			r2->setVisible(!proc.lfo2Params.sync->isOn());
+			b2->setVisible(proc.lfo2Params.sync->isOn());
+			break;
+		case 3:
+			r3->setVisible(!proc.lfo3Params.sync->isOn());
+			b3->setVisible(proc.lfo3Params.sync->isOn());
+			break;
+		case 4:
+			r4->setVisible(!proc.lfo4Params.sync->isOn());
+			b4->setVisible(proc.lfo4Params.sync->isOn());
+			break;
         }
     }
     
     void resized() override {
         gin::ParamBox::resized();
-        sync->setBounds(0, 93, 56, 35);
-        wave->setBounds(0, 128, 56, 35);
-        offset->setBounds(112, 108, 42, 57);
-        phase->setBounds(158,  108, 42, 57);
-        delay->setBounds(200,  108, 42, 57);
-        fade->setBounds(242,   108, 42, 57);
+        s1->setBounds(0, 93, 56, 35);
+        w1->setBounds(0, 128, 56, 35);
+		s2->setBounds(0, 93, 56, 35);
+		w2->setBounds(0, 128, 56, 35);
+		s3->setBounds(0, 93, 56, 35);
+		w3->setBounds(0, 128, 56, 35);
+		s4->setBounds(0, 93, 56, 35);
+		w4->setBounds(0, 128, 56, 35);
+		select1.setBounds(100, 0, 20, 23);
+		select2.setBounds(120, 0, 20, 23);
+		select3.setBounds(140, 0, 20, 23);
+		select4.setBounds(160, 0, 20, 23);
+		o1->setBounds(112, 108, 42, 57);
+		o2->setBounds(112, 108, 42, 57);
+		o3->setBounds(112, 108, 42, 57);
+		o4->setBounds(112, 108, 42, 57);
+		p1->setBounds(158, 108, 42, 57);
+		p2->setBounds(158, 108, 42, 57);
+		p3->setBounds(158, 108, 42, 57);
+		p4->setBounds(158, 108, 42, 57);
+		f1->setBounds(242, 108, 42, 57);
+		f2->setBounds(242, 108, 42, 57);
+		f3->setBounds(242, 108, 42, 57);
+		f4->setBounds(242, 108, 42, 57);
+		dl1->setBounds(200, 108, 42, 57);
+		dl2->setBounds(200, 108, 42, 57);
+		dl3->setBounds(200, 108, 42, 57);
+		dl4->setBounds(200, 108, 42, 57);
     }
 
     APAudioProcessor& proc;
-    gin::ParamComponent::Ptr r = nullptr, b = nullptr, offset = nullptr, phase = nullptr,
-        delay = nullptr, fade = nullptr, sync = nullptr, wave = nullptr;
-    APAudioProcessor::LFOParams& lfoparams;
+
+	gin::ParamComponent::Ptr s1, w1, r1, b1, dp1, p1, o1, f1, dl1,
+		s2, w2, r2, b2, dp2, p2, o2, f2, dl2,
+		s3, w3, r3, b3, dp3, p3, o3, f3, dl3,
+		s4, w4, r4, b4, dp4, p4, o4, f4, dl4;
+
+	int currentLFO{1};
+	TextButton select1{ "1" }, select2{ "2" }, select3{ "3" }, select4{ "4" };
+	gin::LFOComponent *l1, *l2, *l3, *l4;
 };
 
 //==============================================================================
@@ -704,6 +901,192 @@ public:
     
     gin::ParamComponent::Ptr algo = nullptr;
 	APAudioProcessor& proc;
+};
+
+//==============================================================================
+
+
+class AuxBox : public gin::ParamBox
+{
+public:
+	AuxBox(const juce::String& name, APAudioProcessor& proc_)
+		: gin::ParamBox(name), proc(proc_)
+	{
+		
+		setName("aux");
+		addEnable(proc.auxParams.enable);
+		
+		addControl(wave = new gin::Select(proc.auxParams.wave), 0, 0);
+		addControl(env = new gin::Select(proc.auxParams.env), 0, 0);
+		addControl(new APKnob(proc.auxParams.octave), 1, 0);
+		addControl(new APKnob(proc.auxParams.volume), 2, 0);
+		addControl(new APKnob(proc.auxParams.detune), 3, 0);
+		addControl(new APKnob(proc.auxParams.spread), 4, 0);
+
+		addControl(prefx = new gin::Select(proc.auxParams.prefx), 0, 1);
+		addControl(filtertype = new gin::Select(proc.auxParams.filtertype), 0, 1);
+		addControl(new APKnob(proc.auxParams.filtercutoff), 1, 1);
+		addControl(new APKnob(proc.auxParams.filterres), 2, 1);
+		addControl(new APKnob(proc.auxParams.filterkeytrack), 3, 1);
+		addControl(new gin::Switch(proc.auxParams.ignorepb), 4, 1);
+	}
+
+	void resized() override
+	{
+		ParamBox::resized();
+		wave->setBounds(0, 23, 56, 35);
+		env->setBounds(0, 58, 56, 35);
+		prefx->setBounds(0, 93, 56, 35);
+		filtertype->setBounds(0, 128, 56, 35);
+	}
+
+	APAudioProcessor& proc;
+	gin::ParamComponent::Ptr wave, env, prefx, filtertype;
+};
+
+class Waveform : public juce::Component
+{
+public:
+	Waveform(APAudioProcessor& p) : proc(p) {
+        addAndMakeVisible(fileInfo);
+		addAndMakeVisible(sampleFilenameLabel);
+		sampleFilenameLabel.setJustificationType(juce::Justification::centred);
+    }
+    
+    void resized() override {
+        fileInfo.setBounds(getWidth() - 65, 0, 65, 20);
+		sampleFilenameLabel.setBounds(0, getHeight() - 23, getWidth(), 23);
+    }
+    
+	void paint(juce::Graphics& g) override
+	{
+		if (juce::File(proc.sampler.sound.name).getFileName() != sampleFilenameLabel.getText())
+		{
+			shouldRedraw = true;
+		}
+		if (proc.sampler.sound.data != nullptr) {
+			g.setColour(juce::Colour(0xffCC8866).darker(0.5f));
+			int loopstart = proc.samplerParams.loopstart->getUserValue() * getWidth();
+			int loopend = proc.samplerParams.loopend->getUserValue() * getWidth();
+			g.fillRect(loopstart, 0, loopend - loopstart, getHeight());
+			g.setColour(juce::Colours::grey);
+			g.drawLine(loopstart, 0, loopstart, getHeight(), 1);
+			g.drawLine(loopend, 0, loopend, getHeight(), 1);
+			auto soundFile = juce::File(proc.sampler.sound.name);
+			sampleFilenameLabel.setText(soundFile.getFileName(), juce::dontSendNotification);
+			auto ch = proc.sampler.sound.data.get()->getNumChannels();
+			auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
+			auto fileInfoString = String(ch) + " ch: " + String(time, 2) + " s";
+			fileInfo.setText(fileInfoString, juce::dontSendNotification);
+		}
+		else { 
+			sampleFilenameLabel.setText("", juce::dontSendNotification);
+			fileInfo.setText("", juce::dontSendNotification);
+			g.setColour(juce::Colours::black); g.fillAll(); 
+		}
+		g.setColour(juce::Colours::darkgrey);
+		g.drawRect(getLocalBounds(), 1);
+		auto& audio = proc.sampler.sound.data;
+		auto stride = proc.sampler.sound.length * (proc.samplerParams.end->getValue() - proc.samplerParams.start->getValue()) / getWidth();
+		auto name = proc.sampler.sound.name;
+		if (stride < 1) { return; }
+		auto buffer = audio->getReadPointer(0);
+		if (shouldRedraw) {
+			audioPoints.clear();
+			smoothed.clear();
+			auto length = proc.sampler.sound.length;
+			int startSample = int(proc.samplerParams.start->getUserValue() * length);
+			int endSample = int(proc.samplerParams.end->getUserValue() * length);
+			for (int sample = startSample; sample < endSample; sample += stride)
+			{
+				audioPoints.push_back(buffer[sample]);
+			}
+			smoothed.push_back(audioPoints[0]);
+			for (int i = 1; i < audioPoints.size() - 1; i++)
+			{
+				smoothed.push_back(audioPoints[i - 1] * 0.333f + audioPoints[i] * 0.333f + audioPoints[i+1] * 0.333f);
+			}
+			smoothed.push_back(audioPoints[audioPoints.size() - 1]);
+			shouldRedraw = false;
+		}
+		juce::Path p;
+		p.clear();
+		p.startNewSubPath(0, getHeight() / 2);
+		float max{ 0 }, min{ 0 };
+		for (int sample = 0; sample < smoothed.size(); sample++)
+		{
+			if (smoothed[sample] > max) { max = smoothed[sample]; }
+			if (smoothed[sample] < min) { min = smoothed[sample]; }
+		}
+		if (std::abs(min) > max) { max = std::abs(min); }
+		else { min = -max; }
+		min = jlimit(-1.f, -.3f, min);
+		max = jlimit(.3f, 1.f, max);
+		for (int sample = 0; sample < smoothed.size(); sample++) {
+			p.lineTo(sample, jmap(smoothed[sample], min, max, static_cast<float>(getHeight()), 0.f));
+		}
+
+		g.setColour(juce::Colours::white);
+		g.strokePath(p, juce::PathStrokeType(.4f));
+	}
+	APAudioProcessor& proc;
+	std::vector<float> audioPoints, smoothed;
+	bool shouldRedraw{ true };
+	Label fileInfo{ "", "" }, sampleFilenameLabel{"", ""};
+};
+
+class SamplerBox : public gin::ParamBox
+{
+public:
+	SamplerBox(const juce::String& name, APAudioProcessor& proc_)
+		: gin::ParamBox(name), proc(proc_), waveform(proc_) {
+		addEnable(proc.samplerParams.enable);
+		addControl(new APKnob(proc.samplerParams.volume), 0, 0);
+		addControl(new gin::Select(proc.samplerParams.loop), 1, 0);
+		addControl(new APKnob(proc.samplerParams.key), 2, 0);
+		addControl(new APKnob(proc.samplerParams.start), 3, 0);
+		addControl(new APKnob(proc.samplerParams.end), 4, 0);
+		addControl(new APKnob(proc.samplerParams.loopstart), 0, 1);
+		addControl(new APKnob(proc.samplerParams.loopend), 1, 1);
+		addAndMakeVisible(waveform);
+		addAndMakeVisible(loadButton);
+		loadButton.onClick = [this] { chooseFile(); };
+        setFileName();
+	}
+
+	void chooseFile() {
+		chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
+			[this](const juce::FileChooser& fc)
+			{
+				auto file = fc.getResult();
+				if (!file.existsAsFile()) { return; }
+				proc.loadSample(file.getFullPathName());
+				waveform.shouldRedraw = true;
+				waveform.repaint();
+			});
+	}
+
+    void setFileName() {
+        if (proc.sampler.sound.data == nullptr) { return; }
+        auto ch = proc.sampler.sound.data.get()->getNumChannels();
+        auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
+        auto fileInfoString = String(ch) + " ch: " + String(time,2) + " s";
+        waveform.fileInfo.setText(fileInfoString, juce::dontSendNotification);
+        waveform.repaint();
+    }
+    
+	void resized() override {
+		ParamBox::resized();
+		waveform.setBounds(0, 140 + 23, getWidth(), 93);
+		loadButton.setBounds(getWidth() - 55, 0, 55, 23);
+        setFileName();
+	}
+
+	Waveform waveform;
+	APAudioProcessor& proc;
+	TextButton loadButton{ "Load" };
+	std::unique_ptr<juce::FileChooser> chooser = std::make_unique<juce::FileChooser>("Select file",
+		juce::File{}, "*.wav,*.aif,*.mp3,*.aif,*.ogg,*.flac");
 };
 
 

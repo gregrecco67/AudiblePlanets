@@ -40,20 +40,20 @@ private:
 
     FilterBox filter                        { "flt", proc };
 
-	LFOBox lfo1{ "lfo1", proc, proc.lfo1Params, proc.modSrcLFO1, proc.modSrcMonoLFO1};
-	LFOBox lfo2{ "lfo2", proc, proc.lfo2Params, proc.modSrcLFO2, proc.modSrcMonoLFO2};
-	LFOBox lfo3{ "lfo3", proc, proc.lfo3Params, proc.modSrcLFO3, proc.modSrcMonoLFO3};
-	LFOBox lfo4{ "lfo4", proc, proc.lfo4Params, proc.modSrcLFO4, proc.modSrcMonoLFO4};
-    ModBox mod                              { "mod", proc };
+	LFOBox lfo{ proc };
+    ModBox modsrc                              { "mod", proc };
     GlobalBox global                        { "global", proc };
 	TimbreBox timbre						{ "timbre", proc };
-	OrbitBox orbit							{ "orbit", proc };
+	// OrbitBox orbit							{ "orbit", proc };
 
-    OrbitViz orbitViz;
-    int frameRate{ 30 };
-    float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };
-    float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * (float)frameRate) };
+    // OrbitViz orbitViz;
+    // int frameRate{ 30 };
+    // float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };
+    // float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * (float)frameRate) };
     gin::Layout layout { *this };
-	juce::ToggleButton liveViz{ "Live" };
+	// juce::ToggleButton liveViz{ "Live" };
 	APLNF aplnf;
+
+    AuxBox aux{ "   Aux Oscillator", proc };
+	SamplerBox samplerBox{ "   Sampler", proc };
 };

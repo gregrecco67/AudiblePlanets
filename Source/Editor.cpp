@@ -21,29 +21,28 @@ Editor::Editor(APAudioProcessor& proc_)
 {
     addAndMakeVisible(osc);
 	addAndMakeVisible(env);
-
-	addAndMakeVisible(lfo2);
-	addAndMakeVisible(lfo3);
-	addAndMakeVisible(lfo4);
+    addAndMakeVisible(lfo);
 	addAndMakeVisible(filter);
-	addAndMakeVisible(mod);
+	addAndMakeVisible(modsrc);
 	addAndMakeVisible(global);
 	addAndMakeVisible(timbre);
-    addAndMakeVisible(orbitViz);
-    addAndMakeVisible(orbit);
+    // addAndMakeVisible(orbitViz);
+    // addAndMakeVisible(orbit);
 	proc.globalParams.pitchbendRange->addListener(this);
 	proc.globalParams.mpe->addListener(this);
-    startTimerHz(frameRate);
-	addAndMakeVisible(liveViz);
-	liveViz.setLookAndFeel(&aplnf);
+    // startTimerHz(frameRate);
+	// addAndMakeVisible(liveViz);
+	// liveViz.setLookAndFeel(&aplnf);
+    addAndMakeVisible(aux);
+    addAndMakeVisible(samplerBox);
 }
 
 Editor::~Editor()
 {
-	stopTimer();
+	// stopTimer();
 	proc.globalParams.pitchbendRange->removeListener(this);
 	proc.globalParams.mpe->removeListener(this);
-	liveViz.setLookAndFeel(nullptr);
+	// liveViz.setLookAndFeel(nullptr);
 	setLookAndFeel(nullptr);
 }
 
@@ -57,61 +56,61 @@ void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any ot
 }
 
 void Editor::timerCallback() {
-	if (!isVisible()) return;
-    auto speed = proc.orbitParams.speed->getUserValue();
-	bool live = liveViz.getToggleState();
-    auto defRatio = live ? 
-		proc.modMatrix.getValue(proc.osc1Params.coarse) + proc.modMatrix.getValue(proc.osc1Params.fine) : 
-		proc.osc1Params.coarse->getUserValue() + proc.osc1Params.fine->getUserValue();
-    auto defPhaseIncrement = defRatio * phaseIncrement;
-    vizDefPhase += defPhaseIncrement * speed;
-    if (vizDefPhase > juce::MathConstants<float>::twoPi)
-        vizDefPhase -= juce::MathConstants<float>::twoPi;
+	// if (!isVisible()) return;
+    //auto speed = proc.orbitParams.speed->getUserValue();
+	//bool live = liveViz.getToggleState();
+    //auto defRatio = live ? 
+	//	proc.modMatrix.getValue(proc.osc1Params.coarse) + proc.modMatrix.getValue(proc.osc1Params.fine) : 
+	//	proc.osc1Params.coarse->getUserValue() + proc.osc1Params.fine->getUserValue();
+    //auto defPhaseIncrement = defRatio * phaseIncrement;
+    //vizDefPhase += defPhaseIncrement * speed;
+    //if (vizDefPhase > juce::MathConstants<float>::twoPi)
+    //    vizDefPhase -= juce::MathConstants<float>::twoPi;
+//
+    //auto epi1Ratio = live ?
+	//	proc.modMatrix.getValue(proc.osc2Params.coarse) + proc.modMatrix.getValue(proc.osc2Params.fine) :
+	//	proc.osc2Params.coarse->getUserValue() + proc.osc2Params.fine->getUserValue();
+    //auto vizEpi1PhaseIncrement = epi1Ratio * phaseIncrement;
+    //vizEpi1Phase += vizEpi1PhaseIncrement * speed;
+    //if (vizEpi1Phase > juce::MathConstants<float>::twoPi)
+    //    vizEpi1Phase -= juce::MathConstants<float>::twoPi;
+//
+    //auto epi2Ratio = live ?
+	//	proc.modMatrix.getValue(proc.osc3Params.coarse) + proc.modMatrix.getValue(proc.osc3Params.fine) :
+	//	proc.osc3Params.coarse->getUserValue()  + proc.osc3Params.fine->getUserValue();
+    //auto vizEpi2PhaseIncrement = epi2Ratio * phaseIncrement;
+    //vizEpi2Phase += vizEpi2PhaseIncrement * speed;
+    //if (vizEpi2Phase > juce::MathConstants<float>::twoPi)
+    //    vizEpi2Phase -= juce::MathConstants<float>::twoPi;
+//
+    //auto epi3Ratio = live ?
+	//	proc.modMatrix.getValue(proc.osc4Params.coarse) + proc.modMatrix.getValue(proc.osc4Params.fine) :
+	//	proc.osc4Params.coarse->getUserValue()  + proc.osc4Params.fine->getUserValue();
+    //auto vizEpi3PhaseIncrement = epi3Ratio * phaseIncrement;
+    //vizEpi3Phase += vizEpi3PhaseIncrement * speed;
+    //if (vizEpi3Phase > juce::MathConstants<float>::twoPi)
+    //    vizEpi3Phase -= juce::MathConstants<float>::twoPi;
+	//
+	//auto equant = live ? proc.modMatrix.getValue(proc.timbreParams.equant) : proc.timbreParams.equant->getUserValue();
+	//auto vol1 = live ? proc.modMatrix.getValue(proc.osc1Params.volume) : proc.osc1Params.volume->getUserValue();
+	//auto vol2 = live ? proc.modMatrix.getValue(proc.osc2Params.volume) : proc.osc2Params.volume->getUserValue();
+	//auto vol3 = live ? proc.modMatrix.getValue(proc.osc3Params.volume) : proc.osc3Params.volume->getUserValue();
+	//auto vol4 = live ? proc.modMatrix.getValue(proc.osc4Params.volume) : proc.osc4Params.volume->getUserValue();
+	//auto squash = live ? proc.modMatrix.getValue(proc.globalParams.squash) : proc.globalParams.squash->getUserValue();
 
-    auto epi1Ratio = live ?
-		proc.modMatrix.getValue(proc.osc2Params.coarse) + proc.modMatrix.getValue(proc.osc2Params.fine) :
-		proc.osc2Params.coarse->getUserValue() + proc.osc2Params.fine->getUserValue();
-    auto vizEpi1PhaseIncrement = epi1Ratio * phaseIncrement;
-    vizEpi1Phase += vizEpi1PhaseIncrement * speed;
-    if (vizEpi1Phase > juce::MathConstants<float>::twoPi)
-        vizEpi1Phase -= juce::MathConstants<float>::twoPi;
-
-    auto epi2Ratio = live ?
-		proc.modMatrix.getValue(proc.osc3Params.coarse) + proc.modMatrix.getValue(proc.osc3Params.fine) :
-		proc.osc3Params.coarse->getUserValue()  + proc.osc3Params.fine->getUserValue();
-    auto vizEpi2PhaseIncrement = epi2Ratio * phaseIncrement;
-    vizEpi2Phase += vizEpi2PhaseIncrement * speed;
-    if (vizEpi2Phase > juce::MathConstants<float>::twoPi)
-        vizEpi2Phase -= juce::MathConstants<float>::twoPi;
-
-    auto epi3Ratio = live ?
-		proc.modMatrix.getValue(proc.osc4Params.coarse) + proc.modMatrix.getValue(proc.osc4Params.fine) :
-		proc.osc4Params.coarse->getUserValue()  + proc.osc4Params.fine->getUserValue();
-    auto vizEpi3PhaseIncrement = epi3Ratio * phaseIncrement;
-    vizEpi3Phase += vizEpi3PhaseIncrement * speed;
-    if (vizEpi3Phase > juce::MathConstants<float>::twoPi)
-        vizEpi3Phase -= juce::MathConstants<float>::twoPi;
-	
-	auto equant = live ? proc.modMatrix.getValue(proc.timbreParams.equant) : proc.timbreParams.equant->getUserValue();
-	auto vol1 = live ? proc.modMatrix.getValue(proc.osc1Params.volume) : proc.osc1Params.volume->getUserValue();
-	auto vol2 = live ? proc.modMatrix.getValue(proc.osc2Params.volume) : proc.osc2Params.volume->getUserValue();
-	auto vol3 = live ? proc.modMatrix.getValue(proc.osc3Params.volume) : proc.osc3Params.volume->getUserValue();
-	auto vol4 = live ? proc.modMatrix.getValue(proc.osc4Params.volume) : proc.osc4Params.volume->getUserValue();
-	auto squash = live ? proc.modMatrix.getValue(proc.globalParams.squash) : proc.globalParams.squash->getUserValue();
-
-    orbitViz.setEquant(equant);
-    orbitViz.setDefRad(vol1);
-    orbitViz.setEpi1Rad(vol2);
-    orbitViz.setEpi2Rad(vol3);
-    orbitViz.setEpi3Rad(vol4);
-    orbitViz.setAlgo(proc.timbreParams.algo->getUserValueInt());
-    orbitViz.setDefPhase(vizDefPhase);
-    orbitViz.setEpi1Phase(vizEpi1Phase);
-    orbitViz.setEpi2Phase(vizEpi2Phase);
-    orbitViz.setEpi3Phase(vizEpi3Phase);
-	orbitViz.setScale(proc.orbitParams.scale->getUserValue());
-	orbitViz.setSquash(squash);
-    orbitViz.repaint();
+    // orbitViz.setEquant(equant);
+    // orbitViz.setDefRad(vol1);
+    // orbitViz.setEpi1Rad(vol2);
+    // orbitViz.setEpi2Rad(vol3);
+    // orbitViz.setEpi3Rad(vol4);
+    // orbitViz.setAlgo(proc.timbreParams.algo->getUserValueInt());
+    // orbitViz.setDefPhase(vizDefPhase);
+    // orbitViz.setEpi1Phase(vizEpi1Phase);
+    // orbitViz.setEpi2Phase(vizEpi2Phase);
+    // orbitViz.setEpi3Phase(vizEpi3Phase);
+	// orbitViz.setScale(proc.orbitParams.scale->getUserValue());
+	// orbitViz.setSquash(squash);
+    // orbitViz.repaint();
 }
 
 void Editor::resized()
@@ -123,19 +122,18 @@ void Editor::resized()
 	}
 
     auto height = area.getHeight();
-    orbitViz.setBounds(area.getRight() - (394), (int)(height * 0.5f), 394, (int)(height * 0.5f));
-	liveViz.setBounds(area.getRight() - 389, (int)(height * 0.5f) + 5, 55, 25);
+    //orbitViz.setBounds(area.getRight() - (394), (int)(height * 0.5f), 394, (int)(height * 0.5f));
+	//liveViz.setBounds(area.getRight() - 389, (int)(height * 0.5f) + 5, 55, 25);
     
     osc.setBounds(0,0,280,163);
-    env.setBounds(280,0,336,163);
-    
-	lfo1.setBounds(508,0,280,163);
-    lfo2.setBounds(508,163,280,163);
-    lfo3.setBounds(508,326,280,163);
-    lfo4.setBounds(508,489,280,163);
-    timbre.setBounds(790,0,224,162);
-    filter.setBounds(790,163,112,163);
-    mod.setBounds(1014,0,170,163);
-    global.setBounds(904,163,168,163);
-    orbit.setBounds(1074,163,110,163);
+    env.setBounds(282,0,336,163);
+	lfo.setBounds(0,163,280,163);
+    filter.setBounds(282,163,112,163);
+    timbre.setBounds(396,163,224,162);
+    global.setBounds(396+56,326,168,163);
+    aux.setBounds(620,0,280,163);
+    samplerBox.setBounds(620,163,280,210+23+23);
+    modsrc.setBounds(620,419,280,233);
+
+    // orbit.setBounds(1074,163,110,163);
 }
