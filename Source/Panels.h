@@ -19,75 +19,194 @@
 #include "APColors.h"
 #include "MoonKnob.h"
 #include "APModAdditions.h"
+#include "EnvelopeComponent.h"
 
 //==============================================================================
 class OscillatorBox : public gin::ParamBox
 {
 public:
-    OscillatorBox(const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::OSCParams& oscparams_)
-        : gin::ParamBox(name), proc(proc_), osc(oscparams_)
+    OscillatorBox(APAudioProcessor& proc_)
+        : gin::ParamBox("OSC"), proc(proc_)
     {
-        setName( name );
+        addControl(c1 = new APKnob(proc.osc1Params.coarse), 0, 0);
+		addControl(c2 = new APKnob(proc.osc2Params.coarse), 0, 0);
+		addControl(c3 = new APKnob(proc.osc3Params.coarse), 0, 0);
+		addControl(c4 = new APKnob(proc.osc4Params.coarse), 0, 0);
+		addControl(f1 = new APKnob(proc.osc1Params.fine), 1, 0);
+		addControl(f2 = new APKnob(proc.osc2Params.fine, true), 1, 0);
+		addControl(f3 = new APKnob(proc.osc3Params.fine, true), 1, 0);
+		addControl(f4 = new APKnob(proc.osc4Params.fine, true), 1, 0);
+        addControl(v1 = new APKnob(proc.osc1Params.volume), 2, 0);
+		addControl(v2 = new APKnob(proc.osc2Params.volume), 2, 0);
+		addControl(v3 = new APKnob(proc.osc3Params.volume), 2, 0);
+		addControl(v4 = new APKnob(proc.osc4Params.volume), 2, 0);
+        addControl(t1 = new APKnob(proc.osc1Params.tones), 3, 0);
+		addControl(t2 = new APKnob(proc.osc2Params.tones), 3, 0);
+		addControl(t3 = new APKnob(proc.osc3Params.tones), 3, 0);
+		addControl(t4 = new APKnob(proc.osc4Params.tones), 3, 0);
 
-        addControl(c = new APKnob(osc.coarse), 0, 0);
-		if (osc.num == 1) {
-			addControl(f = new APKnob(osc.fine), 1, 0);
-		}
-		else {
-	        addControl(f = new APKnob(osc.fine, true), 1, 0);
-		}
-        addControl(r = new APKnob(osc.volume), 2, 0);
-        addControl(new APKnob(osc.tones), 3, 0);
-		addControl(phaseKnob = new MoonKnob(osc.phase), 4, 0);
+		addControl(p1 = new MoonKnob(proc.osc1Params.phase), 4, 0);
+		addControl(p2 = new MoonKnob(proc.osc2Params.phase), 4, 0);
+		addControl(p3 = new MoonKnob(proc.osc3Params.phase), 4, 0);
+		addControl(p4 = new MoonKnob(proc.osc4Params.phase), 4, 0);
 
+		c1->setLookAndFeel(&lnf1);
+		f1->setLookAndFeel(&lnf1);
+		v1->setLookAndFeel(&lnf1);
+		c2->setLookAndFeel(&lnf2);
+		f2->setLookAndFeel(&lnf2);
+		v2->setLookAndFeel(&lnf2);
+		c3->setLookAndFeel(&lnf3);
+		f3->setLookAndFeel(&lnf3);
+		v3->setLookAndFeel(&lnf3);
+		c4->setLookAndFeel(&lnf4);
+		f4->setLookAndFeel(&lnf4);
+		v4->setLookAndFeel(&lnf4);
+	
+        addControl(d1 = new APKnob(proc.osc1Params.detune), 2, 1);
+		addControl(d2 = new APKnob(proc.osc2Params.detune), 2, 1);
+		addControl(d3 = new APKnob(proc.osc3Params.detune), 2, 1);
+		addControl(d4 = new APKnob(proc.osc4Params.detune), 2, 1);
+
+        addControl(s1 = new APKnob(proc.osc1Params.spread), 3, 1);
+		addControl(s2 = new APKnob(proc.osc2Params.spread), 3, 1);
+		addControl(s3 = new APKnob(proc.osc3Params.spread), 3, 1);
+		addControl(s4 = new APKnob(proc.osc4Params.spread), 3, 1);
+
+        addControl(p1 = new APKnob(proc.osc1Params.pan, true), 4, 1);
+		addControl(p2 = new APKnob(proc.osc2Params.pan, true), 4, 1);
+		addControl(p3 = new APKnob(proc.osc3Params.pan, true), 4, 1);
+		addControl(p4 = new APKnob(proc.osc4Params.pan, true), 4, 1);
+
+        addControl(saw1 = new gin::Select(proc.osc1Params.saw));
+		addControl(saw2 = new gin::Select(proc.osc2Params.saw));
+		addControl(saw3 = new gin::Select(proc.osc3Params.saw));
+		addControl(saw4 = new gin::Select(proc.osc4Params.saw));
+
+        addControl(env1 = new gin::Select(proc.osc1Params.env));
+		addControl(env2 = new gin::Select(proc.osc2Params.env));
+		addControl(env3 = new gin::Select(proc.osc3Params.env));
+		addControl(env4 = new gin::Select(proc.osc4Params.env));
 		
-		switch (osc.num) {
+		addControl(fixed1 = new gin::Select(proc.osc1Params.fixed));
+		addControl(fixed2 = new gin::Select(proc.osc2Params.fixed));
+		addControl(fixed3 = new gin::Select(proc.osc3Params.fixed));
+		addControl(fixed4 = new gin::Select(proc.osc4Params.fixed));
+
+		// TODO: we need a flag for which osc is selected, for fixedHz
+		
+		watchParam(proc.osc1Params.fixed);
+		watchParam(proc.osc2Params.fixed);
+		watchParam(proc.osc3Params.fixed);
+		watchParam(proc.osc4Params.fixed);
+		watchParam(proc.osc1Params.saw);
+		watchParam(proc.osc2Params.saw);
+		watchParam(proc.osc3Params.saw);
+		watchParam(proc.osc4Params.saw);
+		watchParam(proc.osc1Params.coarse);
+		watchParam(proc.osc2Params.coarse);
+		watchParam(proc.osc3Params.coarse);
+		watchParam(proc.osc4Params.coarse);
+		watchParam(proc.osc1Params.fine);
+		watchParam(proc.osc2Params.fine);
+		watchParam(proc.osc3Params.fine);
+		watchParam(proc.osc4Params.fine);
+
+		addAndMakeVisible(fixedHz1);
+		addAndMakeVisible(fixedHz2);
+		addAndMakeVisible(fixedHz3);
+		addAndMakeVisible(fixedHz4);
+		addAndMakeVisible(select1);
+		addAndMakeVisible(select2);
+		addAndMakeVisible(select3);
+		addAndMakeVisible(select4);
+
+		fixedHz1.setJustificationType(Justification::centred);
+		fixedHz2.setJustificationType(Justification::centred);
+		fixedHz3.setJustificationType(Justification::centred);
+		fixedHz4.setJustificationType(Justification::centred);
+
+		select1.onClick = [this]() {show(1);};
+		select2.onClick = [this]() {show(2);};
+		select3.onClick = [this]() {show(3);};
+		select4.onClick = [this]() {show(4);};
+    }
+
+	void show(int osc) {
+		for (gin::ParamComponent::Ptr c : components)
+		{
+			c->setVisible(false);
+		}
+		switch(osc) {
 		case 1:
-			c->setLookAndFeel(&lnf1);
-			f->setLookAndFeel(&lnf1);
-			r->setLookAndFeel(&lnf1);
+			currentOsc = 1;
+			c1->setVisible(true);
+			f1->setVisible(true);
+			v1->setVisible(true);
+			t1->setVisible(true);
+			d1->setVisible(true);
+			s1->setVisible(true);
+			p1->setVisible(true);
+			saw1->setVisible(true);
+			env1->setVisible(true);
+			fixed1->setVisible(true);
 			break;
 		case 2:
-			c->setLookAndFeel(&lnf2);
-			f->setLookAndFeel(&lnf2);
-			r->setLookAndFeel(&lnf2);
+			currentOsc = 2;
+			c2->setVisible(true);
+			f2->setVisible(true);
+			v2->setVisible(true);
+			t2->setVisible(true);
+			d2->setVisible(true);
+			s2->setVisible(true);
+			p2->setVisible(true);
+			saw2->setVisible(true);
+			env2->setVisible(true);
+			fixed2->setVisible(true);
 			break;
 		case 3:
-			c->setLookAndFeel(&lnf3);
-			f->setLookAndFeel(&lnf3);
-			r->setLookAndFeel(&lnf3);
+			currentOsc = 3;
+			c3->setVisible(true);
+			f3->setVisible(true);
+			v3->setVisible(true);
+			t3->setVisible(true);
+			d3->setVisible(true);
+			s3->setVisible(true);
+			p3->setVisible(true);
+			saw3->setVisible(true);
+			env3->setVisible(true);
+			fixed3->setVisible(true);
 			break;
 		case 4:
-			c->setLookAndFeel(&lnf4);
-			f->setLookAndFeel(&lnf4);
-			r->setLookAndFeel(&lnf4);
+			currentOsc = 4;
+			c4->setVisible(true);
+			f4->setVisible(true);
+			v4->setVisible(true);
+			t4->setVisible(true);
+			d4->setVisible(true);
+			s4->setVisible(true);
+			p4->setVisible(true);
+			saw4->setVisible(true);
+			env4->setVisible(true);
+			fixed4->setVisible(true);
 			break;
 		}
-
-        addControl(new APKnob(osc.detune), 2, 1);
-        addControl(new APKnob(osc.spread), 3, 1);
-        addControl(new APKnob(osc.pan, true), 4, 1);
-
-        addControl(saw = new gin::Select(osc.saw));
-        addControl(env = new gin::Select(osc.env));
-		addControl(fixed = new gin::Select(osc.fixed));
-		
-		watchParam(osc.fixed);
-		watchParam(osc.saw);
-		watchParam(osc.coarse);
-		watchParam(osc.fine);
-
-		addAndMakeVisible(fixedHz);
-
-		fixedHz.setJustificationType(Justification::centred);
-    }
+	}
 
     ~OscillatorBox() override
     {
-		c->setLookAndFeel(nullptr);
-		f->setLookAndFeel(nullptr);
-		r->setLookAndFeel(nullptr);
-        //fixedHz.setLookAndFeel(nullptr);
+		c1->setLookAndFeel(nullptr);
+		f1->setLookAndFeel(nullptr);
+		v1->setLookAndFeel(nullptr);
+		c2->setLookAndFeel(nullptr);
+		f2->setLookAndFeel(nullptr);
+		v2->setLookAndFeel(nullptr);
+		c3->setLookAndFeel(nullptr);
+		f3->setLookAndFeel(nullptr);
+		v3->setLookAndFeel(nullptr);
+		c4->setLookAndFeel(nullptr);
+		f4->setLookAndFeel(nullptr);
+		v4->setLookAndFeel(nullptr);
     }
 
 	class APLookAndFeel1 : public APLNF
@@ -125,23 +244,65 @@ public:
 
 	void paramChanged() override {
 		gin::ParamBox::paramChanged();
-		if (osc.fixed->isOn()) {
-			fixedHz.setVisible(true);
-			fixedHz.setText(String((osc.coarse->getUserValue() + osc.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
+		if (proc.osc1Params.fixed->isOn() && currentOsc == 1) {
+			fixedHz1.setVisible(true);
+			fixedHz1.setText(String((proc.osc1Params.coarse->getUserValue() + proc.osc1Params.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
 		}
 		else {
-			fixedHz.setVisible(false);
+			fixedHz1.setVisible(false);
+		}
+		if (proc.osc2Params.fixed->isOn() && currentOsc == 2) {
+			fixedHz2.setVisible(true);
+			fixedHz2.setText(String((proc.osc2Params.coarse->getUserValue() 
+			+ proc.osc2Params.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
+		}
+		else {
+			fixedHz2.setVisible(false);
+		}
+		if (proc.osc3Params.fixed->isOn() && currentOsc == 3) {
+			fixedHz3.setVisible(true);
+			fixedHz3.setText(String((proc.osc3Params.coarse->getUserValue() 
+			+ proc.osc3Params.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
+		}
+		else {
+			fixedHz3.setVisible(false);
+		}
+		if (proc.osc4Params.fixed->isOn() && currentOsc == 4) {
+			fixedHz4.setVisible(true);
+			fixedHz4.setText(String((proc.osc4Params.coarse->getUserValue() 
+			+ proc.osc4Params.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
+		}
+		else {
+			fixedHz4.setVisible(false);
 		}
 	}
 
 	void resized() override {
 		gin::ParamBox::resized();
-		fixedHz.setBounds(56, 23+70+10, 56, 15); // 23/70/10 header, first row, padding
-		phaseKnob->setBounds(56*4, 23, 56, 70);
-        saw->setBounds(0, 93, 56, 35);
-        env->setBounds(0, 128, 56, 35);
-        fixed->setBounds(56, 128, 56, 35);
-        
+		fixedHz1.setBounds(56, 23+70+10, 56, 15); // 23/70/10 header, first row, padding
+		fixedHz2.setBounds(56, 23+70+10, 56, 15);
+		fixedHz3.setBounds(56, 23+70+10, 56, 15);
+		fixedHz4.setBounds(56, 23+70+10, 56, 15);
+		p1->setBounds(56*4, 23, 56, 70);
+		p2->setBounds(56*4, 23, 56, 70);
+		p3->setBounds(56*4, 23, 56, 70);
+		p4->setBounds(56*4, 23, 56, 70);
+        saw1->setBounds(0, 93, 56, 35);
+		saw2->setBounds(0, 93, 56, 35);
+		saw3->setBounds(0, 93, 56, 35);
+		saw4->setBounds(0, 93, 56, 35);
+        env1->setBounds(0, 128, 56, 35);
+		env2->setBounds(0, 128, 56, 35);
+		env3->setBounds(0, 128, 56, 35);
+		env4->setBounds(0, 128, 56, 35);
+        fixed1->setBounds(56, 128, 56, 35);
+		fixed2->setBounds(56, 128, 56, 35);
+		fixed3->setBounds(56, 128, 56, 35);
+		fixed4->setBounds(56, 128, 56, 35);
+		select1.setBounds(0, 100, 20, 23);
+		select2.setBounds(0, 120, 20, 23);
+		select3.setBounds(0, 140, 20, 23);
+		select4.setBounds(0, 160, 20, 23);
 	}
     
 	APLookAndFeel1 lnf1;
@@ -149,51 +310,78 @@ public:
 	APLookAndFeel3 lnf3;
 	APLookAndFeel4 lnf4;
     APAudioProcessor& proc;
-    APAudioProcessor::OSCParams& osc;
-	gin::ParamComponent::Ptr c = nullptr, f = nullptr, r = nullptr, saw = nullptr,
-        env = nullptr, fixed = nullptr;
-	Label fixedHz;
-	MoonKnob* phaseKnob;
-    //juce::Font regularFont{ juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize) };
+	gin::ParamComponent::Ptr c1, f1, v1, t1, p1, d1, s1, n1, saw1, env1, fixed1;
+	gin::ParamComponent::Ptr c2, f2, v2, t2, p2, d2, s2, n2, saw2, env2, fixed2;
+	gin::ParamComponent::Ptr c3, f3, v3, t3, p3, d3, s3, n3, saw3, env3, fixed3;
+	gin::ParamComponent::Ptr c4, f4, v4, t4, p4, d4, s4, n4, saw4, env4, fixed4;
+
+	Label fixedHz1, fixedHz2, fixedHz3, fixedHz4;
+	TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
+	MoonKnob* p1, p2, p3, p4;
+
+	std::vector<gin::ParamComponent::Ptr> components = {c1, f1, v1, t1, p1, d1, s1, n1, saw1, env1, fixed1,
+		c2, f2, v2, t2, p2, d2, s2, n2, saw2, env2, fixed2,
+		c3, f3, v3, t3, p3, d3, s3, n3, saw3, env3, fixed3,
+		c4, f4, v4, t4, p4, d4, s4, n4, saw4, env4, fixed4};
+
+	int currentOsc{1};
 };
 
 //==============================================================================
 class ENVBox : public gin::ParamBox
 {
 public:
-    ENVBox(const juce::String& name, APAudioProcessor& proc_, APAudioProcessor::ENVParams& envparams_)
-        : gin::ParamBox(name), proc(proc_), envparams(envparams_)
+    ENVBox(APAudioProcessor& proc_)
+        : gin::ParamBox("ENV"), proc(proc_)
     {
-        setName(name);
+		// in reverse order
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv4, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv3, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv2, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
 
-		switch (envparams.num) {
-		case 1:
-			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
-			break;
-		case 2:
-			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv2, true));
-			break;
-		case 3:
-			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv3, true));
-			break;
-		case 4:
-			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv4, true));
-			break;
-		}
 
-        //auto& preset = envparams;
-
-        addControl(new APKnob(envparams.attack), 0, 0);
-        addControl(new APKnob(envparams.decay), 1, 0);
-        addControl(new APKnob(envparams.sustain), 2, 0);
-        addControl(new APKnob(envparams.release), 3, 0);
-		addControl(new APKnob(envparams.acurve, true), 0, 1);
-		addControl(new APKnob(envparams.drcurve, true), 1, 1);
-        addControl(new gin::Select(envparams.syncrepeat), 2, 1);
-        addControl(r = new APKnob(envparams.time), 3, 1);
-		addControl(b =new gin::Select(envparams.duration), 3, 1);
+        addControl(a1 = new APKnob(proc.env1Params.attack), 0, 0);
+		addControl(a2 = new APKnob(proc.env2Params.attack), 0, 0);
+		addControl(a3 = new APKnob(proc.env3Params.attack), 0, 0);
+		addControl(a4 = new APKnob(proc.env4Params.attack), 0, 0);
+		addControl(d1 = new APKnob(proc.env1Params.decay), 1, 0);
+		addControl(d2 = new APKnob(proc.env2Params.decay), 1, 0);
+		addControl(d3 = new APKnob(proc.env3Params.decay), 1, 0);
+		addControl(d4 = new APKnob(proc.env4Params.decay), 1, 0);
+		addControl(s1 = new APKnob(proc.env1Params.sustain), 2, 0);
+		addControl(s2 = new APKnob(proc.env2Params.sustain), 2, 0);
+		addControl(s3 = new APKnob(proc.env3Params.sustain), 2, 0);
+		addControl(s4 = new APKnob(proc.env4Params.sustain), 2, 0);
+		addControl(r1 = new APKnob(proc.env1Params.release), 3, 0);
+		addControl(r2 = new APKnob(proc.env2Params.release), 3, 0);
+		addControl(r3 = new APKnob(proc.env3Params.release), 3, 0);
+		addControl(r4 = new APKnob(proc.env4Params.release), 3, 0);
+		addControl(ac1 = new APKnob(proc.env1Params.acurve, true), 4, 0);
+		addControl(ac2 = new APKnob(proc.env2Params.acurve, true), 4, 0);
+		addControl(ac3 = new APKnob(proc.env3Params.acurve, true), 4, 0);
+		addControl(ac4 = new APKnob(proc.env4Params.acurve, true), 4, 0);
+		addControl(dc1 = new APKnob(proc.env1Params.drcurve, true), 5, 0);
+		addControl(dc2 = new APKnob(proc.env2Params.drcurve, true), 5, 0);
+		addControl(dc3 = new APKnob(proc.env3Params.drcurve, true), 5, 0);
+		addControl(dc4 = new APKnob(proc.env4Params.drcurve, true), 5, 0);
+		addControl(rpt1 = new gin::Select(proc.env1Params.syncrepeat), 4, 1);
+		addControl(rpt2 = new gin::Select(proc.env2Params.syncrepeat), 4, 1);
+		addControl(rpt3 = new gin::Select(proc.env3Params.syncrepeat), 4, 1);
+		addControl(rpt4 = new gin::Select(proc.env4Params.syncrepeat), 4, 1);
+		addControl(beats1 = new gin::Select(proc.env1Params.duration), 5, 1);
+		addControl(beats2 = new gin::Select(proc.env2Params.duration), 5, 1);
+		addControl(beats3 = new gin::Select(proc.env3Params.duration), 5, 1);
+		addControl(beats4 = new gin::Select(proc.env4Params.duration), 5, 1);
+		addControl(rate1 = new APKnob(proc.env1Params.rate), 5, 1);
+		addControl(rate2 = new APKnob(proc.env2Params.rate), 5, 1);
+		addControl(rate3 = new APKnob(proc.env3Params.rate), 5, 1);
+		addControl(rate4 = new APKnob(proc.env4Params.rate), 5, 1);
 		
 		watchParam(envparams.syncrepeat);
+
+		// TODO: add and implement selectors
+
 	}
 
 	void paramChanged() override
@@ -209,9 +397,16 @@ public:
 	}
 
 	APAudioProcessor& proc;
-	gin::ParamComponent::Ptr r = nullptr;
-	gin::ParamComponent::Ptr b = nullptr;
-	APAudioProcessor::ENVParams& envparams;
+	gin::ParamComponent::Ptr a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1;
+	gin::ParamComponent::Ptr a2, d2, s2, r2, ac2, dc2, rpt2, beats2, rate2;
+	gin::ParamComponent::Ptr a3, d3, s3, r3, ac3, dc3, rpt3, beats3, rate3;
+	gin::ParamComponent::Ptr a4, d4, s4, r4, ac4, dc4, rpt4, beats4, rate4;
+	std::vector<gin::ParamComponent::Ptr> components = {a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1,
+		a2, d2, s2, r2, ac2, dc2, rpt2, beats2, rate2,
+		a3, d3, s3, r3, ac3, dc3, rpt3, beats3, rate3,
+		a4, d4, s4, r4, ac4, dc4, rpt4, beats4, rate4};
+	EnvelopeComponent env1Viz, env2Viz, env3Viz, env4Viz;
+	int currentComponent{1};
 };
 
 //==============================================================================
