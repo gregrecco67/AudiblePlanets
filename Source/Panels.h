@@ -1352,19 +1352,26 @@ public:
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-
-		bool sync1 = proc.mseg1Params.sync->getUserValueBool();
-		r1->setVisible(!sync1);
-		b1->setVisible(sync1);
-		bool sync2 = proc.mseg2Params.sync->getUserValueBool();
-		r2->setVisible(!sync2);	
-		b2->setVisible(sync2);
-		bool sync3 = proc.mseg3Params.sync->getUserValueBool();
-		r3->setVisible(!sync3);
-		b3->setVisible(sync3);
-		bool sync4 = proc.mseg4Params.sync->getUserValueBool();
-		r4->setVisible(!sync4);
-		b4->setVisible(sync4);
+		if (currentMSEG == 1) {
+			bool sync1 = proc.mseg1Params.sync->getUserValueBool();
+			r1->setVisible(!sync1);
+			b1->setVisible(sync1);
+		}
+		if (currentMSEG == 2) {
+			bool sync2 = proc.mseg2Params.sync->getUserValueBool();
+			r2->setVisible(!sync2);
+			b2->setVisible(sync2);
+		}
+		if (currentMSEG == 3) {
+			bool sync3 = proc.mseg3Params.sync->getUserValueBool();
+			r3->setVisible(!sync3);
+			b3->setVisible(sync3);
+		}
+		if (currentMSEG == 4) {
+			bool sync4 = proc.mseg4Params.sync->getUserValueBool();
+			r4->setVisible(!sync4);
+			b4->setVisible(sync4);
+		}
 
 		if (proc.mseg1Params.draw->getUserValueBool()) {
 			msegComponent1.setDrawMode(true, 
