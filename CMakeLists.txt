@@ -14,7 +14,7 @@ foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_sim
 	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
 endforeach()
 
-set(VersionString 1.0.22)
+set(VersionString 1.1.0)
 
 juce_add_plugin (${PROJECT_NAME}
 				PRODUCT_NAME "Audible Planets" 
