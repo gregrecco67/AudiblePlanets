@@ -1469,12 +1469,177 @@ class MacrosBox : public gin::ParamBox
 		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc3, true));
 		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc2, true));
 		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc1, true));
+
+		addAndMakeVisible(midiLearnButton1);
+		addAndMakeVisible(midiLearnButton2);
+		addAndMakeVisible(midiLearnButton3);
+		addChildComponent(clear1);
+		addChildComponent(clear2);
+		addChildComponent(clear3);
+
+		proc.macroParams.macro1cc->addListener(this);
+		proc.macroParams.macro2cc->addListener(this);
+		proc.macroParams.macro3cc->addListener(this);
+
+		clear1.onClick = [this]() { cancelAssignment(1); };
+		clear2.onClick = [this]() { cancelAssignment(2); };
+		clear3.onClick = [this]() { cancelAssignment(3); };
+
+		midiLearnButton1.setMacroNumber(1);
+		midiLearnButton2.setMacroNumber(2);
+		midiLearnButton3.setMacroNumber(3);
 	}
+
+	void cancelAssignment(int macroNumber) {
+		switch (macroNumber) {
+		case 1:
+			proc.macroParams.macro1cc->setValue(-1.f);
+			midiLearnButton1.setCCString("Learn");
+			midiLearnButton1.setLearning(false);
+			clear1.setVisible(false);
+			break;
+		case 2:
+			proc.macroParams.macro2cc->setValue(-1.f);
+			midiLearnButton2.setCCString("Learn");
+			midiLearnButton2.setLearning(false);
+			clear2.setVisible(false);
+			break;
+		case 3:
+			proc.macroParams.macro3cc->setValue(-1.f);
+			midiLearnButton3.setCCString("Learn");
+			midiLearnButton3.setLearning(false);
+			clear3.setVisible(false);
+			break;
+		}
+	}
+    void valueUpdated(gin::Parameter* p) override {
+		if (p == proc.macroParams.macro1cc) {
+			auto ccValue = proc.macroParams.macro1cc->getUserValueInt();
+			if (ccValue >= 0) {
+				midiLearnButton1.setCCString("CC " + proc.macroParams.macro1cc->getUserValueText());
+				clear1.setVisible(true);
+			}
+			else {
+				midiLearnButton1.setCCString("Learn");
+				midiLearnButton1.setLearning(false);
+				clear1.setVisible(false);
+			}
+		}
+		if (p == proc.macroParams.macro2cc) {
+			auto ccValue = proc.macroParams.macro2cc->getUserValueInt();
+			if (ccValue >= 0) {
+				midiLearnButton2.setCCString("CC " + proc.macroParams.macro2cc->getUserValueText());
+				clear2.setVisible(true);
+			}
+			else {
+				midiLearnButton2.setCCString("Learn");
+				midiLearnButton2.setLearning(false);
+				clear2.setVisible(false);
+			}
+		}
+		if (p == proc.macroParams.macro3cc) {
+			auto ccValue = proc.macroParams.macro3cc->getUserValueInt();
+			if (ccValue >= 0) {
+				midiLearnButton3.setCCString("CC " + proc.macroParams.macro3cc->getUserValueText());
+				clear3.setVisible(true);
+			}
+			else {
+				midiLearnButton3.setCCString("Learn");
+				midiLearnButton3.setLearning(false);
+				clear3.setVisible(false);
+			}
+		}
+	}
+
+	void resized() override {
+		gin::ParamBox::resized();
+		midiLearnButton1.setBounds(0, 93, 56, 35);
+		midiLearnButton2.setBounds(56, 93, 56, 35);
+		midiLearnButton3.setBounds(112, 93, 56, 35);
+		clear1.setBounds(0, 128,   56, 35);
+		clear2.setBounds(56, 128,  56, 35);
+		clear3.setBounds(112, 128, 56, 35);
+	}
+
+	class MIDILearnButton : public juce::Label
+	{
+	public:
+		MIDILearnButton(APAudioProcessor& p) : proc(p) {
+			setEditable(false, false, false);
+			setJustificationType(Justification::left);
+			setText("Learn", dontSendNotification);
+			setLookAndFeel(&midilearnLNF);
+		}
+
+		~MIDILearnButton() override
+		{
+			setLookAndFeel(nullptr);
+		}
+
+		void mouseDown(const juce::MouseEvent& /*ev*/) override
+		{
+			if (thisMacroNumber == 1) {
+				if (proc.macroParams.macro1cc->getUserValue() > 0.f) { return; }
+			}
+			if (thisMacroNumber == 2) {
+				if (proc.macroParams.macro2cc->getUserValue() > 0.f) { return; }
+			}
+			if (thisMacroNumber == 3) {
+				if (proc.macroParams.macro3cc->getUserValue() > 0.f) { return; }
+			}
+			learning = !learning;
+			if (learning) {
+				proc.macroParams.learning->setUserValue(static_cast<float>(thisMacroNumber));
+				setText("Learning", dontSendNotification);
+			}
+			else {
+				proc.macroParams.learning->setValue(0.0f);
+				setText("Learn", dontSendNotification);
+			}
+		}
+
+		void setMacroNumber(int n)
+		{
+			thisMacroNumber = n;
+		}
+
+		void setCCString(const juce::String& s)
+		{
+			currentAssignment = s;
+			setText(s, dontSendNotification);
+		}
+
+		void setLearning(bool shouldLearn) {
+			learning = shouldLearn;
+		}
+
+		class MIDILearnLNF : public APLNF
+		{
+		public:
+			MIDILearnLNF()
+			{
+			}
+
+			void drawLabel(juce::Graphics& g, juce::Label& label) override
+			{
+				auto rc = label.getLocalBounds();
+				g.setColour(juce::Colours::white);
+				g.setFont(14.f);
+				g.drawText(label.getText(), rc, juce::Justification::centred);
+			}
+
+		} midilearnLNF;
+
+		juce::String currentAssignment;
+		APAudioProcessor& proc;
+		bool learning{ false };
+		int mididCC{ -1 }, thisMacroNumber{ 0 };
+	}; // MIDILearnButton
 
 	APAudioProcessor& proc;
 	MIDILearnButton midiLearnButton1{ proc }, midiLearnButton2{ proc }, midiLearnButton3{ proc };
 	TextButton clear1{ "Clear", "Clear" }, clear2{ "Clear", "Clear" }, clear3{ "Clear", "Clear" };
-};
+}; // MacrosBox
 
 //==============================================================================
 
@@ -1511,80 +1676,7 @@ public:
 
 //==============================================================================
 
-class MIDILearnButton : public juce::Label
-{
-public:
-	MIDILearnButton(APAudioProcessor& p) : proc(p) {
-		setEditable(false, false, false);
-		setJustificationType(Justification::left);
-		setText("Learn", dontSendNotification);
-		setLookAndFeel(&midilearnLNF);
-	}
 
-	~MIDILearnButton() override
-	{
-		setLookAndFeel(nullptr);
-	}
-
-	void mouseDown(const juce::MouseEvent& /*ev*/) override
-	{
-		if (thisMacroNumber == 1) {
-			if (proc.macroParams.macro1cc->getUserValue() > 0.f) { return; }
-		}
-		if (thisMacroNumber == 2) {
-			if (proc.macroParams.macro2cc->getUserValue() > 0.f) { return; }
-		}
-		if (thisMacroNumber == 3) {
-			if (proc.macroParams.macro3cc->getUserValue() > 0.f) { return; }
-		}
-		learning = !learning;
-		if (learning) {
-			proc.macroParams.learning->setUserValue(static_cast<float>(thisMacroNumber));
-			setText("Learning", dontSendNotification);
-		}
-		else {
-			proc.macroParams.learning->setValue(0.0f);
-			setText("Learn", dontSendNotification);
-		}
-	}
-
-	void setMacroNumber(int n)
-	{
-		thisMacroNumber = n;
-	}
-
-	void setCCString(const juce::String& s)
-	{
-		currentAssignment = s;
-		setText(s, dontSendNotification);
-	}
-
-	void setLearning(bool shouldLearn) {
-		learning = shouldLearn;
-	}
-
-	class MIDILearnLNF : public APLNF
-	{
-	public:
-		MIDILearnLNF()
-		{
-		}
-
-		void drawLabel(juce::Graphics& g, juce::Label& label) override
-		{
-			auto rc = label.getLocalBounds();
-			g.setColour(juce::Colours::white);
-			g.setFont(20.f);
-			g.drawText(label.getText(), rc, juce::Justification::centred);
-		}
-
-	} midilearnLNF;
-
-	juce::String currentAssignment;
-	APAudioProcessor& proc;
-	bool learning{ false };
-	int mididCC{ -1 }, thisMacroNumber{ 0 };
-};
 
 //==============================================================================
 
