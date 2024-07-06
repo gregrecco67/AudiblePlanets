@@ -126,7 +126,7 @@ void APAudioProcessorEditor::resized()
 	levelKnob.setBounds(1095, 0, 32, 40);
 	
 	meter.setBounds(1130, 5, 15, 30);
-	usage.setBounds(45, 12, 80, 16);
+	usage.setBounds(45, 12, 95, 20);
 	scaleName.setBounds(165, 12, 200, 16);
 	learningLabel.setBounds(834, 12, 184, 16);
 

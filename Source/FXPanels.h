@@ -11,7 +11,7 @@
  * All source for Audible Planets is available at
  * https://github.com/gregrecco67/AudiblePlanets
  */
-
+#pragma once
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "APModAdditions.h"

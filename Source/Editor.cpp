@@ -26,6 +26,7 @@ Editor::Editor(APAudioProcessor& proc_)
 	addAndMakeVisible(modsrc);
 	addAndMakeVisible(global);
 	addAndMakeVisible(timbre);
+    addAndMakeVisible(matrix);
     // addAndMakeVisible(orbitViz);
     // addAndMakeVisible(orbit);
 	proc.globalParams.pitchbendRange->addListener(this);
@@ -35,6 +36,8 @@ Editor::Editor(APAudioProcessor& proc_)
 	// liveViz.setLookAndFeel(&aplnf);
     addAndMakeVisible(aux);
     addAndMakeVisible(samplerBox);
+    addAndMakeVisible(matrix);
+    addAndMakeVisible(mseg);
 }
 
 Editor::~Editor()
@@ -129,11 +132,13 @@ void Editor::resized()
     env.setBounds(282,0,336,163);
 	lfo.setBounds(0,163,280,163);
     filter.setBounds(282,163,112,163);
-    timbre.setBounds(396,163,224,162);
-    global.setBounds(396+56,326,168,163);
+    timbre.setBounds(396,163,222,162);
+    global.setBounds(396+56,326,166,163);
     aux.setBounds(620,0,280,163);
     samplerBox.setBounds(620,163,280,210+23+23);
     modsrc.setBounds(620,419,280,233);
+    matrix.setBounds(902,0,280,489);
+    mseg.setBounds(0, 326, 56*8, 323);
 
     // orbit.setBounds(1074,163,110,163);
 }
