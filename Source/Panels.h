@@ -145,6 +145,10 @@ public:
 		{
 			viz->setVisible(false);
 		}
+		select1.setToggleState(false, juce::dontSendNotification);
+		select2.setToggleState(false, juce::dontSendNotification);
+		select3.setToggleState(false, juce::dontSendNotification);
+		select4.setToggleState(false, juce::dontSendNotification);
 		switch(osc) {
 		case 1:
 			currentOsc = 1;
@@ -159,6 +163,7 @@ public:
 			saw1->setVisible(true);
 			env1->setVisible(true);
 			fixed1->setVisible(true);
+			select1.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 2:
 			currentOsc = 2;
@@ -173,6 +178,7 @@ public:
 			saw2->setVisible(true);
 			env2->setVisible(true);
 			fixed2->setVisible(true);
+			select2.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 3:
 			currentOsc = 3;
@@ -187,6 +193,7 @@ public:
 			saw3->setVisible(true);
 			env3->setVisible(true);
 			fixed3->setVisible(true);
+			select3.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 4:
 			currentOsc = 4;
@@ -201,6 +208,7 @@ public:
 			saw4->setVisible(true);
 			env4->setVisible(true);
 			fixed4->setVisible(true);
+			select4.setToggleState(true, juce::dontSendNotification);
 			break;
 		}
 		paramChanged();
@@ -422,6 +430,10 @@ public:
 		{
 			viz->setVisible(false);
 		}
+		select1.setToggleState(false, juce::dontSendNotification);
+		select2.setToggleState(false, juce::dontSendNotification);
+		select3.setToggleState(false, juce::dontSendNotification);
+		select4.setToggleState(false, juce::dontSendNotification);
 		int choice;
 		switch (env) {
 		case 1:
@@ -437,6 +449,7 @@ public:
 			choice = proc.env1Params.syncrepeat->getUserValueInt();
 			beats1->setVisible(choice == 2);
 			rate1->setVisible(choice == 1);
+			select1.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 2:
 			currentEnv = 2;
@@ -451,6 +464,7 @@ public:
 			choice = proc.env2Params.syncrepeat->getUserValueInt();
 			beats2->setVisible(choice == 2);
 			rate2->setVisible(choice == 1);
+			select2.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 3:
 			currentEnv = 3;
@@ -465,6 +479,7 @@ public:
 			choice = proc.env3Params.syncrepeat->getUserValueInt();
 			beats3->setVisible(choice == 2);
 			rate3->setVisible(choice == 1);
+			select3.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 4:
 			currentEnv = 4;
@@ -479,6 +494,7 @@ public:
 			choice = proc.env4Params.syncrepeat->getUserValueInt();
 			beats4->setVisible(choice == 2);
 			rate4->setVisible(choice == 1);
+			select4.setToggleState(true, juce::dontSendNotification);
 			break;
 		}
 	}
@@ -702,6 +718,10 @@ public:
 		{
 			viz->setVisible(false);
 		}
+		select1.setToggleState(false, juce::dontSendNotification);
+		select2.setToggleState(false, juce::dontSendNotification);
+		select3.setToggleState(false, juce::dontSendNotification);
+		select4.setToggleState(false, juce::dontSendNotification);
 		bool choice;
 		switch (lfo) {
 		case 1:
@@ -717,6 +737,7 @@ public:
 			f1->setVisible(true);
 			dl1->setVisible(true);
 			l1->setVisible(true);
+			select1.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 2:
 			currentLFO = 2;
@@ -731,6 +752,7 @@ public:
 			f2->setVisible(true);
 			dl2->setVisible(true);
 			l2->setVisible(true);
+			select2.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 3:
 			currentLFO = 3;
@@ -745,6 +767,7 @@ public:
 			f3->setVisible(true);
 			dl3->setVisible(true);
 			l3->setVisible(true);
+			select3.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 4:
 			currentLFO = 4;
@@ -759,6 +782,7 @@ public:
 			f4->setVisible(true);
 			dl4->setVisible(true);
 			l4->setVisible(true);
+			select4.setToggleState(true, juce::dontSendNotification);
 			break;
 		}
 		paramChanged();
@@ -1298,6 +1322,10 @@ public:
 		{
 			viz->setVisible(false);
 		}
+		select1.setToggleState(false, juce::dontSendNotification);
+		select2.setToggleState(false, juce::dontSendNotification);
+		select3.setToggleState(false, juce::dontSendNotification);
+		select4.setToggleState(false, juce::dontSendNotification);
 		switch(selected) {
 		case 1:
 			currentMSEG = 1;
@@ -1312,6 +1340,7 @@ public:
 			x1->setVisible(true);
 			y1->setVisible(true);
 			msegComponent1.setVisible(true);
+			select1.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 2:
 			currentMSEG = 2;
@@ -1326,6 +1355,7 @@ public:
 			x2->setVisible(true);
 			y2->setVisible(true);
 			msegComponent2.setVisible(true);
+			select2.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 3:
 			currentMSEG = 3;
@@ -1340,6 +1370,7 @@ public:
 			x3->setVisible(true);
 			y3->setVisible(true);
 			msegComponent3.setVisible(true);
+			select3.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 4:
 			currentMSEG = 4;
@@ -1354,6 +1385,7 @@ public:
 			x4->setVisible(true);
 			y4->setVisible(true);
 			msegComponent4.setVisible(true);
+			select4.setToggleState(true, juce::dontSendNotification);
 			break;
 		}
 		paramChanged();
@@ -1658,6 +1690,10 @@ public:
 		level->setDisplayName("Main");
 		aux->setDisplayName("Aux");
 		sampler->setDisplayName("Sampler");
+		proc.auxParams.enable->addListener(this);
+		proc.samplerParams.enable->addListener(this);
+		valueUpdated(proc.auxParams.enable);
+		valueUpdated(proc.samplerParams.enable);
 	}
 
 	void resized() override {
@@ -1666,6 +1702,15 @@ public:
 		aux->setBounds(80, 43, 80, 100);
 		sampler->setBounds(160, 43, 80, 100);
 		levelMeter.setBounds(280-38, 43, 30, 100);
+	}
+
+	void valueUpdated(gin::Parameter* p) override {
+		if (p == proc.auxParams.enable) {
+			aux->setEnabled(proc.auxParams.enable->isOn());
+		}
+		if (p == proc.samplerParams.enable) {
+			sampler->setEnabled(proc.samplerParams.enable->isOn());
+		}
 	}
 
 	APAudioProcessor& proc;
