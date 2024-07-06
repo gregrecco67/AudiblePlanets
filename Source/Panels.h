@@ -905,28 +905,6 @@ public:
     APAudioProcessor& proc;
 };
 
-//==============================================================================
-class OrbitBox : public gin::ParamBox 
-{
-public:
-	OrbitBox(const juce::String& name, APAudioProcessor& proc_)
-		: gin::ParamBox(name), proc(proc_)
-	{
-		setName("orbit");
-
-		addControl(new APKnob(proc.orbitParams.speed), 0, 0);
-		addControl(new APKnob(proc.orbitParams.scale), 1, 0);
-		addControl(algo = new gin::Select(proc.timbreParams.algo));
-	}
-
-    void resized() override {
-        gin::ParamBox::resized();
-        algo->setBounds(0, 93, 112, 70);
-    }
-    
-    gin::ParamComponent::Ptr algo = nullptr;
-	APAudioProcessor& proc;
-};
 
 //==============================================================================
 
@@ -1718,72 +1696,3 @@ public:
 	// gin::ParamComponent::Ptr level, aux, sampler;
 	gin::LevelMeter levelMeter{ proc.levelTracker };
 };
-
-//==============================================================================
-
-
-
-//==============================================================================
-
-// just a model for MacrosBox, toss out after:
-
-//class MacrosMatrixBox : public gin::ParamBox
-//{
-//public:
-//	MacrosMatrixBox(APAudioProcessor& proc_)
-//		: gin::ParamBox(name), proc(proc_)
-//	{
-//		addAndMakeVisible(midiLearnButton);
-//		midiLearnButton.setMacroNumber(macroNumber);
-//		macroCC->addListener(this);
-//		clearButton.onClick = [this]() { cancelAssignment(); };
-//		addChildComponent(clearButton);
-//		valueUpdated(macroCC);
-//	}
-//
-//	~MacrosMatrixBox() override
-//	{
-//		macroCC->removeListener(this);
-//	}
-//
-//	void valueUpdated(gin::Parameter* p) override {
-//		auto ccValue = macroCC->getUserValueInt();
-//		if (ccValue >= 0) {
-//			midiLearnButton.setCCString("CC " + macroCC->getUserValueText());
-//			clearButton.setVisible(true);
-//		}
-//		else {
-//			midiLearnButton.setCCString("Learn");
-//			midiLearnButton.setLearning(false);
-//			clearButton.setVisible(false);
-//		}
-//	}
-//
-//	void resized() override {
-//		ParamBox::resized();
-//		knob->setBounds(0, 23, 84, 105);
-//		midiLearnButton.setBounds(0, 128, 84, 55);
-//		clearButton.setBounds(0, 183, 84, 25);
-//		paramSelector.setBounds(5, 0, 55, 23);
-//		clearAllButton.setBounds(getWidth() - 55, 0, 55, 25);
-//	}
-//
-//	void cancelAssignment() {
-//		macroCC->setUserValue(-1.f);
-//		midiLearnButton.setCCString("Learn");
-//		midiLearnButton.setLearning(false);
-//		clearButton.setVisible(false);
-//	}
-//
-//	void disableLearning() {
-//		midiLearnButton.setLearning(false);
-//		midiLearnButton.setCCString("Learn");
-//	}
-//
-//
-//	APAudioProcessor& proc;
-//	//gin::ModSrcId macroSrc;
-//	//gin::Parameter::Ptr macroCC;
-//	MIDILearnButton midiLearnButton{ proc };
-//	TextButton clearButton{ "Clear", "Clear" };
-//};

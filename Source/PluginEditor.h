@@ -40,16 +40,13 @@ public:
 private:
     APAudioProcessor& proc;
 
-    
     gin::SynthesiserUsage usage { proc.synth };
-	//gin::LevelMeter meter { proc.levelTracker };
     
     juce::TabbedComponent tabbed{juce::TabbedButtonBar::TabsAtBottom };
     juce::Component tab1, tab2;
 
     Editor editor { proc };
 	FXEditor fxEditor{ proc };
-	//APKnob levelKnob{ proc.globalParams.level }, auxKnob{ proc.auxParams.volume }, samplerKnob{ proc.samplerParams.volume };
 
 	Label scaleName, learningLabel;
 
