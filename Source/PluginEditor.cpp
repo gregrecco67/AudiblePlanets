@@ -20,7 +20,6 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     : ProcessorEditor(p), proc(p)
 {
 	setName("Editor");
-	addAndMakeVisible(meter);
 	tabbed.setName("tabbed");
     addAndMakeVisible(tabbed);
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
@@ -33,11 +32,6 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     addAndMakeVisible(usage);
 	addAndMakeVisible(scaleName);
 	addAndMakeVisible(learningLabel);
-	addAndMakeVisible(auxKnob);
-	auxKnob.setDisplayName("Aux");
-	addAndMakeVisible(samplerKnob);
-	samplerKnob.setDisplayName("Sampler");
-	addAndMakeVisible(levelKnob);
 
 	scaleName.setFont(juce::Font(12.0f, juce::Font::plain));
 	scaleName.setColour(juce::Label::textColourId, juce::Colour(0xffE6E6E9));
@@ -121,11 +115,7 @@ void APAudioProcessorEditor::resized()
     editorArea.removeFromBottom(tabbed.getTabBarDepth());
     editor.setBounds(editorArea);
     patchBrowser.setBounds(rc);
-	auxKnob.setBounds(1031, 0, 32, 40);
-	samplerKnob.setBounds(1063, 0, 32, 40);
-	levelKnob.setBounds(1095, 0, 32, 40);
 	
-	meter.setBounds(1130, 5, 15, 30);
 	usage.setBounds(45, 12, 95, 20);
 	scaleName.setBounds(165, 12, 200, 16);
 	learningLabel.setBounds(834, 12, 184, 16);

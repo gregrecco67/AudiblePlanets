@@ -38,12 +38,12 @@ private:
 	
 	ENVBox env{ proc };
 
-    FilterBox filter                        { "flt", proc };
+    FilterBox filter                        { "  flt", proc };
 
 	LFOBox lfo{ proc };
-    ModBox modsrc                              { "mod", proc };
-    GlobalBox global                        { "global", proc };
-	TimbreBox timbre						{ "timbre", proc };
+    ModBox modsrc                              { "  mod", proc };
+    GlobalBox global                        { "  global", proc };
+	TimbreBox timbre						{ "  timbre", proc };
 	// OrbitBox orbit							{ "orbit", proc };
 
     // OrbitViz orbitViz;
@@ -54,8 +54,10 @@ private:
 	// juce::ToggleButton liveViz{ "Live" };
 	APLNF aplnf;
 
-    AuxBox aux{ "    Aux Oscillator", proc };
-	SamplerBox samplerBox{ "    Sampler", proc };
-    MainMatrixBox matrix{ "    Mod Matrix", proc };
+    AuxBox aux{ "      Aux Oscillator", proc };
+	SamplerBox samplerBox{ "      Sampler", proc };
+    MainMatrixBox matrix{ "  Mod Matrix", proc };
     MsegBox mseg{ proc };
+	MacrosBox macros{ proc };
+	VolumeBox volume{ proc };
 };

@@ -38,6 +38,8 @@ Editor::Editor(APAudioProcessor& proc_)
     addAndMakeVisible(samplerBox);
     addAndMakeVisible(matrix);
     addAndMakeVisible(mseg);
+	addAndMakeVisible(macros);
+	addAndMakeVisible(volume);
 }
 
 Editor::~Editor()
@@ -133,12 +135,14 @@ void Editor::resized()
 	lfo.setBounds(0,163,280,163);
     filter.setBounds(282,163,112,163);
     timbre.setBounds(396,163,222,162);
-    global.setBounds(396+56,326,166,163);
+    global.setBounds(396+54,326,168,163);
     aux.setBounds(620,0,280,163);
     samplerBox.setBounds(620,163,280,210+23+23);
     modsrc.setBounds(620,419,280,233);
     matrix.setBounds(902,0,280,489);
     mseg.setBounds(0, 326, 56*8, 323);
+	macros.setBounds(396+54, 491, 168, 163);
+	volume.setBounds(902, 491, 280, 163);
 
     // orbit.setBounds(1074,163,110,163);
 }

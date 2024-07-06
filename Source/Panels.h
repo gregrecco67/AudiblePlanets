@@ -26,7 +26,7 @@ class OscillatorBox : public gin::ParamBox
 {
 public:
     OscillatorBox(APAudioProcessor& proc_)
-        : gin::ParamBox("OSC"), proc(proc_)
+        : gin::ParamBox("  OSC"), proc(proc_)
     {
         addControl(c1 = new APKnob(proc.osc1Params.coarse), 0, 0); // coarse
 		addControl(c2 = new APKnob(proc.osc2Params.coarse), 0, 0);
@@ -339,7 +339,7 @@ class ENVBox : public gin::ParamBox
 {
 public:
     ENVBox(APAudioProcessor& proc_)
-        : gin::ParamBox("ENV"), proc(proc_)
+        : gin::ParamBox("  ENV"), proc(proc_)
     {
 		// in reverse order
 		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv4, true));
@@ -545,7 +545,7 @@ public:
         : gin::ParamBox(name), proc(proc_)
     {
         setName("flt");
-		setTitle("filter");
+		setTitle("  filter");
 
         auto& flt = proc.filterParams;
 
@@ -573,13 +573,14 @@ class LFOBox : public gin::ParamBox
 {
 public:
     LFOBox(APAudioProcessor& proc_)
-        : gin::ParamBox("LFO"), proc(proc_)
+        : gin::ParamBox("  LFO"), proc(proc_)
     {
         setName("lfo");
-
-		// switch to mini menus to enable learning: "LFO1 Mono, LFO1 Poly," etc.
-        // addModSource(new gin::ModulationSourceButton(proc.modMatrix, monoID, false));
-        // addModSource(new gin::ModulationSourceButton(proc.modMatrix, modsrcID, true));
+		
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO4, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO3, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO2, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, true));
 
         addControl(r1 = new APKnob(proc.lfo1Params.rate), 0, 0);
 		addControl(r2 = new APKnob(proc.lfo2Params.rate), 0, 0);
@@ -839,7 +840,7 @@ public:
         : gin::ParamBox(name), proc(proc_)
     {
         setName("mod");
-        setTitle("mod sources");
+        setTitle("  mod sources");
         addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 3);
         modlist->setRowHeight(20);
     }
@@ -1133,7 +1134,7 @@ class MsegBox : public gin::ParamBox
 {
 public:
 	MsegBox(APAudioProcessor& proc_)
-		: gin::ParamBox("MSEG"), proc(proc_), msegComponent1(proc.mseg1Data), msegComponent2(proc.mseg2Data),
+		: gin::ParamBox("  MSEG"), proc(proc_), msegComponent1(proc.mseg1Data), msegComponent2(proc.mseg2Data),
 		msegComponent3(proc.mseg3Data), msegComponent4(proc.mseg4Data)
 	{
 		setName("MSEG");
@@ -1161,6 +1162,11 @@ public:
 			proc.mseg4Params.xgrid, proc.mseg4Params.ygrid, proc.mseg4Params.loop);
 		msegComponent4.setEditable(true);
 		msegComponent4.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(proc.mseg4Params.drawmode->getUserValue()));
+
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG4, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG3, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG2, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG1, true));
 
 		addControl(r1 = new APKnob(proc.mseg1Params.rate), 0, 0);
 		addControl(r2 = new APKnob(proc.mseg2Params.rate), 0, 0);
@@ -1236,6 +1242,10 @@ public:
 		addAndMakeVisible(select2);
 		addAndMakeVisible(select3);
 		addAndMakeVisible(select4);
+		addAndMakeVisible(learn1);
+		addAndMakeVisible(learn2);
+		addAndMakeVisible(learn3);
+		addAndMakeVisible(learn4);
 
 		select1.onClick = [this]() {show(1);};
 		select2.onClick = [this]() {show(2);};
@@ -1407,57 +1417,6 @@ public:
 
 	}
 
-	void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) {
-	//	float xgrid = msegParams.xgrid->getUserValue();
-	//	float ygrid = msegParams.ygrid->getUserValue();
-	//	if (event.getPosition().y < 93) return;
-	//	if (!juce::ModifierKeys::currentModifiers.isAnyModifierKeyDown()) {
-	//		if (wheel.deltaY > 0) {
-	//			if (!wheel.isReversed)
-	//			{
-	//				msegParams.xgrid->setUserValue(xgrid + 1.f);
-	//			}
-	//			else
-	//			{
-	//				msegParams.xgrid->setUserValue(xgrid - 1.f);
-	//			}
-	//		}
-	//		if (wheel.deltaY <= 0) {
-	//			if (!wheel.isReversed)
-	//			{
-	//				msegParams.xgrid->setUserValue(xgrid - 1.f);
-	//			}
-	//			else
-	//			{
-	//				msegParams.xgrid->setUserValue(xgrid + 1.f);
-	//			}
-	//		}
-	//	}
-	//	else {
-	//		if (wheel.deltaY > 0) {
-	//			if (!wheel.isReversed)
-	//			{
-	//				msegParams.ygrid->setUserValue(ygrid + 1.f);
-	//			}
-	//			else
-	//			{
-	//				msegParams.ygrid->setUserValue(ygrid - 1.f);
-	//			}
-	//		}
-	//		if (wheel.deltaY <= 0) {
-	//			if (!wheel.isReversed)
-	//			{
-	//				msegParams.ygrid->setUserValue(ygrid - 1.f);
-	//			}
-	//			else
-	//			{
-	//				msegParams.ygrid->setUserValue(ygrid + 1.f);
-	//			}
-	//		}
-	//	}
-	//	repaint();
-	}
-
 	void resized() override {
 		gin::ParamBox::resized();
 		msegComponent1.setBounds(0, 93, getWidth(), getHeight() - 93);
@@ -1490,4 +1449,204 @@ public:
 	gin::MSEGComponent msegComponent1, msegComponent2, msegComponent3, msegComponent4;
 	int currentMSEG{ 1 };
 	TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
+	TextButton learn1{ "learn" }, learn2{ "learn" }, learn3{ "learn" }, learn4{ "learn" };
 };
+
+//==============================================================================
+
+class MacrosBox : public gin::ParamBox
+{
+	public:
+	MacrosBox(APAudioProcessor& proc_)
+		: gin::ParamBox("  macros"), proc(proc_)
+	{
+		setName("macros");
+
+		addControl(new APKnob(proc.macroParams.macro1), 0, 0);
+		addControl(new APKnob(proc.macroParams.macro2), 1, 0);
+		addControl(new APKnob(proc.macroParams.macro3), 2, 0);
+
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc3, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc2, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc1, true));
+	}
+
+	APAudioProcessor& proc;
+	MIDILearnButton midiLearnButton1{ proc }, midiLearnButton2{ proc }, midiLearnButton3{ proc };
+	TextButton clear1{ "Clear", "Clear" }, clear2{ "Clear", "Clear" }, clear3{ "Clear", "Clear" };
+};
+
+//==============================================================================
+
+class VolumeBox : public gin::ParamBox
+{
+public:
+	VolumeBox(APAudioProcessor& proc_)
+		: gin::ParamBox("  volume"), proc(proc_)
+	{
+		setName("  volume");
+
+		addControl(level = new APKnob(proc.globalParams.level));
+		addControl(aux = new APKnob(proc.auxParams.volume));
+		addControl(sampler = new APKnob(proc.samplerParams.volume));
+		addAndMakeVisible(levelMeter);
+		level->setDisplayName("Main");
+		aux->setDisplayName("Aux");
+		sampler->setDisplayName("Sampler");
+	}
+
+	void resized() override {
+		gin::ParamBox::resized();
+		level->setBounds(0, 43, 80, 100);
+		aux->setBounds(80, 43, 80, 100);
+		sampler->setBounds(160, 43, 80, 100);
+		levelMeter.setBounds(280-38, 43, 30, 100);
+	}
+
+	APAudioProcessor& proc;
+	APKnob* level, * aux, * sampler;
+	// gin::ParamComponent::Ptr level, aux, sampler;
+	gin::LevelMeter levelMeter{ proc.levelTracker };
+};
+
+//==============================================================================
+
+class MIDILearnButton : public juce::Label
+{
+public:
+	MIDILearnButton(APAudioProcessor& p) : proc(p) {
+		setEditable(false, false, false);
+		setJustificationType(Justification::left);
+		setText("Learn", dontSendNotification);
+		setLookAndFeel(&midilearnLNF);
+	}
+
+	~MIDILearnButton() override
+	{
+		setLookAndFeel(nullptr);
+	}
+
+	void mouseDown(const juce::MouseEvent& /*ev*/) override
+	{
+		if (thisMacroNumber == 1) {
+			if (proc.macroParams.macro1cc->getUserValue() > 0.f) { return; }
+		}
+		if (thisMacroNumber == 2) {
+			if (proc.macroParams.macro2cc->getUserValue() > 0.f) { return; }
+		}
+		if (thisMacroNumber == 3) {
+			if (proc.macroParams.macro3cc->getUserValue() > 0.f) { return; }
+		}
+		learning = !learning;
+		if (learning) {
+			proc.macroParams.learning->setUserValue(static_cast<float>(thisMacroNumber));
+			setText("Learning", dontSendNotification);
+		}
+		else {
+			proc.macroParams.learning->setValue(0.0f);
+			setText("Learn", dontSendNotification);
+		}
+	}
+
+	void setMacroNumber(int n)
+	{
+		thisMacroNumber = n;
+	}
+
+	void setCCString(const juce::String& s)
+	{
+		currentAssignment = s;
+		setText(s, dontSendNotification);
+	}
+
+	void setLearning(bool shouldLearn) {
+		learning = shouldLearn;
+	}
+
+	class MIDILearnLNF : public APLNF
+	{
+	public:
+		MIDILearnLNF()
+		{
+		}
+
+		void drawLabel(juce::Graphics& g, juce::Label& label) override
+		{
+			auto rc = label.getLocalBounds();
+			g.setColour(juce::Colours::white);
+			g.setFont(20.f);
+			g.drawText(label.getText(), rc, juce::Justification::centred);
+		}
+
+	} midilearnLNF;
+
+	juce::String currentAssignment;
+	APAudioProcessor& proc;
+	bool learning{ false };
+	int mididCC{ -1 }, thisMacroNumber{ 0 };
+};
+
+//==============================================================================
+
+// just a model for MacrosBox, toss out after:
+
+//class MacrosMatrixBox : public gin::ParamBox
+//{
+//public:
+//	MacrosMatrixBox(APAudioProcessor& proc_)
+//		: gin::ParamBox(name), proc(proc_)
+//	{
+//		addAndMakeVisible(midiLearnButton);
+//		midiLearnButton.setMacroNumber(macroNumber);
+//		macroCC->addListener(this);
+//		clearButton.onClick = [this]() { cancelAssignment(); };
+//		addChildComponent(clearButton);
+//		valueUpdated(macroCC);
+//	}
+//
+//	~MacrosMatrixBox() override
+//	{
+//		macroCC->removeListener(this);
+//	}
+//
+//	void valueUpdated(gin::Parameter* p) override {
+//		auto ccValue = macroCC->getUserValueInt();
+//		if (ccValue >= 0) {
+//			midiLearnButton.setCCString("CC " + macroCC->getUserValueText());
+//			clearButton.setVisible(true);
+//		}
+//		else {
+//			midiLearnButton.setCCString("Learn");
+//			midiLearnButton.setLearning(false);
+//			clearButton.setVisible(false);
+//		}
+//	}
+//
+//	void resized() override {
+//		ParamBox::resized();
+//		knob->setBounds(0, 23, 84, 105);
+//		midiLearnButton.setBounds(0, 128, 84, 55);
+//		clearButton.setBounds(0, 183, 84, 25);
+//		paramSelector.setBounds(5, 0, 55, 23);
+//		clearAllButton.setBounds(getWidth() - 55, 0, 55, 25);
+//	}
+//
+//	void cancelAssignment() {
+//		macroCC->setUserValue(-1.f);
+//		midiLearnButton.setCCString("Learn");
+//		midiLearnButton.setLearning(false);
+//		clearButton.setVisible(false);
+//	}
+//
+//	void disableLearning() {
+//		midiLearnButton.setLearning(false);
+//		midiLearnButton.setCCString("Learn");
+//	}
+//
+//
+//	APAudioProcessor& proc;
+//	//gin::ModSrcId macroSrc;
+//	//gin::Parameter::Ptr macroCC;
+//	MIDILearnButton midiLearnButton{ proc };
+//	TextButton clearButton{ "Clear", "Clear" };
+//};
