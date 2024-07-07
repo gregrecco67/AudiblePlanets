@@ -87,8 +87,6 @@ void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any ot
 	}
 }
 
-//void Editor::timerCallback() {}
-
 void Editor::resized()
 {
     auto area = getLocalBounds();
@@ -98,8 +96,6 @@ void Editor::resized()
 	}
 
     auto height = area.getHeight();
-    //orbitViz.setBounds(area.getRight() - (394), (int)(height * 0.5f), 394, (int)(height * 0.5f));
-	//liveViz.setBounds(area.getRight() - 389, (int)(height * 0.5f) + 5, 55, 25);
     
     osc.setBounds(0,0,280,163);
     env.setBounds(282,0,336,163);

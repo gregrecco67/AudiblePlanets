@@ -88,7 +88,6 @@ void APAudioProcessorEditor::timerCallback()
 
 APAudioProcessorEditor::~APAudioProcessorEditor()
 {
-	//tabbed.setLookAndFeel(nullptr);
 	setLookAndFeel(nullptr);
     stopTimer();
 }
@@ -97,8 +96,6 @@ APAudioProcessorEditor::~APAudioProcessorEditor()
 void APAudioProcessorEditor::paint(juce::Graphics& g)
 {
     ProcessorEditor::paint(g);
-	//titleBar.setShowBrowser(true);
-	//g.fillAll(findColour(gin::PluginLookAndFeel::blackColourId));
 }
 
 void APAudioProcessorEditor::resized()

@@ -659,16 +659,10 @@ void APAudioProcessor::MacroParams::setup(APAudioProcessor& p)
 
 
 void APAudioProcessor::updatePitchbend() {
- //   synth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
-	//auxSynth.setLegacyModePitchbendRange(globalParams.pitchbendRange->getUserValueInt());
 }
 
 bool APAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-//    if (layouts.getMainInputChannelSet()  == juce::AudioChannelSet::disabled()
-//     || layouts.getMainOutputChannelSet() == juce::AudioChannelSet::disabled())
-//        return false;
- 
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
     
@@ -685,6 +679,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     getOptions()
 ), synth(APSynth(*this)), auxSynth(AuxSynth(*this)), sampler(APSampler(*this))
 {
+	// poly params
     osc1Params.setup(*this, String{ "1" });
     osc2Params.setup(*this, String{ "2" });
     osc3Params.setup(*this, String{ "3" });
@@ -704,6 +699,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     filterParams.setup(*this);
 	auxParams.setup(*this);
 	samplerParams.setup(*this);
+
 	// mono params begin in the middle of this block
     globalParams.setup(*this); 
     orbitParams.setup(*this);
