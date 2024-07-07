@@ -20,32 +20,18 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     : ProcessorEditor(p), proc(p)
 {
 	setName("Editor");
-	addAndMakeVisible(meter);
 	tabbed.setName("tabbed");
     addAndMakeVisible(tabbed);
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
     tabbed.addTab("2. Effects", APColors::tabBkgd, &tab2, false, 1);
-    tabbed.addTab("3. Randomization",   APColors::tabBkgd, &tab3, false, 2);
-	tabbed.addTab("4. MSEG", APColors::tabBkgd, &tab4, false, 3);
-	tabbed.addTab("5. Macros/Aux", APColors::tabBkgd, &tab5, false, 4);
 
-    //tabbed.setLookAndFeel(&tabLNF);
-    
     tab1.addAndMakeVisible(editor);
 	tab2.addAndMakeVisible(fxEditor);
-	tab3.addAndMakeVisible(randEditor);
-	tab4.addAndMakeVisible(msegEditor);
-	tab5.addAndMakeVisible(macrosEditor);
     
     usage.panic.onClick = [this] { proc.presetLoaded = true; };
     addAndMakeVisible(usage);
 	addAndMakeVisible(scaleName);
 	addAndMakeVisible(learningLabel);
-	addAndMakeVisible(auxKnob);
-	auxKnob.setDisplayName("Aux");
-	addAndMakeVisible(samplerKnob);
-	samplerKnob.setDisplayName("Sampler");
-	addAndMakeVisible(levelKnob);
 
 	scaleName.setFont(juce::Font(12.0f, juce::Font::plain));
 	scaleName.setColour(juce::Label::textColourId, juce::Colour(0xffE6E6E9));
@@ -68,18 +54,6 @@ bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*origin
             tabbed.setCurrentTabIndex(1);
             return true;
         }
-        if (key.isKeyCode(51) || key.isKeyCode(juce::KeyPress::numberPad3)) {
-            tabbed.setCurrentTabIndex(2);
-            return true;
-        }
-		if (key.isKeyCode(52) || key.isKeyCode(juce::KeyPress::numberPad4)) {
-			tabbed.setCurrentTabIndex(3);
-			return true;
-		}
-		if (key.isKeyCode(53) || key.isKeyCode(juce::KeyPress::numberPad5)) {
-			tabbed.setCurrentTabIndex(4);
-			return true;
-		}
 		if (key.isKeyCode(juce::KeyPress::escapeKey) || key.isKeyCode(76)) { // "L" for learning
 			proc.modMatrix.disableLearn();
 			return !key.isKeyCode(76); // let the "L" through, since it's often a note
@@ -141,19 +115,12 @@ void APAudioProcessorEditor::resized()
     editorArea.removeFromBottom(tabbed.getTabBarDepth());
     editor.setBounds(editorArea);
     patchBrowser.setBounds(rc);
-	auxKnob.setBounds(1031, 0, 32, 40);
-	samplerKnob.setBounds(1063, 0, 32, 40);
-	levelKnob.setBounds(1095, 0, 32, 40);
 	
-	meter.setBounds(1130, 5, 15, 30);
-	usage.setBounds(45, 12, 80, 16);
+	usage.setBounds(45, 12, 95, 20);
 	scaleName.setBounds(165, 12, 200, 16);
 	learningLabel.setBounds(834, 12, 184, 16);
 
 	fxEditor.setBounds(editorArea);
-	randEditor.setBounds(editorArea);
-	msegEditor.setBounds(editorArea);
-	macrosEditor.setBounds(editorArea);
 }
 
 void APAudioProcessorEditor::addMenuItems(juce::PopupMenu& m)
