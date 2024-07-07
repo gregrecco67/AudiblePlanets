@@ -39,7 +39,7 @@ Enough of that. How to use this thing?
 
 The plugin is available in VST3, LV2 (both for Windows, Mac OS, Linux), and AU (for Mac OS only) formats, [here](https://github.com/gregrecco67/AudiblePlanets/releases). Since there is no installer, you will have to place the plugin file in the right place yourself. On Windows, place the VST3 file in /Program Files/Common Files/VST3. On Mac OS, place the VST3 file in ~/Library/Audio/Plug-Ins/VST3 and/or the AU file in ~/Library/Audio/Plug-Ins/Components. (You will need the AU component if you plan to run the synth in Logic or GarageBand.) On Linux, place the VST3 file wherever your DAW looks for it, which should include ~/.vst3 as a default. More info on default VST3 file locations [here](https://steinbergmedia.github.io/vst3_dev_portal/pages/Technical+Documentation/Locations+Format/Plugin+Locations.html) and LV2 locations [here](https://lv2plug.in/pages/filesystem-hierarchy-standard.html). On a Mac, you will need to take the additional step of authorizing the plugin to run, either from the Privacy & Security settings panel, or by typing `xattr -dr com.apple.quarantine <file location>` in a Terminal window.
 
-Or, you can build it from source:
+Or, you can build it from source (note, v1.1 is on ap2 branch for now, soon to be merged):
 ```
 git clone https://github.com/gregrecco67/AudiblePlanets.git
 cd AudiblePlanets
