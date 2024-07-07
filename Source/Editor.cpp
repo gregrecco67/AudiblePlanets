@@ -103,16 +103,21 @@ void Editor::resized()
     
     osc.setBounds(0,0,280,163);
     env.setBounds(282,0,336,163);
-	lfo.setBounds(0,163,280,163);
-    filter.setBounds(282,163,112,163);
-    timbre.setBounds(396,163,222,162);
-    global.setBounds(396+54,326,168,163);
-    aux.setBounds(620,0,280,163);
-    samplerBox.setBounds(620,163,280,210+23+23);
-    modsrc.setBounds(620,419,280,233);
+    
+	timbre.setBounds(0,163,222,162);
+    filter.setBounds(224,163,112,163);
+	lfo.setBounds(338,163,280,163);
+    
+	
+	global.setBounds(0,326,168,163);
+    mseg.setBounds(170, 326, 56*8, 323);
+	macros.setBounds(0, 491, 168, 163);
+
+    modsrc.setBounds(620,0,280,233);
+    aux.setBounds(620,233,280,163);
+    samplerBox.setBounds(620,396,280,210+23+23);
+
     matrix.setBounds(902,0,280,489);
-    mseg.setBounds(0, 326, 56*8, 323);
-	macros.setBounds(396+54, 491, 168, 163);
 	volume.setBounds(902, 491, 280, 163);
 
     // orbit.setBounds(1074,163,110,163);
