@@ -40,14 +40,22 @@ Editor::Editor(APAudioProcessor& proc_)
     addAndMakeVisible(mseg);
 	addAndMakeVisible(macros);
 	addAndMakeVisible(volume);
+	proc.samplerParams.key->addListener(this);
+	proc.samplerParams.start->addListener(this);
+	proc.samplerParams.end->addListener(this);
+	proc.samplerParams.loopstart->addListener(this);
+	proc.samplerParams.loopend->addListener(this);
 }
 
 Editor::~Editor()
 {
-	// stopTimer();
+	proc.samplerParams.key->removeListener(this);
+	proc.samplerParams.start->removeListener(this);
+	proc.samplerParams.end->removeListener(this);
+	proc.samplerParams.loopstart->removeListener(this);
+	proc.samplerParams.loopend->removeListener(this);
 	proc.globalParams.pitchbendRange->removeListener(this);
 	proc.globalParams.mpe->removeListener(this);
-	// liveViz.setLookAndFeel(nullptr);
 	setLookAndFeel(nullptr);
 }
 
@@ -57,6 +65,25 @@ void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any ot
 	if (param == proc.globalParams.pitchbendRange || param == proc.globalParams.mpe) {
 		proc.updatePitchbend();
 		return;
+	}
+	if (param == proc.samplerParams.key && proc.sampler.sound.data != nullptr) {
+		proc.sampler.updateBaseNote(proc.samplerParams.key->getUserValueInt());
+	}
+	else if (param == proc.samplerParams.start) {
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
+	}
+	else if (param == proc.samplerParams.end) {
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
+	}
+	else if (param == proc.samplerParams.loopstart) {
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
+	}
+	else if (param == proc.samplerParams.loopend) {
+		samplerBox.waveform.shouldRedraw = true;
+		samplerBox.waveform.repaint();
 	}
 }
 
