@@ -4,7 +4,6 @@ set_property (DIRECTORY APPEND PROPERTY LABELS ${PROJECT_NAME})
 
 
 add_subdirectory(JUCE)
-add_subdirectory("modules/melatonin_blur")
 
 foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_simd)
 	juce_add_module (
@@ -89,7 +88,6 @@ target_link_libraries (${PROJECT_NAME}
 						gin_dsp
 						gin_plugin
 						gin_simd
-                        melatonin_blur
 						juce::juce_cryptography
 						juce::juce_data_structures
 						juce::juce_events
