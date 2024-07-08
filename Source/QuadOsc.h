@@ -105,8 +105,8 @@ public:
 	inline mipp::Reg<float> sinesForPhases(mipp::Reg<float> x1) {
 		// normalize [0, ?] (on [0,1]) to [-pi, pi]
 		x1 = x1 - mipp::trunc(x1);
-		x1 *= 2.f * pi;
-		x1 -= pi;
+		x1 *= 2.f * static_cast<float>(pi);
+		x1 -= static_cast<float>(pi);
 		mipp::Reg<float> x2 = x1 * x1;
 		return mipp::mul(x1, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(a6, x2, a5), a4), a3), a2), a1));
 	}

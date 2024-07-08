@@ -95,8 +95,6 @@ void Editor::resized()
 		return;
 	}
 
-    auto height = area.getHeight();
-    
     osc.setBounds(0,0,280,163);
     env.setBounds(282,0,336,163);
     
@@ -115,6 +113,4 @@ void Editor::resized()
 
     matrix.setBounds(902,0,280,489);
 	volume.setBounds(902, 491, 280, 163);
-
-    // orbit.setBounds(1074,163,110,163);
 }

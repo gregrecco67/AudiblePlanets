@@ -35,40 +35,17 @@ public:
 		setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
 	}
 
-	//juce::Typeface::Ptr getTypefaceForFont(const juce::Font& font) override
-	//{
-	//	return juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize);
-	//}
 
-	TypefaceMetricsKind getDefaultMetricsKind() const { return TypefaceMetricsKind::legacy; }
+	TypefaceMetricsKind getDefaultMetricsKind() const override { return TypefaceMetricsKind::legacy; }
 	
 	juce::Font getLabelFont(juce::Label& label) override
 	{
         return label.getFont().withHeight(label.getHeight() * 0.7f);
  	}
 
-//	juce::Font getTextButtonFont(juce::TextButton& button, int height) override
-//	{
-//		return regularFont.withHeight(12);
-//	}
-// //
-//	juce::Font getSliderPopupFont(Slider&) override
-//	{
-//		return regularFont.withHeight(12);
-//	}
-//
-//	juce::Font getComboBoxFont(ComboBox&) override
-//	{
-//		return regularFont.withHeight(12);
-//	}
-//
-//	juce::Font getPopupMenuFont() override
-//	{
-//		return regularFont.withHeight(12);
-//	}
 
 	void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-		const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider)
+		const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider) override
 	{
 		float rotaryStartAngle = rotaryStartAngleIn;
 		const float radius = juce::jmin(width / 2, height / 2) - 2.0f;

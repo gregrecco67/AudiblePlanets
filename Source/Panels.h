@@ -1085,8 +1085,8 @@ public:
         setFileName();
 	}
 
+    APAudioProcessor& proc;
 	Waveform waveform;
-	APAudioProcessor& proc;
 	TextButton loadButton{ "Load" };
 	std::unique_ptr<juce::FileChooser> chooser = std::make_unique<juce::FileChooser>("Select file",
 		juce::File{}, "*.wav,*.aif,*.mp3,*.aif,*.ogg,*.flac");

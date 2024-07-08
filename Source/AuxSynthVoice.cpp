@@ -280,6 +280,8 @@ void AuxSynthVoice::updateParams(int blockSize)
 	case 5:
 		wave = gin::Wave::whiteNoise;
 		break;
+    default:
+        wave = gin::Wave::sine;
 	}
 
 	oscParams.wave = wave;

@@ -976,13 +976,6 @@ public:
         name.setBounds (rc);
         value.setBounds (rc);
         knob.setBounds (r.reduced (2));
-		auto height = value.getHeight();
-
-
-        
-        //value.setFont(height*0.8f);
-        //name.setFont(height*0.8f);
-
 
         modDepthSlider.setBounds (knob.getBounds().removeFromTop (7).removeFromRight (7).reduced (-3));
     }

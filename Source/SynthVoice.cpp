@@ -416,8 +416,8 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 		sine4L = minimaxSin(atanAngle4L);
 		sine4R = minimaxSin(atanAngle4R);
 
-		auto atan4LGtZero = atanAngle4L > 0.f;
-		auto atan4RGtZero = atanAngle4R > 0.f;
+		//auto atan4LGtZero = atanAngle4L > 0.f;
+		//auto atan4RGtZero = atanAngle4R > 0.f;
 		square4L = mipp::blend<float>(1.0f, -1.0f, atanAngle4L > 0.f);
 		square4R = mipp::blend<float>(1.0f, -1.0f, atanAngle4R > 0.f);
 		saw4L = (atanAngle4L * (float)inv_pi) * 2.0f - 1.0f;

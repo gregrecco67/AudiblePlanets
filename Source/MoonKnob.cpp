@@ -12,8 +12,6 @@
  * https://github.com/gregrecco67/AudiblePlanets
  */
 
-#pragma once
-
 #include "MoonKnob.h"
 //==============================================================================
 MoonKnob::MoonKnob(gin::Parameter* p, bool fromCentre)
@@ -40,8 +38,6 @@ MoonKnob::MoonKnob(gin::Parameter* p, bool fromCentre)
 
 	name.setText(parameter->getShortName(), juce::dontSendNotification);
 	name.setJustificationType(juce::Justification::centred);
-	//name.setFont(regularFont);
-	//value.setFont(regularFont);
 
 #if JUCE_IOS
 	knob.setMouseDragSensitivity(500);

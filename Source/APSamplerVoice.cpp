@@ -40,7 +40,6 @@ void APSamplerVoice::noteStarted()
 
 	juce::ScopedValueSetter<bool> svs(disableSmoothing, true);
 
-	updateParams(0);
 	snapParams();
 
 	adsr.noteOn();
@@ -63,8 +62,6 @@ void APSamplerVoice::noteRetriggered()
 	{
 		noteSmoother.setValueUnsmoothed(curNote.initialNote / 127.0f);
 	}
-
-	updateParams(0);
 }
 
 void APSamplerVoice::noteStopped(bool allowTailOff)
@@ -166,6 +163,3 @@ void APSamplerVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int
 	}
 }
 
-void APSamplerVoice::updateParams(int blockSize)
-{
-}

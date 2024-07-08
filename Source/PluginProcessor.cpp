@@ -679,7 +679,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     getOptions()
 ), synth(APSynth(*this)), auxSynth(AuxSynth(*this)), sampler(APSampler(*this))
 {
-	// poly params
+	// poly params 
     osc1Params.setup(*this, String{ "1" });
     osc2Params.setup(*this, String{ "2" });
     osc3Params.setup(*this, String{ "3" });

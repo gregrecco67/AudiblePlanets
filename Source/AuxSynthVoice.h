@@ -57,13 +57,13 @@ private:
 
 	APAudioProcessor& proc;
 
-	// new
-	gin::LFO lfo1, lfo2, lfo3, lfo4;
+    gin::BLLTVoicedStereoOscillator osc;
+    gin::LFO lfo1, lfo2, lfo3, lfo4;
 	gin::MSEG mseg1, mseg2, mseg3, mseg4;
 	gin::MSEG::Parameters mseg1Params, mseg2Params, mseg3Params, mseg4Params;
-	// end new
+	
 
-	gin::BLLTVoicedStereoOscillator osc;
+	
 
 	gin::Filter filter;
 

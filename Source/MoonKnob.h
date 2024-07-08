@@ -12,7 +12,6 @@
  * https://github.com/gregrecco67/AudiblePlanets
  */
 
-
 #pragma once
 #include <JuceHeader.h>
 #include "MoonSlider.h"

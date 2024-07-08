@@ -54,8 +54,6 @@ public:
     void setSound(APSamplerSound* sound_) { sound = sound_; }
   
 private:
-    void updateParams(int blockSize);
-
     APAudioProcessor& proc;
 
     float currentMidiNote = -1;
