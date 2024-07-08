@@ -826,11 +826,6 @@ public:
         addAndMakeVisible (value);
         addAndMakeVisible (knob);
         addChildComponent (modDepthSlider);
-        //setLookAndFeel(&knobLNF);
-		//modDepthSlider.setLookAndFeel(&knobLNF);
-
-		//value.setFont(regularFont);
-		//name.setFont(regularFont);
         
         modDepthSlider.setRange (-1.0, 1.0, 0.001);
         modDepthSlider.setPopupDisplayEnabled (true, true, findParentComponentOfClass<juce::AudioProcessorEditor>());
@@ -899,7 +894,7 @@ public:
 			}
 		}
         modDepthSlider.onClick = [this] { showModMenu(); };
-        modDepthSlider.setMouseDragSensitivity (500);
+		modDepthSlider.setMouseDragSensitivity (500);
         modDepthSlider.onValueChange = [this]
         {
             if (auto mm = parameter->getModMatrix())
@@ -1160,13 +1155,14 @@ protected:
         repaint();
     }
     
-    
     void modMatrixChanged() override
     {
         if (auto mm = parameter->getModMatrix())
         {
             auto dst = gin::ModDstId (parameter->getModIndex());
-			for (auto src : mm->getModSources(parameter))
+			auto sources = mm->getModSources(parameter);
+			if (!sources.contains(currentModSrc)) { currentModSrc = gin::ModSrcId{ -1 }; }
+			for (auto src : sources)
 			{
 				if (currentModSrc == gin::ModSrcId{ -1 }) { currentModSrc = src; }
 			}
