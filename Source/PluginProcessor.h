@@ -337,7 +337,6 @@ public:
     juce::AudioPlayHead* playhead = nullptr;
     bool presetLoaded = false;
 	gin::Filter laneAFilter, laneBFilter;
-	//juce::dsp::IIR::Filter<float> dcFilter;
 	juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> dcFilter;
 	SmoothedValue<float, ValueSmoothingTypes::Multiplicative> laneAFilterCutoff, laneBFilterCutoff;
 	int fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4; // effect choices

@@ -20,7 +20,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     : ProcessorEditor(p), proc(p)
 {
 	setName("Editor");
-	tabbed.setName("tabbed");
+	//tabbed.setName("tabbed");
     addAndMakeVisible(tabbed);
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
     tabbed.addTab("2. Effects", APColors::tabBkgd, &tab2, false, 1);
