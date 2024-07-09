@@ -343,7 +343,6 @@ void APAudioProcessor::FilterParams::setup(APAudioProcessor& p)
 
     float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
 
-    enable           = p.addIntParam(id + "enable",  nm + " Enable",  "",      "", { 0.0, 1.0, 1.0f, 1.0 }, 1.0f, 0.0f);
     type             = p.addIntParam(id + "type",    nm + " Type",    "Type",  "", { 0.0, 7.0, 1.0f, 1.0 }, 0.0, 0.0f, filterTextFunction);
     keyTracking      = p.addExtParam(id + "key",     nm + " Key",     "Key",   "%", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
     frequency        = p.addExtParam(id + "freq",    nm + " Freq",    "Freq",  " Hz", { 0.0, maxFreq, 0.0f, 1.0 }, 95.0, 0.0f, freqTextFunction);
@@ -473,20 +472,12 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
     glideRate      = p.addExtParam("gRate",   "Glide Rate", "Rate",  " s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
     legato         = p.addIntParam("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
     level          = p.addExtParam("level",   "Level",      "",      " dB", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
-    voices         = p.addIntParam("voices",  "Voices",     "",      "",   { 2.0, 8.0, 1.0, 1.0 }, 8.0f, 0.0f);
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
     pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
     sidechainEnable = p.addIntParam("sidechain", "Sidechain", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 
     level->conversionFunction     = [](float in) { return juce::Decibels::decibelsToGain (in); };
     velSens->conversionFunction   = [](float in) { return in / 100.0f; };
-}
-
-//==============================================================================
-void APAudioProcessor::OrbitParams::setup(APAudioProcessor& p)
-{
-    speed = p.addIntParam("speed", "Speed", "", "", { 0.0, 0.4f, 0.0f, 1.0 }, 0.03f, 0.0f);
-    scale = p.addIntParam("scale", "Scale", "", "", { 1.0, 6.0, 0.0, 1.0 }, 1.0f, 0.0f);
 }
 
 
@@ -649,12 +640,10 @@ void APAudioProcessor::MacroParams::setup(APAudioProcessor& p)
     macro1 = p.addExtParam(name + "1", name + "1", name + "1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
     macro2 = p.addExtParam(name + "2", name + "2", name + "2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
     macro3 = p.addExtParam(name + "3", name + "3", name + "3", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
-    macro4 = p.addExtParam(name + "4", name + "4", name + "4", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
     learning = p.addIntParam("Learn", "Learn", "Learn", "", { 0.0, 4.0, 1.0, 1.0 }, 0.0f, 0.0f);
     macro1cc = p.addIntParam("Macro1CC", "Macro 1 CC", "CC", "", { -1.0, 127.0, 1.0, 1.0 }, -1.0f, 0.0f);
     macro2cc = p.addIntParam("Macro2CC", "Macro 2 CC", "CC", "", { -1.0, 127.0, 1.0, 1.0 }, -1.0f, 0.0f);
     macro3cc = p.addIntParam("Macro3CC", "Macro 3 CC", "CC", "", { -1.0, 127.0, 1.0, 1.0 }, -1.0f, 0.0f);
-    macro4cc = p.addIntParam("Macro4CC", "Macro 4 CC", "CC", "", { -1.0, 127.0, 1.0, 1.0 }, -1.0f, 0.0f);
 }
 
 
@@ -702,7 +691,6 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 
 	// mono params begin in the middle of this block
     globalParams.setup(*this); 
-    orbitParams.setup(*this);
 
     gainParams.setup(*this);
     waveshaperParams.setup(*this);
@@ -738,7 +726,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 
 	formatManager.registerBasicFormats();
 
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < numVoices; i++) {
 		sampler.addVoice(new APSamplerVoice(*this));
 	}
     
@@ -788,7 +776,6 @@ void APAudioProcessor::setupModMatrix()
     macroSrc1 = modMatrix.addMonoModSource("macro1", "Macro 1", false);
     macroSrc2 = modMatrix.addMonoModSource("macro2", "Macro 2", false);
     macroSrc3 = modMatrix.addMonoModSource("macro3", "Macro 3", false);
-    macroSrc4 = modMatrix.addMonoModSource("macro4", "Macro 4", false);
         
     auto firstMonoParam = globalParams.mono;
     bool polyParam = true;
@@ -979,14 +966,14 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     synth.setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
     synth.setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
     synth.setGlideRate(globalParams.glideRate->getProcValue());
-    synth.setNumVoices(int (globalParams.voices->getProcValue()));
+    synth.setNumVoices(numVoices);
 
 	auxSynth.setMono(globalParams.mono->isOn());
 	auxSynth.setLegato(globalParams.legato->isOn());
 	auxSynth.setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
 	auxSynth.setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
 	auxSynth.setGlideRate(globalParams.glideRate->getProcValue());
-	auxSynth.setNumVoices(int(globalParams.voices->getProcValue()));
+	auxSynth.setNumVoices(numVoices);
 	auxBuffer.clear();
 
     while (todo > 0)
@@ -1423,7 +1410,6 @@ void APAudioProcessor::updateParams(int newBlockSize)
     modMatrix.setMonoValue(macroSrc1, modMatrix.getValue(macroParams.macro1));
     modMatrix.setMonoValue(macroSrc2, modMatrix.getValue(macroParams.macro2));
     modMatrix.setMonoValue(macroSrc3, modMatrix.getValue(macroParams.macro3));
-    modMatrix.setMonoValue(macroSrc4, modMatrix.getValue(macroParams.macro4));
 
 
 	if (activeEffects.contains(1)) {

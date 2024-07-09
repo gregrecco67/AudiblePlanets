@@ -74,7 +74,7 @@ public:
     {
         FilterParams() = default;
 
-        gin::Parameter::Ptr enable, type, keyTracking, frequency, resonance;
+        gin::Parameter::Ptr type, keyTracking, frequency, resonance;
 
         void setup(APAudioProcessor& p);
 
@@ -129,23 +129,12 @@ public:
     {
         GlobalParams() = default;
 
-        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, voices, mpe, velSens, pitchbendRange, sidechainEnable, squash;
+        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, mpe, velSens, pitchbendRange, sidechainEnable, squash;
 
         void setup(APAudioProcessor& p);
 
         JUCE_DECLARE_NON_COPYABLE(GlobalParams)
     };
-
-	struct OrbitParams
-	{
-		OrbitParams() = default;
-
-		gin::Parameter::Ptr speed, scale;
-
-		void setup(APAudioProcessor& p);
-
-		JUCE_DECLARE_NON_COPYABLE(OrbitParams)
-	};
 
 	struct WaveshaperParams
 	{
@@ -289,7 +278,7 @@ public:
 		modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4,
         modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4,
 		modSrcModwheel, modPolyAT, modSrcMSEG1, modSrcMSEG2, modSrcMSEG3, modSrcMSEG4,
-		macroSrc1, macroSrc2, macroSrc3, macroSrc4;
+		macroSrc1, macroSrc2, macroSrc3;
 
     //==============================================================================
 
@@ -299,12 +288,12 @@ public:
     TimbreParams timbreParams;
     FilterParams filterParams;
     GlobalParams globalParams;
-	OrbitParams orbitParams;
 	GainParams gainParams;
 	WaveshaperParams waveshaperParams;
 	CompressorParams compressorParams;
 	StereoDelayParams stereoDelayParams;
 	ChorusParams chorusParams;
+
 	ReverbParams reverbParams;
 	MBFilterParams mbfilterParams;
 	RingModParams ringmodParams;
@@ -362,6 +351,8 @@ public:
     APSampler sampler;
 	juce::AudioFormatManager formatManager;
 	juce::AudioFormatReader* reader{ nullptr };
+
+	const int numVoices = 8;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)

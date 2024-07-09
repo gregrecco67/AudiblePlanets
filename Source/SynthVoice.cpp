@@ -535,8 +535,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	float ampKeyTrack = getValue(proc.globalParams.velSens);
 	synthBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack) * baseAmplitude);
 	
-	if (proc.filterParams.enable->isOn())
-		filter.process(synthBuffer);
+	filter.process(synthBuffer);
 
     bool voiceShouldStop = false;
 	switch(algo) {
@@ -706,55 +705,54 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	if (proc.filterParams.enable->isOn())
+
+	float n = getValue(proc.filterParams.frequency);
+	n += (currentlyPlayingNote.initialNote - 50) * getValue(proc.filterParams.keyTracking);
+
+	float f = gin::getMidiNoteInHertz(n);
+	float maxFreq = std::min(20000.0f, float(getSampleRate() / 2));
+	f = juce::jlimit(4.0f, maxFreq, f);
+
+	float q = gin::Q / (1.0f - (getValue(proc.filterParams.resonance) / 100.0f) * 0.99f);
+
+	switch (int(proc.filterParams.type->getProcValue()))
 	{
-		float n = getValue(proc.filterParams.frequency);
-		n += (currentlyPlayingNote.initialNote - 50) * getValue(proc.filterParams.keyTracking);
-
-		float f = gin::getMidiNoteInHertz(n);
-		float maxFreq = std::min(20000.0f, float(getSampleRate() / 2));
-		f = juce::jlimit(4.0f, maxFreq, f);
-
-		float q = gin::Q / (1.0f - (getValue(proc.filterParams.resonance) / 100.0f) * 0.99f);
-
-		switch(int(proc.filterParams.type->getProcValue()))
-		{
-		case 0:
-			filter.setType(gin::Filter::lowpass);
-			filter.setSlope(gin::Filter::db12);
-			break;
-		case 1:
-			filter.setType(gin::Filter::lowpass);
-			filter.setSlope(gin::Filter::db24);
-			break;
-		case 2:
-			filter.setType(gin::Filter::highpass);
-			filter.setSlope(gin::Filter::db12);
-			break;
-		case 3:
-			filter.setType(gin::Filter::highpass);
-			filter.setSlope(gin::Filter::db24);
-			break;
-		case 4:
-			filter.setType(gin::Filter::bandpass);
-			filter.setSlope(gin::Filter::db12);
-			break;
-		case 5:
-			filter.setType(gin::Filter::bandpass);
-			filter.setSlope(gin::Filter::db24);
-			break;
-		case 6:
-			filter.setType(gin::Filter::notch);
-			filter.setSlope(gin::Filter::db12);
-			break;
-		case 7:
-			filter.setType(gin::Filter::notch);
-			filter.setSlope(gin::Filter::db24);
-			break;
-		}
-
-		filter.setParams(f, q);
+	case 0:
+		filter.setType(gin::Filter::lowpass);
+		filter.setSlope(gin::Filter::db12);
+		break;
+	case 1:
+		filter.setType(gin::Filter::lowpass);
+		filter.setSlope(gin::Filter::db24);
+		break;
+	case 2:
+		filter.setType(gin::Filter::highpass);
+		filter.setSlope(gin::Filter::db12);
+		break;
+	case 3:
+		filter.setType(gin::Filter::highpass);
+		filter.setSlope(gin::Filter::db24);
+		break;
+	case 4:
+		filter.setType(gin::Filter::bandpass);
+		filter.setSlope(gin::Filter::db12);
+		break;
+	case 5:
+		filter.setType(gin::Filter::bandpass);
+		filter.setSlope(gin::Filter::db24);
+		break;
+	case 6:
+		filter.setType(gin::Filter::notch);
+		filter.setSlope(gin::Filter::db12);
+		break;
+	case 7:
+		filter.setType(gin::Filter::notch);
+		filter.setSlope(gin::Filter::db24);
+		break;
 	}
+
+	filter.setParams(f, q);
+	
 
 	gin::LFO::Parameters params;
 	float freq = 0;
