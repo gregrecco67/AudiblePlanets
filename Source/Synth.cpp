@@ -88,14 +88,15 @@ std::vector<float> APSynth::getMSEG4Phases() {
 void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
     MPESynthesiser::handleMidiEvent(m);
 
-	if (m.isNoteOn()) {
-		proc.newRand();
-	}
-
 	if (m.isSysEx()) {
-		MTS_ParseMIDIDataU(proc.client, m.getSysExData(), m.getSysExDataSize());
+        if (MTS_HasMaster(proc.client))
+            MTS_ParseMIDIDataU(proc.client, m.getSysExData(), m.getSysExDataSize());
 	}
 
+    if (m.isNoteOn()) {
+        proc.newRand();
+    }
+    
     if (m.isController()) {
 		if (m.getControllerNumber() == 1) {
 			proc.modMatrix.setMonoValue(proc.modSrcModwheel, float(m.getControllerValue()) / 127.0f);
