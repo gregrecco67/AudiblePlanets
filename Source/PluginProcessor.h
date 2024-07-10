@@ -360,7 +360,7 @@ public:
 
 	std::random_device rd;
 	std::mt19937 gen{ rd() };
-	std::uniform_real_distribution<> dist{ 0.f, 1.f };
+	std::uniform_real_distribution<> dist{ -1.f, 1.f };
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)
