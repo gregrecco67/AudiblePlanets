@@ -16,7 +16,7 @@ An expressive, quasi-Ptolemaic semi-modular synthesizer.
 ## Features
 
 - "Orbital Modulation" (OM) synthesis
-- Randomizable modulation matrix
+- Modulation matrix with monophonic and polyphonic modulation for most parameters
 - Built-in effects chains
 
 ## *Raison d'être*
