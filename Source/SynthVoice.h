@@ -19,6 +19,7 @@
 #include "Envelope.h"
 #include "libMTSClient.h"
 #include <numbers>
+#include <random>
 class APAudioProcessor;
 
 using namespace std::numbers;
@@ -154,5 +155,9 @@ private:
 
     friend class APSynth;
     juce::MPENote curNote;
+
+	std::random_device rd;
+	std::mt19937 gen{ rd() };
+	std::uniform_real_distribution<> dist{ 0.f, 1.f };
 	
 };

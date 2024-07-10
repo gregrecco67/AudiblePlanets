@@ -731,7 +731,9 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	}
     
     setupModMatrix();
-    init(); 
+    init();
+
+	modMatrix.setMonoValue(randSrcMono, 0.0f);
 }
 
 APAudioProcessor::~APAudioProcessor()
@@ -776,6 +778,9 @@ void APAudioProcessor::setupModMatrix()
     macroSrc1 = modMatrix.addMonoModSource("macro1", "Macro 1", false);
     macroSrc2 = modMatrix.addMonoModSource("macro2", "Macro 2", false);
     macroSrc3 = modMatrix.addMonoModSource("macro3", "Macro 3", false);
+
+	randSrcMono = modMatrix.addMonoModSource("randMono", "Random Mono", true);
+	randSrcPoly = modMatrix.addPolyModSource("randPoly", "Random Poly", true);
         
     auto firstMonoParam = globalParams.mono;
     bool polyParam = true;
@@ -1340,6 +1345,11 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
     auto AContext = juce::dsp::ProcessContextReplacing<float>(ABlock);
     dcFilter.process(AContext);
     limiter.process(AContext);
+}
+
+void APAudioProcessor::newRand()
+{
+	modMatrix.setMonoValue(randSrcMono, dist(gen));
 }
 
 void APAudioProcessor::loadSample(const juce::String& path)

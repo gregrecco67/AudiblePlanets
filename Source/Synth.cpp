@@ -88,6 +88,10 @@ std::vector<float> APSynth::getMSEG4Phases() {
 void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
     MPESynthesiser::handleMidiEvent(m);
 
+	if (m.isNoteOn()) {
+		proc.newRand();
+	}
+
 	if (m.isSysEx()) {
 		MTS_ParseMIDIDataU(proc.client, m.getSysExData(), m.getSysExDataSize());
 	}

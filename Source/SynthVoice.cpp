@@ -61,6 +61,8 @@ SynthVoice::SynthVoice(APAudioProcessor& p)
 void SynthVoice::noteStarted()
 {
     curNote = getCurrentlyPlayingNote();
+
+	proc.modMatrix.setPolyValue(*this, proc.randSrcPoly, dist(gen));
 	
 	if (MTS_ShouldFilterNote(proc.client, curNote.initialNote, curNote.midiChannel)) {
 		return;
