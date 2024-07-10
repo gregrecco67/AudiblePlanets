@@ -268,6 +268,8 @@ public:
 		JUCE_DECLARE_NON_COPYABLE(SamplerParams)
 	};
 
+
+
 	void newRand();
 
 	void loadSample(const juce::String& path);
