@@ -102,7 +102,7 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
 			proc.modMatrix.setMonoValue(proc.modSrcModwheel, float(m.getControllerValue()) / 127.0f);
 			return;
 		}
-		if (proc.macroParams.learning->getValue() > 0.f) {
+		if (proc.macroParams.learning->getUserValueInt() > 0) {
 			int n = proc.macroParams.learning->getUserValueInt();
 			int cc = m.getControllerNumber();
 			if (n == 1) {
@@ -114,9 +114,6 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
 			else if (n == 3) {
 				proc.macroParams.macro3cc->setUserValue(cc);
 			}
-			else if (n == 4) {
-				proc.macroParams.macro4cc->setUserValue(cc);
-			}
 			proc.macroParams.learning->setValue(0.f);
 		}
 		if (m.getControllerNumber() == proc.macroParams.macro1cc->getUserValueInt()) {
@@ -127,9 +124,6 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
 		}
 		if (m.getControllerNumber() == proc.macroParams.macro3cc->getUserValueInt()) {
 			proc.macroParams.macro3->setValue(m.getControllerValue()/127.0f);
-		}
-		if (m.getControllerNumber() == proc.macroParams.macro4cc->getUserValueInt()) {
-			proc.macroParams.macro4->setValue(m.getControllerValue()/127.0f);
 		}
     }
 	if (m.isPitchWheel()) {
