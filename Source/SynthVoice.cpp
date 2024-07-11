@@ -62,7 +62,8 @@ void SynthVoice::noteStarted()
 {
     curNote = getCurrentlyPlayingNote();
 
-	proc.modMatrix.setPolyValue(*this, proc.randSrcPoly, dist(gen));
+	proc.modMatrix.setPolyValue(*this, proc.randSrc1Poly, dist(gen));
+	proc.modMatrix.setPolyValue(*this, proc.randSrc2Poly, dist(gen));
 	
 	if (MTS_ShouldFilterNote(proc.client, curNote.initialNote, curNote.midiChannel)) {
 		return;
@@ -163,6 +164,8 @@ void SynthVoice::noteStopped(bool allowTailOff)
 	env2.noteOff();
 	env3.noteOff();
 	env4.noteOff();
+	curNote = getCurrentlyPlayingNote();
+	proc.modMatrix.setPolyValue(*this, proc.modSrcVelOff, curNote.noteOffVelocity.asUnsignedFloat());
     if (!allowTailOff) {
         clearCurrentNote();
         stopVoice();

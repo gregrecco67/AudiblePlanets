@@ -278,13 +278,13 @@ public:
 	gin::ProcessorOptions getOptions();
 
     //==============================================================================
-    gin::ModSrcId modSrcPressure, modSrcTimbre, modSrcMonoPitchbend, modSrcNote, modSrcVelocity,
+    gin::ModSrcId modSrcPressure, modSrcTimbre, modSrcMonoPitchbend, modSrcNote, modSrcVelocity, modSrcVelOff,
 		modSrcLFO1, modSrcLFO2, modSrcLFO3, modSrcLFO4,
 		modSrcMonoLFO1, modSrcMonoLFO2, modSrcMonoLFO3, modSrcMonoLFO4,
         modSrcEnv1, modSrcEnv2, modSrcEnv3, modSrcEnv4,
 		modSrcModwheel, modPolyAT, modSrcMSEG1, modSrcMSEG2, modSrcMSEG3, modSrcMSEG4,
 		macroSrc1, macroSrc2, macroSrc3,
-		randSrcMono, randSrcPoly;
+		randSrc1Mono, randSrc1Poly, randSrc2Mono, randSrc2Poly;
 
     //==============================================================================
 

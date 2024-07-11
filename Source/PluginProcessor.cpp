@@ -733,7 +733,8 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     setupModMatrix();
     init();
 
-	modMatrix.setMonoValue(randSrcMono, 0.0f);
+	modMatrix.setMonoValue(randSrc1Mono, 0.0f);
+	modMatrix.setMonoValue(randSrc2Mono, 0.0f);
 }
 
 APAudioProcessor::~APAudioProcessor()
@@ -754,6 +755,7 @@ void APAudioProcessor::setupModMatrix()
     
     modSrcNote      = modMatrix.addPolyModSource("note", "MIDI Note #", false);
     modSrcVelocity  = modMatrix.addPolyModSource("vel", "MIDI Velocity", false);
+	modSrcVelOff	= modMatrix.addPolyModSource("velOff", "MIDI Off Velocity", false);
 
     modSrcMonoLFO1 = modMatrix.addMonoModSource("mlfo1", "Mono LFO1", true);
     modSrcMonoLFO2 = modMatrix.addMonoModSource("mlfo2", "Mono LFO2", true);
@@ -779,8 +781,10 @@ void APAudioProcessor::setupModMatrix()
     macroSrc2 = modMatrix.addMonoModSource("macro2", "Macro 2", false);
     macroSrc3 = modMatrix.addMonoModSource("macro3", "Macro 3", false);
 
-	randSrcMono = modMatrix.addMonoModSource("randMono", "Random Mono", true);
-	randSrcPoly = modMatrix.addPolyModSource("randPoly", "Random Poly", true);
+	randSrc1Mono = modMatrix.addMonoModSource("rand1Mono", "Random 1 Mono", true);
+	randSrc2Mono = modMatrix.addMonoModSource("rand2Mono", "Random 2 Mono", true);
+	randSrc1Poly = modMatrix.addPolyModSource("rand1Poly", "Random 1 Poly", true);
+	randSrc2Poly = modMatrix.addPolyModSource("rand2Poly", "Random 2 Poly", true);
         
     auto firstMonoParam = globalParams.mono;
     bool polyParam = true;
@@ -1349,7 +1353,8 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 
 void APAudioProcessor::newRand()
 {
-	modMatrix.setMonoValue(randSrcMono, dist(gen));
+	modMatrix.setMonoValue(randSrc1Mono, dist(gen));
+	modMatrix.setMonoValue(randSrc2Mono, dist(gen));
 }
 
 void APAudioProcessor::loadSample(const juce::String& path)
