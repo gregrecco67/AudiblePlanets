@@ -41,16 +41,23 @@ The plugin is available in VST3, LV2 (both for Windows, Mac OS, Linux), and AU (
 
 Or, you can build it from source:
 ```
-git clone https://github.com/gregrecco67/AudiblePlanets.git
+git clone --recurse-submodules https://github.com/gregrecco67/AudiblePlanets.git
 cd AudiblePlanets
-git submodule update --init --recursive
 ```
-Then, if on Mac OS or [Linux](https://github.com/juce-framework/JUCE/blob/master/docs/Linux%20Dependencies.md) (using Ninja):
+Then, if on Mac OS:
+```
+cmake -B build -G Xcode .
+cd build
+open AudiblePlanets.xcodeproj
+```
+
+Or, on [Linux](https://github.com/juce-framework/JUCE/blob/master/docs/Linux%20Dependencies.md) (using Ninja):
 ```
 cmake -B ninja-build -DCMAKE_BUILD_TYPE=Release -G Ninja .
 cd ninja-build
 ninja
 ```
+
 On Windows, using Visual Studio, just open the folder and wait for it to parse the CMake file. The CMake project defaults to producing a standalone version of the plugin, too, but on Windows at least, the performance is poor. If you don't want it or any other particular format built, just remove the entry from the `FORMAT` line in `juce_add_plugin` in `CMakeLists.txt`. The project is configured to copy the plugin to the right place after building it.
 
 ## Installing Presets
