@@ -1404,7 +1404,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
         auto& lfo = this->monoLFOs[lfoparams->num-1];
         float freq = 0;
         if (lfoparams->sync->getProcValue() > 0.0f)
-            freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(modMatrix.getValue(lfoparams->beat))].toSeconds(playhead);
+            freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(lfoparams->beat->getProcValue())].toSeconds(playhead);
         else
             freq = modMatrix.getValue(lfoparams->rate);
 
