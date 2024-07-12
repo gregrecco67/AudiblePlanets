@@ -1353,8 +1353,8 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
 
 void APAudioProcessor::newRand()
 {
-	modMatrix.setMonoValue(randSrc1Mono, dist(gen));
-	modMatrix.setMonoValue(randSrc2Mono, dist(gen));
+	modMatrix.setMonoValue(randSrc1Mono, static_cast<float>(dist(gen)));
+	modMatrix.setMonoValue(randSrc2Mono, static_cast<float>(dist(gen)));
 }
 
 void APAudioProcessor::loadSample(const juce::String& path)

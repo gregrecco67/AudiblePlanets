@@ -62,8 +62,8 @@ void SynthVoice::noteStarted()
 {
     curNote = getCurrentlyPlayingNote();
 
-	proc.modMatrix.setPolyValue(*this, proc.randSrc1Poly, dist(gen));
-	proc.modMatrix.setPolyValue(*this, proc.randSrc2Poly, dist(gen));
+	proc.modMatrix.setPolyValue(*this, proc.randSrc1Poly, static_cast<float>(dist(gen)));
+	proc.modMatrix.setPolyValue(*this, proc.randSrc2Poly, static_cast<float>(dist(gen)));
 	
 	if (MTS_ShouldFilterNote(proc.client, curNote.initialNote, curNote.midiChannel)) {
 		return;

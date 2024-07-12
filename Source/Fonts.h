@@ -41,7 +41,6 @@ public:
 	juce::Font getLabelFont(juce::Label& label) override
 	{
         return juce::Font{FontOptions{}.withName("Lato").withHeight(label.getHeight() * 0.75f)};
-        //return label.getFont().withHeight(label.getHeight() * 0.7f);
  	}
 
 
