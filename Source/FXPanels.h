@@ -398,7 +398,7 @@ public:
 	{
 		setName("mtx");
 
-		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4.1);
+		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4);
 		addAndMakeVisible(clearAllButton);
 		clearAllButton.onClick = [this] { clearAll(); };
 	}

@@ -329,8 +329,8 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
     detune    = p.addExtParam(id + "detune",     nm + " Detune",      "Detune",    "", { 0.0, 0.5, 0.0f, 1.0 }, 0.0, 0.0f);
     spread    = p.addExtParam(id + "spread",     nm + " Spread",      "Spread",    "%", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
     pan       = p.addExtParam(id + "pan",        nm + " Pan",         "Pan",       "", { -1.0, 1.0, 0.0f, 1.0 }, 0.0, 0.0f);
-    saw       = p.addExtParam(id + "saw",        nm + " Saw",         "Saw",       "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
-    fixed     = p.addExtParam(id + "fixed",      nm + " Fixed",       "Fixed",     "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
+    saw       = p.addIntParam(id + "saw",        nm + " Saw",         "Saw",       "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
+    fixed     = p.addIntParam(id + "fixed",      nm + " Fixed",       "Fixed",     "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
     env       = p.addIntParam(id + "env",        nm + " Env",         "Env",       "", { 0.0, 3.0, 1.0f, 1.0 }, (float)(numStr.getIntValue() - 1), 0.0f, envSelectTextFunction);
     this->num = numStr.getIntValue();
 }
@@ -365,7 +365,7 @@ void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr)
     sync             = p.addIntParam(id + "sync",    nm + " Sync",    "Sync",   "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
     wave             = p.addIntParam(id + "wave",    nm + " Wave",    "Wave",   "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
     rate             = p.addExtParam(id + "rate",    nm + " Rate",    "Rate",   " Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
-    beat             = p.addExtParam(id + "beat",    nm + " Beat",    "Beat",   "", { 0.0, float (notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);						   
+    beat             = p.addIntParam(id + "beat",    nm + " Beat",    "Beat",   "", { 0.0, float (notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);						   
     depth            = p.addExtParam(id + "depth",   nm + " Depth",   "Depth",  "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
     phase            = p.addExtParam(id + "phase",   nm + " Phase",   "Phase",  "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
     offset           = p.addExtParam(id + "offset",  nm + " Offset",  "Offset", "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
@@ -414,7 +414,7 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
     drcurve = p.addExtParam(id + "drcurve", nm + " DRCurve", "DR Curve", "", { -1.0, 1.0, 0.0, 1.0 }, -1.0f, 0.0f);
     syncrepeat = p.addIntParam(id + "syncrepeat", nm + " SyncRepeat", "Repeat", "", { 0.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, syncrepeatTextFunction);
     time = p.addExtParam(id + "time", nm + " Time", "Time", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
-    duration = p.addExtParam(id + "beat", nm + " Beat", "Beat", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
+    duration = p.addIntParam(id + "beat", nm + " Beat", "Beat", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
 
     sustain->conversionFunction = [](float in) { return in / 100.0f; };
     this->num = numStr.getIntValue();
@@ -455,11 +455,11 @@ void APAudioProcessor::SamplerParams::setup(APAudioProcessor& p) {
 	volume = p.addExtParam("samplvolume", "Volume", "", "", { -40.0, 12.0, 0.0f, 1.0 }, -12.f, 0.0f,
                            decibelsTextFunction);
 	loop = p.addIntParam("samplloop", "Loop", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-	key = p.addExtParam("samplkey", "Key", "", "", { 0.0, 127.0, 1.0, 1.0 }, 60.0, 0.0f, midiNoteNameTextFunction);
-	start = p.addExtParam("samplstart", "Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-	end = p.addExtParam("samplend", "End", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
-	loopstart = p.addExtParam("samplloopstart", "Loop Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-	loopend = p.addExtParam("samplloopend", "Loop End", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f); 
+	key = p.addIntParam("samplkey", "Key", "", "", { 0.0, 127.0, 1.0, 1.0 }, 60.0, 0.0f, midiNoteNameTextFunction);
+	start = p.addIntParam("samplstart", "Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+	end = p.addIntParam("samplend", "End", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
+	loopstart = p.addIntParam("samplloopstart", "Loop Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
+	loopend = p.addIntParam("samplloopend", "Loop End", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
 }
 
 //==============================================================================

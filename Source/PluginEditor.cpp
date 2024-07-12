@@ -33,7 +33,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	addAndMakeVisible(scaleName);
 	addAndMakeVisible(learningLabel);
 
-	scaleName.setFont(juce::Font(12.0f, juce::Font::plain));
+    scaleName.setFont(FontOptions(12.0f));
 	scaleName.setColour(juce::Label::textColourId, juce::Colour(0xffE6E6E9));
 	scaleName.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
 	scaleName.setJustificationType(juce::Justification::centred);

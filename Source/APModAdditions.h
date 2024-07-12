@@ -1423,12 +1423,12 @@ public:
 	{
 		auto r = getLocalBounds().reduced(2);
 
-		auto height = r.getHeight() * 0.33333f; // -r.getWidth();
+		auto height = (int)(r.getHeight() * 0.33333f); // -r.getWidth();
 
 		auto nameRect = r.removeFromBottom(height);
 		auto valRect = r.removeFromTop(height);
-		valRect = valRect.withSizeKeepingCentre(valRect.getWidth(), height * 0.8f);
-		nameRect = nameRect.withSizeKeepingCentre(nameRect.getWidth(), height * 0.8f);
+		valRect = valRect.withSizeKeepingCentre(valRect.getWidth(), (int)(height * 0.8f));
+		nameRect = nameRect.withSizeKeepingCentre(nameRect.getWidth(), (int)(height * 0.8f));
 
 		name.setBounds(nameRect);
 		value.setBounds(valRect);

@@ -23,24 +23,25 @@ using std::numbers::pi;
 class APLNF : public gin::CopperLookAndFeel
 {
 public:
-	APLNF() {
-		setColour(juce::Slider::thumbColourId, juce::Colour(0xffCC8866));
-		setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0xffCC8866));
-		setColour(juce::Slider::trackColourId, juce::Colour(0xff797C84));
-		setColour(juce::BubbleComponent::backgroundColourId, juce::Colour(0xff16171A));
-		setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
-		setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
-		setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
-		setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffCC8866));
-		setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
-	}
-
-
-	TypefaceMetricsKind getDefaultMetricsKind() const override { return TypefaceMetricsKind::legacy; }
+    APLNF() {
+        setColour(juce::Slider::thumbColourId, juce::Colour(0xffCC8866));
+        setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0xffCC8866));
+        setColour(juce::Slider::trackColourId, juce::Colour(0xff797C84));
+        setColour(juce::BubbleComponent::backgroundColourId, juce::Colour(0xff16171A));
+        setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
+        setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
+        setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
+        setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffCC8866));
+        setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
+        
+    }
+    
+    juce::Typeface::Ptr fontAwesomeTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::latoregular_otf, BinaryData::latoregular_otfSize);
 	
 	juce::Font getLabelFont(juce::Label& label) override
 	{
-        return label.getFont().withHeight(label.getHeight() * 0.7f);
+        return juce::Font{FontOptions{}.withName("Lato").withHeight(label.getHeight() * 0.75f)};
+        //return label.getFont().withHeight(label.getHeight() * 0.7f);
  	}
 
 

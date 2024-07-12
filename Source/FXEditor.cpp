@@ -105,7 +105,7 @@ FXEditor::~FXEditor()
 void FXEditor::resized()
 {
 	mod.setBounds(900, 7, 280, 303);
-	matrix.setBounds(900, 320, 280, 320);
+	matrix.setBounds(900, 320, 280, 303);
 
 
 	fxa1Selector.setBounds(188, 7, 168, 15); 
