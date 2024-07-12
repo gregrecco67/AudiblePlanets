@@ -1,6 +1,6 @@
 #pragma once
-#include <JuceHeader.h>
-#include <gin/gin.h>
+#include <gin_dsp/gin_dsp.h>
+#include <gin_plugin/gin_plugin.h>
 #include "AuxSynthVoice.h"
 
 class APAudioProcessor;

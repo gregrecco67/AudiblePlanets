@@ -1,5 +1,7 @@
 #pragma once
-#include <JuceHeader.h>
+#include <gin_dsp/gin_dsp.h>
+#include <gin_plugin/gin_plugin.h>
+#include <juce_audio_formats/juce_audio_formats.h>
 #include "APSamplerVoice.h"
 
 class APAudioProcessor;

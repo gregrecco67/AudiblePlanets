@@ -33,7 +33,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	addAndMakeVisible(scaleName);
 	addAndMakeVisible(learningLabel);
 
-    scaleName.setFont(FontOptions(12.0f));
+    scaleName.setFont(juce::FontOptions(12.0f));
 	scaleName.setColour(juce::Label::textColourId, juce::Colour(0xffE6E6E9));
 	scaleName.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
 	scaleName.setJustificationType(juce::Justification::centred);
@@ -45,7 +45,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	titleBar.setShowBrowser(true);
 }
 
-bool APAudioProcessorEditor::keyPressed(const KeyPress& key, Component* /*originatingComponent*/) {
+bool APAudioProcessorEditor::keyPressed(const juce::KeyPress& key, Component* /*originatingComponent*/) {
         if (key.isKeyCode(49) || key.isKeyCode(juce::KeyPress::numberPad1)) { // 1-5 for tab select
             tabbed.setCurrentTabIndex(0);
             return true;
@@ -84,6 +84,28 @@ void APAudioProcessorEditor::timerCallback()
 		learningLabel.setText(proc.learningLabel, juce::dontSendNotification);
 		learningLabel.setColour(juce::Label::backgroundColourId, juce::Colour(0xff16171A).brighter(0.3f));
 	}
+}
+
+void APAudioProcessorEditor::showAboutInfo()
+{
+	juce::String msg;
+
+
+	msg += "Audible Planets v1.1.2 (" __DATE__ ")\n\n";
+
+	msg += "Greg Recco\n\n";
+
+	msg += "Copyright ";
+	msg += juce::String(&__DATE__[7]);
+
+	auto w = std::make_shared<gin::PluginAlertWindow>("---- Info ----", msg, juce::AlertWindow::NoIcon, this);
+	w->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey));
+	w->setLookAndFeel(slProc.lf.get());
+
+	w->runAsync(*this, [w](int)
+		{
+			w->setVisible(false);
+		});
 }
 
 APAudioProcessorEditor::~APAudioProcessorEditor()

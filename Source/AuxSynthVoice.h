@@ -14,7 +14,8 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include <gin_dsp/gin_dsp.h>
+#include <gin_plugin/gin_plugin.h>
 #include "Envelope.h"
 #include "libMTSClient.h"
 #include <numbers>

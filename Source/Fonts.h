@@ -15,7 +15,8 @@
 #pragma once
 
 #include "BinaryData.h"
-#include "JuceHeader.h"
+#include <gin_plugin/gin_plugin.h>
+
 #include <numbers>
 
 using std::numbers::pi;
@@ -40,7 +41,7 @@ public:
 	
 	juce::Font getLabelFont(juce::Label& label) override
 	{
-        return juce::Font{FontOptions{}.withName("Lato").withHeight(label.getHeight() * 0.75f)};
+        return juce::Font{juce::FontOptions{}.withName("Lato").withHeight(label.getHeight() * 0.75f)};
  	}
 
 

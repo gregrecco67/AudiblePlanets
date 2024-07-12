@@ -16,7 +16,9 @@
 #include <cmath>
 #include <memory>
 #include <array>
-#include <JuceHeader.h>
+#include <juce_dsp/juce_dsp.h>
+#include <gin_dsp/gin_dsp.h>
+#include <juce_core/juce_core.h>
 #include "LFO.h"
 #include "FastMath.hpp"
 
@@ -1061,12 +1063,12 @@ public:
 				float p = pinkNoise.nextSample();
 				float factor = 1.f - (drive / 80.f);
 				if (p >= 0.f)
-					return jlimit(-1.f, 1.f, x * std::pow(p, factor));
+					return juce::jlimit(-1.f, 1.f, x * std::pow(p, factor));
 				else
-					return jlimit(-1.f, 1.f, x * -std::pow(-p, factor));
+					return juce::jlimit(-1.f, 1.f, x * -std::pow(-p, factor));
 			}
 			else
-                return jlimit(-1.f, 1.f, x);
+                return juce::jlimit(-1.f, 1.f, x);
 			break;
         case 15: // "fullwave"
             if (x < 0.f) {
@@ -1089,7 +1091,7 @@ public:
 	{
 		drive = pre;
         preGain.setGainDecibels(pre);
-        postGain.setGainDecibels(jmin(post - (pre * 0.33f), -6.f)); // compensate for preGain but only partly
+        postGain.setGainDecibels(juce::jmin(post - (pre * 0.33f), -6.f)); // compensate for preGain but only partly
 	}
 	
 private:
@@ -1197,8 +1199,8 @@ public:
         mod1freqs = mod1freqs * (unity + spread * semitones);
         mod2freqs = mod2freqs * (unity + spread * semitones);
 
-        mod1PhaseIncs = mod1freqs * dsp::SIMDRegister<float>(2.0f * juce::MathConstants<float>::pi * (float)inverseOversampledSampleRate);
-        mod2PhaseIncs = mod2freqs * dsp::SIMDRegister<float>(2.0f * juce::MathConstants<float>::pi * (float)inverseOversampledSampleRate);
+        mod1PhaseIncs = mod1freqs * juce::dsp::SIMDRegister<float>(2.0f * juce::MathConstants<float>::pi * (float)inverseOversampledSampleRate);
+        mod2PhaseIncs = mod2freqs * juce::dsp::SIMDRegister<float>(2.0f * juce::MathConstants<float>::pi * (float)inverseOversampledSampleRate);
 
         mod1LPCutoff.skip((int)numSamples);
         mod2LPCutoff.skip((int)numSamples);

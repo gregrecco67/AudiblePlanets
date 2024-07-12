@@ -14,8 +14,10 @@
 
 
 #pragma once
-#include <JuceHeader.h>
+
+#include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_gui_basics/juce_gui_basics.h>
+#include <gin_plugin/gin_plugin.h>
 #include "BinaryData.h"
 
 class MoonSlider : public gin::PluginSlider

@@ -22,10 +22,10 @@ bool APSampler::loadSound(const juce::String& path) {
     reader = formatManager.createReaderFor(juce::File(path));
 	if (reader == nullptr) { return false; }
     sound.sourceSampleRate = reader->sampleRate;
-    sound.length = jmin((int) reader->lengthInSamples,
+    sound.length = juce::jmin((int) reader->lengthInSamples,
                    (int) (MAX_SAMPLE_LENGTH_S * sound.sourceSampleRate));
 
-    sound.data.reset(new AudioBuffer<float>(jmin (2, (int)reader->numChannels), sound.length + 4));
+    sound.data.reset(new juce::AudioBuffer<float>(juce::jmin (2, (int)reader->numChannels), sound.length + 4));
     sound.midiRootNote = proc.samplerParams.key->getUserValueInt();
     sound.name = path;
     

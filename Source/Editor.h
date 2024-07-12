@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include <gin_plugin/gin_plugin.h>
 #include "PluginProcessor.h"
 #include "Panels.h"
 #include "BinaryData.h"

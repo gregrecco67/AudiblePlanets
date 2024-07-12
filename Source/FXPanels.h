@@ -12,7 +12,6 @@
  * https://github.com/gregrecco67/AudiblePlanets
  */
 #pragma once
-#include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "APModAdditions.h"
 
@@ -421,7 +420,7 @@ public:
 		}
 	}
 
-	TextButton clearAllButton{ "Clear All" };
+	juce::TextButton clearAllButton{ "Clear All" };
 
 	APAudioProcessor& proc;
 };

@@ -32,6 +32,7 @@ juce_add_plugin (${PROJECT_NAME}
 				NEEDS_MIDI_OUTPUT FALSE
 				COPY_PLUGIN_AFTER_BUILD TRUE
 				LV2URI "urn:void-star:audibleplanets:${VersionString}"
+				JUCE_DONT_DECLARE_PROJECTINFO TRUE
 			)
 
 if (APPLE)
@@ -47,7 +48,7 @@ endif ()
 
 if (MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE 
-			/wd26495
+			/wd26495 /wd4459 /wd4244 /wd4996 /wd4267 /wd4244
 		)
     add_compile_definitions(MIPP_ALIGNED_LOADS)
 endif ()
@@ -88,8 +89,6 @@ target_link_libraries (${PROJECT_NAME}
 						gin_dsp
 						gin_plugin
 						gin_simd
-						juce::juce_cryptography
-						juce::juce_data_structures
 						juce::juce_events
 						juce::juce_graphics
 						juce::juce_gui_basics
@@ -109,7 +108,7 @@ if (APPLE)
 	set_target_properties(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO")
 endif()
 
-juce_generate_juce_header (${PROJECT_NAME})
+#juce_generate_juce_header (${PROJECT_NAME})
 
 get_property (debug_configs GLOBAL PROPERTY DEBUG_CONFIGURATIONS)
 
@@ -121,7 +120,6 @@ set (config_is_debug "$<IN_LIST:$<CONFIG>,${debug_configs}>")
 set (config_is_release "$<NOT:${config_is_debug}>")
 
 target_compile_definitions (${PROJECT_NAME} PRIVATE 
-								JUCE_DISPLAY_SPLASH_SCREEN=0
 								JUCE_MODAL_LOOPS_PERMITTED=1
 								JUCE_COREGRAPHICS_DRAW_ASYNC=1
 								JUCE_VST3_CAN_REPLACE_VST2=0

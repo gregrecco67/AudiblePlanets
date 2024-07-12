@@ -13,7 +13,8 @@
  */
 
 #pragma once
-#include <JuceHeader.h>
+
+#include <juce_gui_basics/juce_gui_basics.h>
 #include "MoonSlider.h"
 #include "Fonts.h"
 #include "APModAdditions.h"

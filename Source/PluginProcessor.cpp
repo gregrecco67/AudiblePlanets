@@ -170,15 +170,15 @@ static juce::String fxListTextFunction(const gin::Parameter&, float v)
 {
     switch (int(v))
     {
-        case 0: return String("--");
-        case 1: return String("Waveshaper");
-        case 2: return String("Dynamics");
-        case 3: return String("Delay");
-        case 4: return String("Chorus");
-        case 5: return String("Multiband Filter");
-        case 6: return String("Reverb");
-        case 7: return String("Ring Modulator");
-        case 8: return String("Gain");
+        case 0: return juce::String("--");
+        case 1: return juce::String("Waveshaper");
+        case 2: return juce::String("Dynamics");
+        case 3: return juce::String("Delay");
+        case 4: return juce::String("Chorus");
+        case 5: return juce::String("Multiband Filter");
+        case 6: return juce::String("Reverb");
+        case 7: return juce::String("Ring Modulator");
+        case 8: return juce::String("Gain");
         default:
             jassertfalse;
             return {};
@@ -190,10 +190,10 @@ static juce::String algoTextFunction(const gin::Parameter&, float v)
 {
     switch (int(v))
     {
-        case 0: return String("1-2-3-4");
-        case 1: return String("1-2-3 / 2-4");
-        case 2: return String("1-2 / 1-3-4");
-        case 3: return String("1-2 / 1-3 / 1-4");
+        case 0: return juce::String("1-2-3-4");
+        case 1: return juce::String("1-2-3 / 2-4");
+        case 2: return juce::String("1-2 / 1-3-4");
+        case 3: return juce::String("1-2 / 1-3 / 1-4");
         default:
             jassertfalse;
             return {};
@@ -285,7 +285,7 @@ static juce::String auxPreFxTextFunction(const gin::Parameter&, float v) {
 
 static juce::String midiNoteNameTextFunction(const gin::Parameter&, float v)
 {
-	return String(int(v)) + " " + juce::MidiMessage::getMidiNoteName(int(v), true, true, 3);
+	return juce::String(int(v)) + " " + juce::MidiMessage::getMidiNoteName(int(v), true, true, 3);
 }
 
 
@@ -295,8 +295,8 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
     juce::String id = "osc" + numStr;
     juce::String nm = "OSC" + numStr;
 
-    NormalisableRange<float> osc1FineRange{ 0.0, 4.0, 0.0, 1.0 };
-    NormalisableRange<float> defaultFineRange{ -2.0, 2.0, 0.0, 1.0 };
+    juce::NormalisableRange<float> osc1FineRange{ 0.0, 4.0, 0.0, 1.0 };
+    juce::NormalisableRange<float> defaultFineRange{ -2.0, 2.0, 0.0, 1.0 };
     
     switch (numStr.getIntValue()) {
     case 1:
@@ -352,7 +352,7 @@ void APAudioProcessor::FilterParams::setup(APAudioProcessor& p)
 }
 
 //==============================================================================
-void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, String numStr)
+void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, juce::String numStr)
 {
     // we've got 4 in the processor as mono sources, and four for each voice as poly sources / dests
     juce::String id = "lfo" + numStr;
@@ -394,10 +394,10 @@ void APAudioProcessor::MSEGParams::setup(APAudioProcessor& p, juce::String numbe
 }
 
 //==============================================================================
-void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, String numStr) //
+void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, juce::String numStr) //
 {
-    String id = "env" + numStr;
-	String nm = "ENV" + numStr;
+    juce::String id = "env" + numStr;
+	juce::String nm = "ENV" + numStr;
     auto& notes = gin::NoteDuration::getNoteDurations();
 
     
@@ -484,8 +484,8 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor& p)
 {
-    String pfx = "ws";
-    String name = "WS ";
+    juce::String pfx = "ws";
+    juce::String name = "WS ";
     drive = p.addExtParam(pfx + "drive", name + "Drive", "Drive", "", { 0.0, 60.0, 0.0, 1.0 }, 0.0, 0.0f);
     gain = p.addExtParam(pfx + "gain",  name + "Gain", "Gain", "", { -12.0f, 12.0f, 0.0f, 1.0 }, 0.0, 0.0f);
     dry = p.addExtParam(pfx + "dry",   name + "Dry", "Dry", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f, percentTextFunction);
@@ -499,8 +499,8 @@ void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::CompressorParams::setup(APAudioProcessor& p)
 {
-    String pfx = "cp";
-    String name = "Comp ";
+    juce::String pfx = "cp";
+    juce::String name = "Comp ";
     threshold = p.addExtParam(pfx + "threshold", name + "Threshold", "Threshold", " dB", { -60.0, 0.0, 0.0, 1.0 }, -12.0f, 0.0f);
     ratio = p.addExtParam(pfx + "ratio",     name + "Ratio", "Ratio", "x", { 1.0, 20.0, 0.0, 1.0 }, 2.0f, 0.0f);
     attack = p.addExtParam(pfx + "attack",    name + "Attack", "Attack", "", { 0.00002f, 0.1f, 0.00001f, 0.3f }, 0.0005f, 0.0f, compressorAttackTextFunction);
@@ -514,8 +514,8 @@ void APAudioProcessor::CompressorParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::StereoDelayParams::setup(APAudioProcessor& p)
 {
-    String name = "Delay ";
-    String pfx = "dl";
+    juce::String name = "Delay ";
+    juce::String pfx = "dl";
     auto& notes = gin::NoteDuration::getNoteDurations();
     timeleft = p.addExtParam(pfx + "timeleft",   name + "Time Left", "Time L", "", { 0.001f, 10.0, 0.0, 0.5 }, 0.5f, 0.0f, secondsTextFunction);
     timeright = p.addExtParam(pfx + "timeright",  name + "Time Right", "Time R", "", { 0.001f, 10.0, 0.0, 0.5 }, 0.5f, 0.0f, secondsTextFunction);
@@ -533,8 +533,8 @@ void APAudioProcessor::StereoDelayParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::ChorusParams::setup(APAudioProcessor& p)
 {
-    String name = "Chorus ";
-    String pfx = "ch";
+    juce::String name = "Chorus ";
+    juce::String pfx = "ch";
     rate = p.addExtParam(pfx + "rate",     name + "Rate", "Rate", " Hz", { 0.005f, 20.0f, 0.0f, 0.3f }, 0.05f, 0.0f);
     depth = p.addExtParam(pfx + "depth",    name + "Depth", "Depth", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f, percentTextFunction);
     delay = p.addExtParam(pfx + "delay",    name + "Delay", "Delay", " ms", { 10.0f, 40.0f, 0.0, 1.0 }, 20.0f, 0.0f);
@@ -547,8 +547,8 @@ void APAudioProcessor::ChorusParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::ReverbParams::setup(APAudioProcessor& p)
 {
-    String pfx = "rv";
-    String name = "Reverb ";
+    juce::String pfx = "rv";
+    juce::String name = "Reverb ";
     size = p.addExtParam(pfx + "size",     name + "Size", "Size", "", { 0.0, 2.0, 0.0, 1.0 }, 1.f, 0.0f);
     decay = p.addExtParam(pfx + "decay",    name + "Decay", "Decay", "", { 0.0, 1.0, 0.0, 1.0 }, 0.5f, 0.0f);
     damping = p.addExtParam(pfx + "damping",  name + "Damping", "Damping", " Hz", { 20.0f, 20000.0f, 0.0, 0.3f }, 10000.0f, 0.0f);
@@ -561,8 +561,8 @@ void APAudioProcessor::ReverbParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::MBFilterParams::setup(APAudioProcessor& p)
 {
-    String pfx = "mb";
-    String name = "MB Filter ";
+    juce::String pfx = "mb";
+    juce::String name = "MB Filter ";
     lowshelffreq = p.addExtParam (pfx + "lowshelffreq",  name + "LS Freq", "LS Freq", " Hz", { 20.0, 20000.0, 1.0, 0.3f }, 20.0f, 0.0f);
     lowshelfgain = p.addExtParam (pfx + "lowshelfgain",  name + "LS Gain", "LS Gain", "", { 0.01f, 6.0, 0.01f, 1.0 }, 1.0f, 0.0f);
     lowshelfq = p.addExtParam    (pfx + "lowshelfq",     name + "LS Q", "LS Q", "", { 0.1f, 20.0, 0.0, 1.0 }, 1.0f, 0.0f);
@@ -577,8 +577,8 @@ void APAudioProcessor::MBFilterParams::setup(APAudioProcessor& p)
 //==============================================================================
 void APAudioProcessor::RingModParams::setup(APAudioProcessor& p)
 {
-    String pfx = "rm";
-    String name = "RMod ";
+    juce::String pfx = "rm";
+    juce::String name = "RMod ";
     modfreq1 = p.addExtParam(pfx + "modfreq1", name + "Freq 1", "Mod Freq 1", " Hz", { 1.0, 12000.0, 0.0, 0.3f }, 40.0f, 0.0f);
     shape1 = p.addExtParam  (pfx + "shape1",   name + "Shape 1", "Shape 1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
     mix1 = p.addExtParam    (pfx + "mix1",     name + "Mix 1", "Mix 1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
@@ -636,7 +636,7 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 
 void APAudioProcessor::MacroParams::setup(APAudioProcessor& p)
 {
-    String name = "Macro ";
+	juce::String name = "Macro ";
     macro1 = p.addExtParam(name + "1", name + "1", name + "1", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
     macro2 = p.addExtParam(name + "2", name + "2", name + "2", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction);
     macro3 = p.addExtParam(name + "3", name + "3", name + "3", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0f, 0.0f, percentTextFunction); 
@@ -669,20 +669,20 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 ), synth(APSynth(*this)), auxSynth(AuxSynth(*this)), sampler(APSampler(*this))
 {
 	// poly params 
-    osc1Params.setup(*this, String{ "1" });
-    osc2Params.setup(*this, String{ "2" });
-    osc3Params.setup(*this, String{ "3" });
-    osc4Params.setup(*this, String{ "4" });
+    osc1Params.setup(*this, juce::String{ "1" });
+    osc2Params.setup(*this, juce::String{ "2" });
+    osc3Params.setup(*this, juce::String{ "3" });
+    osc4Params.setup(*this, juce::String{ "4" });
     
-    env1Params.setup(*this, String{ "1" });
-    env2Params.setup(*this, String{ "2" });
-    env3Params.setup(*this, String{ "3" });
-    env4Params.setup(*this, String{ "4" });
+    env1Params.setup(*this, juce::String{ "1" });
+    env2Params.setup(*this, juce::String{ "2" });
+    env3Params.setup(*this, juce::String{ "3" });
+    env4Params.setup(*this, juce::String{ "4" });
     
-    lfo1Params.setup(*this, String{ "1" });
-    lfo2Params.setup(*this, String{ "2" });
-    lfo3Params.setup(*this, String{ "3" });
-    lfo4Params.setup(*this, String{ "4" });
+    lfo1Params.setup(*this, juce::String{ "1" });
+    lfo2Params.setup(*this, juce::String{ "2" });
+    lfo3Params.setup(*this, juce::String{ "3" });
+    lfo4Params.setup(*this, juce::String{ "4" });
 
     timbreParams.setup(*this);
     filterParams.setup(*this);
@@ -703,10 +703,10 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 
     fxOrderParams.setup(*this);
 
-    mseg1Params.setup(*this, String{ "1" });
-    mseg2Params.setup(*this, String{ "2" });
-    mseg3Params.setup(*this, String{ "3" });
-    mseg4Params.setup(*this, String{ "4" });
+    mseg1Params.setup(*this, juce::String{ "1" });
+    mseg2Params.setup(*this, juce::String{ "2" });
+    mseg3Params.setup(*this, juce::String{ "3" });
+    mseg4Params.setup(*this, juce::String{ "4" });
 
     mseg1Data.reset();
     mseg2Data.reset();
@@ -739,7 +739,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 
 APAudioProcessor::~APAudioProcessor()
 {
-	LookAndFeel::setDefaultLookAndFeel(nullptr);
+	juce::LookAndFeel::setDefaultLookAndFeel(nullptr);
     MTS_DeregisterClient(client);
 	reader = nullptr;
 }
@@ -833,7 +833,7 @@ void APAudioProcessor::stateUpdated() // called when loading a preset
     }
 
 	if (state.getOrCreateChildWithName("sample", nullptr).isValid()) {
-		String sampleName = state.getOrCreateChildWithName("sample", nullptr).getProperty("sampleName");
+		juce::String sampleName = state.getOrCreateChildWithName("sample", nullptr).getProperty("sampleName");
 		if (!sampleName.isEmpty()) {
 			sampler.loadSound(sampleName);
 		}
@@ -859,7 +859,7 @@ void APAudioProcessor::updateState() // called when saving a preset
     state.getOrCreateChildWithName("mseg4", nullptr).removeAllChildren(nullptr);
     mseg4Data.toValueTree(state.getChildWithName("mseg4"));
 
-	ValueTree sampleTree = state.getOrCreateChildWithName("sample", nullptr);
+	juce::ValueTree sampleTree = state.getOrCreateChildWithName("sample", nullptr);
 	sampleTree.removeAllChildren(nullptr);
 	sampleTree.setProperty("sampleName", sampler.sound.name, nullptr);
     

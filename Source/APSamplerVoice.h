@@ -14,13 +14,16 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include <juce_core/juce_core.h>
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <gin_dsp/gin_dsp.h>
+#include <gin_plugin/gin_plugin.h>
 #include "libMTSClient.h"
 
 class APSamplerSound {
 public:
-    String name;
-    std::unique_ptr<AudioBuffer<float>> data;
+    juce::String name;
+    std::unique_ptr<juce::AudioBuffer<float>> data;
     double sourceSampleRate;
     int length = 0, midiRootNote = 0;
 };

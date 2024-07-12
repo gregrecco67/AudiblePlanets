@@ -159,7 +159,7 @@ void MoonKnob::showModMenu()
 	{
 		if (currentModSrc == gin::ModSrcId{ -1 }) { currentModSrc = src; }
 		bool editing = (src == currentModSrc) ? true : false;
-		m.addItem("Edit: " + mm.getModSrcName(src) + ": " + String(mm.getModDepth(src, gin::ModDstId(parameter->getModIndex())), 3), !editing, editing, [this, src]
+		m.addItem("Edit: " + mm.getModSrcName(src) + ": " + juce::String(mm.getModDepth(src, gin::ModDstId(parameter->getModIndex())), 3), !editing, editing, [this, src]
 			{
 				currentModSrc = src;
 				modMatrixChanged();

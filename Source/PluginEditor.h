@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include <gin_plugin/gin_plugin.h>
+#include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginProcessor.h"
-#include "Panels.h"
 #include "Editor.h"
 #include "FXEditor.h"
 #include "APColors.h"
@@ -33,9 +33,10 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
     void addMenuItems(juce::PopupMenu& m) override;
-    bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
+    bool keyPressed(const juce::KeyPress& key, Component* originatingComponent) override;
     using juce::Component::keyPressed; // above is overloaded
 	void timerCallback() override;
+	void showAboutInfo() override;
 
 private:
     APAudioProcessor& proc;
@@ -48,7 +49,7 @@ private:
     Editor editor { proc };
 	FXEditor fxEditor{ proc };
 
-	Label scaleName, learningLabel;
+	juce::Label scaleName, learningLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessorEditor)
 };

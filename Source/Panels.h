@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include <gin_plugin/gin_plugin.h>
 #include "PluginProcessor.h"
 #include "APColors.h"
 #include "MoonKnob.h"
@@ -119,10 +119,10 @@ public:
 		addAndMakeVisible(select3);
 		addAndMakeVisible(select4);
 
-		fixedHz1.setJustificationType(Justification::centred);
-		fixedHz2.setJustificationType(Justification::centred);
-		fixedHz3.setJustificationType(Justification::centred);
-		fixedHz4.setJustificationType(Justification::centred);
+		fixedHz1.setJustificationType(juce::Justification::centred);
+		fixedHz2.setJustificationType(juce::Justification::centred);
+		fixedHz3.setJustificationType(juce::Justification::centred);
+		fixedHz4.setJustificationType(juce::Justification::centred);
 
 		select1.onClick = [this]() {show(1);};
 		select2.onClick = [this]() {show(2);};
@@ -267,31 +267,31 @@ public:
 		gin::ParamBox::paramChanged();
 		if (proc.osc1Params.fixed->isOn() && currentOsc == 1) {
 			fixedHz1.setVisible(true);
-			fixedHz1.setText(String((proc.osc1Params.coarse->getUserValue() + proc.osc1Params.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
+			fixedHz1.setText(juce::String((proc.osc1Params.coarse->getUserValue() + proc.osc1Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
 		else {
 			fixedHz1.setVisible(false);
 		}
 		if (proc.osc2Params.fixed->isOn() && currentOsc == 2) {
 			fixedHz2.setVisible(true);
-			fixedHz2.setText(String((proc.osc2Params.coarse->getUserValue() 
-			+ proc.osc2Params.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
+			fixedHz2.setText(juce::String((proc.osc2Params.coarse->getUserValue() 
+			+ proc.osc2Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
 		else {
 			fixedHz2.setVisible(false);
 		}
 		if (proc.osc3Params.fixed->isOn() && currentOsc == 3) {
 			fixedHz3.setVisible(true);
-			fixedHz3.setText(String((proc.osc3Params.coarse->getUserValue() 
-			+ proc.osc3Params.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
+			fixedHz3.setText(juce::String((proc.osc3Params.coarse->getUserValue() 
+			+ proc.osc3Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
 		else {
 			fixedHz3.setVisible(false);
 		}
 		if (proc.osc4Params.fixed->isOn() && currentOsc == 4) {
 			fixedHz4.setVisible(true);
-			fixedHz4.setText(String((proc.osc4Params.coarse->getUserValue() 
-			+ proc.osc4Params.fine->getUserValue()) * 100, 2) + String(" Hz"), juce::dontSendNotification);
+			fixedHz4.setText(juce::String((proc.osc4Params.coarse->getUserValue() 
+			+ proc.osc4Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
 		else {
 			fixedHz4.setVisible(false);
@@ -336,8 +336,8 @@ public:
 	gin::ParamComponent::Ptr c3, f3, v3, t3, p3, d3, s3, n3, saw3, env3, fixed3;
 	gin::ParamComponent::Ptr c4, f4, v4, t4, p4, d4, s4, n4, saw4, env4, fixed4;
 
-	Label fixedHz1, fixedHz2, fixedHz3, fixedHz4;
-	TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
+	juce::Label fixedHz1, fixedHz2, fixedHz3, fixedHz4;
+	juce::TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
 
 	int currentOsc{1};
 };
@@ -527,7 +527,7 @@ public:
 
 	EnvelopeComponent env1Viz{ proc, 1 }, env2Viz{ proc, 2 }, env3Viz{ proc, 3 }, env4Viz{ proc, 4 };
 	int currentEnv{1};
-	TextButton select1{ "1" }, select2{ "2" }, select3{ "3" }, select4{ "4" };
+	juce::TextButton select1{ "1" }, select2{ "2" }, select3{ "3" }, select4{ "4" };
 };
 
 //==============================================================================
@@ -852,7 +852,7 @@ public:
 		s4, w4, r4, b4, dp4, p4, o4, f4, dl4;
 
 	int currentLFO{1};
-	TextButton select1{ "1" }, select2{ "2" }, select3{ "3" }, select4{ "4" };
+	juce::TextButton select1{ "1" }, select2{ "2" }, select3{ "3" }, select4{ "4" };
 	gin::LFOComponent *l1, *l2, *l3, *l4;
 };
 
@@ -979,7 +979,7 @@ public:
 			sampleFilenameLabel.setText(soundFile.getFileName(), juce::dontSendNotification);
 			auto ch = proc.sampler.sound.data.get()->getNumChannels();
 			auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
-			auto fileInfoString = String(ch) + " ch: " + String(time, 2) + " s";
+			auto fileInfoString = juce::String(ch) + " ch: " + juce::String(time, 2) + " s";
 			fileInfo.setText(fileInfoString, juce::dontSendNotification);
 		}
 		else { 
@@ -1023,10 +1023,10 @@ public:
 		}
 		if (std::abs(min) > max) { max = std::abs(min); }
 		else { min = -max; }
-		min = jlimit(-1.f, -.3f, min);
-		max = jlimit(.3f, 1.f, max);
+		min = juce::jlimit(-1.f, -.3f, min);
+		max = juce::jlimit(.3f, 1.f, max);
 		for (int sample = 0; sample < smoothed.size(); sample++) {
-			p.lineTo(sample, jmap(smoothed[sample], min, max, static_cast<float>(getHeight()), 0.f));
+			p.lineTo(sample, juce::jmap(smoothed[sample], min, max, static_cast<float>(getHeight()), 0.f));
 		}
 
 		g.setColour(juce::Colours::white);
@@ -1035,7 +1035,7 @@ public:
 	APAudioProcessor& proc;
 	std::vector<float> audioPoints, smoothed;
 	bool shouldRedraw{ true };
-	Label fileInfo{ "", "" }, sampleFilenameLabel{"", ""};
+	juce::Label fileInfo{ "", "" }, sampleFilenameLabel{"", ""};
 };
 
 class SamplerBox : public gin::ParamBox
@@ -1073,7 +1073,7 @@ public:
         if (proc.sampler.sound.data == nullptr) { return; }
         auto ch = proc.sampler.sound.data.get()->getNumChannels();
         auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
-        auto fileInfoString = String(ch) + " ch: " + String(time,2) + " s";
+        auto fileInfoString = juce::String(ch) + " ch: " + juce::String(time,2) + " s";
         waveform.fileInfo.setText(fileInfoString, juce::dontSendNotification);
         waveform.repaint();
     }
@@ -1087,7 +1087,7 @@ public:
 
     APAudioProcessor& proc;
 	Waveform waveform;
-	TextButton loadButton{ "Load" };
+	juce::TextButton loadButton{ "Load" };
 	std::unique_ptr<juce::FileChooser> chooser = std::make_unique<juce::FileChooser>("Select file",
 		juce::File{}, "*.wav,*.aif,*.mp3,*.aif,*.ogg,*.flac");
 };
@@ -1125,7 +1125,7 @@ public:
 		}
 	}
 
-	TextButton clearAllButton{ "Clear All" };
+	juce::TextButton clearAllButton{ "Clear All" };
 
 	APAudioProcessor& proc;
 };
@@ -1458,8 +1458,8 @@ public:
 
 	gin::MSEGComponent msegComponent1, msegComponent2, msegComponent3, msegComponent4;
 	int currentMSEG{ 1 };
-	TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
-	TextButton learn1{ "learn" }, learn2{ "learn" }, learn3{ "learn" }, learn4{ "learn" };
+	juce::TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
+	juce::TextButton learn1{ "learn" }, learn2{ "learn" }, learn3{ "learn" }, learn4{ "learn" };
 };
 
 //==============================================================================
@@ -1576,8 +1576,8 @@ class MacrosBox : public gin::ParamBox
 	public:
 		MIDILearnButton(APAudioProcessor& p) : proc(p) {
 			setEditable(false, false, false);
-			setJustificationType(Justification::left);
-			setText("Learn", dontSendNotification);
+			setJustificationType(juce::Justification::left);
+			setText("Learn", juce::dontSendNotification);
 			setLookAndFeel(&midilearnLNF);
 		}
 
@@ -1600,11 +1600,11 @@ class MacrosBox : public gin::ParamBox
 			learning = !learning;
 			if (learning) {
 				proc.macroParams.learning->setUserValue(static_cast<float>(thisMacroNumber));
-				setText("Learning", dontSendNotification);
+				setText("Learning", juce::dontSendNotification);
 			}
 			else {
 				proc.macroParams.learning->setValue(0.0f);
-				setText("Learn", dontSendNotification);
+				setText("Learn", juce::dontSendNotification);
 			}
 		}
 
@@ -1616,7 +1616,7 @@ class MacrosBox : public gin::ParamBox
 		void setCCString(const juce::String& s)
 		{
 			currentAssignment = s;
-			setText(s, dontSendNotification);
+			setText(s, juce::dontSendNotification);
 		}
 
 		void setLearning(bool shouldLearn) {
@@ -1648,7 +1648,7 @@ class MacrosBox : public gin::ParamBox
 
 	APAudioProcessor& proc;
 	MIDILearnButton midiLearnButton1{ proc }, midiLearnButton2{ proc }, midiLearnButton3{ proc };
-	TextButton clear1{ "Clear", "Clear" }, clear2{ "Clear", "Clear" }, clear3{ "Clear", "Clear" };
+	juce::TextButton clear1{ "Clear", "Clear" }, clear2{ "Clear", "Clear" }, clear3{ "Clear", "Clear" };
 }; // MacrosBox
 
 //==============================================================================

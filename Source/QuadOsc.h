@@ -1,4 +1,4 @@
-#include <JuceHeader.h>
+#include <gin_simd/gin_simd.h>
 #include "FastMath.hpp"
 #include <numbers>
 

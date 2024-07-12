@@ -14,7 +14,10 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <gin_dsp/gin_dsp.h>
+#include <gin_plugin/gin_plugin.h>
 #include "QuadOsc.h"
 #include "Envelope.h"
 #include "libMTSClient.h"

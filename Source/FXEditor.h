@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include <gin_plugin/gin_plugin.h>
 #include "PluginProcessor.h"
 #include "BinaryData.h"
 #include "FXPanels.h"
@@ -56,5 +56,5 @@ private:
 		laneBGain{ proc.fxOrderParams.laneBGain }, laneBFreq{proc.fxOrderParams.laneBFreq}, laneBRes{proc.fxOrderParams.laneBRes}, laneBPan{proc.fxOrderParams.laneBPan};
 	gin::Select laneAType{ proc.fxOrderParams.laneAType }, laneBType{ proc.fxOrderParams.laneBType }, 
 		laneAPrePost{ proc.fxOrderParams.laneAPrePost }, laneBPrePost{ proc.fxOrderParams.laneBPrePost };
-	Label laneALabel{ "Lane A", "Lane A"}, laneBLabel{"Lane B", "Lane B"};
+	juce::Label laneALabel{ "Lane A", "Lane A"}, laneBLabel{"Lane B", "Lane B"};
 };

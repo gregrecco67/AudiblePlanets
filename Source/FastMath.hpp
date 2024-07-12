@@ -44,6 +44,7 @@ SOFTWARE.
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <numbers>
+#include <juce_dsp/juce_dsp.h>
 
 using std::numbers::pi;
 

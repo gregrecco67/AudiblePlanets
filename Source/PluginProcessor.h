@@ -14,8 +14,12 @@
 
 #pragma once
 
-#include <JuceHeader.h>
-#include <gin/gin.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <juce_core/juce_core.h>
+#include <juce_dsp/juce_dsp.h>
+#include <gin_dsp/gin_dsp.h>
+#include <gin_plugin/gin_plugin.h>
 #include "Envelope.h"
 #include "FXProcessors.h"
 #include "Synth.h"
@@ -88,7 +92,7 @@ public:
 
         gin::Parameter::Ptr enable, sync, wave, rate, beat, depth, phase, offset, fade, delay, level, env;
 
-        void setup(APAudioProcessor& p, String num);
+        void setup(APAudioProcessor& p, juce::String num);
         int num;
         JUCE_DECLARE_NON_COPYABLE(LFOParams)
     };
@@ -333,7 +337,7 @@ public:
     bool presetLoaded = false;
 	gin::Filter laneAFilter, laneBFilter;
 	juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> dcFilter;
-	SmoothedValue<float, ValueSmoothingTypes::Multiplicative> laneAFilterCutoff, laneBFilterCutoff;
+	juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> laneAFilterCutoff, laneBFilterCutoff;
 	int fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4; // effect choices
 	std::unordered_set<int> activeEffects;
 
@@ -347,7 +351,7 @@ public:
 	juce::AudioBuffer<float> samplerSlice;
 
 	MTSClient* client;
-	String scaleName, learningLabel;
+	juce::String scaleName, learningLabel;
 
 
 	AuxSynth auxSynth;
