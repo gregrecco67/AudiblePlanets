@@ -13,7 +13,8 @@ foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_sim
 	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
 endforeach()
 
-set(VersionString 1.1.2)
+set(VersionString 1.1.3)
+# also set this in PluginEditor.cpp -> showAboutInfo()
 
 juce_add_plugin (${PROJECT_NAME}
 				PRODUCT_NAME "Audible Planets" 
@@ -34,6 +35,7 @@ juce_add_plugin (${PROJECT_NAME}
 				LV2URI "urn:void-star:audibleplanets:${VersionString}"
 				JUCE_DONT_DECLARE_PROJECTINFO TRUE
 			)
+
 
 if (APPLE)
 	target_compile_options(${PROJECT_NAME} PRIVATE 
