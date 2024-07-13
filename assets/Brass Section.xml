@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<state name="Brass Section" author="builtin" tags="brass mpe">
+  <state>
+    <instance selectedAuthors="" selectedTags=""/>
+    <MODMATRIX>
+      <MODITEM srcId="mpep" depth="1.0" enabled="1" dstId="osc2volume" function="linear"
+               biPolarMapping="0"/>
+      <MODITEM srcId="mpep" depth="1.0" enabled="1" dstId="osc3volume" function="linear"
+               biPolarMapping="0"/>
+      <MODITEM srcId="mpep" depth="1.0" enabled="1" dstId="osc4volume" function="linear"
+               biPolarMapping="0"/>
+      <MODITEM srcId="mpep" depth="0.239999994635582" enabled="1" dstId="fltfreq"
+               function="linear" biPolarMapping="0"/>
+      <MODITEM srcId="mpep" depth="0.07000000029802322" enabled="1" dstId="wsdrive"
+               function="linear" biPolarMapping="0"/>
+    </MODMATRIX>
+    <mseg1 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg1>
+    <mseg2 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg2>
+    <mseg3 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg3>
+    <mseg4 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg4>
+    <sample sampleName=""/>
+  </state>
+  <param uid="osc1volume" val="0.5600000023841858"/>
+  <param uid="osc2volume" val="0.0"/>
+  <param uid="osc3volume" val="0.0"/>
+  <param uid="osc4volume" val="0.0"/>
+  <param uid="env1attack" val="0.01000000350177288"/>
+  <param uid="env1sustain" val="100.0"/>
+  <param uid="env1release" val="0.09999998658895493"/>
+  <param uid="env1time" val="0.09999998658895493"/>
+  <param uid="env2attack" val="0.01000000350177288"/>
+  <param uid="env2sustain" val="100.0"/>
+  <param uid="env2release" val="0.09999998658895493"/>
+  <param uid="env3attack" val="0.01000000350177288"/>
+  <param uid="env3sustain" val="100.0"/>
+  <param uid="env3release" val="0.09999998658895493"/>
+  <param uid="env4attack" val="0.01000000350177288"/>
+  <param uid="env4sustain" val="100.0"/>
+  <param uid="env4release" val="0.09999998658895493"/>
+  <param uid="fltkey" val="22.75375938415527"/>
+  <param uid="fltfreq" val="67.74420928955078"/>
+  <param uid="fltres" val="20.5876350402832"/>
+  <param uid="velSens" val="22.0552864074707"/>
+  <param uid="gRate" val="0.5343131422996521"/>
+  <param uid="mpe" val="1.0"/>
+  <param uid="fxgain" val="1.000001430511475"/>
+  <param uid="wsdrive" val="6.443730354309082"/>
+  <param uid="cpattack" val="0.0000199999994947575"/>
+  <param uid="chrate" val="0.05500001460313797"/>
+  <param uid="rvwet" val="0.2120781242847443"/>
+  <param uid="rmmodfreq1" val="39.9999885559082"/>
+  <param uid="rmmodfreq2" val="39.9999885559082"/>
+  <param uid="fxa2" val="1.0"/>
+  <param uid="fxa3" val="6.0"/>
+  <param uid="laneAGain" val="-13.28627490997314"/>
+</state>

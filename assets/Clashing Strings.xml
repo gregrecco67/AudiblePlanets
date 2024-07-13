@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<state name="Clashing Strings" author="builtin" tags="pluck">
+  <state>
+    <instance selectedAuthors="" selectedTags="" browserOpen="0"/>
+    <MODMATRIX>
+      <MODITEM srcId="mlfo1" depth="0.1722656190395355" enabled="1" dstId="auxfiltercutoff"
+               function="linear" biPolarMapping="1"/>
+      <MODITEM srcId="note" depth="-0.0634765625" enabled="1" dstId="dltimeleft"
+               function="linear" biPolarMapping="0"/>
+      <MODITEM srcId="note" depth="0.01656249910593033" enabled="1" dstId="dltimeright"
+               function="linear" biPolarMapping="0"/>
+    </MODMATRIX>
+    <mseg1 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg1>
+    <mseg2 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg2>
+    <mseg3 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg3>
+    <mseg4 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg4>
+    <sample sampleName=""/>
+  </state>
+  <param uid="osc1volume" val="0.6200000047683716"/>
+  <param uid="osc1tones" val="3.930000066757202"/>
+  <param uid="osc2volume" val="0.7599999904632568"/>
+  <param uid="osc2tones" val="3.276000022888184"/>
+  <param uid="osc3volume" val="0.02999999932944775"/>
+  <param uid="osc3tones" val="1.450999975204468"/>
+  <param uid="osc4volume" val="0.0"/>
+  <param uid="env1attack" val="0.0"/>
+  <param uid="env1decay" val="0.1553593724966049"/>
+  <param uid="env1sustain" val="5.654687404632568"/>
+  <param uid="env1release" val="2.713393688201904"/>
+  <param uid="env1time" val="0.09999998658895493"/>
+  <param uid="env2attack" val="0.01000000350177288"/>
+  <param uid="env2sustain" val="0.0"/>
+  <param uid="env2release" val="0.09999998658895493"/>
+  <param uid="env2time" val="0.09999998658895493"/>
+  <param uid="env3attack" val="0.01000000350177288"/>
+  <param uid="env3release" val="0.09999998658895493"/>
+  <param uid="env3time" val="0.09999998658895493"/>
+  <param uid="env4attack" val="0.01000000350177288"/>
+  <param uid="env4release" val="0.09999998658895493"/>
+  <param uid="env4time" val="0.09999998658895493"/>
+  <param uid="lfo1enable" val="1.0"/>
+  <param uid="lfo1wave" val="8.0"/>
+  <param uid="lfo1beat" val="7.0"/>
+  <param uid="lfo3enable" val="1.0"/>
+  <param uid="lfo3wave" val="7.0"/>
+  <param uid="demodmix" val="1.0"/>
+  <param uid="auxenable" val="1.0"/>
+  <param uid="auxwave" val="4.0"/>
+  <param uid="auxvolume" val="4.570499897003174"/>
+  <param uid="auxfiltertype" val="5.0"/>
+  <param uid="auxfiltercutoff" val="77.26068115234375"/>
+  <param uid="auxres" val="78.92812347412109"/>
+  <param uid="fxgain" val="2.384185791015625e-6"/>
+  <param uid="wsdrive" val="33.61312484741211"/>
+  <param uid="wsfunc" val="3.0"/>
+  <param uid="dltimeleft" val="0.02331971935927868"/>
+  <param uid="dltimeright" val="0.003161603352054954"/>
+  <param uid="dltemposync" val="0.0"/>
+  <param uid="dlfeedback" val="0.9650624394416809"/>
+  <param uid="dlwet" val="1.0"/>
+  <param uid="dldry" val="0.8325155973434448"/>
+  <param uid="dlcutoff" val="8070.7275390625"/>
+  <param uid="chrate" val="0.05000001192092896"/>
+  <param uid="rvlowpass" val="6181.78125"/>
+  <param uid="rmmodfreq1" val="39.9999885559082"/>
+  <param uid="rmmodfreq2" val="39.9999885559082"/>
+  <param uid="fxa1" val="3.0"/>
+  <param uid="fxa2" val="1.0"/>
+  <param uid="fxa3" val="6.0"/>
+  <param uid="laneAGain" val="2.384185791015625e-6"/>
+  <param uid="laneBGain" val="2.384185791015625e-6"/>
+</state>

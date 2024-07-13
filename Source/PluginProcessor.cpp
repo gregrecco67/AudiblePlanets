@@ -732,9 +732,71 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     
     setupModMatrix();
     init();
-
+    
+    
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Brass_Section_xml, BinaryData::Brass_Section_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Caustic_Lead_xml, BinaryData::Caustic_Lead_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Clashing_Strings_xml, BinaryData::Clashing_Strings_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Endurance_Like_the_Liberty_Bell_xml, BinaryData::Endurance_Like_the_Liberty_Bell_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Foreign_Keypad_xml, BinaryData::Foreign_Keypad_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Gentle_Horn_Section_xml, BinaryData::Gentle_Horn_Section_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Metal_Pan_xml, BinaryData::Metal_Pan_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Metallic_Keys_xml, BinaryData::Metallic_Keys_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Muted_Brass_xml, BinaryData::Muted_Brass_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Pulsating_Pad_xml, BinaryData::Pulsating_Pad_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Rando_Buzz_xml, BinaryData::Rando_Buzz_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Spacy_Bell_xml, BinaryData::Spacy_Bell_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Swell_Keys_xml, BinaryData::Swell_Keys_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Swell_Lead_xml, BinaryData::Swell_Lead_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Venus_Dawn_xml, BinaryData::Venus_Dawn_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Wanderer_xml, BinaryData::Wanderer_xmlSize)));
+    addFactoryPreset(juce::XmlDocument(juce::String(BinaryData::Wet_Snare_xml, BinaryData::Wet_Snare_xmlSize)));
+    
+     
 	modMatrix.setMonoValue(randSrc1Mono, 0.0f);
 	modMatrix.setMonoValue(randSrc2Mono, 0.0f);
+}
+
+void APAudioProcessor::addFactoryPreset(juce::XmlDocument doc) {
+    gin::Program* program = new gin::Program();
+    
+    std::unique_ptr<juce::XmlElement> rootE (doc.getDocumentElement());
+    if (rootE)
+    {
+        program->states.clear();
+
+        program->name = rootE->getStringAttribute ("name").trim();
+        program->author = rootE->getStringAttribute ("author").trim();
+        program->tags = juce::StringArray::fromTokens (rootE->getStringAttribute ("tags"), " ", "");
+
+        
+        if (auto s = rootE->getChildByName ("state"))
+        {
+            program->state = juce::ValueTree::fromXml (*s);
+        }
+        else
+        {
+            auto stateXml = rootE->getStringAttribute ("valueTree");
+            program->state = juce::ValueTree::fromXml (stateXml);
+        }
+
+        auto paramE = rootE->getChildByName ("param");
+        while (paramE)
+        {
+            juce::String uid = paramE->getStringAttribute ("uid");
+            float  val = (float) paramE->getDoubleAttribute ("val");
+
+            gin::Parameter::ParamState s;
+            s.uid   = uid;
+            s.value = val;
+            program->states.add (s);
+
+            paramE = paramE->getNextElementWithTagName ("param");
+        }
+    
+    }
+    program->fullyLoaded = true;
+    programs.add(program);
 }
 
 APAudioProcessor::~APAudioProcessor()
