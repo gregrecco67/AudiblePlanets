@@ -55,7 +55,6 @@ public:
 	void updateState() override;
 
     void updatePitchbend();
-    void addFactoryPreset(juce::XmlDocument);
     
     //==============================================================================
     

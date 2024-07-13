@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<state name="Nasty Sub" author="builtin" tags="bass">
+  <state>
+    <instance editorScale="0.9255172610282898" browserOpen="1" selectedAuthors=""
+              selectedTags=""/>
+    <MODMATRIX/>
+    <mseg1 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg1>
+    <mseg2 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg2>
+    <mseg3 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg3>
+    <mseg4 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg4>
+    <sample sampleName=""/>
+  </state>
+  <param uid="osc1fine" val="0.5015643239021301"/>
+  <param uid="osc1detune" val="0.01067157182842493"/>
+  <param uid="osc1spread" val="100.0"/>
+  <param uid="osc2coarse" val="3.0"/>
+  <param uid="osc2detune" val="0.03068066388368607"/>
+  <param uid="osc2spread" val="100.0"/>
+  <param uid="osc3coarse" val="6.0"/>
+  <param uid="osc3detune" val="0.0240110456943512"/>
+  <param uid="osc3spread" val="100.0"/>
+  <param uid="osc4coarse" val="12.0"/>
+  <param uid="osc4detune" val="0.03868439048528671"/>
+  <param uid="osc4spread" val="100.0"/>
+  <param uid="env1attack" val="0.0"/>
+  <param uid="env1decay" val="0.01937331259250641"/>
+  <param uid="env1sustain" val="30.52437591552734"/>
+  <param uid="env1release" val="0.09999998658895493"/>
+  <param uid="env1time" val="0.09999998658895493"/>
+  <param uid="env2attack" val="0.0"/>
+  <param uid="env2release" val="0.09999998658895493"/>
+  <param uid="env2time" val="0.09999998658895493"/>
+  <param uid="env3attack" val="0.0"/>
+  <param uid="env3release" val="0.09999998658895493"/>
+  <param uid="env3time" val="0.09999998658895493"/>
+  <param uid="env4attack" val="0.0"/>
+  <param uid="env4release" val="0.09999998658895493"/>
+  <param uid="env4time" val="0.09999998658895493"/>
+  <param uid="fltfreq" val="122.3880310058594"/>
+  <param uid="auxenable" val="1.0"/>
+  <param uid="auxwave" val="2.0"/>
+  <param uid="auxoctave" val="-1.0"/>
+  <param uid="auxvolume" val="-4.485023498535156"/>
+  <param uid="auxdetune" val="0.06002770364284515"/>
+  <param uid="auxspread" val="100.0"/>
+  <param uid="auxfiltercutoff" val="86.71148681640625"/>
+  <param uid="auxres" val="67.49770355224609"/>
+  <param uid="mono" val="1.0"/>
+  <param uid="fxgain" val="3.814697265625e-6"/>
+  <param uid="wsdrive" val="26.73227500915527"/>
+  <param uid="wswet" val="0.527460515499115"/>
+  <param uid="wsfunc" val="10.0"/>
+  <param uid="wshighshelf" val="6957.18115234375"/>
+  <param uid="wslp" val="3445.058837890625"/>
+  <param uid="chrate" val="0.05000001192092896"/>
+  <param uid="rvsize" val="1.394848227500916"/>
+  <param uid="rvdamping" val="3685.221923828125"/>
+  <param uid="rmmodfreq1" val="39.9999885559082"/>
+  <param uid="rmmodfreq2" val="39.9999885559082"/>
+  <param uid="fxa1" val="1.0"/>
+  <param uid="fxa2" val="2.0"/>
+  <param uid="fxa3" val="6.0"/>
+  <param uid="laneAGain" val="3.814697265625e-6"/>
+  <param uid="laneBGain" val="3.814697265625e-6"/>
+</state>

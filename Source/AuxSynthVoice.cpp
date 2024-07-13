@@ -416,7 +416,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
-		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.env1Params.duration))].toSeconds(proc.playhead);
+		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(proc.env1Params.duration->getProcValue())].toSeconds(proc.playhead);
 	}
 	if (mode == 2) {
 		p.sync = true;
@@ -435,7 +435,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 	p.sync = (mode != 0); p.repeat = (mode != 0);
 	if (mode == 1) {
 		p.sync = true;
-		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.env2Params.duration))].toSeconds(proc.playhead);
+		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(proc.env2Params.duration->getProcValue())].toSeconds(proc.playhead);
 	}
 	if (mode == 2) {
 		p.sync = true;
@@ -454,7 +454,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
-		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.env3Params.duration))].toSeconds(proc.playhead);
+		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(proc.env3Params.duration->getProcValue())].toSeconds(proc.playhead);
 	}
 	if (mode == 2) {
 		p.sync = true;
@@ -472,7 +472,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 	p.sync = (!(mode == 0)); p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
-		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.env4Params.duration))].toSeconds(proc.playhead);
+		p.syncduration = gin::NoteDuration::getNoteDurations()[size_t(proc.env4Params.duration->getProcValue())].toSeconds(proc.playhead);
 	}
 	if (mode == 2) {
 		p.sync = true;

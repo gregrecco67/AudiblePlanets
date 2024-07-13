@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<state name="Victory Fanfare" author="builtin" tags="repeating soundfx">
+  <state sample="">
+    <instance editorScale="1.499310374259949" browserOpen="0" selectedAuthors=""
+              selectedTags=""/>
+    <MODMATRIX>
+      <MODITEM srcId="mseg1" depth="0.578125" enabled="1" dstId="pitch" function="linear"
+               biPolarMapping="1"/>
+      <MODITEM srcId="mseg1" depth="0.128376230597496" enabled="1" dstId="fltfreq"
+               function="linear" biPolarMapping="0"/>
+    </MODMATRIX>
+    <mseg1 startIndex="0" endIndex="7">
+      <PT t="0.0" v="0.0" c="0.0"/>
+      <PT t="0.0" v="0.5" c="0.0"/>
+      <PT t="0.3333333432674408" v="0.5" c="0.0"/>
+      <PT t="0.3333333432674408" v="0.25" c="0.0"/>
+      <PT t="0.6666666865348816" v="0.25" c="0.0"/>
+      <PT t="0.6666666865348816" v="0.75" c="0.0"/>
+      <PT t="1.0" v="0.75" c="0.0"/>
+      <PT t="1.0" v="0.0" c="0.0"/>
+    </mseg1>
+    <mseg2 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg2>
+    <mseg3 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg3>
+    <mseg4 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg4>
+    <sample sampleName=""/>
+  </state>
+  <param uid="env1attack" val="0.01000000350177288"/>
+  <param uid="env1release" val="0.006454505026340485"/>
+  <param uid="env1time" val="0.09999998658895493"/>
+  <param uid="env2attack" val="0.01000000350177288"/>
+  <param uid="env2release" val="1.992130994796753"/>
+  <param uid="env2time" val="0.09999998658895493"/>
+  <param uid="env3attack" val="0.01000000350177288"/>
+  <param uid="env3release" val="2.523425102233887"/>
+  <param uid="env3time" val="0.09999998658895493"/>
+  <param uid="env4attack" val="0.01000000350177288"/>
+  <param uid="env4release" val="2.642127990722656"/>
+  <param uid="env4time" val="0.09999998658895493"/>
+  <param uid="pitch" val="1.410640954971313"/>
+  <param uid="fltkey" val="68.56485748291016"/>
+  <param uid="fltfreq" val="93.55851745605469"/>
+  <param uid="fltres" val="50.15640258789062"/>
+  <param uid="auxvolume" val="-11.99999809265137"/>
+  <param uid="samplvolume" val="-11.99999809265137"/>
+  <param uid="fxgain" val="3.814697265625e-6"/>
+  <param uid="cpattack" val="0.0000199999994947575"/>
+  <param uid="dlbeatsright" val="16.0"/>
+  <param uid="dlpingpong" val="1.0"/>
+  <param uid="dlfeedback" val="0.860165536403656"/>
+  <param uid="chrate" val="0.05000001192092896"/>
+  <param uid="rmmodfreq1" val="39.9999885559082"/>
+  <param uid="rmmodfreq2" val="39.9999885559082"/>
+  <param uid="fxa1" val="3.0"/>
+  <param uid="laneAGain" val="3.814697265625e-6"/>
+  <param uid="laneBGain" val="3.814697265625e-6"/>
+  <param uid="mseg1beat" val="6.0"/>
+  <param uid="mseg1xgrid" val="3.0"/>
+  <param uid="mseg1loop" val="1.0"/>
+  <param uid="mseg1draw" val="1.0"/>
+</state>
