@@ -151,7 +151,7 @@ private:
 	mipp::Reg<float> modSample4L, demodSample4L, modSample4R, demodSample4R;
 
 	mipp::Reg<float> sampleL{ 0.f, 0.f, 0.f, 0.f }, sampleR{ 0.f, 0.f, 0.f, 0.f };
-	mipp::Reg<float> piReg = static_cast<float>(pi);
+	mipp::Reg<float> piReg = pi;
 
 	float maxPos = 0.0f;
 	float minPos = 0.0f;

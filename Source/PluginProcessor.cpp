@@ -980,16 +980,16 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
 	synth.setMono(globalParams.mono->isOn());
     synth.setLegato(globalParams.legato->isOn());
-    synth.setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
-    synth.setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
-    synth.setGlideRate(globalParams.glideRate->getProcValue());
+    synth.setGlissando(globalParams.glideMode->getUserValue() == 1.0f);
+    synth.setPortamento(globalParams.glideMode->getUserValue() == 2.0f);
+    synth.setGlideRate(globalParams.glideRate->getUserValue());
     synth.setNumVoices(numVoices);
 
 	auxSynth.setMono(globalParams.mono->isOn());
 	auxSynth.setLegato(globalParams.legato->isOn());
-	auxSynth.setGlissando(globalParams.glideMode->getProcValue() == 1.0f);
-	auxSynth.setPortamento(globalParams.glideMode->getProcValue() == 2.0f);
-	auxSynth.setGlideRate(globalParams.glideRate->getProcValue());
+	auxSynth.setGlissando(globalParams.glideMode->getUserValue() == 1.0f);
+	auxSynth.setPortamento(globalParams.glideMode->getUserValue() == 2.0f);
+	auxSynth.setGlideRate(globalParams.glideRate->getUserValue());
 	auxSynth.setNumVoices(numVoices);
 	auxBuffer.clear();
 
@@ -1051,12 +1051,12 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
     int numSamples = fxALaneBuffer.getNumSamples();
     float laneAQ = gin::Q / (1.0f - (modMatrix.getValue(fxOrderParams.laneARes) / 100.0f) * 0.99f);
     float laneBQ = gin::Q / (1.0f - (modMatrix.getValue(fxOrderParams.laneBRes) / 100.0f) * 0.99f);
-    bool laneAPre = fxOrderParams.laneAPrePost->getProcValue() < 0.5f;
-    bool laneBPre = fxOrderParams.laneBPrePost->getProcValue() < 0.5f;
+    bool laneAPre = fxOrderParams.laneAPrePost->getUserValue() < 0.5f;
+    bool laneBPre = fxOrderParams.laneBPrePost->getUserValue() < 0.5f;
     float laneAPan = modMatrix.getValue(fxOrderParams.laneAPan);
     float laneBPan = modMatrix.getValue(fxOrderParams.laneBPan);
 
-    switch (int(fxOrderParams.laneAType->getProcValue()))
+    switch (int(fxOrderParams.laneAType->getUserValue()))
     {
     case 0:
         laneAFilter.setType(gin::Filter::lowpass);
@@ -1097,7 +1097,7 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
     laneAFilter.setParams(laneAFilterCutoff.getCurrentValue(), laneAQ);
     laneAFilterCutoff.skip(numSamples);
 
-    switch (int(fxOrderParams.laneBType->getProcValue()))
+    switch (int(fxOrderParams.laneBType->getUserValue()))
     {
     case 0:
         laneBFilter.setType(gin::Filter::lowpass);
@@ -1411,12 +1411,12 @@ void APAudioProcessor::updateParams(int newBlockSize)
         gin::LFO::Parameters classparams;
         auto& lfo = this->monoLFOs[lfoparams->num-1];
         float freq = 0;
-        if (lfoparams->sync->getProcValue() > 0.0f)
-            freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(lfoparams->beat->getProcValue())].toSeconds(playhead);
+        if (lfoparams->sync->getUserValue() > 0.0f)
+            freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(lfoparams->beat->getUserValue())].toSeconds(playhead);
         else
             freq = modMatrix.getValue(lfoparams->rate);
 
-        classparams.waveShape = (gin::LFO::WaveShape) int(lfoparams->wave->getProcValue());
+        classparams.waveShape = (gin::LFO::WaveShape) int(lfoparams->wave->getUserValue());
         classparams.frequency = freq;
         classparams.phase = modMatrix.getValue(lfoparams->phase);
         classparams.offset = modMatrix.getValue(lfoparams->offset);
@@ -1461,7 +1461,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
     auto& notes = gin::NoteDuration::getNoteDurations();
 
 	if (activeEffects.contains(3)) {
-		bool tempoSync = stereoDelayParams.temposync->getProcValue() > 0.0f;
+		bool tempoSync = stereoDelayParams.temposync->getUserValue() > 0.0f;
 		if (!tempoSync) {
 			stereoDelay.setTimeL(modMatrix.getValue(stereoDelayParams.timeleft));
 			stereoDelay.setTimeR(modMatrix.getValue(stereoDelayParams.timeright));
@@ -1473,8 +1473,8 @@ void APAudioProcessor::updateParams(int newBlockSize)
 		stereoDelay.setFB(modMatrix.getValue(stereoDelayParams.feedback));
 		stereoDelay.setWet(modMatrix.getValue(stereoDelayParams.wet));
 		stereoDelay.setDry(modMatrix.getValue(stereoDelayParams.dry));
-		stereoDelay.setFreeze(stereoDelayParams.freeze->getProcValue() > 0.0f);
-		stereoDelay.setPing(stereoDelayParams.pingpong->getProcValue() > 0.0f);
+		stereoDelay.setFreeze(stereoDelayParams.freeze->getUserValue() > 0.0f);
+		stereoDelay.setPing(stereoDelayParams.pingpong->getUserValue() > 0.0f);
 		stereoDelay.setCutoff(modMatrix.getValue(stereoDelayParams.cutoff));
 	}
 

@@ -16,8 +16,8 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <juce_core/juce_core.h>
 #include <cmath>
+#include <juce_core/juce_core.h>
 
 
 class LFO {
