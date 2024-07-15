@@ -447,8 +447,8 @@ public:
 			rpt1->setVisible(true);
 			env1Viz.setVisible(true);
 			choice = proc.env1Params.syncrepeat->getUserValueInt();
-			beats1->setVisible(choice == 2);
-			rate1->setVisible(choice == 1);
+			beats1->setVisible(choice == 1);
+			rate1->setVisible(choice == 2);
 			select1.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 2:
@@ -462,8 +462,8 @@ public:
 			rpt2->setVisible(true);
 			env2Viz.setVisible(true);
 			choice = proc.env2Params.syncrepeat->getUserValueInt();
-			beats2->setVisible(choice == 2);
-			rate2->setVisible(choice == 1);
+			beats2->setVisible(choice == 1);
+			rate2->setVisible(choice == 2);
 			select2.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 3:
@@ -477,8 +477,8 @@ public:
 			rpt3->setVisible(true);
 			env3Viz.setVisible(true);
 			choice = proc.env3Params.syncrepeat->getUserValueInt();
-			beats3->setVisible(choice == 2);
-			rate3->setVisible(choice == 1);
+			beats3->setVisible(choice == 1);
+			rate3->setVisible(choice == 2);
 			select3.setToggleState(true, juce::dontSendNotification);
 			break;
 		case 4:
@@ -492,8 +492,8 @@ public:
 			rpt4->setVisible(true);
 			env4Viz.setVisible(true);
 			choice = proc.env4Params.syncrepeat->getUserValueInt();
-			beats4->setVisible(choice == 2);
-			rate4->setVisible(choice == 1);
+			beats4->setVisible(choice == 1);
+			rate4->setVisible(choice == 2);
 			select4.setToggleState(true, juce::dontSendNotification);
 			break;
 		}
