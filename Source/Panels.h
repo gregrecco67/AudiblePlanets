@@ -25,10 +25,10 @@
 class OscillatorBox : public gin::ParamBox
 {
 public:
-    OscillatorBox(APAudioProcessor& proc_)
-        : gin::ParamBox("  OSC"), proc(proc_)
-    {
-        addControl(c1 = new APKnob(proc.osc1Params.coarse), 0, 0); // coarse
+	OscillatorBox(APAudioProcessor &proc_)
+		: gin::ParamBox("  OSC"), proc(proc_)
+	{
+		addControl(c1 = new APKnob(proc.osc1Params.coarse), 0, 0); // coarse
 		addControl(c2 = new APKnob(proc.osc2Params.coarse), 0, 0);
 		addControl(c3 = new APKnob(proc.osc3Params.coarse), 0, 0);
 		addControl(c4 = new APKnob(proc.osc4Params.coarse), 0, 0);
@@ -36,11 +36,11 @@ public:
 		addControl(f2 = new APKnob(proc.osc2Params.fine, true), 1, 0);
 		addControl(f3 = new APKnob(proc.osc3Params.fine, true), 1, 0);
 		addControl(f4 = new APKnob(proc.osc4Params.fine, true), 1, 0);
-        addControl(v1 = new APKnob(proc.osc1Params.volume), 2, 0); // volume
+		addControl(v1 = new APKnob(proc.osc1Params.volume), 2, 0); // volume
 		addControl(v2 = new APKnob(proc.osc2Params.volume), 2, 0);
 		addControl(v3 = new APKnob(proc.osc3Params.volume), 2, 0);
 		addControl(v4 = new APKnob(proc.osc4Params.volume), 2, 0);
-        addControl(t1 = new APKnob(proc.osc1Params.tones), 3, 0); // tones
+		addControl(t1 = new APKnob(proc.osc1Params.tones), 3, 0); // tones
 		addControl(t2 = new APKnob(proc.osc2Params.tones), 3, 0);
 		addControl(t3 = new APKnob(proc.osc3Params.tones), 3, 0);
 		addControl(t4 = new APKnob(proc.osc4Params.tones), 3, 0);
@@ -62,32 +62,32 @@ public:
 		c4->setLookAndFeel(&lnf4);
 		f4->setLookAndFeel(&lnf4);
 		v4->setLookAndFeel(&lnf4);
-	
-        addControl(d1 = new APKnob(proc.osc1Params.detune), 2, 1); // detune
+
+		addControl(d1 = new APKnob(proc.osc1Params.detune), 2, 1); // detune
 		addControl(d2 = new APKnob(proc.osc2Params.detune), 2, 1);
 		addControl(d3 = new APKnob(proc.osc3Params.detune), 2, 1);
 		addControl(d4 = new APKnob(proc.osc4Params.detune), 2, 1);
 
-        addControl(s1 = new APKnob(proc.osc1Params.spread), 3, 1); // spread
+		addControl(s1 = new APKnob(proc.osc1Params.spread), 3, 1); // spread
 		addControl(s2 = new APKnob(proc.osc2Params.spread), 3, 1);
 		addControl(s3 = new APKnob(proc.osc3Params.spread), 3, 1);
 		addControl(s4 = new APKnob(proc.osc4Params.spread), 3, 1);
 
-        addControl(n1 = new APKnob(proc.osc1Params.pan, true), 4, 1); // pan
+		addControl(n1 = new APKnob(proc.osc1Params.pan, true), 4, 1); // pan
 		addControl(n2 = new APKnob(proc.osc2Params.pan, true), 4, 1);
 		addControl(n3 = new APKnob(proc.osc3Params.pan, true), 4, 1);
 		addControl(n4 = new APKnob(proc.osc4Params.pan, true), 4, 1);
 
-        addControl(saw1 = new gin::Select(proc.osc1Params.saw)); // saw
+		addControl(saw1 = new gin::Select(proc.osc1Params.saw)); // saw
 		addControl(saw2 = new gin::Select(proc.osc2Params.saw));
 		addControl(saw3 = new gin::Select(proc.osc3Params.saw));
 		addControl(saw4 = new gin::Select(proc.osc4Params.saw));
 
-        addControl(env1 = new gin::Select(proc.osc1Params.env)); // env select
+		addControl(env1 = new gin::Select(proc.osc1Params.env)); // env select
 		addControl(env2 = new gin::Select(proc.osc2Params.env));
 		addControl(env3 = new gin::Select(proc.osc3Params.env));
 		addControl(env4 = new gin::Select(proc.osc4Params.env));
-		
+
 		addControl(fixed1 = new gin::Select(proc.osc1Params.fixed)); // fixed
 		addControl(fixed2 = new gin::Select(proc.osc2Params.fixed));
 		addControl(fixed3 = new gin::Select(proc.osc3Params.fixed));
@@ -124,24 +124,28 @@ public:
 		fixedHz3.setJustificationType(juce::Justification::centred);
 		fixedHz4.setJustificationType(juce::Justification::centred);
 
-		select1.onClick = [this]() {show(1);};
-		select2.onClick = [this]() {show(2);};
-		select3.onClick = [this]() {show(3);};
-		select4.onClick = [this]() {show(4);};
+		select1.onClick = [this]()
+		{ show(1); };
+		select2.onClick = [this]()
+		{ show(2); };
+		select3.onClick = [this]()
+		{ show(3); };
+		select4.onClick = [this]()
+		{ show(4); };
 
 		show(1);
-    }
+	}
 
-	void show(int osc) {
+	void show(int osc)
+	{
 		for (gin::ParamComponent::Ptr c : {c1, f1, v1, t1, d1, s1, p1, n1, saw1, env1, fixed1,
-			c2, f2, v2, t2, d2, s2, p2, n2, saw2, env2, fixed2,	
-			c3, f3, v3, t3, d3, s3, p3, n3, saw3, env3, fixed3,
-			c4, f4, v4, t4, d4, s4, p4, n4, saw4, env4, fixed4
-		})
+										   c2, f2, v2, t2, d2, s2, p2, n2, saw2, env2, fixed2,
+										   c3, f3, v3, t3, d3, s3, p3, n3, saw3, env3, fixed3,
+										   c4, f4, v4, t4, d4, s4, p4, n4, saw4, env4, fixed4})
 		{
 			c->setVisible(false);
 		}
-		for (auto& viz : {&fixedHz1, &fixedHz2, &fixedHz3, &fixedHz4})
+		for (auto &viz : {&fixedHz1, &fixedHz2, &fixedHz3, &fixedHz4})
 		{
 			viz->setVisible(false);
 		}
@@ -149,7 +153,8 @@ public:
 		select2.setToggleState(false, juce::dontSendNotification);
 		select3.setToggleState(false, juce::dontSendNotification);
 		select4.setToggleState(false, juce::dontSendNotification);
-		switch(osc) {
+		switch (osc)
+		{
 		case 1:
 			currentOsc = 1;
 			c1->setVisible(true);
@@ -214,8 +219,8 @@ public:
 		paramChanged();
 	}
 
-    ~OscillatorBox() override
-    {
+	~OscillatorBox() override
+	{
 		c1->setLookAndFeel(nullptr);
 		f1->setLookAndFeel(nullptr);
 		v1->setLookAndFeel(nullptr);
@@ -228,12 +233,13 @@ public:
 		c4->setLookAndFeel(nullptr);
 		f4->setLookAndFeel(nullptr);
 		v4->setLookAndFeel(nullptr);
-    }
+	}
 
 	class APLookAndFeel1 : public APLNF
 	{
 	public:
-		APLookAndFeel1(){
+		APLookAndFeel1()
+		{
 			setColour(juce::Slider::rotarySliderFillColourId, APColors::red);
 			setColour(juce::Slider::trackColourId, APColors::redMuted);
 		}
@@ -241,7 +247,8 @@ public:
 	class APLookAndFeel2 : public APLNF
 	{
 	public:
-		APLookAndFeel2() {
+		APLookAndFeel2()
+		{
 			setColour(juce::Slider::rotarySliderFillColourId, APColors::yellow);
 			setColour(juce::Slider::trackColourId, APColors::yellowMuted);
 		}
@@ -249,7 +256,8 @@ public:
 	class APLookAndFeel3 : public APLNF
 	{
 	public:
-		APLookAndFeel3() {
+		APLookAndFeel3()
+		{
 			setColour(juce::Slider::rotarySliderFillColourId, APColors::green);
 			setColour(juce::Slider::trackColourId, APColors::greenMuted);
 		}
@@ -257,66 +265,74 @@ public:
 	class APLookAndFeel4 : public APLNF
 	{
 	public:
-		APLookAndFeel4() {
+		APLookAndFeel4()
+		{
 			setColour(juce::Slider::rotarySliderFillColourId, APColors::blue);
 			setColour(juce::Slider::trackColourId, APColors::blueMuted);
 		}
 	};
 
-	void paramChanged() override {
+	void paramChanged() override
+	{
 		gin::ParamBox::paramChanged();
-		if (proc.osc1Params.fixed->isOn() && currentOsc == 1) {
+		if (proc.osc1Params.fixed->isOn() && currentOsc == 1)
+		{
 			fixedHz1.setVisible(true);
 			fixedHz1.setText(juce::String((proc.osc1Params.coarse->getUserValue() + proc.osc1Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
-		else {
+		else
+		{
 			fixedHz1.setVisible(false);
 		}
-		if (proc.osc2Params.fixed->isOn() && currentOsc == 2) {
+		if (proc.osc2Params.fixed->isOn() && currentOsc == 2)
+		{
 			fixedHz2.setVisible(true);
-			fixedHz2.setText(juce::String((proc.osc2Params.coarse->getUserValue() 
-			+ proc.osc2Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
+			fixedHz2.setText(juce::String((proc.osc2Params.coarse->getUserValue() + proc.osc2Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
-		else {
+		else
+		{
 			fixedHz2.setVisible(false);
 		}
-		if (proc.osc3Params.fixed->isOn() && currentOsc == 3) {
+		if (proc.osc3Params.fixed->isOn() && currentOsc == 3)
+		{
 			fixedHz3.setVisible(true);
-			fixedHz3.setText(juce::String((proc.osc3Params.coarse->getUserValue() 
-			+ proc.osc3Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
+			fixedHz3.setText(juce::String((proc.osc3Params.coarse->getUserValue() + proc.osc3Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
-		else {
+		else
+		{
 			fixedHz3.setVisible(false);
 		}
-		if (proc.osc4Params.fixed->isOn() && currentOsc == 4) {
+		if (proc.osc4Params.fixed->isOn() && currentOsc == 4)
+		{
 			fixedHz4.setVisible(true);
-			fixedHz4.setText(juce::String((proc.osc4Params.coarse->getUserValue() 
-			+ proc.osc4Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
+			fixedHz4.setText(juce::String((proc.osc4Params.coarse->getUserValue() + proc.osc4Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
-		else {
+		else
+		{
 			fixedHz4.setVisible(false);
 		}
 	}
 
-	void resized() override {
+	void resized() override
+	{
 		gin::ParamBox::resized();
-		fixedHz1.setBounds(56, 23+70+10, 56, 15); // 23/70/10 header, first row, padding
-		fixedHz2.setBounds(56, 23+70+10, 56, 15);
-		fixedHz3.setBounds(56, 23+70+10, 56, 15);
-		fixedHz4.setBounds(56, 23+70+10, 56, 15);
-		p1->setBounds(56*4, 23, 56, 70);
-		p2->setBounds(56*4, 23, 56, 70);
-		p3->setBounds(56*4, 23, 56, 70);
-		p4->setBounds(56*4, 23, 56, 70);
-        saw1->setBounds(0, 93, 56, 35);
+		fixedHz1.setBounds(56, 23 + 70 + 10, 56, 15); // 23/70/10 header, first row, padding
+		fixedHz2.setBounds(56, 23 + 70 + 10, 56, 15);
+		fixedHz3.setBounds(56, 23 + 70 + 10, 56, 15);
+		fixedHz4.setBounds(56, 23 + 70 + 10, 56, 15);
+		p1->setBounds(56 * 4, 23, 56, 70);
+		p2->setBounds(56 * 4, 23, 56, 70);
+		p3->setBounds(56 * 4, 23, 56, 70);
+		p4->setBounds(56 * 4, 23, 56, 70);
+		saw1->setBounds(0, 93, 56, 35);
 		saw2->setBounds(0, 93, 56, 35);
 		saw3->setBounds(0, 93, 56, 35);
 		saw4->setBounds(0, 93, 56, 35);
-        env1->setBounds(0, 128, 56, 35);
+		env1->setBounds(0, 128, 56, 35);
 		env2->setBounds(0, 128, 56, 35);
 		env3->setBounds(0, 128, 56, 35);
 		env4->setBounds(0, 128, 56, 35);
-        fixed1->setBounds(56, 128, 56, 35);
+		fixed1->setBounds(56, 128, 56, 35);
 		fixed2->setBounds(56, 128, 56, 35);
 		fixed3->setBounds(56, 128, 56, 35);
 		fixed4->setBounds(56, 128, 56, 35);
@@ -325,12 +341,12 @@ public:
 		select3.setBounds(140, 0, 20, 23);
 		select4.setBounds(160, 0, 20, 23);
 	}
-    
+
 	APLookAndFeel1 lnf1;
 	APLookAndFeel2 lnf2;
 	APLookAndFeel3 lnf3;
 	APLookAndFeel4 lnf4;
-    APAudioProcessor& proc;
+	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr c1, f1, v1, t1, p1, d1, s1, n1, saw1, env1, fixed1;
 	gin::ParamComponent::Ptr c2, f2, v2, t2, p2, d2, s2, n2, saw2, env2, fixed2;
 	gin::ParamComponent::Ptr c3, f3, v3, t3, p3, d3, s3, n3, saw3, env3, fixed3;
@@ -346,17 +362,16 @@ public:
 class ENVBox : public gin::ParamBox
 {
 public:
-    ENVBox(APAudioProcessor& proc_)
-        : gin::ParamBox("  ENV"), proc(proc_)
-    {
+	ENVBox(APAudioProcessor &proc_)
+		: gin::ParamBox("  ENV"), proc(proc_)
+	{
 		// in reverse order
 		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv4, true));
 		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv3, true));
 		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv2, true));
 		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
 
-
-        addControl(a1 = new APKnob(proc.env1Params.attack), 0, 0);
+		addControl(a1 = new APKnob(proc.env1Params.attack), 0, 0);
 		addControl(a2 = new APKnob(proc.env2Params.attack), 0, 0);
 		addControl(a3 = new APKnob(proc.env3Params.attack), 0, 0);
 		addControl(a4 = new APKnob(proc.env4Params.attack), 0, 0);
@@ -392,7 +407,7 @@ public:
 		addControl(rate2 = new APKnob(proc.env2Params.time), 5, 1);
 		addControl(rate3 = new APKnob(proc.env3Params.time), 5, 1);
 		addControl(rate4 = new APKnob(proc.env4Params.time), 5, 1);
-		
+
 		watchParam(proc.env1Params.syncrepeat);
 		watchParam(proc.env2Params.syncrepeat);
 		watchParam(proc.env3Params.syncrepeat);
@@ -409,24 +424,28 @@ public:
 		addAndMakeVisible(env3Viz);
 		addAndMakeVisible(env4Viz);
 
-		select1.onClick = [this]() {show(1);};
-		select2.onClick = [this]() {show(2);};
-		select3.onClick = [this]() {show(3);};
-		select4.onClick = [this]() {show(4);};
+		select1.onClick = [this]()
+		{ show(1); };
+		select2.onClick = [this]()
+		{ show(2); };
+		select3.onClick = [this]()
+		{ show(3); };
+		select4.onClick = [this]()
+		{ show(4); };
 
 		show(1);
 	}
 
-	void show(int env) {
+	void show(int env)
+	{
 		for (gin::ParamComponent::Ptr c : {a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1,
-			a2, d2, s2, r2, ac2, dc2, rpt2, beats2, rate2,
-			a3, d3, s3, r3, ac3, dc3, rpt3, beats3, rate3,
-			a4, d4, s4, r4, ac4, dc4, rpt4, beats4, rate4
-		})
+										   a2, d2, s2, r2, ac2, dc2, rpt2, beats2, rate2,
+										   a3, d3, s3, r3, ac3, dc3, rpt3, beats3, rate3,
+										   a4, d4, s4, r4, ac4, dc4, rpt4, beats4, rate4})
 		{
 			c->setVisible(false);
 		}
-		for (auto& viz : {&env1Viz, &env2Viz, &env3Viz, &env4Viz})
+		for (auto &viz : {&env1Viz, &env2Viz, &env3Viz, &env4Viz})
 		{
 			viz->setVisible(false);
 		}
@@ -435,7 +454,8 @@ public:
 		select3.setToggleState(false, juce::dontSendNotification);
 		select4.setToggleState(false, juce::dontSendNotification);
 		int choice;
-		switch (env) {
+		switch (env)
+		{
 		case 1:
 			currentEnv = 1;
 			a1->setVisible(true);
@@ -506,108 +526,110 @@ public:
 		show(currentEnv);
 	}
 
-	void resized() override {
+	void resized() override
+	{
 		gin::ParamBox::resized();
 		select1.setBounds(100, 0, 20, 23);
 		select2.setBounds(120, 0, 20, 23);
 		select3.setBounds(140, 0, 20, 23);
 		select4.setBounds(160, 0, 20, 23);
-		env1Viz.setBounds(0, 23+70, 56*4, 70);
-		env2Viz.setBounds(0, 23+70, 56*4, 70);
-		env3Viz.setBounds(0, 23+70, 56*4, 70);
-		env4Viz.setBounds(0, 23+70, 56*4, 70);
+		env1Viz.setBounds(0, 23 + 70, 56 * 4, 70);
+		env2Viz.setBounds(0, 23 + 70, 56 * 4, 70);
+		env3Viz.setBounds(0, 23 + 70, 56 * 4, 70);
+		env4Viz.setBounds(0, 23 + 70, 56 * 4, 70);
 	}
 
-	APAudioProcessor& proc;
+	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1;
 	gin::ParamComponent::Ptr a2, d2, s2, r2, ac2, dc2, rpt2, beats2, rate2;
 	gin::ParamComponent::Ptr a3, d3, s3, r3, ac3, dc3, rpt3, beats3, rate3;
 	gin::ParamComponent::Ptr a4, d4, s4, r4, ac4, dc4, rpt4, beats4, rate4;
 
-
-	EnvelopeComponent env1Viz{ proc, 1 }, env2Viz{ proc, 2 }, env3Viz{ proc, 3 }, env4Viz{ proc, 4 };
+	EnvelopeComponent env1Viz{proc, 1}, env2Viz{proc, 2}, env3Viz{proc, 3}, env4Viz{proc, 4};
 	int currentEnv{1};
-	juce::TextButton select1{ "1" }, select2{ "2" }, select3{ "3" }, select4{ "4" };
+	juce::TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
 };
 
 //==============================================================================
 class TimbreBox : public gin::ParamBox
 {
 public:
-	TimbreBox(const juce::String& name, APAudioProcessor& proc)
+	TimbreBox(const juce::String &name, APAudioProcessor &proc)
 		: gin::ParamBox(name)
 	{
 		setName(name);
 
-		auto& timbreparams = proc.timbreParams;
-		auto& globalParams = proc.globalParams;
+		auto &timbreparams = proc.timbreParams;
+		auto &globalParams = proc.globalParams;
 		addControl(new APKnob(timbreparams.equant, true), 0, 0);
 		addControl(new APKnob(timbreparams.pitch), 0, 1);
 		addControl(new APKnob(timbreparams.blend), 1, 1);
-        addControl(new APKnob(timbreparams.algo), 1, 0);
+		addControl(new APKnob(timbreparams.algo), 1, 0);
 		addControl(new APKnob(timbreparams.demodmix), 2, 0);
 		addControl(new APKnob(timbreparams.demodVol, true), 2, 1);
 		addControl(new APKnob(globalParams.squash), 3, 0);
 		addControl(new APKnob(proc.globalParams.velSens), 3, 1);
 	}
-
 };
 
 //==============================================================================
 class FilterBox : public gin::ParamBox
 {
 public:
-    FilterBox(const juce::String& name, APAudioProcessor& proc_)
-        : gin::ParamBox(name), proc(proc_)
-    {
-        setName("flt");
+	FilterBox(const juce::String &name, APAudioProcessor &proc_)
+		: gin::ParamBox(name), proc(proc_)
+	{
+		setName("flt");
 		setTitle("  filter");
 
-        auto& flt = proc.filterParams;
+		auto &flt = proc.filterParams;
 
-        auto freq = new APKnob(flt.frequency);
-        addControl(freq, 0, 0);
-        addControl(new APKnob(flt.resonance), 1, 0);
+		auto freq = new APKnob(flt.frequency);
+		addControl(freq, 0, 0);
+		addControl(new APKnob(flt.resonance), 1, 0);
 
-        addControl(new APKnob(flt.keyTracking), 0, 1);
-        addControl(new gin::Select(flt.type), 1, 1);
+		addControl(new APKnob(flt.keyTracking), 0, 1);
+		addControl(new gin::Select(flt.type), 1, 1);
 
-        freq->setLiveValuesCallback([this] ()
-        {
+		freq->setLiveValuesCallback([this]()
+									{
             if (proc.filterParams.keyTracking->getUserValue() != 0.0f ||
                 proc.modMatrix.isModulated(gin::ModDstId(proc.filterParams.frequency->getModIndex())))
                 return proc.getLiveFilterCutoff();
-            return juce::Array<float>();
-        });
-    }
+            return juce::Array<float>(); });
+	}
 
-    APAudioProcessor& proc;
+	APAudioProcessor &proc;
 };
 
 //==============================================================================
-class LFOBox : public gin::ParamBox
+class LFOBox : ParamBox
 {
 public:
-    LFOBox(APAudioProcessor& proc_)
-        : gin::ParamBox("  LFO"), proc(proc_)
-    {
-        setName("lfo");
-		
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO4, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO3, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO2, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, true));
+	LFOBox(APAudioProcessor &proc_)
+		: ParamBox("  LFO"), proc(proc_)
+	{
+		setName("lfo");
 
-        addControl(r1 = new APKnob(proc.lfo1Params.rate), 0, 0);
+		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO4, true), true);
+		addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO3, true), true);
+		addModSource(poly3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO2, true), true);
+		addModSource(poly4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, true), true);
+		addModSource(mono1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO4, false), true);
+		addModSource(mono2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO3, false), true);
+		addModSource(mono3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO2, false), true);
+		addModSource(mono4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, false), true);
+
+		addControl(r1 = new APKnob(proc.lfo1Params.rate), 0, 0);
 		addControl(r2 = new APKnob(proc.lfo2Params.rate), 0, 0);
 		addControl(r3 = new APKnob(proc.lfo3Params.rate), 0, 0);
 		addControl(r4 = new APKnob(proc.lfo4Params.rate), 0, 0);
-        addControl(b1 = new gin::Select(proc.lfo1Params.beat), 0, 0);
+		addControl(b1 = new gin::Select(proc.lfo1Params.beat), 0, 0);
 		addControl(b2 = new gin::Select(proc.lfo2Params.beat), 0, 0);
 		addControl(b3 = new gin::Select(proc.lfo3Params.beat), 0, 0);
 		addControl(b4 = new gin::Select(proc.lfo4Params.beat), 0, 0);
 
-        addControl(s1 = new gin::Select(proc.lfo1Params.sync));
+		addControl(s1 = new gin::Select(proc.lfo1Params.sync));
 		addControl(s2 = new gin::Select(proc.lfo2Params.sync));
 		addControl(s3 = new gin::Select(proc.lfo3Params.sync));
 		addControl(s4 = new gin::Select(proc.lfo4Params.sync));
@@ -617,51 +639,51 @@ public:
 		addControl(w3 = new gin::Select(proc.lfo3Params.wave));
 		addControl(w4 = new gin::Select(proc.lfo4Params.wave));
 
-        addControl(dp1 = new APKnob(proc.lfo1Params.depth, true), 1, 1);
+		addControl(dp1 = new APKnob(proc.lfo1Params.depth, true), 1, 1);
 		addControl(dp2 = new APKnob(proc.lfo2Params.depth, true), 1, 1);
 		addControl(dp3 = new APKnob(proc.lfo3Params.depth, true), 1, 1);
 		addControl(dp4 = new APKnob(proc.lfo4Params.depth, true), 1, 1);
 
-        addControl(o1 = new APKnob(proc.lfo1Params.offset, true), 1, 2);
+		addControl(o1 = new APKnob(proc.lfo1Params.offset, true), 1, 2);
 		addControl(o2 = new APKnob(proc.lfo2Params.offset, true), 1, 2);
 		addControl(o3 = new APKnob(proc.lfo3Params.offset, true), 1, 2);
 		addControl(o4 = new APKnob(proc.lfo4Params.offset, true), 1, 2);
 
-        addControl(p1 = new APKnob(proc.lfo1Params.phase, true), 1, 3);
+		addControl(p1 = new APKnob(proc.lfo1Params.phase, true), 1, 3);
 		addControl(p2 = new APKnob(proc.lfo2Params.phase, true), 1, 3);
 		addControl(p3 = new APKnob(proc.lfo3Params.phase, true), 1, 3);
 		addControl(p4 = new APKnob(proc.lfo4Params.phase, true), 1, 3);
 
-        addControl(dl1 = new APKnob(proc.lfo1Params.delay), 1, 4);
+		addControl(dl1 = new APKnob(proc.lfo1Params.delay), 1, 4);
 		addControl(dl2 = new APKnob(proc.lfo2Params.delay), 1, 4);
 		addControl(dl3 = new APKnob(proc.lfo3Params.delay), 1, 4);
 		addControl(dl4 = new APKnob(proc.lfo4Params.delay), 1, 4);
 
-        addControl(f1 = new APKnob(proc.lfo1Params.fade, true), 1, 5);
+		addControl(f1 = new APKnob(proc.lfo1Params.fade, true), 1, 5);
 		addControl(f2 = new APKnob(proc.lfo2Params.fade, true), 1, 5);
 		addControl(f3 = new APKnob(proc.lfo3Params.fade, true), 1, 5);
 		addControl(f4 = new APKnob(proc.lfo4Params.fade, true), 1, 5);
-        
-        l1 = new gin::LFOComponent();
-        l1->phaseCallback = [this]   
-        {
-            std::vector<float> res;
-            res.push_back(proc.monoLFOs[0]->getCurrentPhase());
-            return res;
-        };
-        l1->setParams(proc.lfo1Params.wave, proc.lfo1Params.sync, proc.lfo1Params.rate, proc.lfo1Params.beat, proc.lfo1Params.depth, 
-            proc.lfo1Params.offset, proc.lfo1Params.phase, proc.lfo1Params.enable);
-        addControl(l1, 1, 0, 4, 1);
+
+		l1 = new gin::LFOComponent();
+		l1->phaseCallback = [this]
+		{
+			std::vector<float> res;
+			res.push_back(proc.monoLFOs[0]->getCurrentPhase());
+			return res;
+		};
+		l1->setParams(proc.lfo1Params.wave, proc.lfo1Params.sync, proc.lfo1Params.rate, proc.lfo1Params.beat, proc.lfo1Params.depth,
+					  proc.lfo1Params.offset, proc.lfo1Params.phase, proc.lfo1Params.enable);
+		addControl(l1, 1, 0, 4, 1);
 
 		l2 = new gin::LFOComponent();
-		l2->phaseCallback = [this]   
+		l2->phaseCallback = [this]
 		{
 			std::vector<float> res;
 			res.push_back(proc.monoLFOs[1]->getCurrentPhase());
 			return res;
 		};
 		l2->setParams(proc.lfo2Params.wave, proc.lfo2Params.sync, proc.lfo2Params.rate, proc.lfo2Params.beat, proc.lfo2Params.depth,
-			proc.lfo2Params.offset, proc.lfo2Params.phase, proc.lfo2Params.enable);
+					  proc.lfo2Params.offset, proc.lfo2Params.phase, proc.lfo2Params.enable);
 		addControl(l2, 1, 0, 4, 1);
 
 		l3 = new gin::LFOComponent();
@@ -672,7 +694,7 @@ public:
 			return res;
 		};
 		l3->setParams(proc.lfo3Params.wave, proc.lfo3Params.sync, proc.lfo3Params.rate, proc.lfo3Params.beat, proc.lfo3Params.depth,
-			proc.lfo3Params.offset, proc.lfo3Params.phase, proc.lfo3Params.enable);
+					  proc.lfo3Params.offset, proc.lfo3Params.phase, proc.lfo3Params.enable);
 		addControl(l3, 1, 0, 4, 1);
 
 		l4 = new gin::LFOComponent();
@@ -683,7 +705,7 @@ public:
 			return res;
 		};
 		l4->setParams(proc.lfo4Params.wave, proc.lfo4Params.sync, proc.lfo4Params.rate, proc.lfo4Params.beat, proc.lfo4Params.depth,
-			proc.lfo4Params.offset, proc.lfo4Params.phase, proc.lfo4Params.enable);
+					  proc.lfo4Params.offset, proc.lfo4Params.phase, proc.lfo4Params.enable);
 		addControl(l4, 1, 0, 4, 1);
 
 		addAndMakeVisible(select1);
@@ -691,26 +713,30 @@ public:
 		addAndMakeVisible(select3);
 		addAndMakeVisible(select4);
 
-		select1.onClick = [this]() {show(1);};
-		select2.onClick = [this]() {show(2);};
-		select3.onClick = [this]() {show(3);};
-		select4.onClick = [this]() {show(4);};
+		select1.onClick = [this]()
+		{ show(1); };
+		select2.onClick = [this]()
+		{ show(2); };
+		select3.onClick = [this]()
+		{ show(3); };
+		select4.onClick = [this]()
+		{ show(4); };
 
-        watchParam(proc.lfo1Params.sync);
+		watchParam(proc.lfo1Params.sync);
 		watchParam(proc.lfo2Params.sync);
 		watchParam(proc.lfo3Params.sync);
 		watchParam(proc.lfo4Params.sync);
 
-        show(1);
-    }
+		show(1);
+	}
 
-	void show(int lfo) {
+	void show(int lfo)
+	{
 		for (gin::ParamComponent::Ptr c : {
-			r1, b1, s1, w1, dp1, p1, o1, f1, dl1,
-			r2, b2, s2, w2, dp2, p2, o2, f2, dl2,
-			r3, b3, s3, w3, dp3, p3, o3, f3, dl3,
-			r4, b4, s4, w4, dp4, p4, o4, f4, dl4
-		})
+				 r1, b1, s1, w1, dp1, p1, o1, f1, dl1,
+				 r2, b2, s2, w2, dp2, p2, o2, f2, dl2,
+				 r3, b3, s3, w3, dp3, p3, o3, f3, dl3,
+				 r4, b4, s4, w4, dp4, p4, o4, f4, dl4})
 		{
 			c->setVisible(false);
 		}
@@ -718,12 +744,17 @@ public:
 		{
 			viz->setVisible(false);
 		}
+		for (auto button : {poly1, poly2, poly3, poly4, mono1, mono2, mono3, mono4})
+		{
+			button->setVisible(false);
+		}
 		select1.setToggleState(false, juce::dontSendNotification);
 		select2.setToggleState(false, juce::dontSendNotification);
 		select3.setToggleState(false, juce::dontSendNotification);
 		select4.setToggleState(false, juce::dontSendNotification);
 		bool choice;
-		switch (lfo) {
+		switch (lfo)
+		{
 		case 1:
 			currentLFO = 1;
 			choice = proc.lfo1Params.sync->isOn();
@@ -738,6 +769,8 @@ public:
 			dl1->setVisible(true);
 			l1->setVisible(true);
 			select1.setToggleState(true, juce::dontSendNotification);
+			poly1->setVisible(true);
+			mono1->setVisible(true);
 			break;
 		case 2:
 			currentLFO = 2;
@@ -753,6 +786,8 @@ public:
 			dl2->setVisible(true);
 			l2->setVisible(true);
 			select2.setToggleState(true, juce::dontSendNotification);
+			poly2->setVisible(true);
+			mono2->setVisible(true);
 			break;
 		case 3:
 			currentLFO = 3;
@@ -768,6 +803,8 @@ public:
 			dl3->setVisible(true);
 			l3->setVisible(true);
 			select3.setToggleState(true, juce::dontSendNotification);
+			poly3->setVisible(true);
+			mono3->setVisible(true);
 			break;
 		case 4:
 			currentLFO = 4;
@@ -783,19 +820,21 @@ public:
 			dl4->setVisible(true);
 			l4->setVisible(true);
 			select4.setToggleState(true, juce::dontSendNotification);
+			poly4->setVisible(true);
+			mono4->setVisible(true);
 			break;
 		}
 		paramChanged();
 	}
 
-    void paramChanged() override
-    {
-        gin::ParamBox::paramChanged();
+	void paramChanged() override
+	{
+		gin::ParamBox::paramChanged();
 		switch (currentLFO)
-        {
+		{
 		case 1:
-            r1->setVisible(!proc.lfo1Params.sync->isOn());
-            b1->setVisible(proc.lfo1Params.sync->isOn());
+			r1->setVisible(!proc.lfo1Params.sync->isOn());
+			b1->setVisible(proc.lfo1Params.sync->isOn());
 			break;
 		case 2:
 			r2->setVisible(!proc.lfo2Params.sync->isOn());
@@ -809,13 +848,14 @@ public:
 			r4->setVisible(!proc.lfo4Params.sync->isOn());
 			b4->setVisible(proc.lfo4Params.sync->isOn());
 			break;
-        }
-    }
-    
-    void resized() override {
-        gin::ParamBox::resized();
-        s1->setBounds(0, 93, 56, 35);
-        w1->setBounds(0, 128, 56, 35);
+		}
+	}
+
+	void resized() override
+	{
+		gin::ParamBox::resized();
+		s1->setBounds(0, 93, 56, 35);
+		w1->setBounds(0, 128, 56, 35);
 		s2->setBounds(0, 93, 56, 35);
 		w2->setBounds(0, 128, 56, 35);
 		s3->setBounds(0, 93, 56, 35);
@@ -842,17 +882,20 @@ public:
 		dl2->setBounds(200, 108, 42, 57);
 		dl3->setBounds(200, 108, 42, 57);
 		dl4->setBounds(200, 108, 42, 57);
-    }
+	}
 
-    APAudioProcessor& proc;
+	APAudioProcessor &proc;
 
 	gin::ParamComponent::Ptr s1, w1, r1, b1, dp1, p1, o1, f1, dl1,
 		s2, w2, r2, b2, dp2, p2, o2, f2, dl2,
 		s3, w3, r3, b3, dp3, p3, o3, f3, dl3,
 		s4, w4, r4, b4, dp4, p4, o4, f4, dl4;
 
+	juce::Button *poly1, *poly2, *poly3, *poly4,
+		*mono1, *mono2, *mono3, *mono4;
+
 	int currentLFO{1};
-	juce::TextButton select1{ "1" }, select2{ "2" }, select3{ "3" }, select4{ "4" };
+	juce::TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
 	gin::LFOComponent *l1, *l2, *l3, *l4;
 };
 
@@ -860,65 +903,64 @@ public:
 class ModBox : public gin::ParamBox
 {
 public:
-    ModBox(const juce::String& name, APAudioProcessor& proc_)
-        : gin::ParamBox(name), proc(proc_)
-    {
-        setName("mod");
-        setTitle("  mod sources");
-        addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 3);
-        modlist->setRowHeight(20);
-    }
+	ModBox(const juce::String &name, APAudioProcessor &proc_)
+		: gin::ParamBox(name), proc(proc_)
+	{
+		setName("mod");
+		setTitle("  mod sources");
+		addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 3);
+		modlist->setRowHeight(20);
+	}
 
-    gin::ModSrcListBox* modlist;
-    APAudioProcessor& proc;
+	gin::ModSrcListBox *modlist;
+	APAudioProcessor &proc;
 };
 
 //==============================================================================
 class GlobalBox : public gin::ParamBox
 {
 public:
-    GlobalBox(const juce::String& name, APAudioProcessor& proc_)
-        : gin::ParamBox(name), proc(proc_)
-    {
-        setName("global");
+	GlobalBox(const juce::String &name, APAudioProcessor &proc_)
+		: gin::ParamBox(name), proc(proc_)
+	{
+		setName("global");
 
-        addControl(new APKnob(proc.globalParams.level), 2, 1);
-        addControl(new APKnob(proc.globalParams.glideRate), 2, 0);
+		addControl(new APKnob(proc.globalParams.level), 2, 1);
+		addControl(new APKnob(proc.globalParams.glideRate), 2, 0);
 		addControl(new gin::Switch(proc.globalParams.mpe), 0, 1);
 		addControl(new APKnob(proc.globalParams.pitchbendRange), 1, 1);
-        //  velsens
-        addControl(legato = new gin::Select(proc.globalParams.legato));
-        addControl(mono = new gin::Select(proc.globalParams.mono));
-        addControl(glideMode = new gin::Select(proc.globalParams.glideMode));
-        addControl(sidechain = new gin::Select(proc.globalParams.sidechainEnable));
-    }
+		//  velsens
+		addControl(legato = new gin::Select(proc.globalParams.legato));
+		addControl(mono = new gin::Select(proc.globalParams.mono));
+		addControl(glideMode = new gin::Select(proc.globalParams.glideMode));
+		addControl(sidechain = new gin::Select(proc.globalParams.sidechainEnable));
+	}
 
-    void resized() override {
-        gin::ParamBox::resized();
-        legato->setBounds(0, 23, 56, 35);
-        mono->setBounds(0, 58, 56, 35);
-        glideMode->setBounds(56, 23, 56, 35);
-        sidechain->setBounds(56, 58, 56, 35);
-    }
-    
-    gin::ParamComponent::Ptr legato = nullptr, mono = nullptr, glideMode = nullptr, sidechain = nullptr;
-    APAudioProcessor& proc;
+	void resized() override
+	{
+		gin::ParamBox::resized();
+		legato->setBounds(0, 23, 56, 35);
+		mono->setBounds(0, 58, 56, 35);
+		glideMode->setBounds(56, 23, 56, 35);
+		sidechain->setBounds(56, 58, 56, 35);
+	}
+
+	gin::ParamComponent::Ptr legato = nullptr, mono = nullptr, glideMode = nullptr, sidechain = nullptr;
+	APAudioProcessor &proc;
 };
 
-
 //==============================================================================
-
 
 class AuxBox : public gin::ParamBox
 {
 public:
-	AuxBox(const juce::String& name, APAudioProcessor& proc_)
+	AuxBox(const juce::String &name, APAudioProcessor &proc_)
 		: gin::ParamBox(name), proc(proc_)
 	{
-		
+
 		setName("aux");
 		addEnable(proc.auxParams.enable);
-		
+
 		addControl(wave = new gin::Select(proc.auxParams.wave), 0, 0);
 		addControl(env = new gin::Select(proc.auxParams.env), 0, 0);
 		addControl(new APKnob(proc.auxParams.octave), 1, 0);
@@ -943,31 +985,34 @@ public:
 		filtertype->setBounds(0, 128, 56, 35);
 	}
 
-	APAudioProcessor& proc;
+	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr wave, env, prefx, filtertype;
 };
 
 class Waveform : public juce::Component
 {
 public:
-	Waveform(APAudioProcessor& p) : proc(p) {
-        addAndMakeVisible(fileInfo);
+	Waveform(APAudioProcessor &p) : proc(p)
+	{
+		addAndMakeVisible(fileInfo);
 		addAndMakeVisible(sampleFilenameLabel);
 		sampleFilenameLabel.setJustificationType(juce::Justification::centred);
-    }
-    
-    void resized() override {
-        fileInfo.setBounds(getWidth() - 65, 0, 65, 20);
+	}
+
+	void resized() override
+	{
+		fileInfo.setBounds(getWidth() - 65, 0, 65, 20);
 		sampleFilenameLabel.setBounds(0, getHeight() - 23, getWidth(), 23);
-    }
-    
-	void paint(juce::Graphics& g) override
+	}
+
+	void paint(juce::Graphics &g) override
 	{
 		if (juce::File(proc.sampler.sound.name).getFileName() != sampleFilenameLabel.getText())
 		{
 			shouldRedraw = true;
 		}
-		if (proc.sampler.sound.data != nullptr) {
+		if (proc.sampler.sound.data != nullptr)
+		{
 			g.setColour(juce::Colour(0xffCC8866).darker(0.5f));
 			int loopstart = proc.samplerParams.loopstart->getUserValue() * getWidth();
 			int loopend = proc.samplerParams.loopend->getUserValue() * getWidth();
@@ -982,19 +1027,25 @@ public:
 			auto fileInfoString = juce::String(ch) + " ch: " + juce::String(time, 2) + " s";
 			fileInfo.setText(fileInfoString, juce::dontSendNotification);
 		}
-		else { 
+		else
+		{
 			sampleFilenameLabel.setText("", juce::dontSendNotification);
 			fileInfo.setText("", juce::dontSendNotification);
-			g.setColour(juce::Colours::black); g.fillAll(); 
+			g.setColour(juce::Colours::black);
+			g.fillAll();
 		}
 		g.setColour(juce::Colours::darkgrey);
 		g.drawRect(getLocalBounds(), 1);
-		auto& audio = proc.sampler.sound.data;
+		auto &audio = proc.sampler.sound.data;
 		auto stride = proc.sampler.sound.length * (proc.samplerParams.end->getValue() - proc.samplerParams.start->getValue()) / getWidth();
 		auto name = proc.sampler.sound.name;
-		if (stride < 1) { return; }
+		if (stride < 1)
+		{
+			return;
+		}
 		auto buffer = audio->getReadPointer(0);
-		if (shouldRedraw) {
+		if (shouldRedraw)
+		{
 			audioPoints.clear();
 			smoothed.clear();
 			auto length = proc.sampler.sound.length;
@@ -1007,7 +1058,7 @@ public:
 			smoothed.push_back(audioPoints[0]);
 			for (int i = 1; i < audioPoints.size() - 1; i++)
 			{
-				smoothed.push_back(audioPoints[i - 1] * 0.333f + audioPoints[i] * 0.333f + audioPoints[i+1] * 0.333f);
+				smoothed.push_back(audioPoints[i - 1] * 0.333f + audioPoints[i] * 0.333f + audioPoints[i + 1] * 0.333f);
 			}
 			smoothed.push_back(audioPoints[audioPoints.size() - 1]);
 			shouldRedraw = false;
@@ -1015,34 +1066,48 @@ public:
 		juce::Path p;
 		p.clear();
 		p.startNewSubPath(0, getHeight() / 2);
-		float max{ 0 }, min{ 0 };
+		float max{0}, min{0};
 		for (int sample = 0; sample < smoothed.size(); sample++)
 		{
-			if (smoothed[sample] > max) { max = smoothed[sample]; }
-			if (smoothed[sample] < min) { min = smoothed[sample]; }
+			if (smoothed[sample] > max)
+			{
+				max = smoothed[sample];
+			}
+			if (smoothed[sample] < min)
+			{
+				min = smoothed[sample];
+			}
 		}
-		if (std::abs(min) > max) { max = std::abs(min); }
-		else { min = -max; }
+		if (std::abs(min) > max)
+		{
+			max = std::abs(min);
+		}
+		else
+		{
+			min = -max;
+		}
 		min = juce::jlimit(-1.f, -.3f, min);
 		max = juce::jlimit(.3f, 1.f, max);
-		for (int sample = 0; sample < smoothed.size(); sample++) {
+		for (int sample = 0; sample < smoothed.size(); sample++)
+		{
 			p.lineTo(sample, juce::jmap(smoothed[sample], min, max, static_cast<float>(getHeight()), 0.f));
 		}
 
 		g.setColour(juce::Colours::white);
 		g.strokePath(p, juce::PathStrokeType(.4f));
 	}
-	APAudioProcessor& proc;
+	APAudioProcessor &proc;
 	std::vector<float> audioPoints, smoothed;
-	bool shouldRedraw{ true };
-	juce::Label fileInfo{ "", "" }, sampleFilenameLabel{"", ""};
+	bool shouldRedraw{true};
+	juce::Label fileInfo{"", ""}, sampleFilenameLabel{"", ""};
 };
 
 class SamplerBox : public gin::ParamBox
 {
 public:
-	SamplerBox(const juce::String& name, APAudioProcessor& proc_)
-		: gin::ParamBox(name), proc(proc_), waveform(proc_) {
+	SamplerBox(const juce::String &name, APAudioProcessor &proc_)
+		: gin::ParamBox(name), proc(proc_), waveform(proc_)
+	{
 		addEnable(proc.samplerParams.enable);
 		addControl(new APKnob(proc.samplerParams.volume), 0, 0);
 		addControl(new gin::Select(proc.samplerParams.loop), 1, 0);
@@ -1053,43 +1118,53 @@ public:
 		addControl(new APKnob(proc.samplerParams.loopend), 1, 1);
 		addAndMakeVisible(waveform);
 		addAndMakeVisible(loadButton);
-		loadButton.onClick = [this] { chooseFile(); };
-        setFileName();
+		loadButton.onClick = [this]
+		{ chooseFile(); };
+		setFileName();
 	}
 
-	void chooseFile() {
+	void chooseFile()
+	{
 		chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-			[this](const juce::FileChooser& fc)
-			{
-				auto file = fc.getResult();
-				if (!file.existsAsFile()) { return; }
-				proc.loadSample(file.getFullPathName());
-				waveform.shouldRedraw = true;
-				waveform.repaint();
-			});
+							 [this](const juce::FileChooser &fc)
+							 {
+								 auto file = fc.getResult();
+								 if (!file.existsAsFile())
+								 {
+									 return;
+								 }
+								 proc.loadSample(file.getFullPathName());
+								 waveform.shouldRedraw = true;
+								 waveform.repaint();
+							 });
 	}
 
-    void setFileName() {
-        if (proc.sampler.sound.data == nullptr) { return; }
-        auto ch = proc.sampler.sound.data.get()->getNumChannels();
-        auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
-        auto fileInfoString = juce::String(ch) + " ch: " + juce::String(time,2) + " s";
-        waveform.fileInfo.setText(fileInfoString, juce::dontSendNotification);
-        waveform.repaint();
-    }
-    
-	void resized() override {
+	void setFileName()
+	{
+		if (proc.sampler.sound.data == nullptr)
+		{
+			return;
+		}
+		auto ch = proc.sampler.sound.data.get()->getNumChannels();
+		auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
+		auto fileInfoString = juce::String(ch) + " ch: " + juce::String(time, 2) + " s";
+		waveform.fileInfo.setText(fileInfoString, juce::dontSendNotification);
+		waveform.repaint();
+	}
+
+	void resized() override
+	{
 		ParamBox::resized();
 		waveform.setBounds(0, 140 + 23, getWidth(), 93);
 		loadButton.setBounds(getWidth() - 55, 0, 55, 23);
-        setFileName();
+		setFileName();
 	}
 
-    APAudioProcessor& proc;
+	APAudioProcessor &proc;
 	Waveform waveform;
-	juce::TextButton loadButton{ "Load" };
+	juce::TextButton loadButton{"Load"};
 	std::unique_ptr<juce::FileChooser> chooser = std::make_unique<juce::FileChooser>("Select file",
-		juce::File{}, "*.wav,*.aif,*.mp3,*.aif,*.ogg,*.flac");
+																					 juce::File{}, "*.wav,*.aif,*.mp3,*.aif,*.ogg,*.flac");
 };
 
 //==============================================================================
@@ -1097,37 +1172,44 @@ public:
 class MainMatrixBox : public gin::ParamBox
 {
 public:
-	MainMatrixBox(const juce::String& name, APAudioProcessor& proc_)
+	MainMatrixBox(const juce::String &name, APAudioProcessor &proc_)
 		: gin::ParamBox(name), proc(proc_)
 	{
 		setName("mtx");
 
 		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 7);
 		addAndMakeVisible(clearAllButton);
-		clearAllButton.onClick = [this] { clearAll(); };
+		clearAllButton.onClick = [this]
+		{ clearAll(); };
 	}
 
-	void resized() override {
+	void resized() override
+	{
 		gin::ParamBox::resized();
 		clearAllButton.setBounds(getWidth() - 60, 0, 55, 23);
 	}
 
-	void clearAll() {
-		auto& params = proc.getPluginParameters();
-		for (auto* param : params) {
-			if (param->getModIndex() == -1) continue;
-			if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex()))) {
+	void clearAll()
+	{
+		auto &params = proc.getPluginParameters();
+		for (auto *param : params)
+		{
+			if (param->getModIndex() == -1)
+				continue;
+			if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex())))
+			{
 				auto modSrcs = proc.modMatrix.getModSources(param);
-				for (auto& modSrc : modSrcs) {
+				for (auto &modSrc : modSrcs)
+				{
 					proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 				}
 			}
 		}
 	}
 
-	juce::TextButton clearAllButton{ "Clear All" };
+	juce::TextButton clearAllButton{"Clear All"};
 
-	APAudioProcessor& proc;
+	APAudioProcessor &proc;
 };
 
 //==============================================================================
@@ -1135,33 +1217,33 @@ public:
 class MsegBox : public gin::ParamBox
 {
 public:
-	MsegBox(APAudioProcessor& proc_)
+	MsegBox(APAudioProcessor &proc_)
 		: gin::ParamBox("  MSEG"), proc(proc_), msegComponent1(proc.mseg1Data), msegComponent2(proc.mseg2Data),
-		msegComponent3(proc.mseg3Data), msegComponent4(proc.mseg4Data)
+		  msegComponent3(proc.mseg3Data), msegComponent4(proc.mseg4Data)
 	{
 		setName("MSEG");
-		
-		msegComponent1.setParams(proc.mseg1Params.sync, proc.mseg1Params.rate, proc.mseg1Params.beat, 
-			proc.mseg1Params.depth, proc.mseg1Params.offset, proc.mseg1Params.phase, proc.mseg1Params.enable, 
-			proc.mseg1Params.xgrid, proc.mseg1Params.ygrid, proc.mseg1Params.loop);
+
+		msegComponent1.setParams(proc.mseg1Params.sync, proc.mseg1Params.rate, proc.mseg1Params.beat,
+								 proc.mseg1Params.depth, proc.mseg1Params.offset, proc.mseg1Params.phase, proc.mseg1Params.enable,
+								 proc.mseg1Params.xgrid, proc.mseg1Params.ygrid, proc.mseg1Params.loop);
 		msegComponent1.setEditable(true);
 		msegComponent1.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(proc.mseg1Params.drawmode->getUserValue()));
 
 		msegComponent2.setParams(proc.mseg2Params.sync, proc.mseg2Params.rate, proc.mseg2Params.beat,
-			proc.mseg2Params.depth, proc.mseg2Params.offset, proc.mseg2Params.phase, proc.mseg2Params.enable,
-			proc.mseg2Params.xgrid, proc.mseg2Params.ygrid, proc.mseg2Params.loop);
+								 proc.mseg2Params.depth, proc.mseg2Params.offset, proc.mseg2Params.phase, proc.mseg2Params.enable,
+								 proc.mseg2Params.xgrid, proc.mseg2Params.ygrid, proc.mseg2Params.loop);
 		msegComponent2.setEditable(true);
 		msegComponent2.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(proc.mseg2Params.drawmode->getUserValue()));
 
 		msegComponent3.setParams(proc.mseg3Params.sync, proc.mseg3Params.rate, proc.mseg3Params.beat,
-			proc.mseg3Params.depth, proc.mseg3Params.offset, proc.mseg3Params.phase, proc.mseg3Params.enable,
-			proc.mseg3Params.xgrid, proc.mseg3Params.ygrid, proc.mseg3Params.loop);
+								 proc.mseg3Params.depth, proc.mseg3Params.offset, proc.mseg3Params.phase, proc.mseg3Params.enable,
+								 proc.mseg3Params.xgrid, proc.mseg3Params.ygrid, proc.mseg3Params.loop);
 		msegComponent3.setEditable(true);
 		msegComponent3.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(proc.mseg3Params.drawmode->getUserValue()));
 
 		msegComponent4.setParams(proc.mseg4Params.sync, proc.mseg4Params.rate, proc.mseg4Params.beat,
-			proc.mseg4Params.depth, proc.mseg4Params.offset, proc.mseg4Params.phase, proc.mseg4Params.enable,
-			proc.mseg4Params.xgrid, proc.mseg4Params.ygrid, proc.mseg4Params.loop);
+								 proc.mseg4Params.depth, proc.mseg4Params.offset, proc.mseg4Params.phase, proc.mseg4Params.enable,
+								 proc.mseg4Params.xgrid, proc.mseg4Params.ygrid, proc.mseg4Params.loop);
 		msegComponent4.setEditable(true);
 		msegComponent4.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(proc.mseg4Params.drawmode->getUserValue()));
 
@@ -1249,54 +1331,61 @@ public:
 		addAndMakeVisible(learn3);
 		addAndMakeVisible(learn4);
 
-		select1.onClick = [this]() {show(1);};
-		select2.onClick = [this]() {show(2);};
-		select3.onClick = [this]() {show(3);};
-		select4.onClick = [this]() {show(4);};
-
+		select1.onClick = [this]()
+		{ show(1); };
+		select2.onClick = [this]()
+		{ show(2); };
+		select3.onClick = [this]()
+		{ show(3); };
+		select4.onClick = [this]()
+		{ show(4); };
 
 		// addAndMakeVisible(msegDstSelector);
 		// TODO: add textbuttons for learn
 
-		msegComponent1.phaseCallback = [this]() { 
+		msegComponent1.phaseCallback = [this]()
+		{
 			std::vector<float> auxVals = proc.auxSynth.getMSEG1Phases();
 			std::vector<float> synthVals = proc.synth.getMSEG1Phases();
 			synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
 			return synthVals;
-			};
-		msegComponent2.phaseCallback = [this]() {
-				std::vector<float> auxVals = proc.auxSynth.getMSEG2Phases();
-				std::vector<float> synthVals = proc.synth.getMSEG2Phases();
-				synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
-				return synthVals;
-			};
-		msegComponent3.phaseCallback = [this]() {
-				std::vector<float> auxVals = proc.auxSynth.getMSEG3Phases();
-				std::vector<float> synthVals = proc.synth.getMSEG3Phases();
-				synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
-				return synthVals;
-			};
-		msegComponent4.phaseCallback = [this]() {
-				std::vector<float> auxVals = proc.auxSynth.getMSEG4Phases();
-				std::vector<float> synthVals = proc.synth.getMSEG4Phases();
-				synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
-				return synthVals;
-			};
-	
+		};
+		msegComponent2.phaseCallback = [this]()
+		{
+			std::vector<float> auxVals = proc.auxSynth.getMSEG2Phases();
+			std::vector<float> synthVals = proc.synth.getMSEG2Phases();
+			synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
+			return synthVals;
+		};
+		msegComponent3.phaseCallback = [this]()
+		{
+			std::vector<float> auxVals = proc.auxSynth.getMSEG3Phases();
+			std::vector<float> synthVals = proc.synth.getMSEG3Phases();
+			synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
+			return synthVals;
+		};
+		msegComponent4.phaseCallback = [this]()
+		{
+			std::vector<float> auxVals = proc.auxSynth.getMSEG4Phases();
+			std::vector<float> synthVals = proc.synth.getMSEG4Phases();
+			synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
+			return synthVals;
+		};
+
 		show(1);
 	}
 
-	void show(int selected) {
+	void show(int selected)
+	{
 		for (gin::ParamComponent::Ptr c : {
-			r1, b1, s1, l1, dp1, o1, dr1, m1, x1, y1,
-			r2, b2, s2, l2, dp2, o2, dr2, m2, x2, y2,
-			r3, b3, s3, l3, dp3, o3, dr3, m3, x3, y3,
-			r4, b4, s4, l4, dp4, o4, dr4, m4, x4, y4
-		})
+				 r1, b1, s1, l1, dp1, o1, dr1, m1, x1, y1,
+				 r2, b2, s2, l2, dp2, o2, dr2, m2, x2, y2,
+				 r3, b3, s3, l3, dp3, o3, dr3, m3, x3, y3,
+				 r4, b4, s4, l4, dp4, o4, dr4, m4, x4, y4})
 		{
 			c->setVisible(false);
 		}
-		for (auto& viz : {&msegComponent1, &msegComponent2, &msegComponent3, &msegComponent4})
+		for (auto &viz : {&msegComponent1, &msegComponent2, &msegComponent3, &msegComponent4})
 		{
 			viz->setVisible(false);
 		}
@@ -1304,7 +1393,8 @@ public:
 		select2.setToggleState(false, juce::dontSendNotification);
 		select3.setToggleState(false, juce::dontSendNotification);
 		select4.setToggleState(false, juce::dontSendNotification);
-		switch(selected) {
+		switch (selected)
+		{
 		case 1:
 			currentMSEG = 1;
 			r1->setVisible(!proc.mseg1Params.sync->isOn());
@@ -1372,62 +1462,74 @@ public:
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-		if (currentMSEG == 1) {
+		if (currentMSEG == 1)
+		{
 			bool sync1 = proc.mseg1Params.sync->getUserValueBool();
 			r1->setVisible(!sync1);
 			b1->setVisible(sync1);
 		}
-		if (currentMSEG == 2) {
+		if (currentMSEG == 2)
+		{
 			bool sync2 = proc.mseg2Params.sync->getUserValueBool();
 			r2->setVisible(!sync2);
 			b2->setVisible(sync2);
 		}
-		if (currentMSEG == 3) {
+		if (currentMSEG == 3)
+		{
 			bool sync3 = proc.mseg3Params.sync->getUserValueBool();
 			r3->setVisible(!sync3);
 			b3->setVisible(sync3);
 		}
-		if (currentMSEG == 4) {
+		if (currentMSEG == 4)
+		{
 			bool sync4 = proc.mseg4Params.sync->getUserValueBool();
 			r4->setVisible(!sync4);
 			b4->setVisible(sync4);
 		}
 
-		if (proc.mseg1Params.draw->getUserValueBool()) {
-			msegComponent1.setDrawMode(true, 
-			static_cast<gin::MSEGComponent::DrawMode>(proc.mseg1Params.drawmode->getUserValue()));
+		if (proc.mseg1Params.draw->getUserValueBool())
+		{
+			msegComponent1.setDrawMode(true,
+									   static_cast<gin::MSEGComponent::DrawMode>(proc.mseg1Params.drawmode->getUserValue()));
 		}
-		else {
+		else
+		{
 			msegComponent1.setDrawMode(false, gin::MSEGComponent::DrawMode::step);
 		}
 
-		if (proc.mseg2Params.draw->getUserValueBool()) {
+		if (proc.mseg2Params.draw->getUserValueBool())
+		{
 			msegComponent2.setDrawMode(true,
-				static_cast<gin::MSEGComponent::DrawMode>(proc.mseg2Params.drawmode->getUserValue()));
+									   static_cast<gin::MSEGComponent::DrawMode>(proc.mseg2Params.drawmode->getUserValue()));
 		}
-		else {
+		else
+		{
 			msegComponent2.setDrawMode(false, gin::MSEGComponent::DrawMode::step);
 		}
 
-		if (proc.mseg3Params.draw->getUserValueBool()) {
+		if (proc.mseg3Params.draw->getUserValueBool())
+		{
 			msegComponent3.setDrawMode(true,
-				static_cast<gin::MSEGComponent::DrawMode>(proc.mseg3Params.drawmode->getUserValue()));
+									   static_cast<gin::MSEGComponent::DrawMode>(proc.mseg3Params.drawmode->getUserValue()));
 		}
-		else {
+		else
+		{
 			msegComponent3.setDrawMode(false, gin::MSEGComponent::DrawMode::step);
 		}
 
-		if (proc.mseg4Params.draw->getUserValueBool()) {
+		if (proc.mseg4Params.draw->getUserValueBool())
+		{
 			msegComponent4.setDrawMode(true,
-				static_cast<gin::MSEGComponent::DrawMode>(proc.mseg4Params.drawmode->getUserValue()));
+									   static_cast<gin::MSEGComponent::DrawMode>(proc.mseg4Params.drawmode->getUserValue()));
 		}
-		else {
+		else
+		{
 			msegComponent4.setDrawMode(false, gin::MSEGComponent::DrawMode::step);
 		}
-
 	}
 
-	void resized() override {
+	void resized() override
+	{
 		gin::ParamBox::resized();
 		msegComponent1.setBounds(0, 93, getWidth(), getHeight() - 93);
 		msegComponent2.setBounds(0, 93, getWidth(), getHeight() - 93);
@@ -1447,7 +1549,7 @@ public:
 		select4.setBounds(160, 0, 20, 23);
 	}
 
-	APAudioProcessor& proc;
+	APAudioProcessor &proc;
 	// r, b, s, l, d, o, d, m, x, y
 	gin::ParamComponent::Ptr r1, b1, s1, l1, dp1, o1, dr1, m1, x1, y1,
 		r2, b2, s2, l2, dp2, o2, dr2, m2, x2, y2,
@@ -1457,17 +1559,17 @@ public:
 	// create textbuttons for learn
 
 	gin::MSEGComponent msegComponent1, msegComponent2, msegComponent3, msegComponent4;
-	int currentMSEG{ 1 };
+	int currentMSEG{1};
 	juce::TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
-	juce::TextButton learn1{ "learn" }, learn2{ "learn" }, learn3{ "learn" }, learn4{ "learn" };
+	juce::TextButton learn1{"learn"}, learn2{"learn"}, learn3{"learn"}, learn4{"learn"};
 };
 
 //==============================================================================
 
 class MacrosBox : public gin::ParamBox
 {
-	public:
-	MacrosBox(APAudioProcessor& proc_)
+public:
+	MacrosBox(APAudioProcessor &proc_)
 		: gin::ParamBox("  macros"), proc(proc_)
 	{
 		setName("macros");
@@ -1491,17 +1593,22 @@ class MacrosBox : public gin::ParamBox
 		proc.macroParams.macro2cc->addListener(this);
 		proc.macroParams.macro3cc->addListener(this);
 
-		clear1.onClick = [this]() { cancelAssignment(1); };
-		clear2.onClick = [this]() { cancelAssignment(2); };
-		clear3.onClick = [this]() { cancelAssignment(3); };
+		clear1.onClick = [this]()
+		{ cancelAssignment(1); };
+		clear2.onClick = [this]()
+		{ cancelAssignment(2); };
+		clear3.onClick = [this]()
+		{ cancelAssignment(3); };
 
 		midiLearnButton1.setMacroNumber(1);
 		midiLearnButton2.setMacroNumber(2);
 		midiLearnButton3.setMacroNumber(3);
 	}
 
-	void cancelAssignment(int macroNumber) {
-		switch (macroNumber) {
+	void cancelAssignment(int macroNumber)
+	{
+		switch (macroNumber)
+		{
 		case 1:
 			proc.macroParams.macro1cc->setValue(-1.f);
 			midiLearnButton1.setCCString("Learn");
@@ -1522,38 +1629,48 @@ class MacrosBox : public gin::ParamBox
 			break;
 		}
 	}
-    void valueUpdated(gin::Parameter* p) override {
-		if (p == proc.macroParams.macro1cc) {
+	void valueUpdated(gin::Parameter *p) override
+	{
+		if (p == proc.macroParams.macro1cc)
+		{
 			auto ccValue = proc.macroParams.macro1cc->getUserValueInt();
-			if (ccValue >= 0) {
+			if (ccValue >= 0)
+			{
 				midiLearnButton1.setCCString("CC " + proc.macroParams.macro1cc->getUserValueText());
 				clear1.setVisible(true);
 			}
-			else {
+			else
+			{
 				midiLearnButton1.setCCString("Learn");
 				midiLearnButton1.setLearning(false);
 				clear1.setVisible(false);
 			}
 		}
-		if (p == proc.macroParams.macro2cc) {
+		if (p == proc.macroParams.macro2cc)
+		{
 			auto ccValue = proc.macroParams.macro2cc->getUserValueInt();
-			if (ccValue >= 0) {
+			if (ccValue >= 0)
+			{
 				midiLearnButton2.setCCString("CC " + proc.macroParams.macro2cc->getUserValueText());
 				clear2.setVisible(true);
 			}
-			else {
+			else
+			{
 				midiLearnButton2.setCCString("Learn");
 				midiLearnButton2.setLearning(false);
 				clear2.setVisible(false);
 			}
 		}
-		if (p == proc.macroParams.macro3cc) {
+		if (p == proc.macroParams.macro3cc)
+		{
 			auto ccValue = proc.macroParams.macro3cc->getUserValueInt();
-			if (ccValue >= 0) {
+			if (ccValue >= 0)
+			{
 				midiLearnButton3.setCCString("CC " + proc.macroParams.macro3cc->getUserValueText());
 				clear3.setVisible(true);
 			}
-			else {
+			else
+			{
 				midiLearnButton3.setCCString("Learn");
 				midiLearnButton3.setLearning(false);
 				clear3.setVisible(false);
@@ -1561,20 +1678,22 @@ class MacrosBox : public gin::ParamBox
 		}
 	}
 
-	void resized() override {
+	void resized() override
+	{
 		gin::ParamBox::resized();
 		midiLearnButton1.setBounds(0, 93, 56, 35);
 		midiLearnButton2.setBounds(56, 93, 56, 35);
 		midiLearnButton3.setBounds(112, 93, 56, 35);
-		clear1.setBounds(0, 128,   56, 35);
-		clear2.setBounds(56, 128,  56, 35);
+		clear1.setBounds(0, 128, 56, 35);
+		clear2.setBounds(56, 128, 56, 35);
 		clear3.setBounds(112, 128, 56, 35);
 	}
 
 	class MIDILearnButton : public juce::Label
 	{
 	public:
-		MIDILearnButton(APAudioProcessor& p) : proc(p) {
+		MIDILearnButton(APAudioProcessor &p) : proc(p)
+		{
 			setEditable(false, false, false);
 			setJustificationType(juce::Justification::left);
 			setText("Learn", juce::dontSendNotification);
@@ -1586,23 +1705,37 @@ class MacrosBox : public gin::ParamBox
 			setLookAndFeel(nullptr);
 		}
 
-		void mouseDown(const juce::MouseEvent& /*ev*/) override
+		void mouseDown(const juce::MouseEvent & /*ev*/) override
 		{
-			if (thisMacroNumber == 1) {
-				if (proc.macroParams.macro1cc->getUserValue() > 0.f) { return; }
+			if (thisMacroNumber == 1)
+			{
+				if (proc.macroParams.macro1cc->getUserValue() > 0.f)
+				{
+					return;
+				}
 			}
-			if (thisMacroNumber == 2) {
-				if (proc.macroParams.macro2cc->getUserValue() > 0.f) { return; }
+			if (thisMacroNumber == 2)
+			{
+				if (proc.macroParams.macro2cc->getUserValue() > 0.f)
+				{
+					return;
+				}
 			}
-			if (thisMacroNumber == 3) {
-				if (proc.macroParams.macro3cc->getUserValue() > 0.f) { return; }
+			if (thisMacroNumber == 3)
+			{
+				if (proc.macroParams.macro3cc->getUserValue() > 0.f)
+				{
+					return;
+				}
 			}
 			learning = !learning;
-			if (learning) {
+			if (learning)
+			{
 				proc.macroParams.learning->setUserValue(static_cast<float>(thisMacroNumber));
 				setText("Learning", juce::dontSendNotification);
 			}
-			else {
+			else
+			{
 				proc.macroParams.learning->setValue(0.0f);
 				setText("Learn", juce::dontSendNotification);
 			}
@@ -1613,13 +1746,14 @@ class MacrosBox : public gin::ParamBox
 			thisMacroNumber = n;
 		}
 
-		void setCCString(const juce::String& s)
+		void setCCString(const juce::String &s)
 		{
 			currentAssignment = s;
 			setText(s, juce::dontSendNotification);
 		}
 
-		void setLearning(bool shouldLearn) {
+		void setLearning(bool shouldLearn)
+		{
 			learning = shouldLearn;
 		}
 
@@ -1630,7 +1764,7 @@ class MacrosBox : public gin::ParamBox
 			{
 			}
 
-			void drawLabel(juce::Graphics& g, juce::Label& label) override
+			void drawLabel(juce::Graphics &g, juce::Label &label) override
 			{
 				auto rc = label.getLocalBounds();
 				g.setColour(juce::Colours::white);
@@ -1641,14 +1775,14 @@ class MacrosBox : public gin::ParamBox
 		} midilearnLNF;
 
 		juce::String currentAssignment;
-		APAudioProcessor& proc;
-		bool learning{ false };
-		int mididCC{ -1 }, thisMacroNumber{ 0 };
+		APAudioProcessor &proc;
+		bool learning{false};
+		int mididCC{-1}, thisMacroNumber{0};
 	}; // MIDILearnButton
 
-	APAudioProcessor& proc;
-	MIDILearnButton midiLearnButton1{ proc }, midiLearnButton2{ proc }, midiLearnButton3{ proc };
-	juce::TextButton clear1{ "Clear", "Clear" }, clear2{ "Clear", "Clear" }, clear3{ "Clear", "Clear" };
+	APAudioProcessor &proc;
+	MIDILearnButton midiLearnButton1{proc}, midiLearnButton2{proc}, midiLearnButton3{proc};
+	juce::TextButton clear1{"Clear", "Clear"}, clear2{"Clear", "Clear"}, clear3{"Clear", "Clear"};
 }; // MacrosBox
 
 //==============================================================================
@@ -1656,7 +1790,7 @@ class MacrosBox : public gin::ParamBox
 class VolumeBox : public gin::ParamBox
 {
 public:
-	VolumeBox(APAudioProcessor& proc_)
+	VolumeBox(APAudioProcessor &proc_)
 		: gin::ParamBox("  volume"), proc(proc_)
 	{
 		setName("  volume");
@@ -1674,25 +1808,29 @@ public:
 		valueUpdated(proc.samplerParams.enable);
 	}
 
-	void resized() override {
+	void resized() override
+	{
 		gin::ParamBox::resized();
 		level->setBounds(0, 43, 80, 100);
 		aux->setBounds(80, 43, 80, 100);
 		sampler->setBounds(160, 43, 80, 100);
-		levelMeter.setBounds(280-38, 43, 30, 100);
+		levelMeter.setBounds(280 - 38, 43, 30, 100);
 	}
 
-	void valueUpdated(gin::Parameter* p) override {
-		if (p == proc.auxParams.enable) {
+	void valueUpdated(gin::Parameter *p) override
+	{
+		if (p == proc.auxParams.enable)
+		{
 			aux->setEnabled(proc.auxParams.enable->isOn());
 		}
-		if (p == proc.samplerParams.enable) {
+		if (p == proc.samplerParams.enable)
+		{
 			sampler->setEnabled(proc.samplerParams.enable->isOn());
 		}
 	}
 
-	APAudioProcessor& proc;
-	APKnob* level, * aux, * sampler;
+	APAudioProcessor &proc;
+	APKnob *level, *aux, *sampler;
 	// gin::ParamComponent::Ptr level, aux, sampler;
-	gin::LevelMeter levelMeter{ proc.levelTracker };
+	gin::LevelMeter levelMeter{proc.levelTracker};
 };
