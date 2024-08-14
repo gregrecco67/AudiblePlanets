@@ -603,7 +603,7 @@ public:
 };
 
 //==============================================================================
-class LFOBox : ParamBox
+class LFOBox : public gin::ParamBox
 {
 public:
 	LFOBox(APAudioProcessor &proc_)
@@ -611,14 +611,18 @@ public:
 	{
 		setName("lfo");
 
-		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO4, true), true);
-		addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO3, true), true);
-		addModSource(poly3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO2, true), true);
-		addModSource(poly4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, true), true);
-		addModSource(mono1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO4, false), true);
-		addModSource(mono2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO3, false), true);
-		addModSource(mono3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO2, false), true);
-		addModSource(mono4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, false), true);
+		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, true), true);
+		addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO2, true), true);
+		addModSource(poly3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO3, true), true);
+		addModSource(poly4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO4, true), true);
+		addModSource(mono1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO1, false), true);
+		addModSource(mono2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO2, false), true);
+		addModSource(mono3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO3, false), true);
+		addModSource(mono4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO4, false), true);
+        poly1->getProperties().set("polysrc", true);
+        poly2->getProperties().set("polysrc", true);
+        poly3->getProperties().set("polysrc", true);
+        poly4->getProperties().set("polysrc", true);
 
 		addControl(r1 = new APKnob(proc.lfo1Params.rate), 0, 0);
 		addControl(r2 = new APKnob(proc.lfo2Params.rate), 0, 0);
