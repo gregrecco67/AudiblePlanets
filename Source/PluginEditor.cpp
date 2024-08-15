@@ -91,7 +91,7 @@ void APAudioProcessorEditor::showAboutInfo()
 	juce::String msg;
 
 
-	msg += "Audible Planets v1.1.4 (" __DATE__ ")\n\n";
+	msg += "Audible Planets v1.1.5 (" __DATE__ ")\n\n";
 
 	msg += "Greg Recco\n\n";
 
