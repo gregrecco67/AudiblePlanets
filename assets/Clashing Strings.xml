@@ -33,20 +33,20 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="0.6200000047683716"/>
+  <param uid="osc1volume" val="-4.152166"/>
   <param uid="osc1tones" val="3.930000066757202"/>
-  <param uid="osc2volume" val="0.7599999904632568"/>
+  <param uid="osc2volume" val="-2.383728"/>
   <param uid="osc2tones" val="3.276000022888184"/>
-  <param uid="osc3volume" val="0.02999999932944775"/>
+  <param uid="osc3volume" val="-30.457575"/>
   <param uid="osc3tones" val="1.450999975204468"/>
-  <param uid="osc4volume" val="0.0"/>
+  <param uid="osc4volume" val="-40.0"/>
   <param uid="env1attack" val="0.0"/>
   <param uid="env1decay" val="0.1553593724966049"/>
-  <param uid="env1sustain" val="5.654687404632568"/>
+  <param uid="env1sustain" val="-24.959031"/>
   <param uid="env1release" val="2.713393688201904"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="0.01000000350177288"/>
-  <param uid="env2sustain" val="0.0"/>
+  <param uid="env2sustain" val="-40.0"/>
   <param uid="env2release" val="0.09999998658895493"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="0.01000000350177288"/>

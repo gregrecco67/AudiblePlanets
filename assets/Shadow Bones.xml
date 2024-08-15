@@ -50,39 +50,39 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="0.7999999523162842"/>
+  <param uid="osc1volume" val="-1.9382"/>
   <param uid="osc1phase" val="1.0"/>
   <param uid="osc1tones" val="1.550999999046326"/>
   <param uid="osc1detune" val="0.04650979489088058"/>
   <param uid="osc1spread" val="93.60097503662109"/>
   <param uid="osc2coarse" val="3.0"/>
-  <param uid="osc2volume" val="0.9899999499320984"/>
+  <param uid="osc2volume" val="-0.087296"/>
   <param uid="osc2detune" val="0.03052209503948689"/>
   <param uid="osc2spread" val="98.54264831542969"/>
-  <param uid="osc3volume" val="0.5399999618530273"/>
+  <param uid="osc3volume" val="-5.352125"/>
   <param uid="osc4coarse" val="7.0"/>
-  <param uid="osc4volume" val="0.2599999904632568"/>
+  <param uid="osc4volume" val="-11.700533"/>
   <param uid="osc4detune" val="0.01744110137224197"/>
   <param uid="osc4spread" val="100.0"/>
   <param uid="env1attack" val="0.1652543246746063"/>
-  <param uid="env1sustain" val="100.0"/>
+  <param uid="env1sustain" val="0.0"/>
   <param uid="env1release" val="3.761730670928955"/>
   <param uid="env1syncrepeat" val="1.0"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env1beat" val="21.0"/>
   <param uid="env2attack" val="0.01000000350177288"/>
   <param uid="env2decay" val="0.8634562492370605"/>
-  <param uid="env2sustain" val="4.652941703796387"/>
+  <param uid="env2sustain" val="-26.650941"/>
   <param uid="env2release" val="0.09999998658895493"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="0.01000000350177288"/>
   <param uid="env3decay" val="0.001275188871659338"/>
-  <param uid="env3sustain" val="73.54360961914062"/>
+  <param uid="env3sustain" val="-2.669527"/>
   <param uid="env3release" val="0.09999998658895493"/>
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="0.01000000350177288"/>
   <param uid="env4decay" val="0.8582260012626648"/>
-  <param uid="env4sustain" val="100.0"/>
+  <param uid="env4sustain" val="0.0"/>
   <param uid="env4release" val="5.085914611816406"/>
   <param uid="env4syncrepeat" val="2.0"/>
   <param uid="env4time" val="1.91349458694458"/>

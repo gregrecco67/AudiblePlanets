@@ -39,32 +39,32 @@
     <sample sampleName=""/>
   </state>
   <param uid="osc1phase" val="0.449417382478714"/>
-  <param uid="osc2volume" val="0.3299999833106995"/>
+  <param uid="osc2volume" val="-9.629721"/>
   <param uid="osc2phase" val="0.5081169605255127"/>
   <param uid="osc2saw" val="1.0"/>
   <param uid="osc2env" val="0.0"/>
   <param uid="osc3coarse" val="4.0"/>
-  <param uid="osc3volume" val="0.2599999904632568"/>
+  <param uid="osc3volume" val="-11.700533"/>
   <param uid="osc3env" val="0.0"/>
   <param uid="osc4coarse" val="2.0"/>
-  <param uid="osc4volume" val="0.0"/>
+  <param uid="osc4volume" val="-40.0"/>
   <param uid="env1attack" val="0.01000000350177288"/>
   <param uid="env1release" val="12.0"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="0.00004987621650798246"/>
   <param uid="env2decay" val="0.4828658699989319"/>
-  <param uid="env2sustain" val="9.177044868469238"/>
+  <param uid="env2sustain" val="-20.752613"/>
   <param uid="env2release" val="12.0"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="1.362014889717102"/>
   <param uid="env3decay" val="0.9600622057914734"/>
-  <param uid="env3sustain" val="0.0"/>
+  <param uid="env3sustain" val="-40.0"/>
   <param uid="env3release" val="12.0"/>
   <param uid="env3acurve" val="-1.0"/>
   <param uid="env3drcurve" val="0.02457618713378906"/>
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="0.009999983943998814"/>
-  <param uid="env4sustain" val="82.12327575683594"/>
+  <param uid="env4sustain" val="-1.723723"/>
   <param uid="env4release" val="11.91845035552979"/>
   <param uid="env4acurve" val="-0.1366392821073532"/>
   <param uid="env4time" val="0.09999998658895493"/>

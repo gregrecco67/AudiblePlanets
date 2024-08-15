@@ -36,7 +36,7 @@
   <param uid="osc3detune" val="0.07648437470197678"/>
   <param uid="osc3spread" val="92.27656555175781"/>
   <param uid="osc4coarse" val="6.0"/>
-  <param uid="osc4volume" val="0.449999988079071"/>
+  <param uid="osc4volume" val="-6.93575"/>
   <param uid="osc4detune" val="0.04099218919873238"/>
   <param uid="osc4spread" val="100.0"/>
   <param uid="env1attack" val="0.01000000350177288"/>

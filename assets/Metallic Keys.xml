@@ -49,17 +49,17 @@
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="0.01000000350177288"/>
   <param uid="env2decay" val="0.684641420841217"/>
-  <param uid="env2sustain" val="13.29374980926514"/>
+  <param uid="env2sustain" val="-17.522967"/>
   <param uid="env2release" val="0.09999998658895493"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="0.06563710421323776"/>
   <param uid="env3decay" val="3.118231058120728"/>
-  <param uid="env3sustain" val="11.20468711853027"/>
+  <param uid="env3sustain" val="-19.01564"/>
   <param uid="env3release" val="0.09999998658895493"/>
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="0.0"/>
   <param uid="env4decay" val="0.6648716926574707"/>
-  <param uid="env4sustain" val="6.626562595367432"/>
+  <param uid="env4sustain" val="-23.569729"/>
   <param uid="env4release" val="0.09999998658895493"/>
   <param uid="blend" val="0.1845781207084656"/>
   <param uid="demodmix" val="0.255187451839447"/>

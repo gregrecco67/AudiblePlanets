@@ -40,7 +40,7 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="0.7699999809265137"/>
+  <param uid="osc1volume" val="-2.270185"/>
   <param uid="osc1detune" val="0.004000000189989805"/>
   <param uid="osc1spread" val="100.0"/>
   <param uid="osc2coarse" val="6.0"/>
@@ -48,32 +48,32 @@
   <param uid="osc2detune" val="0.00800000037997961"/>
   <param uid="osc2spread" val="100.0"/>
   <param uid="osc3coarse" val="4.0"/>
-  <param uid="osc3volume" val="0.5"/>
+  <param uid="osc3volume" val="-6.0"/>
   <param uid="osc3tones" val="1.960000038146973"/>
   <param uid="osc3detune" val="0.009999999776482582"/>
   <param uid="osc3spread" val="100.0"/>
   <param uid="osc4coarse" val="8.0"/>
-  <param uid="osc4volume" val="0.5"/>
+  <param uid="osc4volume" val="-6.0"/>
   <param uid="osc4tones" val="2.117000102996826"/>
   <param uid="osc4detune" val="0.1140000000596046"/>
   <param uid="osc4spread" val="100.0"/>
   <param uid="env1attack" val="22.72835540771484"/>
-  <param uid="env1sustain" val="100.0"/>
+  <param uid="env1sustain" val="0.0"/>
   <param uid="env1release" val="18.48666763305664"/>
   <param uid="env1acurve" val="0.01600003242492676"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="20.60461235046387"/>
-  <param uid="env2sustain" val="100.0"/>
+  <param uid="env2sustain" val="0.0"/>
   <param uid="env2release" val="19.93362998962402"/>
   <param uid="env2acurve" val="-0.07999998331069946"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="22.18172454833984"/>
-  <param uid="env3sustain" val="100.0"/>
+  <param uid="env3sustain" val="0.0"/>
   <param uid="env3release" val="23.09927558898926"/>
   <param uid="env3acurve" val="-0.1920000314712524"/>
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="22.18172264099121"/>
-  <param uid="env4sustain" val="100.0"/>
+  <param uid="env4sustain" val="0.0"/>
   <param uid="env4release" val="25.42425727844238"/>
   <param uid="env4acurve" val="-0.1119999885559082"/>
   <param uid="env4time" val="0.09999998658895493"/>

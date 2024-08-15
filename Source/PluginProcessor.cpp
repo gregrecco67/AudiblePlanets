@@ -302,25 +302,25 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
     case 1:
         coarse        = p.addExtParam(id + "coarse",     nm + " Coarse",      "Coarse",    "", { 1.0, 24.0, 1.0, 1.0 }, 1.0, 0.0f);
         fine        = p.addExtParam(id + "fine", nm + " Fine", "Fine", "", osc1FineRange, 0.0, 0.0f);
-        volume        = p.addExtParam(id + "volume",     nm + " Volume",      "Volume",    "", { 0.0, 1.0, 0.01f, 1.0 }, 0.5, 0.0f);
+        volume        = p.addExtParam(id + "volume",     nm + " Volume",      "Volume",    " dB", { -40.0, 0.0, 0.0f, 1.0 }, -6.f, 0.0f);
         phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.15f, 0.0f);
         break;
     case 2:
         coarse        = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 2.0, 0.0f);
         fine        = p.addExtParam(id + "fine", nm + " Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
-        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", "", { 0.0, 1.0, 0.01f, 1.0 }, 0.5, 0.0f);
+        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", " dB", { -40.0, 0.0, 0.0f, 1.0 }, -6.f, 0.0f);
         phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.3f, 0.0f);
         break;
     case 3:
         coarse        = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 3.0, 0.0f);
         fine        = p.addExtParam(id + "fine", nm + " Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
-        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", "", { 0.0, 1.0, 0.01f, 1.0 }, 0.35f, 0.0f);
+        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", " dB", { -40.0, 0.0, 0.0f, 1.0 }, -9.f, 0.0f);
         phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.65f, 0.0f);
         break;
     case 4:
         coarse        = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 4.0, 0.0f);
         fine        = p.addExtParam(id + "fine", nm + " Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
-        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", "", { 0.0, 1.0, 0.01f, 1.0 }, 0.2f, 0.0f);
+        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", " dB", { -40.0, 0.0, 0.0f, 1.0 }, -14.f, 0.0f);
         phase = p.addExtParam(id + "phase", nm + " Phase", " Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.85f, 0.0f);
         break;
     }
@@ -333,6 +333,10 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
     fixed     = p.addIntParam(id + "fixed",      nm + " Fixed",       "Fixed",     "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
     env       = p.addIntParam(id + "env",        nm + " Env",         "Env",       "", { 0.0, 3.0, 1.0f, 1.0 }, (float)(numStr.getIntValue() - 1), 0.0f, envSelectTextFunction);
     this->num = numStr.getIntValue();
+    volume->conversionFunction     = [](float in) { 
+        if ( in < -39.5f ) return 0.0f;
+        return juce::Decibels::decibelsToGain (in); 
+    };
 }
 
 //==============================================================================
@@ -408,7 +412,7 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, juce::String numStr
     else {
         decay = p.addExtParam(id + "decay", nm + " Decay", "Decay", "", { 0.0, 60.0, 0.0, 0.2f }, 0.07f, 0.0f, secondsTextFunction);
     }
-    sustain = p.addExtParam(id + "sustain", nm + " Sustain", "Sustain", "%", { 0.0, 100.0, 0.0, 1.0 }, 50.0f, 0.0f);
+    sustain = p.addExtParam(id + "sustain", nm + " Sustain", "Sustain", " dB", { -40.0, 0.0, 0.0, 1.0 }, -6.0f, 0.0f);
     release = p.addExtParam(id + "release", nm + " Release", "Release", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
     acurve = p.addExtParam(id + "acurve",	nm + " ACurve", "At Curve", "", { -1.0, 1.0, 0.0, 1.0 }, 1.0f, 0.0f);
     drcurve = p.addExtParam(id + "drcurve", nm + " DRCurve", "DR Curve", "", { -1.0, 1.0, 0.0, 1.0 }, -1.0f, 0.0f);
@@ -416,7 +420,12 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, juce::String numStr
     time = p.addExtParam(id + "time", nm + " Time", "Time", "", { 0.0, 60.0, 0.0, 0.2f }, 0.1f, 0.0f, secondsTextFunction);
     duration = p.addIntParam(id + "beat", nm + " Beat", "Beat", "", { 0.0, float(notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);
 
-    sustain->conversionFunction = [](float in) { return in / 100.0f; };
+    sustain->conversionFunction     = [](float in) { 
+        if ( in < -39.5f ) return 0.0f;
+        return juce::Decibels::decibelsToGain (in); 
+    };
+    
+    //conversionFunction = [](float in) { return in / 100.0f; };
     this->num = numStr.getIntValue();
 }
 

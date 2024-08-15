@@ -42,24 +42,24 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="0.5600000023841858"/>
-  <param uid="osc2volume" val="0.0"/>
-  <param uid="osc3volume" val="0.0"/>
-  <param uid="osc4volume" val="0.0"/>
+  <param uid="osc1volume" val="-5.036239"/>
+  <param uid="osc2volume" val="-40.0"/>
+  <param uid="osc3volume" val="-40.0"/>
+  <param uid="osc4volume" val="-40.0"/>
   <param uid="env1attack" val="0.01000000350177288"/>
-  <param uid="env1sustain" val="100.0"/>
+  <param uid="env1sustain" val="0.0"/>
   <param uid="env1release" val="0.09999998658895493"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="0.01000000350177288"/>
-  <param uid="env2sustain" val="100.0"/>
+  <param uid="env2sustain" val="0.0"/>
   <param uid="env2release" val="0.09999998658895493"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="0.01000000350177288"/>
-  <param uid="env3sustain" val="100.0"/>
+  <param uid="env3sustain" val="0.0"/>
   <param uid="env3release" val="0.09999998658895493"/>
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="0.01000000350177288"/>
-  <param uid="env4sustain" val="100.0"/>
+  <param uid="env4sustain" val="0.0"/>
   <param uid="env4release" val="0.09999998658895493"/>
   <param uid="env4time" val="0.09999998658895493"/>
   <param uid="fltkey" val="22.75375938415527"/>

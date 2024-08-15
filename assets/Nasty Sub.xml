@@ -41,7 +41,7 @@
   <param uid="osc4spread" val="100.0"/>
   <param uid="env1attack" val="0.0"/>
   <param uid="env1decay" val="0.01937331259250641"/>
-  <param uid="env1sustain" val="30.52437591552734"/>
+  <param uid="env1sustain" val="-10.172766"/>
   <param uid="env1release" val="0.09999998658895493"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="0.0"/>

@@ -72,28 +72,28 @@
     <sample sampleName=""/>
   </state>
   <param uid="osc1coarse" val="4.0"/>
-  <param uid="osc1volume" val="0.7599999904632568"/>
+  <param uid="osc1volume" val="-2.383728"/>
   <param uid="osc1spread" val="100.0"/>
   <param uid="osc1pan" val="-0.2586668729782104"/>
   <param uid="osc2coarse" val="4.0"/>
-  <param uid="osc2volume" val="0.1299999952316284"/>
+  <param uid="osc2volume" val="-17.721133"/>
   <param uid="osc2spread" val="82.62557220458984"/>
   <param uid="osc2pan" val="0.2106554508209229"/>
   <param uid="osc2fixed" val="1.0"/>
   <param uid="osc3coarse" val="6.0"/>
-  <param uid="osc3volume" val="0.85999995470047"/>
+  <param uid="osc3volume" val="-1.310031"/>
   <param uid="osc3detune" val="0.009078551083803177"/>
   <param uid="osc3spread" val="100.0"/>
-  <param uid="osc4volume" val="1.0"/>
+  <param uid="osc4volume" val="0.0"/>
   <param uid="osc4detune" val="0.01263757329434156"/>
   <param uid="env1attack" val="1.963073145816452e-6"/>
   <param uid="env1decay" val="3.364236354827881"/>
-  <param uid="env1sustain" val="45.2088508605957"/>
+  <param uid="env1sustain" val="-6.897231"/>
   <param uid="env1release" val="2.833726167678833"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="0.09999998658895493"/>
   <param uid="env2decay" val="3.128258943557739"/>
-  <param uid="env2sustain" val="37.15144729614258"/>
+  <param uid="env2sustain" val="-8.589141"/>
   <param uid="env2release" val="0.09999998658895493"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="4.766274929046631"/>
@@ -102,7 +102,7 @@
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="6.734153747558594"/>
   <param uid="env4decay" val="0.09999998658895493"/>
-  <param uid="env4sustain" val="51.81549072265625"/>
+  <param uid="env4sustain" val="-5.713405"/>
   <param uid="env4release" val="2.590576171875"/>
   <param uid="env4drcurve" val="0.03575503826141357"/>
   <param uid="env4time" val="0.09999998658895493"/>
