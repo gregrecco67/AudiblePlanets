@@ -32,35 +32,57 @@ public:
 			proc.env1Params.acurve->addListener(this);
             attackCurve = proc.env1Params.acurve->getUserValue();
 			proc.env1Params.attack->addListener(this);
+			attack = proc.env1Params.attack->getUserValue();
 			proc.env1Params.decay->addListener(this);
+			decay = proc.env1Params.decay->getUserValue();
 			proc.env1Params.drcurve->addListener(this);
+			decayCurve = proc.env1Params.drcurve->getUserValue();
 			proc.env1Params.release->addListener(this);
+			release = proc.env1Params.release->getUserValue();
 			proc.env1Params.sustain->addListener(this);
-            sustain = (proc.env1Params.sustain->getUserValue()+40.f)/40.f;
+			sustain = proc.env1Params.sustain->getValue(); // getValue() -> 0..1
 			break;
 		case 2:
 			proc.env2Params.acurve->addListener(this);
+			attackCurve = proc.env2Params.acurve->getUserValue();
 			proc.env2Params.attack->addListener(this);
+			attack = proc.env2Params.attack->getUserValue();
 			proc.env2Params.decay->addListener(this);
+			decay = proc.env2Params.decay->getUserValue();
 			proc.env2Params.drcurve->addListener(this);
+			decayCurve = proc.env2Params.drcurve->getUserValue();
 			proc.env2Params.release->addListener(this);
+			release = proc.env2Params.release->getUserValue();
 			proc.env2Params.sustain->addListener(this);
+			sustain = proc.env2Params.sustain->getValue();
 			break;
 		case 3:
 			proc.env3Params.acurve->addListener(this);
+			attackCurve = proc.env3Params.acurve->getUserValue();
 			proc.env3Params.attack->addListener(this);
+			attack = proc.env3Params.attack->getUserValue();
 			proc.env3Params.decay->addListener(this);
+			decay = proc.env3Params.decay->getUserValue();
 			proc.env3Params.drcurve->addListener(this);
+			decayCurve = proc.env3Params.drcurve->getUserValue();
 			proc.env3Params.release->addListener(this);
+			release = proc.env3Params.release->getUserValue();
 			proc.env3Params.sustain->addListener(this);
+			sustain = proc.env3Params.sustain->getValue();
 			break;
 		case 4:
 			proc.env4Params.acurve->addListener(this);
+			attackCurve = proc.env4Params.acurve->getUserValue();
 			proc.env4Params.attack->addListener(this);
+			attack = proc.env4Params.attack->getUserValue();
 			proc.env4Params.decay->addListener(this);
+			decay = proc.env4Params.decay->getUserValue();
 			proc.env4Params.drcurve->addListener(this);
+			decayCurve = proc.env4Params.drcurve->getUserValue();
 			proc.env4Params.release->addListener(this);
+			release = proc.env4Params.release->getUserValue();
 			proc.env4Params.sustain->addListener(this);
+			sustain = proc.env4Params.sustain->getValue();
 			break;
 		}
 
@@ -143,7 +165,7 @@ public:
 		else if (p == proc.env1Params.decay || p == proc.env2Params.decay || p == proc.env3Params.decay || p == proc.env4Params.decay)
 			setDecay(p->getUserValue());
 		else if (p == proc.env1Params.sustain || p == proc.env2Params.sustain || p == proc.env3Params.sustain || p == proc.env4Params.sustain)
-			setSustain((p->getUserValue()+40.f)/40.f);
+			setSustain(p->getValue()); // getValue() -> 0..1
 		else if (p == proc.env1Params.release || p == proc.env2Params.release || p == proc.env3Params.release || p == proc.env4Params.release)
 			setRelease(p->getUserValue());
 		else if (p == proc.env1Params.acurve || p == proc.env2Params.acurve || p == proc.env3Params.acurve || p == proc.env4Params.acurve)
