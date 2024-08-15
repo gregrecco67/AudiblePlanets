@@ -30,11 +30,13 @@ public:
 		switch (envelopeNumber) {
 		case 1:
 			proc.env1Params.acurve->addListener(this);
+            attackCurve = proc.env1Params.acurve->getUserValue();
 			proc.env1Params.attack->addListener(this);
 			proc.env1Params.decay->addListener(this);
 			proc.env1Params.drcurve->addListener(this);
 			proc.env1Params.release->addListener(this);
 			proc.env1Params.sustain->addListener(this);
+            sustain = (proc.env1Params.sustain->getUserValue()+40.f)/40.f;
 			break;
 		case 2:
 			proc.env2Params.acurve->addListener(this);
@@ -61,7 +63,7 @@ public:
 			proc.env4Params.sustain->addListener(this);
 			break;
 		}
-		
+
     }
 
     ~EnvelopeComponent() override
@@ -141,7 +143,7 @@ public:
 		else if (p == proc.env1Params.decay || p == proc.env2Params.decay || p == proc.env3Params.decay || p == proc.env4Params.decay)
 			setDecay(p->getUserValue());
 		else if (p == proc.env1Params.sustain || p == proc.env2Params.sustain || p == proc.env3Params.sustain || p == proc.env4Params.sustain)
-			setSustain(p->getUserValue() * 0.01f);
+			setSustain((p->getUserValue()+40.f)/40.f);
 		else if (p == proc.env1Params.release || p == proc.env2Params.release || p == proc.env3Params.release || p == proc.env4Params.release)
 			setRelease(p->getUserValue());
 		else if (p == proc.env1Params.acurve || p == proc.env2Params.acurve || p == proc.env3Params.acurve || p == proc.env4Params.acurve)
