@@ -30,7 +30,7 @@ if __name__ == "__main__":
     from math import log10
 
     if len(sys.argv) != 2:
-        print("Usage: python script.py <preset-directory>")
+        print("Usage: python3 convert-presets.py <preset-directory>")
         sys.exit(1)
 
     directory = sys.argv[1]
