@@ -10,14 +10,18 @@ def process_xml_file(file_path):
         uid = elem.get('uid')
         if uid and uid.startswith("osc") and "volume" in uid:
             gain = elem.get('val')
-            if gain and float(gain) >= 0.0:
+            if gain and float(gain) > 0.0:
                 db_value = 20 * log10(float(gain))
                 elem.set('val', str(db_value))
+            if gain and float(gain) == 0.0:
+                elem.set('val', "-40.0");
         if uid and uid.startswith("env") and "sustain" in uid:
             sustain = elem.get('val')
-            if sustain and float(sustain) >= 0.0:
+            if sustain and float(sustain) > 0.0:
                 db_value = 20 * log10(float(sustain)/100.0)
                 elem.set('val', str(db_value))
+            if sustain and float(sustain) == 0.0:
+                elem.set('val', "-40.0");
     tree.write(file_path)
 
 def main(directory):
