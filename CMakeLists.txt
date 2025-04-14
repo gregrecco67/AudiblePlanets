@@ -11,7 +11,7 @@ project(AudiblePlanets)
 set_property (DIRECTORY APPEND PROPERTY LABELS ${PROJECT_NAME})
 
 
-add_subdirectory(JUCE)
+add_subdirectory(modules/JUCE)
 
 foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_simd)
 	juce_add_module (

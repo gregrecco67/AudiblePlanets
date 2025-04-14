@@ -611,14 +611,14 @@ public:
 	{
 		setName("lfo");
 
-		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, true), true);
-		addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO2, true), true);
-		addModSource(poly3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO3, true), true);
-		addModSource(poly4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO4, true), true);
-		addModSource(mono1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO1, false), true);
-		addModSource(mono2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO2, false), true);
-		addModSource(mono3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO3, false), true);
-		addModSource(mono4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO4, false), true);
+		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, true));
+		addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO2, true));
+		addModSource(poly3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO3, true));
+		addModSource(poly4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO4, true));
+		addModSource(mono1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO1, false));
+		addModSource(mono2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO2, false));
+		addModSource(mono3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO3, false));
+		addModSource(mono4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO4, false));
         poly1->getProperties().set("polysrc", true);
         poly2->getProperties().set("polysrc", true);
         poly3->getProperties().set("polysrc", true);
@@ -887,6 +887,7 @@ public:
 		dl3->setBounds(200, 108, 42, 57);
 		dl4->setBounds(200, 108, 42, 57);
 	}
+
 
 	APAudioProcessor &proc;
 
