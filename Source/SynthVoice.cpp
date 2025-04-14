@@ -621,7 +621,7 @@ void SynthVoice::updateParams(int blockSize)
 		osc4Freq = baseFreq * ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine));
 	}
 
-	osc1Params.wave = proc.osc1Params.saw->getUserValue() ? Wavetype::sawUp : Wavetype::sine;
+	osc1Params.wave = proc.osc1Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
@@ -644,7 +644,7 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc2Params.wave = proc.osc2Params.saw->getUserValue() ? Wavetype::sawUp : Wavetype::sine;
+	osc2Params.wave = proc.osc2Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
 	osc2Params.tones = getValue(proc.osc2Params.tones);
 	osc2Params.pan = getValue(proc.osc2Params.pan);
 	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
@@ -667,7 +667,7 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc3Params.wave = proc.osc3Params.saw->getUserValue() ? Wavetype::sawUp : Wavetype::sine;
+	osc3Params.wave = proc.osc3Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
 	osc3Params.tones = getValue(proc.osc3Params.tones);
 	osc3Params.pan = getValue(proc.osc3Params.pan);
 	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
@@ -690,7 +690,7 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc4Params.wave = proc.osc4Params.saw->getUserValue() ? Wavetype::sawUp : Wavetype::sine;
+	osc4Params.wave = proc.osc4Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
 	osc4Params.tones = getValue(proc.osc4Params.tones);
 	osc4Params.pan = getValue(proc.osc4Params.pan);
 	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;
@@ -714,10 +714,10 @@ void SynthVoice::updateParams(int blockSize)
 	}
 
 
-	float n = getValue(proc.filterParams.frequency);
-	n += (currentlyPlayingNote.initialNote - 50) * getValue(proc.filterParams.keyTracking);
+	float noteNum = getValue(proc.filterParams.frequency);
+	noteNum += (currentlyPlayingNote.initialNote - 50) * getValue(proc.filterParams.keyTracking);
 
-	float f = gin::getMidiNoteInHertz(n);
+	float f = gin::getMidiNoteInHertz(noteNum);
 	float maxFreq = std::min(20000.0f, float(getSampleRate() / 2));
 	f = juce::jlimit(4.0f, maxFreq, f);
 

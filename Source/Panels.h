@@ -1019,8 +1019,8 @@ public:
 		if (proc.sampler.sound.data != nullptr)
 		{
 			g.setColour(juce::Colour(0xffCC8866).darker(0.5f));
-			int loopstart = proc.samplerParams.loopstart->getUserValue() * getWidth();
-			int loopend = proc.samplerParams.loopend->getUserValue() * getWidth();
+			int loopstart = (int)proc.samplerParams.loopstart->getUserValue() * getWidth();
+			int loopend = (int)proc.samplerParams.loopend->getUserValue() * getWidth();
 			g.fillRect(loopstart, 0, loopend - loopstart, getHeight());
 			g.setColour(juce::Colours::grey);
 			g.drawLine(loopstart, 0, loopstart, getHeight(), 1);
@@ -1056,12 +1056,12 @@ public:
 			auto length = proc.sampler.sound.length;
 			int startSample = int(proc.samplerParams.start->getUserValue() * length);
 			int endSample = int(proc.samplerParams.end->getUserValue() * length);
-			for (int sample = startSample; sample < endSample; sample += stride)
+			for (int sample = startSample; sample < endSample; sample += (int)stride)
 			{
 				audioPoints.push_back(buffer[sample]);
 			}
 			smoothed.push_back(audioPoints[0]);
-			for (int i = 1; i < audioPoints.size() - 1; i++)
+			for (size_t i = 1; i < audioPoints.size() - 1; i++)
 			{
 				smoothed.push_back(audioPoints[i - 1] * 0.333f + audioPoints[i] * 0.333f + audioPoints[i + 1] * 0.333f);
 			}
@@ -1072,7 +1072,7 @@ public:
 		p.clear();
 		p.startNewSubPath(0, getHeight() / 2);
 		float max{0}, min{0};
-		for (int sample = 0; sample < smoothed.size(); sample++)
+		for (size_t sample = 0; sample < smoothed.size(); sample++)
 		{
 			if (smoothed[sample] > max)
 			{
@@ -1093,7 +1093,7 @@ public:
 		}
 		min = juce::jlimit(-1.f, -.3f, min);
 		max = juce::jlimit(.3f, 1.f, max);
-		for (int sample = 0; sample < smoothed.size(); sample++)
+		for (size_t sample = 0; sample < smoothed.size(); sample++)
 		{
 			p.lineTo(sample, juce::jmap(smoothed[sample], min, max, static_cast<float>(getHeight()), 0.f));
 		}
