@@ -45,12 +45,13 @@ void APLNF::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int hei
         const float gap = (rcI.getWidth() / c) * 2.0f * (float)pi;
 
         float alpha = isMouseOver ? 1.0f : 0.7f;
+        float dimHL = slider.isEnabled() ? 0.7f : 0.4f;
         juce::Path knob;
         juce::ColourGradient gradient{
-            juce::Colours::white.withBrightness(0.7f), 
-            radius*.55f, radius*.55f, 
+            juce::Colours::white.withBrightness(dimHL), 
+            radius*.75f, radius*.75f, 
             slider.findColour(juce::Slider::rotarySliderFillColourId).darker(.3f).withMultipliedAlpha(alpha), 
-            radius, radius, 
+            radius*1.1f, radius*1.1f, 
             true
         };
         g.setGradientFill(gradient);
