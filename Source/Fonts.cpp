@@ -2,8 +2,8 @@
 
 
 APLNF::APLNF() {
-    setColour(juce::Slider::thumbColourId, juce::Colour(0xffCC8866));
-    setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0xffCC8866));
+    setColour(juce::Slider::thumbColourId, juce::Colour(0xffa38371));
+    setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0xffa38371));
     setColour(juce::Slider::trackColourId, juce::Colour(0xff797C84));
     setColour(juce::BubbleComponent::backgroundColourId, juce::Colour(0xff16171A));
     setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
@@ -37,7 +37,6 @@ void APLNF::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int hei
 
     const float thickness = (radius - 2) / radius;
 
- 
     // Draw knob
     {
         const auto rcO = juce::Rectangle<float>(rx, ry, rw, rw).withSizeKeepingCentre(radius*1.6f, radius*1.6f);
@@ -50,7 +49,7 @@ void APLNF::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int hei
         juce::ColourGradient gradient{
             juce::Colours::white.withBrightness(0.7f), 
             radius*.55f, radius*.55f, 
-            slider.findColour(juce::Slider::rotarySliderFillColourId).withMultipliedAlpha(alpha), 
+            slider.findColour(juce::Slider::rotarySliderFillColourId).darker(.3f).withMultipliedAlpha(alpha), 
             radius, radius, 
             true
         };
