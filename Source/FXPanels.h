@@ -101,6 +101,14 @@ public:
 
 		// GN = 8
 		addControl(gngain = new APKnob(proc.gainParams.gain), 1, 1);
+
+		// LDR = 9
+		addControl(ldrcutoff = new APKnob(proc.ladderParams.cutoff), 0, 0);
+		addControl(ldrreso = new APKnob(proc.ladderParams.reso), 0, 1);
+		addControl(ldrdrive = new APKnob(proc.ladderParams.drive), 0, 2);
+		addControl(ldrtype = new APKnob(proc.ladderParams.type), 1, 0);
+		addControl(ldrgain = new APKnob(proc.ladderParams.gain), 1, 1);
+		
 		
         
         addAndMakeVisible(dynamicsMeter);
@@ -282,6 +290,13 @@ public:
 		case 8:
 			gngain->setVisible(true);
 			break;
+		case 9:
+			ldrcutoff->setVisible(true);
+			ldrreso->setVisible(true);
+			ldrdrive->setVisible(true);
+			ldrtype->setVisible(true);
+			ldrgain->setVisible(true);
+			break;
 		}
 	}
     
@@ -355,6 +370,12 @@ public:
         rmhighcut->setVisible(false);
 		// GN = 8
 		gngain->setVisible(false);
+		// LDR = 9
+		ldrcutoff->setVisible(false);
+		ldrreso->setVisible(false);
+		ldrdrive->setVisible(false);
+		ldrtype->setVisible(false);
+		ldrgain->setVisible(false);
     }
 	
     APAudioProcessor& proc;
@@ -366,6 +387,7 @@ public:
 	gin::ParamComponent::Ptr chrate, chdepth, chdelay, chfeedback, chdry, chwet;
 	gin::ParamComponent::Ptr rvsize, rvdecay, rvdamping, rvlowpass, rvpredelay, rvdry, rvwet;
 	gin::ParamComponent::Ptr mbfilterlowshelffreq, mbfilterlowshelfgain, mbfilterlowshelfq, mbfilterpeakfreq, mbfilterpeakgain, mbfilterpeakq, mbfilterhighshelffreq, mbfilterhighshelfgain, mbfilterhighshelfq;
+	gin::ParamComponent::Ptr ldrcutoff, ldrreso, ldrdrive, ldrtype, ldrgain;
     gin::DynamicsMeter dynamicsMeter;
     juce::ImageComponent funcImage{"function"};
 	int currentEffect = 0;

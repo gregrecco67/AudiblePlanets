@@ -1383,3 +1383,37 @@ private:
 
     juce::SmoothedValue<float> mod1LPCutoff, mod2LPCutoff;
 };
+
+
+class LadderFilterProcessor
+{
+public:
+    LadderFilterProcessor() { filter.setEnabled(true); }
+    ~LadderFilterProcessor() = default;
+
+    void prepare(juce::dsp::ProcessSpec spec) {
+		currentSampleRate = static_cast<float>(spec.sampleRate);
+		filter.prepare(spec);
+        gain.prepare(spec);
+        gain.setRampDurationSeconds(0.007f);
+        gain.setGainDecibels(0.f);
+        filter.setMode(juce::dsp::LadderFilter<float>::Mode::LPF24);
+    }
+
+    void process(juce::dsp::ProcessContextReplacing<float> context) {
+        filter.process(context);
+        gain.process(context);
+    }
+
+    void setParams(float cutoff, float res, float dri) {
+		filter.setCutoffFrequencyHz(cutoff);
+        filter.setResonance(res);
+        filter.setDrive(dri);
+	}
+
+    // gain.setGainDecibels(float)
+
+    juce::dsp::LadderFilter<float> filter;
+    juce::dsp::Gain<float> gain;
+    float currentSampleRate { 44100.0f };
+};
