@@ -384,6 +384,7 @@ void APAudioProcessor::LadderParams::setup(APAudioProcessor& p)
     cutoff      = p.addExtParam(id + "cutoff",     nm + " Cutoff",     "Cutoff",   "Hz", { 0.0, maxFreq, 0.0f, 1.0 }, 0.0, 0.0, freqTextFunction);
     drive       = p.addExtParam(id + "drive",    nm + " Drive",    "Drive",  " dB", { -40.0, 0.0, 0.0, 1.0 }, -6.0f, 0.0f);
     reso        = p.addExtParam(id + "res",     nm + " Res",     "Res",   "", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
+	gain		= p.addExtParam(id + "gain",  nm + " Gain", "Gain", " dB", { -40.0, 0.0, 0.0, 1.0 }, -6.0f, 0.0f);
 }
 
 //==============================================================================
