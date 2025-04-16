@@ -50,7 +50,9 @@ public:
 		addControl(p3 = new MoonKnob(proc.osc3Params.phase), 4, 0);
 		addControl(p4 = new MoonKnob(proc.osc4Params.phase), 4, 0);
 
+		
 		c1->setLookAndFeel(&lnf1);
+		lnf1.setColour(juce::Slider::trackColourId, juce::Colours::black);
 		f1->setLookAndFeel(&lnf1);
 		v1->setLookAndFeel(&lnf1);
 		c2->setLookAndFeel(&lnf2);
@@ -1252,10 +1254,10 @@ public:
 		msegComponent4.setEditable(true);
 		msegComponent4.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(proc.mseg4Params.drawmode->getUserValue()));
 
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG4, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG3, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG2, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG1, true));
+		addModSource(poly4 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG4, true));
+		addModSource(poly3 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG3, true));
+		addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG2, true));
+		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG1, true));
 
 		addControl(r1 = new APKnob(proc.mseg1Params.rate), 0, 0);
 		addControl(r2 = new APKnob(proc.mseg2Params.rate), 0, 0);
@@ -1390,6 +1392,10 @@ public:
 		{
 			c->setVisible(false);
 		}
+		for (juce::Button *c : {poly1, poly2, poly3, poly4}) 
+		{
+			c->setVisible(false);
+		}
 		for (auto &viz : {&msegComponent1, &msegComponent2, &msegComponent3, &msegComponent4})
 		{
 			viz->setVisible(false);
@@ -1412,6 +1418,7 @@ public:
 			m1->setVisible(true);
 			x1->setVisible(true);
 			y1->setVisible(true);
+			poly1->setVisible(true);
 			msegComponent1.setVisible(true);
 			select1.setToggleState(true, juce::dontSendNotification);
 			break;
@@ -1427,6 +1434,7 @@ public:
 			m2->setVisible(true);
 			x2->setVisible(true);
 			y2->setVisible(true);
+			poly2->setVisible(true);
 			msegComponent2.setVisible(true);
 			select2.setToggleState(true, juce::dontSendNotification);
 			break;
@@ -1442,6 +1450,7 @@ public:
 			m3->setVisible(true);
 			x3->setVisible(true);
 			y3->setVisible(true);
+			poly3->setVisible(true);
 			msegComponent3.setVisible(true);
 			select3.setToggleState(true, juce::dontSendNotification);
 			break;
@@ -1457,6 +1466,7 @@ public:
 			m4->setVisible(true);
 			x4->setVisible(true);
 			y4->setVisible(true);
+			poly4->setVisible(true);
 			msegComponent4.setVisible(true);
 			select4.setToggleState(true, juce::dontSendNotification);
 			break;
@@ -1560,6 +1570,7 @@ public:
 		r2, b2, s2, l2, dp2, o2, dr2, m2, x2, y2,
 		r3, b3, s3, l3, dp3, o3, dr3, m3, x3, y3,
 		r4, b4, s4, l4, dp4, o4, dr4, m4, x4, y4;
+	juce::Button *poly1, *poly2, *poly3, *poly4;
 
 	// create textbuttons for learn
 
