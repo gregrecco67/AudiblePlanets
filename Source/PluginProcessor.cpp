@@ -378,12 +378,12 @@ void APAudioProcessor::LadderParams::setup(APAudioProcessor& p)
     juce::String id = "ldr";
     juce::String nm = "Ladder";
 
-    float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
+	float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
 
     type        = p.addIntParam(id + "type",    nm + " Type",    "Type",  "", { 0.0, 5.0, 1.0f, 1.0 }, 0.0, 0.0f, ladderTypeTextFunction);
-    cutoff      = p.addExtParam(id + "cutoff",     nm + " Cutoff",     "Cutoff",   "Hz", { 0.0, maxFreq, 0.0f, 1.0 }, 0.0, 0.0, freqTextFunction);
-    drive       = p.addExtParam(id + "drive",    nm + " Drive",    "Drive",  " dB", { -40.0, 0.0, 0.0, 1.0 }, -6.0f, 0.0f);
-    reso        = p.addExtParam(id + "res",     nm + " Res",     "Res",   "", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
+    cutoff      = p.addExtParam(id + "cutoff",     nm + " Cutoff",     "Cutoff",   "Hz", { 0.0, maxFreq, 0.0f, 1.0 }, 95.0, 0.0, freqTextFunction);
+    drive       = p.addExtParam(id + "drive",    nm + " Drive",    "Drive",  "", { 1.0, 10.0, 0.0, 1.0 }, 1.0f, 0.0f);
+    reso        = p.addExtParam(id + "res",     nm + " Res",     "Res",   "", { 0.0, 0.99f, 0.0, 1.0 }, 0.0, 0.0f);
 	gain		= p.addExtParam(id + "gain",  nm + " Gain", "Gain", " dB", { -40.0, 0.0, 0.0, 1.0 }, -6.0f, 0.0f);
 }
 
@@ -949,6 +949,7 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
     reverb.prepare(spec);
     mbfilter.prepare(spec);
     ringmod.prepare(spec);
+	ladder.prepare(spec);
     limiter.prepare(spec);
     limiter.setThreshold(-0.3f);
     limiter.setRelease(0.05f);
@@ -1222,6 +1223,9 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
             case 8:
                 effectGain.process(outContext);
                 break;
+			case 9:
+				ladder.process(outContext);
+				break;
             default:
                 break;
             }
@@ -1582,7 +1586,9 @@ void APAudioProcessor::updateParams(int newBlockSize)
     using LMode = juce::dsp::LadderFilter<float>::Mode;
     
     if (activeEffects.contains(9)) {
-        ladder.filter.setCutoffFrequencyHz(modMatrix.getValue(ladderParams.cutoff));
+        ladder.filter.setCutoffFrequencyHz(
+			gin::getMidiNoteInHertz(modMatrix.getValue(ladderParams.cutoff))
+		);
         ladder.filter.setDrive(modMatrix.getValue(ladderParams.drive));
         juce::dsp::LadderFilter<float>::Mode mode;
         switch (ladderParams.type->getUserValueInt()) {

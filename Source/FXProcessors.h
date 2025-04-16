@@ -1388,16 +1388,20 @@ private:
 class LadderFilterProcessor
 {
 public:
-    LadderFilterProcessor() { filter.setEnabled(true); }
+    LadderFilterProcessor() {  }
     ~LadderFilterProcessor() = default;
 
     void prepare(juce::dsp::ProcessSpec spec) {
 		currentSampleRate = static_cast<float>(spec.sampleRate);
 		filter.prepare(spec);
+		filter.setEnabled(true);
+        filter.setMode(juce::dsp::LadderFilter<float>::Mode::LPF24);
+		filter.setCutoffFrequencyHz(20000.0f);
+		filter.setResonance(0.f);
+		filter.setDrive(1.0f);
         gain.prepare(spec);
         gain.setRampDurationSeconds(0.007f);
         gain.setGainDecibels(0.f);
-        filter.setMode(juce::dsp::LadderFilter<float>::Mode::LPF24);
     }
 
     void process(juce::dsp::ProcessContextReplacing<float> context) {
