@@ -43,7 +43,7 @@ public:
     void releaseResources() override;
 
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
-    bool isBusesLayoutSupported (const BusesLayout& layouts) const;
+    bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
@@ -231,6 +231,15 @@ public:
 		JUCE_DECLARE_NON_COPYABLE(GainParams)
 	};
 
+	struct LadderParams 
+	{
+		LadderParams() = default;
+		gin::Parameter::Ptr cutoff, reso, drive, type, gain;
+		void setup(APAudioProcessor& p);
+		int pos{-1};
+		JUCE_DECLARE_NON_COPYABLE(LadderParams)
+	};
+
     struct FXOrderParams
     {
         
@@ -303,7 +312,7 @@ public:
 	CompressorParams compressorParams;
 	StereoDelayParams stereoDelayParams;
 	ChorusParams chorusParams;
-
+	LadderParams ladderParams;
 	ReverbParams reverbParams;
 	MBFilterParams mbfilterParams;
 	RingModParams ringmodParams;
@@ -322,6 +331,7 @@ public:
 	PlateReverb<float, uint32_t> reverb;
 	MBFilterProcessor mbfilter;
 	RingModulator ringmod;
+	LadderFilterProcessor ladder;
 	juce::dsp::Limiter<float> limiter;
 
     gin::GainProcessor outputGain;

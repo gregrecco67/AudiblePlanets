@@ -75,7 +75,7 @@ private:
 	double pitchStride;
 	juce::ADSR adsr;
     
-	double sourceSamplePosition = 0;
+	float sourceSamplePosition = 0;
 	float lgain = 0, rgain = 0;
 
 	bool hasLooped{ false };

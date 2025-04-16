@@ -15,6 +15,22 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+static juce::String ladderTypeTextFunction(const gin::Parameter&, float v)
+{
+    switch (int(v))
+    {
+        case 0: return "LPF12";
+        case 1: return "HPF12";
+        case 2: return "BPF12";
+        case 3: return "LPF24";
+        case 4: return "HPF24";
+        case 5: return "BPF24";
+        default:
+            jassertfalse;
+            return {};
+    }
+}
+
 static juce::String waveshaperTypeTextFunction(const gin::Parameter&, float v)
 {
     switch (int(v))
@@ -179,6 +195,7 @@ static juce::String fxListTextFunction(const gin::Parameter&, float v)
         case 6: return juce::String("Reverb");
         case 7: return juce::String("Ring Modulator");
         case 8: return juce::String("Gain");
+        case 9: return juce::String("Ladder Filter");
         default:
             jassertfalse;
             return {};
@@ -353,6 +370,21 @@ void APAudioProcessor::FilterParams::setup(APAudioProcessor& p)
     resonance        = p.addExtParam(id + "res",     nm + " Res",     "Res",   "", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
 
     keyTracking->conversionFunction      = [] (float in) { return in / 100.0f; };
+}
+
+//==============================================================================
+void APAudioProcessor::LadderParams::setup(APAudioProcessor& p)
+{
+    juce::String id = "ldr";
+    juce::String nm = "Ladder";
+
+	float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
+
+    type        = p.addIntParam(id + "type",    nm + " Type",    "Type",  "", { 0.0, 5.0, 1.0f, 1.0 }, 0.0, 0.0f, ladderTypeTextFunction);
+    cutoff      = p.addExtParam(id + "cutoff",     nm + " Cutoff",     "Cutoff",   "Hz", { 0.0, maxFreq, 0.0f, 1.0 }, 95.0, 0.0, freqTextFunction);
+    drive       = p.addExtParam(id + "drive",    nm + " Drive",    "Drive",  "", { 1.0, 10.0, 0.0, 1.0 }, 1.0f, 0.0f);
+    reso        = p.addExtParam(id + "res",     nm + " Res",     "Res",   "", { 0.0, 0.99f, 0.0, 1.0 }, 0.0, 0.0f);
+	gain		= p.addExtParam(id + "gain",  nm + " Gain", "Gain", " dB", { -40.0, 0.0, 0.0, 1.0 }, -6.0f, 0.0f);
 }
 
 //==============================================================================
@@ -620,14 +652,14 @@ static juce::String fxPrePostFunction(const gin::Parameter&, float v)
 void APAudioProcessor::FXOrderParams::setup(APAudioProcessor& p)
 {
     float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
-    fxa1 = p.addIntParam("fxa1", "FX A1", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa2 = p.addIntParam("fxa2", "FX A2", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa3 = p.addIntParam("fxa3", "FX A3", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxa4 = p.addIntParam("fxa4", "FX A4", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb1 = p.addIntParam("fxb1", "FX B1", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb2 = p.addIntParam("fxb2", "FX B2", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb3 = p.addIntParam("fxb3", "FX B3", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
-    fxb4 = p.addIntParam("fxb4", "FX B4", "", "", {0.0, 8.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa1 = p.addIntParam("fxa1", "FX A1", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa2 = p.addIntParam("fxa2", "FX A2", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa3 = p.addIntParam("fxa3", "FX A3", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxa4 = p.addIntParam("fxa4", "FX A4", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb1 = p.addIntParam("fxb1", "FX B1", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb2 = p.addIntParam("fxb2", "FX B2", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb3 = p.addIntParam("fxb3", "FX B3", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
+    fxb4 = p.addIntParam("fxb4", "FX B4", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f, 0.0f, fxListTextFunction);
     chainAtoB = p.addIntParam("chainAtoB", "FX Chain Routing", "", "", { 0.0, 1.0, 1.0, 1.0 }, 1.0f, 0.0f, fxRouteFunction);
     laneAGain = p.addExtParam("laneAGain", "FX A Pre-Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 0.0f, 0.0f);
     laneBGain = p.addExtParam("laneBGain", "FX B Pre-Gain", "Gain", " dB", { -60.0, 40.0, 0.0, 1.0 }, 0.0f, 0.0f);
@@ -717,6 +749,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     reverbParams.setup(*this);
     mbfilterParams.setup(*this);
     ringmodParams.setup(*this);
+    ladderParams.setup(*this);
 
     fxOrderParams.setup(*this);
 
@@ -916,6 +949,7 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
     reverb.prepare(spec);
     mbfilter.prepare(spec);
     ringmod.prepare(spec);
+	ladder.prepare(spec);
     limiter.prepare(spec);
     limiter.setThreshold(-0.3f);
     limiter.setRelease(0.05f);
@@ -1189,6 +1223,9 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
             case 8:
                 effectGain.process(outContext);
                 break;
+			case 9:
+				ladder.process(outContext);
+				break;
             default:
                 break;
             }
@@ -1238,6 +1275,9 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
                 break;
             case 8:
                 effectGain.process(outContext);
+                break;
+            case 9:
+                ladder.process(outContext);
                 break;
             default:
                 break;
@@ -1304,6 +1344,9 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
             case 8:
                 effectGain.process(AContext);
                 break;
+            case 9:
+                ladder.process(AContext);
+                break;
             default:
                 break;
             }
@@ -1337,6 +1380,9 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer& fxALaneBuffer)
                 break;
             case 8:
                 effectGain.process(BContext);
+                break;
+            case 9:
+                ladder.process(BContext);
                 break;
             default:
                 break;
@@ -1536,6 +1582,43 @@ void APAudioProcessor::updateParams(int newBlockSize)
 
 	if (activeEffects.contains(8))
 	    effectGain.setGainLevel(modMatrix.getValue(gainParams.gain));
+
+    using LMode = juce::dsp::LadderFilter<float>::Mode;
+    
+    if (activeEffects.contains(9)) {
+        ladder.filter.setCutoffFrequencyHz(
+			gin::getMidiNoteInHertz(modMatrix.getValue(ladderParams.cutoff))
+		);
+        ladder.filter.setDrive(modMatrix.getValue(ladderParams.drive));
+        juce::dsp::LadderFilter<float>::Mode mode;
+        switch (ladderParams.type->getUserValueInt()) {
+            case 0:
+                mode = LMode::LPF12;
+                break;
+            case 1:
+                mode = LMode::HPF12;
+                break;
+            case 2:
+                mode = LMode::BPF12;
+                break;
+            case 3:
+                mode = LMode::LPF24;
+                break;
+            case 4:
+                mode = LMode::HPF24;
+                break;
+            case 5:
+                mode = LMode::BPF24;
+                break;
+            default:
+                mode = LMode::LPF12;
+                break;
+        }
+        ladder.filter.setMode(mode);
+        ladder.filter.setResonance(modMatrix.getValue(ladderParams.reso));
+        ladder.gain.setGainDecibels(modMatrix.getValue(ladderParams.gain));
+    }
+
 
     // Output gain
     outputGain.setGain(modMatrix.getValue(globalParams.level));

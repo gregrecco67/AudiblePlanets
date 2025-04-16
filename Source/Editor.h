@@ -48,5 +48,4 @@ private:
 	VolumeBox volume{ proc };
 	
 	APLNF aplnf;
-    //gin::Layout layout { *this };
 };
