@@ -58,6 +58,10 @@ void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any ot
 	}
 }
 
+void Editor::setGrid(gin::ParamBox* box, int x, int y, int boxheaders, int w, int h) {
+	box->setBounds(x * 56, y * 70 + 23 * boxheaders, w * 56, h * 70 + 23);
+}
+
 void Editor::resized()
 {
     auto area = getLocalBounds();
@@ -66,25 +70,29 @@ void Editor::resized()
 		return;
 	}
 
-    osc.setBounds(0,0,280,163);
-    env.setBounds(282,0,336,163);
-    
-	timbre.setBounds(0,163,222,162);
-    filter.setBounds(224,163,112,163);
-	lfo.setBounds(338,163,280,163);
-    
-	
-	global.setBounds(0,326,168,163);
-    mseg.setBounds(170, 326, 56*8, 323);
-	macros.setBounds(0, 491, 168, 163);
-
-	aux.setBounds   (620,   0, 280, 163);
-	volume.setBounds(620, 491, 280, 163);
-	
-	// From FXEditor:
-	// 	mod.setBounds	(900,   7, 280, 303);
-	//  matrix.setBounds(900, 320, 280, 303);
-    modsrc.setBounds(902,   0, 280, 303);
-    matrix.setBounds(902, 304, 280, 303);
+    setGrid(&osc,      0,  0, 0, 5, 2);
+    setGrid(&env,      5,  0, 0, 6, 2);
+	setGrid(&timbre,   0,  2, 1, 4, 2);
+    setGrid(&filter,   4,  2, 1, 2, 2);
+	setGrid(&lfo,      6,  2, 1, 5, 2);
+	setGrid(&global,   0,  4, 2, 3, 2);
+    setGrid(&mseg,     3,  4, 2, 8, 5);
+	setGrid(&macros,   0,  6, 3, 3, 2);
+	setGrid(&aux,     11,  0, 0, 5, 2);
+	setGrid(&volume,  11,  7, 0, 5, 2);
+    setGrid(&modsrc,  16,  0, 0, 5, 4);
+    setGrid(&matrix,  16,  4, 1, 5, 4);
+	//    osc.setBounds(0,0,280,163);
+	//    env.setBounds(282,0,336,163);
+	//	timbre.setBounds(0,163,222,162);
+	//    filter.setBounds(224,163,112,163);
+	//	lfo.setBounds(338,163,280,163);
+	//	global.setBounds(0,326,168,163);
+	//    mseg.setBounds(170, 326, 56*8, 323);
+	//	macros.setBounds(0, 491, 168, 163);
+	//	aux.setBounds   (620,   0, 280, 163);
+	//	volume.setBounds(620, 491, 280, 163);
+	//    modsrc.setBounds(902,   0, 280, 303);
+	//    matrix.setBounds(902, 304, 280, 303);
 
 }

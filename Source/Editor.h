@@ -29,6 +29,7 @@ public:
 
     void resized() override;
 	void valueUpdated(gin::Parameter* param) override;
+    void setGrid(gin::ParamBox* box, int x, int y, int heds, int w, int h);
 
 private:
     APAudioProcessor& proc;
