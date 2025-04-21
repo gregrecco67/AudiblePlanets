@@ -70,17 +70,17 @@ void Editor::resized()
 		return;
 	}
 
-    setGrid(&osc,      0,  0, 0, 5, 2);
-    setGrid(&env,      5,  0, 0, 6, 2);
-	setGrid(&timbre,   0,  2, 1, 4, 2);
-    setGrid(&filter,   4,  2, 1, 2, 2);
-	setGrid(&lfo,      6,  2, 1, 5, 2);
-	setGrid(&global,   0,  4, 2, 3, 2);
-    setGrid(&mseg,     3,  4, 2, 8, 5);
-	setGrid(&macros,   0,  6, 3, 3, 2);
-	setGrid(&aux,     11,  0, 0, 5, 2);
-	setGrid(&volume,  11,  7, 0, 5, 2);
+    setGrid(&osc,      0,  0, 0, 4, 2);
+    setGrid(&env,      4,  0, 0, 6, 2);
+    setGrid(&filter,  10,  0, 0, 2, 2);
+	setGrid(&timbre,  12,  0, 1, 4, 2);
     setGrid(&modsrc,  16,  0, 0, 5, 4);
+	setGrid(&lfo,      0,  2, 1, 5, 2);
+	setGrid(&macros,   5,  2, 1, 3, 2);
+	setGrid(&aux,      8,  2, 1, 5, 2);
+    setGrid(&mseg,     0,  4, 2, 8, 5);
+	setGrid(&global,   8,  6, 2, 3, 2);
+	setGrid(&volume,   8,  8, 0, 5, 2);
     setGrid(&matrix,  16,  4, 1, 5, 4);
 	//    osc.setBounds(0,0,280,163);
 	//    env.setBounds(282,0,336,163);
