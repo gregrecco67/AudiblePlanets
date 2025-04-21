@@ -41,7 +41,6 @@ private:
     GlobalBox global                        { "  global", proc };
 	TimbreBox timbre						{ "  timbre", proc };
     AuxBox aux{ "      Aux Oscillator", proc };
-	SamplerBox samplerBox{ "      Sampler", proc };
     MainMatrixBox matrix{ "  Mod Matrix", proc };
     MsegBox mseg{ proc };
 	MacrosBox macros{ proc };

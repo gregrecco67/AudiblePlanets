@@ -121,6 +121,8 @@ public:
 		addAndMakeVisible(select3);
 		addAndMakeVisible(select4);
 
+		setColour(juce::TextButton::buttonOnColourId, juce::Colours::beige);
+
 		fixedHz1.setJustificationType(juce::Justification::centred);
 		fixedHz2.setJustificationType(juce::Justification::centred);
 		fixedHz3.setJustificationType(juce::Justification::centred);
@@ -915,7 +917,7 @@ public:
 	{
 		setName("mod");
 		setTitle("  mod sources");
-		addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 3);
+		addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 4);
 		modlist->setRowHeight(20);
 	}
 
@@ -940,7 +942,6 @@ public:
 		addControl(legato = new gin::Select(proc.globalParams.legato));
 		addControl(mono = new gin::Select(proc.globalParams.mono));
 		addControl(glideMode = new gin::Select(proc.globalParams.glideMode));
-		addControl(sidechain = new gin::Select(proc.globalParams.sidechainEnable));
 	}
 
 	void resized() override
@@ -949,10 +950,9 @@ public:
 		legato->setBounds(0, 23, 56, 35);
 		mono->setBounds(0, 58, 56, 35);
 		glideMode->setBounds(56, 23, 56, 35);
-		sidechain->setBounds(56, 58, 56, 35);
 	}
 
-	gin::ParamComponent::Ptr legato = nullptr, mono = nullptr, glideMode = nullptr, sidechain = nullptr;
+	gin::ParamComponent::Ptr legato = nullptr, mono = nullptr, glideMode = nullptr;
 	APAudioProcessor &proc;
 };
 
@@ -996,184 +996,6 @@ public:
 	gin::ParamComponent::Ptr wave, env, prefx, filtertype;
 };
 
-class Waveform : public juce::Component
-{
-public:
-	Waveform(APAudioProcessor &p) : proc(p)
-	{
-		addAndMakeVisible(fileInfo);
-		addAndMakeVisible(sampleFilenameLabel);
-		sampleFilenameLabel.setJustificationType(juce::Justification::centred);
-	}
-
-	void resized() override
-	{
-		fileInfo.setBounds(getWidth() - 65, 0, 65, 20);
-		sampleFilenameLabel.setBounds(0, getHeight() - 23, getWidth(), 23);
-	}
-
-	void paint(juce::Graphics &g) override
-	{
-		if (juce::File(proc.sampler.sound.name).getFileName() != sampleFilenameLabel.getText())
-		{
-			shouldRedraw = true;
-		}
-		if (proc.sampler.sound.data != nullptr)
-		{
-			g.setColour(juce::Colour(0xffCC8866).darker(0.5f));
-			int loopstart = (int)proc.samplerParams.loopstart->getUserValue() * getWidth();
-			int loopend = (int)proc.samplerParams.loopend->getUserValue() * getWidth();
-			g.fillRect(loopstart, 0, loopend - loopstart, getHeight());
-			g.setColour(juce::Colours::grey);
-			g.drawLine(loopstart, 0, loopstart, getHeight(), 1);
-			g.drawLine(loopend, 0, loopend, getHeight(), 1);
-			auto soundFile = juce::File(proc.sampler.sound.name);
-			sampleFilenameLabel.setText(soundFile.getFileName(), juce::dontSendNotification);
-			auto ch = proc.sampler.sound.data.get()->getNumChannels();
-			auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
-			auto fileInfoString = juce::String(ch) + " ch: " + juce::String(time, 2) + " s";
-			fileInfo.setText(fileInfoString, juce::dontSendNotification);
-		}
-		else
-		{
-			sampleFilenameLabel.setText("", juce::dontSendNotification);
-			fileInfo.setText("", juce::dontSendNotification);
-			g.setColour(juce::Colours::black);
-			g.fillAll();
-		}
-		g.setColour(juce::Colours::darkgrey);
-		g.drawRect(getLocalBounds(), 1);
-		auto &audio = proc.sampler.sound.data;
-		auto stride = proc.sampler.sound.length * (proc.samplerParams.end->getValue() - proc.samplerParams.start->getValue()) / getWidth();
-		auto name = proc.sampler.sound.name;
-		if (stride < 1)
-		{
-			return;
-		}
-		auto buffer = audio->getReadPointer(0);
-		if (shouldRedraw)
-		{
-			audioPoints.clear();
-			smoothed.clear();
-			auto length = proc.sampler.sound.length;
-			int startSample = int(proc.samplerParams.start->getUserValue() * length);
-			int endSample = int(proc.samplerParams.end->getUserValue() * length);
-			for (int sample = startSample; sample < endSample; sample += (int)stride)
-			{
-				audioPoints.push_back(buffer[sample]);
-			}
-			smoothed.push_back(audioPoints[0]);
-			for (size_t i = 1; i < audioPoints.size() - 1; i++)
-			{
-				smoothed.push_back(audioPoints[i - 1] * 0.333f + audioPoints[i] * 0.333f + audioPoints[i + 1] * 0.333f);
-			}
-			smoothed.push_back(audioPoints[audioPoints.size() - 1]);
-			shouldRedraw = false;
-		}
-		juce::Path p;
-		p.clear();
-		p.startNewSubPath(0, getHeight() / 2);
-		float max{0}, min{0};
-		for (size_t sample = 0; sample < smoothed.size(); sample++)
-		{
-			if (smoothed[sample] > max)
-			{
-				max = smoothed[sample];
-			}
-			if (smoothed[sample] < min)
-			{
-				min = smoothed[sample];
-			}
-		}
-		if (std::abs(min) > max)
-		{
-			max = std::abs(min);
-		}
-		else
-		{
-			min = -max;
-		}
-		min = juce::jlimit(-1.f, -.3f, min);
-		max = juce::jlimit(.3f, 1.f, max);
-		for (size_t sample = 0; sample < smoothed.size(); sample++)
-		{
-			p.lineTo(sample, juce::jmap(smoothed[sample], min, max, static_cast<float>(getHeight()), 0.f));
-		}
-
-		g.setColour(juce::Colours::white);
-		g.strokePath(p, juce::PathStrokeType(.4f));
-	}
-	APAudioProcessor &proc;
-	std::vector<float> audioPoints, smoothed;
-	bool shouldRedraw{true};
-	juce::Label fileInfo{"", ""}, sampleFilenameLabel{"", ""};
-};
-
-class SamplerBox : public gin::ParamBox
-{
-public:
-	SamplerBox(const juce::String &name, APAudioProcessor &proc_)
-		: gin::ParamBox(name), proc(proc_), waveform(proc_)
-	{
-		addEnable(proc.samplerParams.enable);
-		addControl(new APKnob(proc.samplerParams.volume), 0, 0);
-		addControl(new gin::Select(proc.samplerParams.loop), 1, 0);
-		addControl(new APKnob(proc.samplerParams.key), 2, 0);
-		addControl(new APKnob(proc.samplerParams.start), 3, 0);
-		addControl(new APKnob(proc.samplerParams.end), 4, 0);
-		addControl(new APKnob(proc.samplerParams.loopstart), 0, 1);
-		addControl(new APKnob(proc.samplerParams.loopend), 1, 1);
-		addAndMakeVisible(waveform);
-		addAndMakeVisible(loadButton);
-		loadButton.onClick = [this]
-		{ chooseFile(); };
-		setFileName();
-	}
-
-	void chooseFile()
-	{
-		chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-							 [this](const juce::FileChooser &fc)
-							 {
-								 auto file = fc.getResult();
-								 if (!file.existsAsFile())
-								 {
-									 return;
-								 }
-								 proc.loadSample(file.getFullPathName());
-								 waveform.shouldRedraw = true;
-								 waveform.repaint();
-							 });
-	}
-
-	void setFileName()
-	{
-		if (proc.sampler.sound.data == nullptr)
-		{
-			return;
-		}
-		auto ch = proc.sampler.sound.data.get()->getNumChannels();
-		auto time = proc.sampler.sound.length / proc.sampler.sound.sourceSampleRate;
-		auto fileInfoString = juce::String(ch) + " ch: " + juce::String(time, 2) + " s";
-		waveform.fileInfo.setText(fileInfoString, juce::dontSendNotification);
-		waveform.repaint();
-	}
-
-	void resized() override
-	{
-		ParamBox::resized();
-		waveform.setBounds(0, 140 + 23, getWidth(), 93);
-		loadButton.setBounds(getWidth() - 55, 0, 55, 23);
-		setFileName();
-	}
-
-	APAudioProcessor &proc;
-	Waveform waveform;
-	juce::TextButton loadButton{"Load"};
-	std::unique_ptr<juce::FileChooser> chooser = std::make_unique<juce::FileChooser>("Select file",
-																					 juce::File{}, "*.wav,*.aif,*.mp3,*.aif,*.ogg,*.flac");
-};
-
 //==============================================================================
 
 class MainMatrixBox : public gin::ParamBox
@@ -1184,7 +1006,7 @@ public:
 	{
 		setName("mtx");
 
-		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 7);
+		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4);
 		addAndMakeVisible(clearAllButton);
 		clearAllButton.onClick = [this]
 		{ clearAll(); };
@@ -1346,9 +1168,6 @@ public:
 		{ show(3); };
 		select4.onClick = [this]()
 		{ show(4); };
-
-		// addAndMakeVisible(msegDstSelector);
-		// TODO: add textbuttons for learn
 
 		msegComponent1.phaseCallback = [this]()
 		{
@@ -1810,18 +1629,13 @@ public:
 		: gin::ParamBox("  volume"), proc(proc_)
 	{
 		setName("  volume");
-
 		addControl(level = new APKnob(proc.globalParams.level));
 		addControl(aux = new APKnob(proc.auxParams.volume));
-		addControl(sampler = new APKnob(proc.samplerParams.volume));
 		addAndMakeVisible(levelMeter);
 		level->setDisplayName("Main");
 		aux->setDisplayName("Aux");
-		sampler->setDisplayName("Sampler");
 		proc.auxParams.enable->addListener(this);
-		proc.samplerParams.enable->addListener(this);
 		valueUpdated(proc.auxParams.enable);
-		valueUpdated(proc.samplerParams.enable);
 	}
 
 	void resized() override
@@ -1829,7 +1643,6 @@ public:
 		gin::ParamBox::resized();
 		level->setBounds(0, 43, 80, 100);
 		aux->setBounds(80, 43, 80, 100);
-		sampler->setBounds(160, 43, 80, 100);
 		levelMeter.setBounds(280 - 38, 43, 30, 100);
 	}
 
@@ -1839,14 +1652,10 @@ public:
 		{
 			aux->setEnabled(proc.auxParams.enable->isOn());
 		}
-		if (p == proc.samplerParams.enable)
-		{
-			sampler->setEnabled(proc.samplerParams.enable->isOn());
-		}
 	}
 
 	APAudioProcessor &proc;
-	APKnob *level, *aux, *sampler;
-	// gin::ParamComponent::Ptr level, aux, sampler;
+	APKnob *level, *aux;
+
 	gin::LevelMeter levelMeter{proc.levelTracker};
 };

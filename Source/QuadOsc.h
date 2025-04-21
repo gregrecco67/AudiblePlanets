@@ -39,7 +39,6 @@ struct StereoPosition {
 	}
 };
 
-
 enum class Wavetype
 {
 	sine = 0,
@@ -54,8 +53,6 @@ static inline float semitonePower(float x) { // about 2x faster than std::pow(SE
 	u = u * x + -0.057762265f;
 	return u * x + 1.f;
 }
-
-
 
 static inline float sineValueForPhaseAndTones(float phase_, float tones) {
 	float fullTones{ 0.f }, value{ 0.0f };

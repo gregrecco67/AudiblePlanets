@@ -229,18 +229,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 
 	// we do this to advance phase, even if we have to overwrite with sidechain (rare)
 	osc1.renderPositions(osc1Freq, osc1Params, osc1Positions, numSamples); 
-	
-	if (proc.globalParams.sidechainEnable->isOn()) { 
-		// taking sidechain as the vertical component, we calculate the horizontal component
-		// effectively mapping the sidechain to a semicircle
-		for (int i = 0; i < numSamples; i++) {
-			osc1Positions[i].yL = std::clamp(proc.sidechainSlice.getSample(0, i), -1.f, 1.f);
-			osc1Positions[i].yR = std::clamp(proc.sidechainSlice.getSample(1, i), -1.f, 1.f);
-			osc1Positions[i].xL = std::sqrt(1.f - osc1Positions[i].yL * osc1Positions[i].yL) * 2.f - 1.f;
-			osc1Positions[i].xR = std::sqrt(1.f - osc1Positions[i].yR * osc1Positions[i].yR) * 2.f - 1.f;
-		}
-	}
-	
 	osc2.renderPositions(osc2Freq, osc2Params, osc2Positions, numSamples);
 	osc3.renderPositions(osc3Freq, osc3Params, osc3Positions, numSamples);
 	osc4.renderPositions(osc4Freq, osc4Params, osc4Positions, numSamples);

@@ -24,7 +24,6 @@
 #include "FXProcessors.h"
 #include "Synth.h"
 #include "AuxSynth.h"
-#include "APSampler.h"
 #include <random>
 
 //==============================================================================
@@ -134,7 +133,7 @@ public:
     {
         GlobalParams() = default;
 
-        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, mpe, velSens, pitchbendRange, sidechainEnable, squash;
+        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, mpe, velSens, pitchbendRange, squash;
 
         void setup(APAudioProcessor& p);
 
@@ -272,22 +271,8 @@ public:
 		JUCE_DECLARE_NON_COPYABLE(AuxParams)
 	};
 
-	struct SamplerParams {
-		SamplerParams() = default;
-
-		gin::Parameter::Ptr enable, volume, loop, key, start, end, loopstart, loopend;
-		void setup(APAudioProcessor& p);
-
-		JUCE_DECLARE_NON_COPYABLE(SamplerParams)
-	};
-
-
-
 	void newRand();
-
 	void loadSample(const juce::String& path);
-    
-    
 	gin::ProcessorOptions getOptions();
 
     //==============================================================================
@@ -320,7 +305,6 @@ public:
 	MSEGParams mseg1Params, mseg2Params, mseg3Params, mseg4Params;
 	MacroParams macroParams;
 	AuxParams auxParams;
-	SamplerParams samplerParams;
 
     //==============================================================================
 	GainProcessor effectGain;
@@ -353,24 +337,14 @@ public:
 
 	gin::LevelTracker levelTracker;
     APSynth synth;
-	juce::AudioBuffer<float> sidechainBuffer;
-	juce::AudioBuffer<float> sidechainSlice;
 	juce::AudioBuffer<float> auxBuffer;
 	juce::AudioBuffer<float> auxSlice;
-	juce::AudioBuffer<float> samplerBuffer;
-	juce::AudioBuffer<float> samplerSlice;
-
+	
 	MTSClient* client;
 	juce::String scaleName, learningLabel;
 
-
 	AuxSynth auxSynth;
 	gin::BandLimitedLookupTables analogTables;
-
-	//juce::Synthesiser sampler;
-    APSampler sampler;
-	juce::AudioFormatManager formatManager;
-	juce::AudioFormatReader* reader{ nullptr };
 
 	const int numVoices = 8;
 

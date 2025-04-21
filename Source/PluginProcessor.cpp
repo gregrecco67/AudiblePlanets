@@ -491,17 +491,6 @@ void APAudioProcessor::AuxParams::setup(APAudioProcessor& p) {
 	ignorepb = p.addIntParam("auxignorepb", "Aux Ignore PB", "Ignore PB", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 }
 
-void APAudioProcessor::SamplerParams::setup(APAudioProcessor& p) {
-	enable = p.addIntParam("samplenable", "Enable", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-	volume = p.addExtParam("samplvolume", "Volume", "", "", { -40.0, 12.0, 0.0f, 1.0 }, -12.f, 0.0f,
-                           decibelsTextFunction);
-	loop = p.addIntParam("samplloop", "Loop", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
-	key = p.addIntParam("samplkey", "Key", "", "", { 0.0, 127.0, 1.0, 1.0 }, 60.0, 0.0f, midiNoteNameTextFunction);
-	start = p.addIntParam("samplstart", "Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-	end = p.addIntParam("samplend", "End", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
-	loopstart = p.addIntParam("samplloopstart", "Loop Start", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
-	loopend = p.addIntParam("samplloopend", "Loop End", "", "", { 0.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
-}
 
 //==============================================================================
 void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
@@ -515,7 +504,6 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
     level          = p.addExtParam("level",   "Level",      "",      " dB", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
     pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
-    sidechainEnable = p.addIntParam("sidechain", "Sidechain", "", "", { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
 
     level->conversionFunction     = [](float in) { return juce::Decibels::decibelsToGain (in); };
     velSens->conversionFunction   = [](float in) { return in / 100.0f; };
@@ -707,7 +695,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     .withInput("Sidechain", juce::AudioChannelSet::stereo(), true),
     false,
     getOptions()
-), synth(APSynth(*this)), auxSynth(AuxSynth(*this)), sampler(APSampler(*this))
+), synth(APSynth(*this)), auxSynth(AuxSynth(*this))
 {
 	{
 		auto sz = 0;
@@ -736,7 +724,6 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     timbreParams.setup(*this);
     filterParams.setup(*this);
 	auxParams.setup(*this);
-	samplerParams.setup(*this);
 
 	// mono params begin in the middle of this block
     globalParams.setup(*this); 
@@ -769,17 +756,8 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     laneBFilter.setNumChannels(2);
 
     macroParams.setup(*this);
-
     client = MTS_RegisterClient();
-
-    lf = std::make_unique<APLNF>();
-
-	formatManager.registerBasicFormats();
-
-	for (int i = 0; i < numVoices; i++) {
-		sampler.addVoice(new APSamplerVoice(*this));
-	}
-    
+    lf = std::make_unique<APLNF>();    
     setupModMatrix();
     init();
              
@@ -791,7 +769,6 @@ APAudioProcessor::~APAudioProcessor()
 {
 	juce::LookAndFeel::setDefaultLookAndFeel(nullptr);
     MTS_DeregisterClient(client);
-	reader = nullptr;
 }
 
 //==============================================================================
@@ -881,16 +858,6 @@ void APAudioProcessor::stateUpdated() // called when loading a preset
     else {
         mseg4Data.reset();
     }
-
-	if (state.getOrCreateChildWithName("sample", nullptr).isValid()) {
-		juce::String sampleName = state.getOrCreateChildWithName("sample", nullptr).getProperty("sampleName");
-		if (!sampleName.isEmpty()) {
-			sampler.loadSound(sampleName);
-		}
-		else {
-			sampler.clearSound();
-		}
-	}
 }
 
 void APAudioProcessor::updateState() // called when saving a preset
@@ -908,11 +875,6 @@ void APAudioProcessor::updateState() // called when saving a preset
 
     state.getOrCreateChildWithName("mseg4", nullptr).removeAllChildren(nullptr);
     mseg4Data.toValueTree(state.getChildWithName("mseg4"));
-
-	juce::ValueTree sampleTree = state.getOrCreateChildWithName("sample", nullptr);
-	sampleTree.removeAllChildren(nullptr);
-	sampleTree.setProperty("sampleName", sampler.sound.name, nullptr);
-    
 }
 
 void APAudioProcessor::reset()
@@ -937,7 +899,6 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
 
     synth.setCurrentPlaybackSampleRate(newSampleRate); // rollback to 1x
 	auxSynth.setCurrentPlaybackSampleRate(newSampleRate);
-    sampler.setCurrentPlaybackSampleRate(newSampleRate);
 	modMatrix.setSampleRate(newSampleRate);
 
     stereoDelay.prepare(spec);
@@ -1008,17 +969,11 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 	auxSynth.setMPE(globalParams.mpe->isOn());
 	auxBuffer.setSize(2, numSamples, false, false, true);
 
-	samplerBuffer.setSize(2, numSamples, false, false, true);
-	samplerBuffer.clear();
-
 	playhead = getPlayHead();
 
     int pos = 0;
     int todo = numSamples;
 
-    sidechainBuffer.setSize(2, numSamples, false, false, true);
-    sidechainBuffer.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
-    sidechainBuffer.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples()); // copy input
     buffer.clear(); // then clear it from output buffer
 
 	synth.setMono(globalParams.mono->isOn());
@@ -1039,22 +994,13 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     while (todo > 0)
     {
         int thisBlock = std::min(todo, 32);
-
-        updateParams(thisBlock); // now also gets fx choices
+		updateParams(thisBlock); // now also gets fx choices
         
-        sidechainSlice = gin::sliceBuffer(sidechainBuffer, pos, thisBlock);
 		if (auxParams.enable->isOn()) { auxSynth.renderNextBlock(auxBuffer, midi, pos, thisBlock); }
-		if (samplerParams.enable->isOn()) { sampler.renderNextBlock(samplerBuffer, midi, pos, thisBlock); }
         synth.renderNextBlock(buffer, midi, pos, thisBlock);
         
         auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);
 		auxSlice = gin::sliceBuffer(auxBuffer, pos, thisBlock);
-		samplerSlice = gin::sliceBuffer(samplerBuffer, pos, thisBlock);
-
-		bufferSlice.addFrom(0, 0, samplerBuffer, 0, pos, thisBlock, 
-            juce::Decibels::decibelsToGain(modMatrix.getValue(samplerParams.volume)));
-		bufferSlice.addFrom(1, 0, samplerBuffer, 1, pos, thisBlock, 
-            juce::Decibels::decibelsToGain(modMatrix.getValue(samplerParams.volume)));
 
 		if (auxParams.prefx->isOn()) {
 			bufferSlice.addFrom(0, 0, auxBuffer, 0, pos, thisBlock);
@@ -1418,11 +1364,6 @@ void APAudioProcessor::newRand()
 {
 	modMatrix.setMonoValue(randSrc1Mono, static_cast<float>(dist(gen)));
 	modMatrix.setMonoValue(randSrc2Mono, static_cast<float>(dist(gen)));
-}
-
-void APAudioProcessor::loadSample(const juce::String& path)
-{    
-	sampler.loadSound(path);
 }
 
 gin::ProcessorOptions APAudioProcessor::getOptions()

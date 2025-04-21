@@ -35,25 +35,15 @@ Editor::Editor(APAudioProcessor& proc_)
 	// addAndMakeVisible(liveViz);
 	// liveViz.setLookAndFeel(&aplnf);
     addAndMakeVisible(aux);
-    addAndMakeVisible(samplerBox);
     addAndMakeVisible(matrix);
     addAndMakeVisible(mseg);
 	addAndMakeVisible(macros);
 	addAndMakeVisible(volume);
-	proc.samplerParams.key->addListener(this);
-	proc.samplerParams.start->addListener(this);
-	proc.samplerParams.end->addListener(this);
-	proc.samplerParams.loopstart->addListener(this);
-	proc.samplerParams.loopend->addListener(this);
+
 }
 
 Editor::~Editor()
 {
-	proc.samplerParams.key->removeListener(this);
-	proc.samplerParams.start->removeListener(this);
-	proc.samplerParams.end->removeListener(this);
-	proc.samplerParams.loopstart->removeListener(this);
-	proc.samplerParams.loopend->removeListener(this);
 	proc.globalParams.pitchbendRange->removeListener(this);
 	proc.globalParams.mpe->removeListener(this);
 	setLookAndFeel(nullptr);
@@ -65,25 +55,6 @@ void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any ot
 	if (param == proc.globalParams.pitchbendRange || param == proc.globalParams.mpe) {
 		proc.updatePitchbend();
 		return;
-	}
-	if (param == proc.samplerParams.key && proc.sampler.sound.data != nullptr) {
-		proc.sampler.updateBaseNote(proc.samplerParams.key->getUserValueInt());
-	}
-	else if (param == proc.samplerParams.start) {
-		samplerBox.waveform.shouldRedraw = true;
-		samplerBox.waveform.repaint();
-	}
-	else if (param == proc.samplerParams.end) {
-		samplerBox.waveform.shouldRedraw = true;
-		samplerBox.waveform.repaint();
-	}
-	else if (param == proc.samplerParams.loopstart) {
-		samplerBox.waveform.shouldRedraw = true;
-		samplerBox.waveform.repaint();
-	}
-	else if (param == proc.samplerParams.loopend) {
-		samplerBox.waveform.shouldRedraw = true;
-		samplerBox.waveform.repaint();
 	}
 }
 
@@ -107,10 +78,13 @@ void Editor::resized()
     mseg.setBounds(170, 326, 56*8, 323);
 	macros.setBounds(0, 491, 168, 163);
 
-    modsrc.setBounds(620,0,280,233);
-    aux.setBounds(620,233,280,163);
-    samplerBox.setBounds(620,396,280,210+23+23);
+	aux.setBounds   (620,   0, 280, 163);
+	volume.setBounds(620, 491, 280, 163);
+	
+	// From FXEditor:
+	// 	mod.setBounds	(900,   7, 280, 303);
+	//  matrix.setBounds(900, 320, 280, 303);
+    modsrc.setBounds(902,   0, 280, 303);
+    matrix.setBounds(902, 304, 280, 303);
 
-    matrix.setBounds(902,0,280,489);
-	volume.setBounds(902, 491, 280, 163);
 }
