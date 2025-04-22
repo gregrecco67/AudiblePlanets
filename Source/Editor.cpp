@@ -38,7 +38,7 @@ Editor::Editor(APAudioProcessor& proc_)
     addAndMakeVisible(matrix);
     addAndMakeVisible(mseg);
 	addAndMakeVisible(macros);
-	addAndMakeVisible(volume);
+	//addAndMakeVisible(volume);
 
 	osc.setRight(true);
 	env.setRight(true);
@@ -46,7 +46,8 @@ Editor::Editor(APAudioProcessor& proc_)
 	timbre.setRight(true);
 	lfo.setRight(true);
 	macros.setRight(true);
-	mseg.setRight(true);
+	aux.setRight(true);
+	global.setRight(true);
 }
 
 Editor::~Editor()
@@ -65,8 +66,8 @@ void Editor::valueUpdated(gin::Parameter* param) // we'll use this to set any ot
 	}
 }
 
-void Editor::setGrid(gin::ParamBox* box, int x, int y, int heds, int w, int h) {
-	box->setBounds(x * 56, y * 70 + 23 * heds, w * 56, h * 70 + 23);
+void Editor::setGrid(gin::ParamBox* box, float x, float y, float heds, float w, float h) {
+	box->setBounds(x * 56.f, y * 70.f + 23.f * heds, w * 56.f, h * 70.f + 23.f);
 }
 
 void Editor::resized()
@@ -81,14 +82,14 @@ void Editor::resized()
     setGrid(&env,      4,  0, 0, 6, 2);
     setGrid(&filter,  10,  0, 0, 2, 2);
 	setGrid(&timbre,  12,  0, 0, 4, 2);
-    setGrid(&modsrc,  16,  0, 0, 5, 4);
 	setGrid(&lfo,      0,  2, 1, 5, 2);
-	setGrid(&macros,   5,  2, 1, 3, 2);
-	setGrid(&aux,      8,  2, 1, 5, 2);
+	setGrid(&aux,      5,  2, 1, 5, 2);
+	setGrid(&macros,  10,  2, 1, 3, 2);
+	setGrid(&global,   13, 2, 1, 3, 2);
     setGrid(&mseg,     0,  4, 2, 8, 5);
-	setGrid(&global,   8,  4, 2, 3, 2);
-	setGrid(&volume,   8,  6, 3, 5, 2);
-    setGrid(&matrix,  16,  4, 1, 5, 4);
+
+    setGrid(&modsrc,  16,  0, 0, 5, 4.328571f);
+    setGrid(&matrix,  16,  4.328571, 1, 5, 4.328571f);
 	
 
 }

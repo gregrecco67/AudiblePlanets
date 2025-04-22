@@ -20,6 +20,7 @@
 #include "Editor.h"
 #include "FXEditor.h"
 #include "APColors.h"
+#include "APLevelMeter.h"
 
 //==============================================================================
 class APAudioProcessorEditor : public gin::ProcessorEditor,
@@ -48,6 +49,7 @@ private:
 
     Editor editor { proc };
 	FXEditor fxEditor{ proc };
+    APLevelMeter levelMeter{proc.levelTracker};
 
 	juce::Label scaleName, learningLabel;
 

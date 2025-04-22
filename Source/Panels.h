@@ -152,8 +152,8 @@ public:
 			findColour (gin::PluginLookAndFeel::matte2ColourId),
 			(float) rc.getRight(), (float) rc.getBottom(), false);
 
-		gradient.addColour (0.5f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.13f));
-
+		gradient.addColour (0.5f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.03f));
+		g.setGradientFill (gradient);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -1030,7 +1030,7 @@ public:
 	{
 		setName("mod");
 		setTitle("  mod sources");
-		addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0, 0, 5, 4);
+		addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0.f, 0.f, 5.f, 4.3f);
 		modlist->setRowHeight(20);
 	}
 void paint (juce::Graphics& g) override
@@ -1178,7 +1178,7 @@ public:
 	{
 		setName("mtx");
 
-		addControl(new APModMatrixBox(proc, proc.modMatrix), 0, 0, 5, 4);
+		addControl(new APModMatrixBox(proc, proc.modMatrix), 0.f, 0.f, 5.f, 4.3f);
 		addAndMakeVisible(clearAllButton);
 		clearAllButton.onClick = [this]
 		{ clearAll(); };

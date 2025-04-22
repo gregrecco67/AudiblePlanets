@@ -395,7 +395,7 @@ void APAudioProcessor::LFOParams::setup(APAudioProcessor& p, juce::String numStr
     sync             = p.addIntParam(id + "sync",    nm + " Sync",    "Sync",   "", { 0.0, 1.0, 1.0, 1.0 }, 1.0, 0.0f, enableTextFunction);
     wave             = p.addIntParam(id + "wave",    nm + " Wave",    "Wave",   "", { 1.0, 17.0, 1.0, 1.0 }, 1.0, 0.0f, lfoTextFunction);
     rate             = p.addExtParam(id + "rate",    nm + " Rate",    "Rate",   " Hz", { 0.0, 50.0, 0.0, 0.3f }, 10.0, 0.0f);
-    beat             = p.addIntParam(id + "beat",    nm + " Beat",    "Beat",   "", { 0.0, float (notes.size() - 1), 1.0, 1.0 }, 13.0, 0.0f, durationTextFunction);						   
+    beat             = p.addIntParam(id + "beat",    nm + " Beat",    "Beat",   "", { 0.0, float (notes.size() - 1), 1.0, 1.0 }, 23.0, 0.0f, durationTextFunction);						   
     depth            = p.addExtParam(id + "depth",   nm + " Depth",   "Depth",  "", { -1.0, 1.0, 0.0, 1.0 }, 1.0, 0.0f);
     phase            = p.addExtParam(id + "phase",   nm + " Phase",   "Phase",  "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
     offset           = p.addExtParam(id + "offset",  nm + " Offset",  "Offset", "", { -1.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f);
@@ -472,7 +472,7 @@ void APAudioProcessor::AuxParams::setup(APAudioProcessor& p) {
 	wave = p.addExtParam("auxwave", "Aux Wave", "Wave", "", { 0.0, 5.0, 0.0, 1.0 }, 0.0f, 0.0f, auxWaveTextFunction);
 	env = p.addIntParam("auxenv", "Aux Env", "Env", "", { 0.0, 3.0, 1.0, 1.0 }, 0.0f, 0.0f, envSelectTextFunction);
 	octave = p.addExtParam("auxoctave", "Aux Octave", "Octave", "", { -2.0, 2.0, 1.0, 1.0 }, 0.0f, 0.0f, auxOctaveTextFunction);
-	volume = p.addExtParam("auxvolume", "Aux Volume", "Volume", "", { -40.0, 12.0, 0.0, 1.0 }, -12.f, 0.0f,
+	volume = p.addExtParam("auxvolume", "Aux Volume", "Volume", "", { -60.0, 12.0, 0.0, 1.0 }, -12.f, 0.0f,
                            decibelsTextFunction);
 	detune = p.addExtParam("auxdetune", "Aux Detune", "Detune", "", { 0.0, 0.5f, 0.0, 1.0 }, 0.0, 0.0f);
 	spread = p.addExtParam("auxspread", "Aux Spread", "Spread", "%", { 0.0, 100.0, 0.0, 1.0 }, 0.0, 0.0f);
@@ -495,7 +495,7 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
     glideMode      = p.addIntParam("gMode",   "Glide Mode", "Glide", "",   { 0.0, 2.0, 0.0, 1.0 }, 0.0f, 0.0f, glideModeTextFunction);
     glideRate      = p.addExtParam("gRate",   "Glide Rate", "Rate",  " s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
     legato         = p.addIntParam("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
-    level          = p.addExtParam("level",   "Level",      "",      " dB", { -100.0, 12.0, 1.0, 4.0f }, 0.0, 0.0f);
+    level          = p.addExtParam("level",   "Level",      "",      " dB", { -100.0, 12.0, 0.0, 4.0f }, 0.0, 0.0f);
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
     pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
 

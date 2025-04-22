@@ -39,10 +39,11 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	scaleName.setJustificationType(juce::Justification::centred);
 	learningLabel.setJustificationType(juce::Justification::centred);
     setSize(1186,725);
-    startTimerHz(3);
+    startTimerHz(30);
     addKeyListener(this);
     this->setWantsKeyboardFocus(true);
 	titleBar.setShowBrowser(true);
+	addAndMakeVisible(levelMeter);
 }
 
 bool APAudioProcessorEditor::keyPressed(const juce::KeyPress& key, Component* /*originatingComponent*/) {
@@ -91,7 +92,7 @@ void APAudioProcessorEditor::showAboutInfo()
 	juce::String msg;
 
 
-	msg += "Audible Planets v1.1.5 (" __DATE__ ")\n\n";
+	msg += "Audible Planets v2.0.0 (" __DATE__ ")\n\n";
 
 	msg += "Greg Recco\n\n";
 
@@ -127,18 +128,16 @@ void APAudioProcessorEditor::resized()
 		return;
 	}
     ProcessorEditor::resized();
-
     rc.removeFromTop(40);
     tabbed.setBounds(rc);
     auto editorArea = tabbed.getLocalBounds();
     editorArea.removeFromBottom(tabbed.getTabBarDepth());
     editor.setBounds(editorArea);
     patchBrowser.setBounds(rc);
-	
 	usage.setBounds(45, 12, 95, 20);
 	scaleName.setBounds(165, 12, 200, 16);
 	learningLabel.setBounds(834, 12, 184, 16);
-
+	levelMeter.setBounds(1050, 12, 90, 22);
 	fxEditor.setBounds(editorArea);
 }
 
@@ -160,8 +159,8 @@ void APAudioProcessorEditor::addMenuItems(juce::PopupMenu& m)
     um.addItem("50%",  [setSize] { setSize(0.50f); });
     um.addItem("75%",  [setSize] { setSize(0.75f); });
     um.addItem("100%", [setSize] { setSize(1.00f); });
+    um.addItem("125%", [setSize] { setSize(1.25f); });
     um.addItem("150%", [setSize] { setSize(1.50f); });
-    um.addItem("200%", [setSize] { setSize(2.00f); });
 
     m.addSubMenu("UI Size", um);
 }
