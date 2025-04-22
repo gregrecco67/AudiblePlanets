@@ -30,7 +30,7 @@ inline void gradientRect (juce::Graphics& g, juce::Rectangle<int> rc, juce::Colo
     g.fillRect (rc);
 }
 
-	
+
 //==============================================================================
 class OscillatorBox : public gin::ParamBox
 {
@@ -145,15 +145,14 @@ public:
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-
 		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId),
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
 			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId),
-			(float) rc.getRight(), (float) rc.getBottom(), false);
-
-		gradient.addColour (0.5f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.03f));
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
 		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -474,7 +473,14 @@ public:
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -483,7 +489,7 @@ public:
 		if (bottom)
 			g.fillRect(0, getHeight() - 1, getWidth(), 1);
 		if (left)
-			g.fillRect(0, 0, 2, getHeight());
+			g.fillRect(0, 0, 1, getHeight());
     }
 
 	bool top{false}, right{false}, bottom{false}, left{false};
@@ -626,10 +632,18 @@ public:
 		addControl(new APKnob(globalParams.squash), 3, 0);
 		addControl(new APKnob(proc.globalParams.velSens), 3, 1);
 	}
+	
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -638,7 +652,7 @@ public:
 		if (bottom)
 			g.fillRect(0, getHeight() - 1, getWidth(), 1);
 		if (left)
-			g.fillRect(0, 0, 2, getHeight());
+			g.fillRect(0, 0, 1, getHeight());
     }
 
 	bool top{false}, right{false}, bottom{false}, left{false};
@@ -674,10 +688,18 @@ public:
                 return proc.getLiveFilterCutoff();
             return juce::Array<float>(); });
 	}
+	
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -686,7 +708,7 @@ public:
 		if (bottom)
 			g.fillRect(0, getHeight() - 1, getWidth(), 1);
 		if (left)
-			g.fillRect(0, 0, 2, getHeight());
+			g.fillRect(0, 0, 1, getHeight());
     }
 
 	bool top{false}, right{false}, bottom{false}, left{false};
@@ -833,7 +855,14 @@ public:
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -842,7 +871,7 @@ public:
 		if (bottom)
 			g.fillRect(0, getHeight() - 1, getWidth(), 1);
 		if (left)
-			g.fillRect(0, 0, 2, getHeight());
+			g.fillRect(0, 0, 1, getHeight());
     }
 
 	bool top{false}, right{false}, bottom{false}, left{false};
@@ -1033,10 +1062,18 @@ public:
 		addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0.f, 0.f, 5.f, 4.3f);
 		modlist->setRowHeight(20);
 	}
-void paint (juce::Graphics& g) override
+
+	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -1045,7 +1082,7 @@ void paint (juce::Graphics& g) override
 		if (bottom)
 			g.fillRect(0, getHeight() - 1, getWidth(), 1);
 		if (left)
-			g.fillRect(0, 0, 2, getHeight());
+			g.fillRect(0, 0, 1, getHeight());
     }
 
 	bool top{false}, right{false}, bottom{false}, left{false};
@@ -1066,11 +1103,12 @@ public:
 	{
 		setName("global");
 
-		addControl(new APKnob(proc.globalParams.level), 2, 1);
-		addControl(new APKnob(proc.globalParams.glideRate), 2, 0);
-		addControl(new gin::Switch(proc.globalParams.mpe), 0, 1);
-		addControl(new APKnob(proc.globalParams.pitchbendRange), 1, 1);
-		//  velsens
+		addControl(vol = new APKnob(proc.globalParams.level), 2, 0);
+		addControl(auxvol = new APKnob(proc.auxParams.volume), 2, 1);
+		addControl(new APKnob(proc.globalParams.glideRate), 1, 1);
+		addControl(new APKnob(proc.globalParams.pitchbendRange), 0, 1);
+		auxvol->setDisplayName("Aux Vol.");
+		addControl(mpe = new gin::Select(proc.globalParams.mpe));
 		addControl(legato = new gin::Select(proc.globalParams.legato));
 		addControl(mono = new gin::Select(proc.globalParams.mono));
 		addControl(glideMode = new gin::Select(proc.globalParams.glideMode));
@@ -1079,7 +1117,14 @@ public:
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -1088,7 +1133,7 @@ public:
 		if (bottom)
 			g.fillRect(0, getHeight() - 1, getWidth(), 1);
 		if (left)
-			g.fillRect(0, 0, 2, getHeight());
+			g.fillRect(0, 0, 1, getHeight());
     }
 
 	bool top{false}, right{false}, bottom{false}, left{false};
@@ -1103,9 +1148,12 @@ public:
 		legato->setBounds(0, 23, 56, 35);
 		mono->setBounds(0, 58, 56, 35);
 		glideMode->setBounds(56, 23, 56, 35);
+		mpe->setBounds(56, 58, 56, 35);
 	}
 
-	gin::ParamComponent::Ptr legato = nullptr, mono = nullptr, glideMode = nullptr;
+	gin::ParamComponent::Ptr legato = nullptr, mono = nullptr, glideMode = nullptr,
+		mpe = nullptr;
+	APKnob  *auxvol, *vol;
 	APAudioProcessor &proc;
 };
 
@@ -1135,10 +1183,18 @@ public:
 		addControl(new APKnob(proc.auxParams.filterkeytrack), 3, 1);
 		addControl(new gin::Switch(proc.auxParams.ignorepb), 4, 1);
 	}
-void paint (juce::Graphics& g) override
+
+	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -1147,7 +1203,7 @@ void paint (juce::Graphics& g) override
 		if (bottom)
 			g.fillRect(0, getHeight() - 1, getWidth(), 1);
 		if (left)
-			g.fillRect(0, 0, 2, getHeight());
+			g.fillRect(0, 0, 1, getHeight());
     }
 
 	bool top{false}, right{false}, bottom{false}, left{false};
@@ -1208,6 +1264,28 @@ public:
 		}
 	}
 
+	void paint (juce::Graphics& g) override
+    {
+        auto rc = getLocalBounds().withTrimmedTop (23);
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
+		g.setColour(juce::Colour(0xFF888888));
+		if (top)
+			g.fillRect(0, 0, getWidth(), 1);
+		if (right)
+			g.fillRect(getWidth() - 1, 0, 1, getHeight());
+		if (bottom)
+			g.fillRect(0, getHeight() - 1, getWidth(), 1);
+		if (left)
+			g.fillRect(0, 0, 1, getHeight());
+    }
+	bool top{false}, right{false}, bottom{false}, left{false};
 	juce::TextButton clearAllButton{"Clear All"};
 
 	APAudioProcessor &proc;
@@ -1376,7 +1454,14 @@ public:
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -1385,7 +1470,7 @@ public:
 		if (bottom)
 			g.fillRect(0, getHeight() - 1, getWidth(), 1);
 		if (left)
-			g.fillRect(0, 0, 2, getHeight());
+			g.fillRect(0, 0, 1, getHeight());
     }
 
 	bool top{false}, right{false}, bottom{false}, left{false};
@@ -1636,7 +1721,14 @@ public:
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+		juce::ColourGradient gradient(
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float) rc.getX(), (float) rc.getY(), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float) rc.getWidth(), (float) rc.getBottom(), false);
+		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill (gradient);
+		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
 		if (top)
 			g.fillRect(0, 0, getWidth(), 1);
@@ -1645,7 +1737,7 @@ public:
 		if (bottom)
 			g.fillRect(0, getHeight() - 1, getWidth(), 1);
 		if (left)
-			g.fillRect(0, 0, 2, getHeight());
+			g.fillRect(0, 0, 1, getHeight());
     }
 
 	bool top{false}, right{false}, bottom{false}, left{false};
@@ -1835,7 +1927,7 @@ public:
 }; // MacrosBox
 
 //==============================================================================
-
+/*
 class VolumeBox : public gin::ParamBox
 {
 public:
@@ -1894,3 +1986,4 @@ public:
 
 	gin::LevelMeter levelMeter{proc.levelTracker};
 };
+*/

@@ -89,7 +89,7 @@ void Editor::resized()
     setGrid(&mseg,     0,  4, 2, 8, 5);
 
     setGrid(&modsrc,  16,  0, 0, 5, 4.328571f);
-    setGrid(&matrix,  16,  4.328571, 1, 5, 4.328571f);
+    setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
 	
 
 }

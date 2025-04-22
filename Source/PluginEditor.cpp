@@ -39,7 +39,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	scaleName.setJustificationType(juce::Justification::centred);
 	learningLabel.setJustificationType(juce::Justification::centred);
     setSize(1186,725);
-    startTimerHz(30);
+    startTimerHz(20);
     addKeyListener(this);
     this->setWantsKeyboardFocus(true);
 	titleBar.setShowBrowser(true);

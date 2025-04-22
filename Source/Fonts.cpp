@@ -3,7 +3,7 @@
 
 APLNF::APLNF() {
     setColour(juce::Slider::thumbColourId, juce::Colour(0xffa09189));
-    setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0xffa09189));
+    setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0xffa09189).darker(0.3f));
     setColour(juce::Slider::trackColourId, juce::Colour(0xff000000));
     setColour(juce::BubbleComponent::backgroundColourId, juce::Colour(0xff16171A));
     setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));

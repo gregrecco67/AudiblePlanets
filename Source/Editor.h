@@ -45,7 +45,6 @@ private:
     MainMatrixBox matrix{ "  Mod Matrix", proc };
     MsegBox mseg{ proc };
 	MacrosBox macros{ proc };
-	VolumeBox volume{ proc };
 	
 	APLNF aplnf;
 };
