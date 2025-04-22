@@ -21,17 +21,6 @@ juce::Font APLNF::getLabelFont(juce::Label& label)
     return juce::Font{juce::FontOptions{}.withName("Lato").withHeight(label.getHeight() * 0.89f)};
 }
 
-
-void APLNF::drawButtonBackground(juce::Graphics& g, juce::Button& b, const juce::Colour&,
-	bool, bool)
-{
-	if (b.isMouseOver() && b.isEnabled())
-	{
-		g.setColour(b.findColour(juce::TextButton::buttonOnColourId).withMultipliedAlpha(0.7f));
-		//g.fillRect(b.getLocalBounds().reduced(2));
-	}
-}
-
 void APLNF::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
     const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider)
 {

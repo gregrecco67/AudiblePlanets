@@ -27,6 +27,4 @@ public:
 	juce::Font getLabelFont(juce::Label& label) override;
 	void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
 		const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider) override;
-	void drawButtonBackground(juce::Graphics& g, juce::Button& b, const juce::Colour&,
-		bool, bool);
 };

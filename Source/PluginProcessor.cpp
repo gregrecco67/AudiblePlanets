@@ -300,12 +300,6 @@ static juce::String auxPreFxTextFunction(const gin::Parameter&, float v) {
 	}
 }
 
-static juce::String midiNoteNameTextFunction(const gin::Parameter&, float v)
-{
-	return juce::String(int(v)) + " " + juce::MidiMessage::getMidiNoteName(int(v), true, true, 3);
-}
-
-
 //==============================================================================
 void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr)
 {
