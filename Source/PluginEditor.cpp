@@ -14,6 +14,10 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#ifndef VERSION_STRING
+#define VERSION_STRING "???"
+#endif
+
 
 //==============================================================================
 APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
@@ -39,7 +43,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	scaleName.setJustificationType(juce::Justification::centred);
 	learningLabel.setJustificationType(juce::Justification::centred);
     setSize(1186,725);
-    startTimerHz(20);
+    startTimerHz(4);
     addKeyListener(this);
     this->setWantsKeyboardFocus(true);
 	titleBar.setShowBrowser(true);
@@ -92,7 +96,9 @@ void APAudioProcessorEditor::showAboutInfo()
 	juce::String msg;
 
 
-	msg += "Audible Planets v2.0.0 (" __DATE__ ")\n\n";
+	msg += "Audible Planets v";
+	msg.append(VERSION_STRING, 25);
+	msg += " (" __DATE__ ")\n\n";
 
 	msg += "Greg Recco\n\n";
 

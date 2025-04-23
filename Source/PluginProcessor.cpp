@@ -934,9 +934,35 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     juce::ScopedNoDenormals noDenormals;
 
     auto numSamples = buffer.getNumSamples();
-
-	//auxMidiBuffer.clear();
-	//auxMidiBuffer.addEvents(midi, 0, numSamples, 0);
+    tillReset -= numSamples;
+    if (tillReset <= 0) {
+        tillReset = resetVal + tillReset;
+        
+        viz.defRat = modMatrix.getValue(osc1Params.coarse) + modMatrix.getValue(osc1Params.fine);
+        viz.epi1Rat = modMatrix.getValue(osc2Params.coarse) + modMatrix.getValue(osc2Params.fine);
+        viz.epi2Rat = modMatrix.getValue(osc3Params.coarse) + modMatrix.getValue(osc3Params.fine);
+        viz.epi3Rat = modMatrix.getValue(osc4Params.coarse) + modMatrix.getValue(osc4Params.fine);
+        viz.equant = modMatrix.getValue(timbreParams.equant);
+        viz.defRad = modMatrix.getValue(osc1Params.volume);
+        viz.epi1Rad = modMatrix.getValue(osc2Params.volume);
+        viz.epi2Rad = modMatrix.getValue(osc3Params.volume);
+        viz.epi3Rad = modMatrix.getValue(osc4Params.volume);
+        viz.algo = modMatrix.getValue(timbreParams.algo);
+        viz.squash = modMatrix.getValue(globalParams.squash);
+        /*
+        viz2.defRat = osc1Params.coarse->getUserValue() + osc1Params.fine->getUserValue();
+        viz2.epi1Rat = osc2Params.coarse->getUserValue() + osc2Params.fine->getUserValue();
+        viz2.epi2Rat = osc3Params.coarse->getUserValue() + osc3Params.fine->getUserValue();
+        viz2.epi3Rat = osc4Params.coarse->getUserValue() + osc4Params.fine->getUserValue();
+        viz2.equant = timbreParams.equant->getUserValue();
+        viz2.defRad = osc1Params.volume->getUserValue();
+        viz2.epi1Rad = osc2Params.volume->getUserValue();
+        viz2.epi2Rad = osc3Params.volume->getUserValue();
+        viz2.epi3Rad = osc4Params.volume->getUserValue();
+        viz2.algo = timbreParams.algo->getUserValue();
+        viz2.squash = globalParams.squash->getUserValue();
+        */
+    }
 
     if (MTS_HasMaster(client)) {
         scaleName = MTS_GetScaleName(client);

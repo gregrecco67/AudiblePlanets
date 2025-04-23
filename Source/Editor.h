@@ -18,10 +18,11 @@
 #include "PluginProcessor.h"
 #include "Panels.h"
 #include "BinaryData.h"
+#include "OrbitViz.h"
 
 
 //==============================================================================
-class Editor : public juce::Component, public gin::Parameter::ParameterListener
+class Editor : public juce::Component, public gin::Parameter::ParameterListener, juce::Timer
 {
 public:
     Editor(APAudioProcessor& proc_);
@@ -30,6 +31,7 @@ public:
     void resized() override;
 	void valueUpdated(gin::Parameter* param) override;
     void setGrid(gin::ParamBox* box, float x, float y, float heds, float w, float h);
+    void timerCallback() override;
 
 private:
     APAudioProcessor& proc;
@@ -45,6 +47,10 @@ private:
     MainMatrixBox matrix{ "  Mod Matrix", proc };
     MsegBox mseg{ proc };
 	MacrosBox macros{ proc };
-	
+    OrbitViz orbitViz;
+    int frameRate{ 24 };
+    float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };
+    juce::ToggleButton liveViz{ "Live" };
+    float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * frameRate) };
 	APLNF aplnf;
 };

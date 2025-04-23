@@ -723,8 +723,7 @@ public:
         repaint();
     }
     
-    
-protected:
+
     void timerCallback() override
     {
 		if (!isVisible()) return;

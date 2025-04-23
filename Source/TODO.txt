@@ -1,0 +1,6 @@
+Automate version number / 
+have editor get it from processorOptions()
+
+orbitviz
+
+levelmeter swap out?

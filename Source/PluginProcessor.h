@@ -335,7 +335,7 @@ public:
 	int fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4; // effect choices
 	std::unordered_set<int> activeEffects;
 
-	gin::LevelTracker levelTracker;
+	gin::LevelTracker levelTracker{10.f};
     APSynth synth;
 	juce::AudioBuffer<float> auxBuffer;
 	juce::AudioBuffer<float> auxSlice;
@@ -347,6 +347,14 @@ public:
 	gin::BandLimitedLookupTables analogTables;
 
 	const int numVoices = 8;
+	
+	int tillReset{0};
+	const int resetVal{2000};
+	struct VizInfo {
+		float defRat, epi1Rat, epi2Rat, epi3Rat,
+		equant, defRad, epi1Rad, epi2Rad, epi3Rad,
+		algo, squash;
+	} viz;
 
 	std::random_device rd;
 	std::mt19937 gen{ rd() };

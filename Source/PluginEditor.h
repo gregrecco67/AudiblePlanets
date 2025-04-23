@@ -49,7 +49,7 @@ private:
 
     Editor editor { proc };
 	FXEditor fxEditor{ proc };
-    APLevelMeter levelMeter{proc.levelTracker};
+    APLevelMeter levelMeter{ proc.levelTracker};
 
 	juce::Label scaleName, learningLabel;
 
