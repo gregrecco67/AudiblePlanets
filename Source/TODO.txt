@@ -1,6 +1,5 @@
-Automate version number / 
-have editor get it from processorOptions()
+implement quadosc as a wavetable
+    need a function to read from phi and phi + pi/2 at once
+    no detune/spread, but bring back pan + phase
 
-orbitviz
-
-levelmeter swap out?
+run at 4x...
