@@ -2,4 +2,8 @@ implement quadosc as a wavetable
     need a function to read from phi and phi + pi/2 at once
     no detune/spread, but bring back pan + phase
 
+get pan law or modify params struct or give it a method for setting pan
+
 run at 4x...
+
+
