@@ -685,8 +685,7 @@ bool APAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 //==============================================================================
 APAudioProcessor::APAudioProcessor() : gin::Processor(
     BusesProperties()
-    .withOutput("Output", juce::AudioChannelSet::stereo(), true)
-    .withInput("Sidechain", juce::AudioChannelSet::stereo(), true),
+    .withOutput("Output", juce::AudioChannelSet::stereo(), true),
     false,
     getOptions()
 ), synth(APSynth(*this)), auxSynth(AuxSynth(*this))
@@ -949,13 +948,16 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
         viz.epi3Rad = modMatrix.getValue(osc4Params.volume);
         viz.algo = modMatrix.getValue(timbreParams.algo);
         viz.squash = modMatrix.getValue(globalParams.squash);
-        /*
+        
         viz2.defRat = osc1Params.coarse->getUserValue() + osc1Params.fine->getUserValue();
+		/*
         viz2.epi1Rat = osc2Params.coarse->getUserValue() + osc2Params.fine->getUserValue();
         viz2.epi2Rat = osc3Params.coarse->getUserValue() + osc3Params.fine->getUserValue();
         viz2.epi3Rat = osc4Params.coarse->getUserValue() + osc4Params.fine->getUserValue();
         viz2.equant = timbreParams.equant->getUserValue();
+		*/
         viz2.defRad = osc1Params.volume->getUserValue();
+		/*
         viz2.epi1Rad = osc2Params.volume->getUserValue();
         viz2.epi2Rad = osc3Params.volume->getUserValue();
         viz2.epi3Rad = osc4Params.volume->getUserValue();

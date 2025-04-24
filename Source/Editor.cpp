@@ -99,7 +99,8 @@ void Editor::timerCallback() {
 	auto speed = 0.05f; // proc.orbitParams.speed->getUserValue();
 	bool live = liveViz.getToggleState();
     //auto c1S = (APKnob*)osc.c1;
-	auto defRatio = live ? proc.viz.defRat : ((APKnob*)osc.c1)->getSlider().getValue();
+	
+	auto defRatio = live ? proc.viz.defRat : proc.viz2.defRat;
     auto defPhaseIncrement = defRatio * phaseIncrement;
     vizDefPhase += defPhaseIncrement * speed;
     if (vizDefPhase > juce::MathConstants<float>::twoPi)
@@ -120,7 +121,8 @@ void Editor::timerCallback() {
     if (vizEpi3Phase > juce::MathConstants<float>::twoPi)
         vizEpi3Phase -= juce::MathConstants<float>::twoPi;
     orbitViz.setEquant(live ? proc.viz.equant : timbre.equant->getSlider().getValue());
-    orbitViz.setDefRad (live ? proc.viz.defRad : ((APKnob*)osc.v1)->getSlider().getValue());
+	
+	orbitViz.setDefRad(live ? proc.viz.defRad : proc.viz2.defRad);
     orbitViz.setEpi1Rad(live ? proc.viz.epi1Rad : ((APKnob*)osc.v2)->getSlider().getValue());
     orbitViz.setEpi2Rad(live ? proc.viz.epi2Rad : ((APKnob*)osc.v3)->getSlider().getValue());
     orbitViz.setEpi3Rad(live ? proc.viz.epi3Rad : ((APKnob*)osc.v4)->getSlider().getValue());

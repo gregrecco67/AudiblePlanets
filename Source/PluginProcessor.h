@@ -354,7 +354,7 @@ public:
 		float defRat, epi1Rat, epi2Rat, epi3Rat,
 		equant, defRad, epi1Rad, epi2Rad, epi3Rad,
 		algo, squash;
-	} viz;
+	} viz, viz2;
 
 	std::random_device rd;
 	std::mt19937 gen{ rd() };
