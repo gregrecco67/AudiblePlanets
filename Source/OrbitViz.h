@@ -207,17 +207,17 @@ public:
 	}
 
 	void setEquant(float input) { equant = std::clamp(input, -.5f, .5f); }
-	void setDefPhase(float phase) { defPhase = phase; }
-	void setEpi1Phase(float phase) { epi1Phase = phase; }
-	void setEpi2Phase(float phase) { epi2Phase = phase; }
-	void setEpi3Phase(float phase) { epi3Phase = phase; }
+	void setDefPhase(float phase) { defPhase =   std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi); }
+	void setEpi1Phase(float phase) { epi1Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi); }
+	void setEpi2Phase(float phase) { epi2Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi); }
+	void setEpi3Phase(float phase) { epi3Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi); }
 	void setDefRad(float input) { defRad = validate(input); }
 	void setEpi1Rad(float input) { epi1Rad = validate(input); }
 	void setEpi2Rad(float input) { epi2Rad = validate(input); }
 	void setEpi3Rad(float input) { epi3Rad = validate(input); }
-	void setAlgo(int input) { algo = input; }
+	void setAlgo(int input) { algo = std::clamp(input, 0, 4); }
 	float validate(float x) { return std::clamp(x, 0.f, 1.f); }
-	void setSquash(float input) { squash = input; }
+	void setSquash(float input) { squash = std::clamp(input, 0.f, 1.f); }
 
 	float equant{ 0.f }, defPhase{ 0.f }, epi1Phase{ 0.f }, epi2Phase{ 0.f }, epi3Phase{ 0.f }, defRad{ 1.f }, epi1Rad{ 0.5f }, epi2Rad{ 0.25f }, epi3Rad{ 0.2f };
 	int algo{ 0 };
