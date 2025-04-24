@@ -51,6 +51,7 @@ private:
     int frameRate{ 24 };
     float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };
     juce::ToggleButton liveViz{ "Live" };
+    APModMatrixBox::Row::APDepthSlider speedSlider;
     float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * frameRate) };
 	APLNF aplnf;
 };

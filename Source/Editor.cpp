@@ -38,7 +38,10 @@ Editor::Editor(APAudioProcessor& proc_)
     addAndMakeVisible(matrix);
     addAndMakeVisible(mseg);
 	addAndMakeVisible(macros);
-
+    addAndMakeVisible(speedSlider);
+    speedSlider.setRange(0.0, 2.0);
+    speedSlider.setSkewFactor(0.5);
+    speedSlider.setValue(0.1);
 	osc.setRight(true);
 	env.setRight(true);
 	filter.setRight(true);
@@ -66,7 +69,7 @@ void Editor::valueUpdated(gin::Parameter* param)
 }
 
 void Editor::setGrid(gin::ParamBox* box, float x, float y, float heds, float w, float h) {
-	box->setBounds(x * 56.f, y * 70.f + 23.f * heds, w * 56.f, h * 70.f + 23.f);
+	box->setBounds((int)(x * 56.f), (int)(y * 70.f + 23.f * heds), (int)(w * 56.f), (int)(h * 70.f + 23.f));
 }
 
 void Editor::resized()
@@ -90,13 +93,14 @@ void Editor::resized()
 		8 * 56, 5 * 70);
 	liveViz.setBounds( 8 * 56.f, 4 * 70.f + 2 * 23.f,
 		75, 25);
+    speedSlider.setBounds(14 * 56 , 4 * 70 + 2 * 23, 112, 25);
 
     setGrid(&modsrc,  16,  0, 0, 5, 4.328571f);
     setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
 }
 
 void Editor::timerCallback() {
-    auto speed = 0.05f; // proc.orbitParams.speed->getUserValue();
+    auto speed = static_cast<float>(speedSlider.getValue());
     //auto c1S = (APKnob*)osc.c1;
     bool live = liveViz.getToggleState();
 	
