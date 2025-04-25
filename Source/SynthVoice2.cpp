@@ -15,12 +15,16 @@
 //#define MIPP_ALIGNED_LOADS
 #include "SynthVoice.h"
 #include "PluginProcessor.h"
+#include "SynthVoice2.h"
 
 inline mipp::Reg<float> SynthVoice::minimaxSin(mipp::Reg<float> x1) {
 	mipp::Reg<float> x2 = x1 * x1;
 	return mipp::mul(x1, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(s6, x2, s5), s4), s3), s2), s1));
 }
 
+inline std::array<float, 2> SynthVoice::panWeights(const float in) { // -1 to 1
+	return { std::sqrt((in + 1.f) * 0.5f), std::sqrt(1.f - ((in + 1.f) * 0.5f) };
+}
 
 inline mipp::Reg<float> SynthVoice::mmAtan(mipp::Reg<float> x1) {
 	mipp::Reg<float> x2 = x1 * x1;
@@ -49,7 +53,8 @@ inline mipp::Reg<float> SynthVoice::fastAtan2(mipp::Reg<float> x, mipp::Reg<floa
 
 //==============================================================================
 SynthVoice::SynthVoice(APAudioProcessor& p)
-	: proc(p), mseg1(proc.mseg1Data), mseg2(proc.mseg2Data), mseg3(proc.mseg3Data), mseg4(proc.mseg4Data)
+	: proc(p), mseg1(proc.mseg1Data), mseg2(proc.mseg2Data), mseg3(proc.mseg3Data), mseg4(proc.mseg4Data),
+	osc1(p.analogTables, 1), osc2(p.analogTables, 1), osc3(p.analogTables, 1), osc4(p.analogTables, 1)
 {
 	mseg1.reset();
 	mseg2.reset();
@@ -608,13 +613,12 @@ void SynthVoice::updateParams(int blockSize)
 		osc4Freq = baseFreq * ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine));
 	}
 
-	osc1Params.wave = proc.osc1Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
+	osc1Params.wave = waveForChoice(int(getValue(proc.osc1Params.wave)));
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.pan = getValue(proc.osc1Params.pan);
-	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
-	osc1Params.detune = getValue(proc.osc1Params.detune);
 	osc1Params.phaseShift = getValue(proc.osc1Params.phase);
 	osc1Vol = getValue(proc.osc1Params.volume);
+
 	switch(proc.osc1Params.env->getUserValueInt())
 	{
 	case 0:
@@ -631,11 +635,13 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc2Params.wave = proc.osc2Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
+	// osc 2
+	// 
+	//==================================================
+
+	osc2Params.wave = waveForChoice(int(getValue(proc.osc2Params.wave)));
 	osc2Params.tones = getValue(proc.osc2Params.tones);
 	osc2Params.pan = getValue(proc.osc2Params.pan);
-	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
-	osc2Params.detune = getValue(proc.osc2Params.detune);
 	osc2Params.phaseShift = getValue(proc.osc2Params.phase);
 	osc2Vol = getValue(proc.osc2Params.volume);
 	switch(proc.osc2Params.env->getUserValueInt())
@@ -654,11 +660,12 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc3Params.wave = proc.osc3Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
+	// osc 3
+	// ------------------
+
+	osc3Params.wave = waveForChoice(int(getValue(proc.osc3Params.wave)));
 	osc3Params.tones = getValue(proc.osc3Params.tones);
 	osc3Params.pan = getValue(proc.osc3Params.pan);
-	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
-	osc3Params.detune = getValue(proc.osc3Params.detune);
 	osc3Params.phaseShift = getValue(proc.osc3Params.phase);
 	osc3Vol = getValue(proc.osc3Params.volume);
 	switch(proc.osc3Params.env->getUserValueInt())
@@ -677,11 +684,11 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc4Params.wave = proc.osc4Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
+	// osc4 
+	// -------------
+	osc4Params.wave = waveForChoice(int(getValue(proc.osc4Params.wave)));
 	osc4Params.tones = getValue(proc.osc4Params.tones);
 	osc4Params.pan = getValue(proc.osc4Params.pan);
-	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;
-	osc4Params.detune = getValue(proc.osc4Params.detune);
 	osc4Params.phaseShift = getValue(proc.osc4Params.phase);
 	osc4Vol = getValue(proc.osc4Params.volume);
 	switch(proc.osc4Params.env->getUserValueInt())
@@ -748,7 +755,6 @@ void SynthVoice::updateParams(int blockSize)
 
 	filter.setParams(f, q);
 	
-
 	gin::LFO::Parameters params;
 	float freq = 0;
 	
@@ -985,4 +991,25 @@ float SynthVoice::getMSEG3Phase()
 float SynthVoice::getMSEG4Phase()
 {
 	return mseg4.getCurrentPhase();
+}
+
+gin::Wave SynthVoice::waveForChoice(int choice)
+{
+	switch (choice)
+	{
+	case 0:
+		return gin::Wave::sine;
+	case 1:
+		return gin::Wave::triangle;
+	case 2:
+		return gin::Wave::square;
+	case 3:
+		return gin::Wave::sawUp;
+	case 4:
+		return gin::Wave::pinkNoise;
+	case 5:
+		return gin::Wave::whiteNoise;
+	default:
+		return gin::Wave::sine;
+	}
 }

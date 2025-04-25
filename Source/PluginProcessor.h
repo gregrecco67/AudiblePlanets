@@ -67,7 +67,7 @@ public:
     {
         OSCParams() = default;
 
-        gin::Parameter::Ptr coarse, fine, volume, tones, detune, spread, pan, env, saw, fixed, phase;
+        gin::Parameter::Ptr coarse, fine, volume, tones, pan, env, wave, fixed, phase;
 
         void setup(APAudioProcessor& p, juce::String number);
 		int num;

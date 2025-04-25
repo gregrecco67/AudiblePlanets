@@ -337,10 +337,8 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
     }
     
     tones     = p.addExtParam(id + "tones",      nm + " Tones",       "Tones",     "", { 1.0, 5.9f, 0.001f, 1.0 }, 1.0, 0.0f);
-    detune    = p.addExtParam(id + "detune",     nm + " Detune",      "Detune",    "", { 0.0, 0.5, 0.0f, 1.0 }, 0.0, 0.0f);
-    spread    = p.addExtParam(id + "spread",     nm + " Spread",      "Spread",    "%", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
     pan       = p.addExtParam(id + "pan",        nm + " Pan",         "Pan",       "", { -1.0, 1.0, 0.0f, 1.0 }, 0.0, 0.0f);
-    saw       = p.addIntParam(id + "saw",        nm + " Saw",         "Saw",       "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
+    wave       = p.addIntParam(id + "wave",        nm + " Wave",         "Wave",       "", { 0.0, 5.0, 1.0f, 1.0 }, 0.0, 0.0f, auxWaveTextFunction);
     fixed     = p.addIntParam(id + "fixed",      nm + " Fixed",       "Fixed",     "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
     env       = p.addIntParam(id + "env",        nm + " Env",         "Env",       "", { 0.0, 3.0, 1.0f, 1.0 }, (float)(numStr.getIntValue() - 1), 0.0f, envSelectTextFunction);
     this->num = numStr.getIntValue();
