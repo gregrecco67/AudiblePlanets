@@ -493,7 +493,7 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
     glideMode      = p.addIntParam("gMode",   "Glide Mode", "Glide", "",   { 0.0, 2.0, 0.0, 1.0 }, 0.0f, 0.0f, glideModeTextFunction);
     glideRate      = p.addExtParam("gRate",   "Glide Rate", "Rate",  " s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
     legato         = p.addIntParam("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
-    level          = p.addExtParam("level",   "Main",      "",      " dB", { -100.0, 12.0, 0.0, 4.0f }, 0.0, 0.0f);
+    level          = p.addExtParam("level",   "Main Vol.",      "",      " dB", { -100.0, 12.0, 0.0, 4.0f }, 0.0, 0.0f);
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
     pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
 
@@ -947,21 +947,17 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
         viz.algo = modMatrix.getValue(timbreParams.algo);
         viz.squash = modMatrix.getValue(globalParams.squash);
         
-        viz2.defRat = osc1Params.coarse->getUserValue() + osc1Params.fine->getUserValue();
-		/*
-        viz2.epi1Rat = osc2Params.coarse->getUserValue() + osc2Params.fine->getUserValue();
-        viz2.epi2Rat = osc3Params.coarse->getUserValue() + osc3Params.fine->getUserValue();
-        viz2.epi3Rat = osc4Params.coarse->getUserValue() + osc4Params.fine->getUserValue();
-        viz2.equant = timbreParams.equant->getUserValue();
-		*/
-        viz2.defRad = osc1Params.volume->getUserValue();
-		/*
-        viz2.epi1Rad = osc2Params.volume->getUserValue();
-        viz2.epi2Rad = osc3Params.volume->getUserValue();
-        viz2.epi3Rad = osc4Params.volume->getUserValue();
-        viz2.algo = timbreParams.algo->getUserValue();
-        viz2.squash = globalParams.squash->getUserValue();
-        */
+        viz2.defRat = osc1Params.coarse->getProcValue() + osc1Params.fine->getProcValue();
+        viz2.epi1Rat = osc2Params.coarse->getProcValue() + osc2Params.fine->getProcValue();
+        viz2.epi2Rat = osc3Params.coarse->getProcValue() + osc3Params.fine->getProcValue();
+        viz2.epi3Rat = osc4Params.coarse->getProcValue() + osc4Params.fine->getProcValue();
+        viz2.equant = timbreParams.equant->getProcValue();
+        viz2.defRad = osc1Params.volume->getProcValue();
+        viz2.epi1Rad = osc2Params.volume->getProcValue();
+        viz2.epi2Rad = osc3Params.volume->getProcValue();
+        viz2.epi3Rad = osc4Params.volume->getProcValue();
+        viz2.algo = timbreParams.algo->getProcValue();
+        viz2.squash = globalParams.squash->getProcValue();
     }
 
     if (MTS_HasMaster(client)) {

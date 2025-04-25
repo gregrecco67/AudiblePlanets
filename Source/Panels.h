@@ -50,14 +50,14 @@ public:
 		addControl(v2 = new APKnob(proc.osc2Params.volume), 2, 0);
 		addControl(v3 = new APKnob(proc.osc3Params.volume), 2, 0);
 		addControl(v4 = new APKnob(proc.osc4Params.volume), 2, 0);
-		addControl(t1 = new APKnob(proc.osc1Params.tones), 3, 0); // tones
-		addControl(t2 = new APKnob(proc.osc2Params.tones), 3, 0);
-		addControl(t3 = new APKnob(proc.osc3Params.tones), 3, 0);
-		addControl(t4 = new APKnob(proc.osc4Params.tones), 3, 0);
-		addControl(p1 = new MoonKnob(proc.osc1Params.phase), 4, 0); // phase
-		addControl(p2 = new MoonKnob(proc.osc2Params.phase), 4, 0);
-		addControl(p3 = new MoonKnob(proc.osc3Params.phase), 4, 0);
-		addControl(p4 = new MoonKnob(proc.osc4Params.phase), 4, 0);
+		addControl(t1 = new APKnob(proc.osc1Params.tones), 3, 1); // tones
+		addControl(t2 = new APKnob(proc.osc2Params.tones), 3, 1);
+		addControl(t3 = new APKnob(proc.osc3Params.tones), 3, 1);
+		addControl(t4 = new APKnob(proc.osc4Params.tones), 3, 1);
+		addControl(p1 = new MoonKnob(proc.osc1Params.phase), 3, 0); // phase
+		addControl(p2 = new MoonKnob(proc.osc2Params.phase), 3, 0);
+		addControl(p3 = new MoonKnob(proc.osc3Params.phase), 3, 0);
+		addControl(p4 = new MoonKnob(proc.osc4Params.phase), 3, 0);
 
 		
 		c1->setLookAndFeel(&lnf1);
@@ -74,22 +74,14 @@ public:
 		f4->setLookAndFeel(&lnf4);
 		v4->setLookAndFeel(&lnf4);
 
-		addControl(d1 = new APKnob(proc.osc1Params.detune), 2, 1); // detune
-		addControl(d2 = new APKnob(proc.osc2Params.detune), 2, 1);
-		addControl(d3 = new APKnob(proc.osc3Params.detune), 2, 1);
-		addControl(d4 = new APKnob(proc.osc4Params.detune), 2, 1);
-		addControl(s1 = new APKnob(proc.osc1Params.spread), 3, 1); // spread
-		addControl(s2 = new APKnob(proc.osc2Params.spread), 3, 1);
-		addControl(s3 = new APKnob(proc.osc3Params.spread), 3, 1);
-		addControl(s4 = new APKnob(proc.osc4Params.spread), 3, 1);
-		addControl(n1 = new APKnob(proc.osc1Params.pan, true), 4, 1); // pan
-		addControl(n2 = new APKnob(proc.osc2Params.pan, true), 4, 1);
-		addControl(n3 = new APKnob(proc.osc3Params.pan, true), 4, 1);
-		addControl(n4 = new APKnob(proc.osc4Params.pan, true), 4, 1);
-		addControl(saw1 = new gin::Select(proc.osc1Params.saw)); // saw
-		addControl(saw2 = new gin::Select(proc.osc2Params.saw));
-		addControl(saw3 = new gin::Select(proc.osc3Params.saw));
-		addControl(saw4 = new gin::Select(proc.osc4Params.saw));
+		addControl(n1 = new APKnob(proc.osc1Params.pan, true), 2, 1); // pan
+		addControl(n2 = new APKnob(proc.osc2Params.pan, true), 2, 1);
+		addControl(n3 = new APKnob(proc.osc3Params.pan, true), 2, 1);
+		addControl(n4 = new APKnob(proc.osc4Params.pan, true), 2, 1);
+		addControl(wave1 = new gin::Select(proc.osc1Params.wave)); // saw
+		addControl(wave2 = new gin::Select(proc.osc2Params.wave));
+		addControl(wave3 = new gin::Select(proc.osc3Params.wave));
+		addControl(wave4 = new gin::Select(proc.osc4Params.wave));
 		addControl(env1 = new gin::Select(proc.osc1Params.env)); // env select
 		addControl(env2 = new gin::Select(proc.osc2Params.env));
 		addControl(env3 = new gin::Select(proc.osc3Params.env));
@@ -102,10 +94,10 @@ public:
 		watchParam(proc.osc2Params.fixed);
 		watchParam(proc.osc3Params.fixed);
 		watchParam(proc.osc4Params.fixed);
-		watchParam(proc.osc1Params.saw);
-		watchParam(proc.osc2Params.saw);
-		watchParam(proc.osc3Params.saw);
-		watchParam(proc.osc4Params.saw);
+		watchParam(proc.osc1Params.wave);
+		watchParam(proc.osc2Params.wave);
+		watchParam(proc.osc3Params.wave);
+		watchParam(proc.osc4Params.wave);
 		watchParam(proc.osc1Params.coarse);
 		watchParam(proc.osc2Params.coarse);
 		watchParam(proc.osc3Params.coarse);
@@ -172,10 +164,10 @@ public:
 
 	void show(int osc)
 	{
-		for (gin::ParamComponent::Ptr c : {c1, f1, v1, t1, d1, s1, p1, n1, saw1, env1, fixed1,
-										   c2, f2, v2, t2, d2, s2, p2, n2, saw2, env2, fixed2,
-										   c3, f3, v3, t3, d3, s3, p3, n3, saw3, env3, fixed3,
-										   c4, f4, v4, t4, d4, s4, p4, n4, saw4, env4, fixed4})
+		for (gin::ParamComponent::Ptr c : {c1, f1, v1, t1, p1, n1, wave1, env1, fixed1,
+										   c2, f2, v2, t2, p2, n2, wave2, env2, fixed2,
+										   c3, f3, v3, t3, p3, n3, wave3, env3, fixed3,
+										   c4, f4, v4, t4, p4, n4, wave4, env4, fixed4})
 		{
 			c->setVisible(false);
 		}
@@ -195,11 +187,9 @@ public:
 			f1->setVisible(true);
 			v1->setVisible(true);
 			t1->setVisible(true);
-			d1->setVisible(true);
-			s1->setVisible(true);
 			p1->setVisible(true);
 			n1->setVisible(true);
-			saw1->setVisible(true);
+			wave1->setVisible(true);
 			env1->setVisible(true);
 			fixed1->setVisible(true);
 			select1.setToggleState(true, juce::dontSendNotification);
@@ -210,11 +200,9 @@ public:
 			f2->setVisible(true);
 			v2->setVisible(true);
 			t2->setVisible(true);
-			d2->setVisible(true);
-			s2->setVisible(true);
 			p2->setVisible(true);
 			n2->setVisible(true);
-			saw2->setVisible(true);
+			wave2->setVisible(true);
 			env2->setVisible(true);
 			fixed2->setVisible(true);
 			select2.setToggleState(true, juce::dontSendNotification);
@@ -225,11 +213,9 @@ public:
 			f3->setVisible(true);
 			v3->setVisible(true);
 			t3->setVisible(true);
-			d3->setVisible(true);
-			s3->setVisible(true);
 			p3->setVisible(true);
 			n3->setVisible(true);
-			saw3->setVisible(true);
+			wave3->setVisible(true);
 			env3->setVisible(true);
 			fixed3->setVisible(true);
 			select3.setToggleState(true, juce::dontSendNotification);
@@ -240,11 +226,9 @@ public:
 			f4->setVisible(true);
 			v4->setVisible(true);
 			t4->setVisible(true);
-			d4->setVisible(true);
-			s4->setVisible(true);
 			p4->setVisible(true);
 			n4->setVisible(true);
-			saw4->setVisible(true);
+			wave4->setVisible(true);
 			env4->setVisible(true);
 			fixed4->setVisible(true);
 			select4.setToggleState(true, juce::dontSendNotification);
@@ -358,10 +342,10 @@ public:
 		p2->setBounds(56 * 4, 23, 56, 70);
 		p3->setBounds(56 * 4, 23, 56, 70);
 		p4->setBounds(56 * 4, 23, 56, 70);
-		saw1->setBounds(0, 93, 56, 35);
-		saw2->setBounds(0, 93, 56, 35);
-		saw3->setBounds(0, 93, 56, 35);
-		saw4->setBounds(0, 93, 56, 35);
+		wave1->setBounds(0, 93, 56, 35);
+		wave2->setBounds(0, 93, 56, 35);
+		wave3->setBounds(0, 93, 56, 35);
+		wave4->setBounds(0, 93, 56, 35);
 		env1->setBounds(0, 128, 56, 35);
 		env2->setBounds(0, 128, 56, 35);
 		env3->setBounds(0, 128, 56, 35);
@@ -381,10 +365,10 @@ public:
 	APLookAndFeel3 lnf3;
 	APLookAndFeel4 lnf4;
 	APAudioProcessor &proc;
-	gin::ParamComponent::Ptr c1, f1, v1, t1, p1, d1, s1, n1, saw1, env1, fixed1;
-	gin::ParamComponent::Ptr c2, f2, v2, t2, p2, d2, s2, n2, saw2, env2, fixed2;
-	gin::ParamComponent::Ptr c3, f3, v3, t3, p3, d3, s3, n3, saw3, env3, fixed3;
-	gin::ParamComponent::Ptr c4, f4, v4, t4, p4, d4, s4, n4, saw4, env4, fixed4;
+	gin::ParamComponent::Ptr c1, f1, v1, t1, p1, n1, wave1, env1, fixed1;
+	gin::ParamComponent::Ptr c2, f2, v2, t2, p2, n2, wave2, env2, fixed2;
+	gin::ParamComponent::Ptr c3, f3, v3, t3, p3, n3, wave3, env3, fixed3;
+	gin::ParamComponent::Ptr c4, f4, v4, t4, p4, n4, wave4, env4, fixed4;
 
 	juce::Label fixedHz1, fixedHz2, fixedHz3, fixedHz4;
 	juce::TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};

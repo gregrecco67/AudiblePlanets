@@ -609,11 +609,9 @@ void SynthVoice::updateParams(int blockSize)
 		osc4Freq = baseFreq * ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine));
 	}
 
-	osc1Params.wave = proc.osc1Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
+	osc1Params.wave =  Wavetype::sine;
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.pan = getValue(proc.osc1Params.pan);
-	osc1Params.spread = getValue(proc.osc1Params.spread) / 100.0f;
-	osc1Params.detune = getValue(proc.osc1Params.detune);
 	osc1Params.phaseShift = getValue(proc.osc1Params.phase);
 	osc1Vol = getValue(proc.osc1Params.volume);
 	switch(proc.osc1Params.env->getUserValueInt())
@@ -632,11 +630,9 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc2Params.wave = proc.osc2Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
+	osc2Params.wave = Wavetype::sine;
 	osc2Params.tones = getValue(proc.osc2Params.tones);
 	osc2Params.pan = getValue(proc.osc2Params.pan);
-	osc2Params.spread = getValue(proc.osc2Params.spread) / 100.0f;
-	osc2Params.detune = getValue(proc.osc2Params.detune);
 	osc2Params.phaseShift = getValue(proc.osc2Params.phase);
 	osc2Vol = getValue(proc.osc2Params.volume);
 	switch(proc.osc2Params.env->getUserValueInt())
@@ -655,11 +651,9 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc3Params.wave = proc.osc3Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
+	osc3Params.wave = Wavetype::sine;
 	osc3Params.tones = getValue(proc.osc3Params.tones);
 	osc3Params.pan = getValue(proc.osc3Params.pan);
-	osc3Params.spread = getValue(proc.osc3Params.spread) / 100.0f;
-	osc3Params.detune = getValue(proc.osc3Params.detune);
 	osc3Params.phaseShift = getValue(proc.osc3Params.phase);
 	osc3Vol = getValue(proc.osc3Params.volume);
 	switch(proc.osc3Params.env->getUserValueInt())
@@ -678,11 +672,9 @@ void SynthVoice::updateParams(int blockSize)
 		break;
 	}
 
-	osc4Params.wave = proc.osc4Params.saw->getUserValueBool() ? Wavetype::sawUp : Wavetype::sine;
+	osc4Params.wave = Wavetype::sine;
 	osc4Params.tones = getValue(proc.osc4Params.tones);
 	osc4Params.pan = getValue(proc.osc4Params.pan);
-	osc4Params.spread = getValue(proc.osc4Params.spread) / 100.0f;
-	osc4Params.detune = getValue(proc.osc4Params.detune);
 	osc4Params.phaseShift = getValue(proc.osc4Params.phase);
 	osc4Vol = getValue(proc.osc4Params.volume);
 	switch(proc.osc4Params.env->getUserValueInt())

@@ -104,51 +104,38 @@ void Editor::timerCallback() {
     //auto c1S = (APKnob*)osc.c1;
     bool live = liveViz.getToggleState();
 	
-	auto defRatio = live ? proc.viz.defRat : 
-        proc.osc1Params.coarse->getUserValue() +
-        proc.osc1Params.fine->getUserValue();
+	auto defRatio = live ? proc.viz.defRat : proc.viz2.defRat;
     auto defPhaseIncrement = defRatio * phaseIncrement;
     vizDefPhase += defPhaseIncrement * speed;
     if (vizDefPhase > juce::MathConstants<float>::twoPi)
     vizDefPhase -= juce::MathConstants<float>::twoPi;
-    auto epi1Ratio = live ? proc.viz.epi1Rat :
-        proc.osc2Params.coarse->getUserValue() +
-        proc.osc2Params.fine->getUserValue();
+    auto epi1Ratio = live ? proc.viz.epi1Rat : proc.viz2.epi1Rat;
     auto vizEpi1PhaseIncrement = epi1Ratio * phaseIncrement;
     vizEpi1Phase += vizEpi1PhaseIncrement * speed;
     if (vizEpi1Phase > juce::MathConstants<float>::twoPi)
     vizEpi1Phase -= juce::MathConstants<float>::twoPi;
-    auto epi2Ratio = live ? proc.viz.epi2Rat :
-        proc.osc3Params.coarse->getUserValue() +
-        proc.osc3Params.fine->getUserValue();
+    auto epi2Ratio = live ? proc.viz.epi2Rat : proc.viz2.epi2Rat;
     auto vizEpi2PhaseIncrement = epi2Ratio * phaseIncrement;
     vizEpi2Phase += vizEpi2PhaseIncrement * speed;
     if (vizEpi2Phase > juce::MathConstants<float>::twoPi)
     vizEpi2Phase -= juce::MathConstants<float>::twoPi;
-    auto epi3Ratio = live ? proc.viz.epi3Rat :
-        proc.osc4Params.coarse->getUserValue() +
-        proc.osc4Params.fine->getUserValue();
+    auto epi3Ratio = live ? proc.viz.epi3Rat : proc.viz2.epi3Rat;
     auto vizEpi3PhaseIncrement = epi3Ratio * phaseIncrement;
     vizEpi3Phase += vizEpi3PhaseIncrement * speed;
     if (vizEpi3Phase > juce::MathConstants<float>::twoPi)
     vizEpi3Phase -= juce::MathConstants<float>::twoPi;
-    orbitViz.setEquant(live ? proc.viz.equant :
-        proc.timbreParams.equant->getUserValue());
+    orbitViz.setEquant(live ? proc.viz.equant : proc.viz2.equant);
 	
-    orbitViz.setDefRad(live ? proc.viz.defRad :  
-        juce::Decibels::decibelsToGain(proc.osc1Params.volume->getUserValue()));
-    orbitViz.setEpi1Rad(live ? proc.viz.epi1Rad : 
-        juce::Decibels::decibelsToGain(proc.osc2Params.volume->getUserValue()));
-    orbitViz.setEpi2Rad(live ? proc.viz.epi2Rad : 
-        juce::Decibels::decibelsToGain(proc.osc3Params.volume->getUserValue()));
-    orbitViz.setEpi3Rad(live ? proc.viz.epi3Rad : 
-        juce::Decibels::decibelsToGain(proc.osc4Params.volume->getUserValue()));
-    orbitViz.setAlgo(live ? proc.viz.algo : proc.timbreParams.algo->getUserValue());
+    orbitViz.setDefRad(live ? proc.viz.defRad : proc.viz2.defRad);
+    orbitViz.setEpi1Rad(live ? proc.viz.epi1Rad : proc.viz2.epi1Rad);
+    orbitViz.setEpi2Rad(live ? proc.viz.epi2Rad : proc.viz2.epi2Rad);
+    orbitViz.setEpi3Rad(live ? proc.viz.epi3Rad : proc.viz2.epi3Rad);
+    orbitViz.setAlgo(live ? proc.viz.algo : proc.viz2.algo);
     orbitViz.setDefPhase(vizDefPhase);
     orbitViz.setEpi1Phase(vizEpi1Phase);
     orbitViz.setEpi2Phase(vizEpi2Phase);
     orbitViz.setEpi3Phase(vizEpi3Phase);
 	orbitViz.setScale(1.0f);
-	orbitViz.setSquash(live ? proc.viz.squash : proc.globalParams.squash->getUserValue());
+	orbitViz.setSquash(live ? proc.viz.squash : proc.viz2.squash);
     orbitViz.repaint();
 }
