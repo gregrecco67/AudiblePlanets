@@ -8,7 +8,7 @@ APSynth::APSynth(APAudioProcessor& proc_) : proc(proc_)
 
     for (int i = 0; i < 16; i++)
     {
-        auto voice = new SynthVoice(proc);
+        auto voice = new SynthVoice2(proc);
         proc.modMatrix.addVoice(voice);
         addVoice(voice);
     }
@@ -21,7 +21,7 @@ juce::Array<float> APSynth::getLiveFilterCutoff() {
     {
         if (v->isActive())
         {
-            auto vav = dynamic_cast<SynthVoice*>(v);
+            auto vav = dynamic_cast<SynthVoice2*>(v);
             values.add (vav->getFilterCutoffNormalized());
         }
     }
@@ -35,7 +35,7 @@ std::vector<float> APSynth::getMSEG1Phases() {
 	{
 		if (v->isActive())
 		{
-			auto vav = dynamic_cast<SynthVoice*>(v);
+			auto vav = dynamic_cast<SynthVoice2*>(v);
 			values.push_back(vav->getMSEG1Phase());
 		}
 	}
@@ -49,7 +49,7 @@ std::vector<float> APSynth::getMSEG2Phases() {
 	{
 		if (v->isActive())
 		{
-			auto vav = dynamic_cast<SynthVoice*>(v);
+			auto vav = dynamic_cast<SynthVoice2*>(v);
 			values.push_back(vav->getMSEG2Phase());
 		}
 	}
@@ -63,7 +63,7 @@ std::vector<float> APSynth::getMSEG3Phases() {
 	{
 		if (v->isActive())
 		{
-			auto vav = dynamic_cast<SynthVoice*>(v);
+			auto vav = dynamic_cast<SynthVoice2*>(v);
 			values.push_back(vav->getMSEG3Phase());
 		}
 	}
@@ -77,7 +77,7 @@ std::vector<float> APSynth::getMSEG4Phases() {
 	{
 		if (v->isActive())
 		{
-			auto vav = dynamic_cast<SynthVoice*>(v);
+			auto vav = dynamic_cast<SynthVoice2*>(v);
 			values.push_back(vav->getMSEG4Phase());
 		}
 	}
@@ -131,7 +131,7 @@ void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
 	}
     if (m.isAftertouch()) {
         for (auto& voice : voices) {
-            SynthVoice* svoice = static_cast<SynthVoice*>(voice);
+            SynthVoice2* svoice = static_cast<SynthVoice2*>(voice);
             if (svoice->curNote.initialNote == m.getNoteNumber()) {
                 proc.modMatrix.setPolyValue(*svoice, proc.modPolyAT, m.getAfterTouchValue() / 127.0f);
             }

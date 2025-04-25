@@ -18,9 +18,9 @@
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <gin_dsp/gin_dsp.h>
 #include <gin_plugin/gin_plugin.h>
-//#include "QuadOsc.h"  -- 
 #include "Envelope.h"
 #include "libMTSClient.h"
+#include "Oscillator.h"
 #include <numbers>
 #include <random>
 class APAudioProcessor;
@@ -28,51 +28,18 @@ class APAudioProcessor;
 using namespace std::numbers;
 
 
-struct Matrix {
-	inline friend Matrix operator*(const Matrix& m, const float s) { // scalar multiplication
-		return { m.a * s, m.b * s, m.c * s, m.d * s };
-	}
-	float a, b, c, d;
-};
-
-struct StereoMatrix {
-	Matrix left, right;
-	inline friend StereoMatrix operator*(const StereoMatrix& m, const float s) { // scalar multiplication
-		return { m.left * s, m.right * s };
-	}
-};
-
-struct StereoPosition {
-	float xL{ 0.f }, yL{ 0.f }, xR{ 0.f }, yR{ 0.f };
-
-	inline friend StereoPosition operator*(const StereoPosition& p, const StereoMatrix& m) { // apply matrix to position
-		return { .xL = m.left.a * p.xL + m.left.b * p.yL,
-				.yL = m.left.c * p.xL + m.left.d * p.yL,
-				.xR = m.right.a * p.xR + m.right.b * p.yR,
-				.yR = m.right.c * p.xR + m.right.d * p.yR };
-	}
-
-	inline friend StereoPosition operator*(const StereoPosition& p, const float s) { // scalar multiplication
-		return { p.xL * s, p.yL * s, p.xR * s, p.yR * s };
-	}
-
-	inline StereoPosition operator+(const StereoPosition otherPos) {
-		return { this->xL + otherPos.xL, this->yL + otherPos.yL,
-			this->xR + otherPos.xR, this->yR + otherPos.yR };
-	}
-};
 
 
 //==============================================================================
-class SynthVoice : public gin::SynthesiserVoice,
+class SynthVoice2 : public gin::SynthesiserVoice,
                    public gin::ModVoice
 {
 public:
 	inline mipp::Reg<float> minimaxSin(mipp::Reg<float> x1);
 	inline mipp::Reg<float> mmAtan(mipp::Reg<float> x1);
 	inline mipp::Reg<float> fastAtan2(mipp::Reg<float> x, mipp::Reg<float> y);
-	inline std::array<float, 2> SynthVoice::panWeights(const float in)
-	SynthVoice(APAudioProcessor& p);
+	inline std::array<float, 2> panWeights(const float in);
+	SynthVoice2(APAudioProcessor& p);
     
     void noteStarted() override;
     void noteRetriggered() override;
@@ -97,13 +64,50 @@ public:
 	float getMSEG3Phase();
 	float getMSEG4Phase();
 	gin::Wave waveForChoice(int choice);
+
+
+
+	struct Matrix {
+		inline friend Matrix operator*(const Matrix& m, const float s) { // scalar multiplication
+			return { m.a * s, m.b * s, m.c * s, m.d * s };
+		}
+		float a, b, c, d;
+	};
+	
+	struct StereoMatrix {
+		Matrix left, right;
+		inline friend StereoMatrix operator*(const StereoMatrix& m, const float s) { // scalar multiplication
+			return { m.left * s, m.right * s };
+		}
+	};
+	
+	struct StereoPosition {
+		float xL{ 0.f }, yL{ 0.f }, xR{ 0.f }, yR{ 0.f };
+	
+		inline friend StereoPosition operator*(const StereoPosition& p, const StereoMatrix& m) { // apply matrix to position
+			return { .xL = m.left.a * p.xL + m.left.b * p.yL,
+					.yL = m.left.c * p.xL + m.left.d * p.yL,
+					.xR = m.right.a * p.xR + m.right.b * p.yR,
+					.yR = m.right.c * p.xR + m.right.d * p.yR };
+		}
+	
+		inline friend StereoPosition operator*(const StereoPosition& p, const float s) { // scalar multiplication
+			return { p.xL * s, p.yL * s, p.xR * s, p.yR * s };
+		}
+	
+		inline StereoPosition operator+(const StereoPosition otherPos) {
+			return { this->xL + otherPos.xL, this->yL + otherPos.yL,
+				this->xR + otherPos.xR, this->yR + otherPos.yR };
+		}
+	};
+
   
 private:
     void updateParams(int blockSize);
 
     APAudioProcessor& proc;
 
-    gin::StereoOscillator osc1, osc2, osc3, osc4;
+    APOscillator osc1, osc2, osc3, osc4;
 
     gin::Filter filter;
     gin::LFO lfo1, lfo2, lfo3, lfo4;
@@ -124,7 +128,7 @@ private:
 	StereoPosition osc4Positions[32];
 
     float currentMidiNote = -1;
-    StereoOscillator::Params osc1Params, osc2Params, osc3Params, osc4Params;
+    gin::StereoOscillator::Params osc1Params, osc2Params, osc3Params, osc4Params;
 	float osc1Freq = 0.0f, osc2Freq = 0.0f, osc3Freq = 0.0f, osc4Freq = 0.0f;
 	float osc1Vol = 0.0f, osc2Vol = 0.0f, osc3Vol = 0.0f, osc4Vol = 0.0f;
 	int algo{ 0 };

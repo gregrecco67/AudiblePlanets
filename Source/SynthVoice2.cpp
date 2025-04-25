@@ -13,24 +13,24 @@
  */
 
 //#define MIPP_ALIGNED_LOADS
-#include "SynthVoice.h"
-#include "PluginProcessor.h"
 #include "SynthVoice2.h"
+#include "PluginProcessor.h"
 
-inline mipp::Reg<float> SynthVoice::minimaxSin(mipp::Reg<float> x1) {
+
+inline mipp::Reg<float> SynthVoice2::minimaxSin(mipp::Reg<float> x1) {
 	mipp::Reg<float> x2 = x1 * x1;
 	return mipp::mul(x1, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(s6, x2, s5), s4), s3), s2), s1));
 }
 
-inline std::array<float, 2> SynthVoice::panWeights(const float in) { // -1 to 1
-	return { std::sqrt((in + 1.f) * 0.5f), std::sqrt(1.f - ((in + 1.f) * 0.5f) };
+inline std::array<float, 2> SynthVoice2::panWeights(const float in) { // -1 to 1
+	return { std::sqrt((in + 1.f) * 0.5f), std::sqrt(1.f - ((in + 1.f) * 0.5f)) };
 }
 
-inline mipp::Reg<float> SynthVoice::mmAtan(mipp::Reg<float> x1) {
+inline mipp::Reg<float> SynthVoice2::mmAtan(mipp::Reg<float> x1) {
 	mipp::Reg<float> x2 = x1 * x1;
 	return mipp::mul(x1, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, t1, t2), t3), t4), t5), t6));
 }
-inline mipp::Reg<float> SynthVoice::fastAtan2(mipp::Reg<float> x, mipp::Reg<float> y) {
+inline mipp::Reg<float> SynthVoice2::fastAtan2(mipp::Reg<float> x, mipp::Reg<float> y) {
 	mipp::Reg<float> out = 0.f;
 	mipp::Msk<mipp::N<float>()> xEqZero = mipp::cmpeq<float>(x, 0.0f);
 	mipp::Msk<mipp::N<float>()> yEqZero = mipp::cmpeq<float>(y, 0.0f);
@@ -52,9 +52,9 @@ inline mipp::Reg<float> SynthVoice::fastAtan2(mipp::Reg<float> x, mipp::Reg<floa
 }
 
 //==============================================================================
-SynthVoice::SynthVoice(APAudioProcessor& p)
+SynthVoice2::SynthVoice2(APAudioProcessor& p)
 	: proc(p), mseg1(proc.mseg1Data), mseg2(proc.mseg2Data), mseg3(proc.mseg3Data), mseg4(proc.mseg4Data),
-	osc1(p.analogTables, 1), osc2(p.analogTables, 1), osc3(p.analogTables, 1), osc4(p.analogTables, 1)
+	osc1(p.analogTables), osc2(p.analogTables), osc3(p.analogTables), osc4(p.analogTables)
 {
 	mseg1.reset();
 	mseg2.reset();
@@ -63,7 +63,7 @@ SynthVoice::SynthVoice(APAudioProcessor& p)
 	filter.setNumChannels(2);
 }
 
-void SynthVoice::noteStarted()
+void SynthVoice2::noteStarted()
 {
     curNote = getCurrentlyPlayingNote();
 
@@ -130,7 +130,7 @@ void SynthVoice::noteStarted()
 
 }
 
-void SynthVoice::noteRetriggered()
+void SynthVoice2::noteRetriggered()
 {
 	auto note = getCurrentlyPlayingNote();
     curNote = getCurrentlyPlayingNote();
@@ -166,7 +166,7 @@ void SynthVoice::noteRetriggered()
 
 }
 
-void SynthVoice::noteStopped(bool allowTailOff)
+void SynthVoice2::noteStopped(bool allowTailOff)
 {
 	env1.noteOff();
 	env2.noteOff();
@@ -181,19 +181,19 @@ void SynthVoice::noteStopped(bool allowTailOff)
 
 }
 
-void SynthVoice::notePressureChanged()
+void SynthVoice2::notePressureChanged()
 {
 	auto note = getCurrentlyPlayingNote();
 	proc.modMatrix.setPolyValue(*this, proc.modSrcPressure, note.pressure.asUnsignedFloat());
 }
 
-void SynthVoice::noteTimbreChanged()
+void SynthVoice2::noteTimbreChanged()
 {
 	auto note = getCurrentlyPlayingNote();
 	proc.modMatrix.setPolyValue(*this, proc.modSrcTimbre, note.timbre.asUnsignedFloat());
 }
 
-void SynthVoice::setCurrentSampleRate(double newRate)
+void SynthVoice2::setCurrentSampleRate(double newRate)
 {
 	MPESynthesiserVoice::setCurrentSampleRate(newRate);
 
@@ -226,7 +226,7 @@ void SynthVoice::setCurrentSampleRate(double newRate)
 	mseg4.setSampleRate(newRate);
 }
 
-void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
+void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
 {
 	updateParams(numSamples);
 
@@ -569,7 +569,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
 	finishBlock(numSamples);
 }
 
-void SynthVoice::updateParams(int blockSize)
+void SynthVoice2::updateParams(int blockSize)
 {
 	algo = (int)getValue(proc.timbreParams.algo);
 	equant = getValue(proc.timbreParams.equant);
@@ -961,39 +961,39 @@ void SynthVoice::updateParams(int blockSize)
 	proc.modMatrix.setPolyValue(*this, proc.modSrcMSEG4, mseg4.getOutput());
 }
 
-bool SynthVoice::isVoiceActive()
+bool SynthVoice2::isVoiceActive()
 {
 	return isActive();
 }
 
-float SynthVoice::getFilterCutoffNormalized()
+float SynthVoice2::getFilterCutoffNormalized()
 {
 	float freq = filter.getFrequency();
 	auto range = proc.filterParams.frequency->getUserRange();
 	return range.convertTo0to1(juce::jlimit(range.start, range.end, gin::getMidiNoteFromHertz(freq)));
 }
 
-float SynthVoice::getMSEG1Phase()
+float SynthVoice2::getMSEG1Phase()
 {
 	return mseg1.getCurrentPhase();
 }
 
-float SynthVoice::getMSEG2Phase()
+float SynthVoice2::getMSEG2Phase()
 {
 	return mseg2.getCurrentPhase();
 }
 
-float SynthVoice::getMSEG3Phase()
+float SynthVoice2::getMSEG3Phase()
 {
 	return mseg3.getCurrentPhase();
 }
 
-float SynthVoice::getMSEG4Phase()
+float SynthVoice2::getMSEG4Phase()
 {
 	return mseg4.getCurrentPhase();
 }
 
-gin::Wave SynthVoice::waveForChoice(int choice)
+gin::Wave SynthVoice2::waveForChoice(int choice)
 {
 	switch (choice)
 	{

@@ -2,7 +2,7 @@
 
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <gin_dsp/gin_dsp.h>
-#include "SynthVoice.h"
+#include "SynthVoice2.h"
 
 class APAudioProcessor;
 
