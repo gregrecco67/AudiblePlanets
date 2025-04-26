@@ -1,3 +1,4 @@
+#pragma once
 #include <gin_dsp/gin_dsp.h>
 #include <gin_plugin/gin_plugin.h>
 

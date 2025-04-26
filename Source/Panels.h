@@ -50,14 +50,14 @@ public:
 		addControl(v2 = new APKnob(proc.osc2Params.volume), 2, 0);
 		addControl(v3 = new APKnob(proc.osc3Params.volume), 2, 0);
 		addControl(v4 = new APKnob(proc.osc4Params.volume), 2, 0);
-		addControl(t1 = new APKnob(proc.osc1Params.tones), 3, 1); // tones
-		addControl(t2 = new APKnob(proc.osc2Params.tones), 3, 1);
-		addControl(t3 = new APKnob(proc.osc3Params.tones), 3, 1);
-		addControl(t4 = new APKnob(proc.osc4Params.tones), 3, 1);
-		addControl(p1 = new MoonKnob(proc.osc1Params.phase), 3, 0); // phase
-		addControl(p2 = new MoonKnob(proc.osc2Params.phase), 3, 0);
-		addControl(p3 = new MoonKnob(proc.osc3Params.phase), 3, 0);
-		addControl(p4 = new MoonKnob(proc.osc4Params.phase), 3, 0);
+		addControl(t1 = new APKnob(proc.osc1Params.tones), 3, 0); // tones
+		addControl(t2 = new APKnob(proc.osc2Params.tones), 3, 0);
+		addControl(t3 = new APKnob(proc.osc3Params.tones), 3, 0);
+		addControl(t4 = new APKnob(proc.osc4Params.tones), 3, 0);
+		addControl(p1 = new MoonKnob(proc.osc1Params.phase), 2, 1); // phase
+		addControl(p2 = new MoonKnob(proc.osc2Params.phase), 2, 1);
+		addControl(p3 = new MoonKnob(proc.osc3Params.phase), 2, 1);
+		addControl(p4 = new MoonKnob(proc.osc4Params.phase), 2, 1);
 
 		
 		c1->setLookAndFeel(&lnf1);
@@ -74,10 +74,10 @@ public:
 		f4->setLookAndFeel(&lnf4);
 		v4->setLookAndFeel(&lnf4);
 
-		addControl(n1 = new APKnob(proc.osc1Params.pan, true), 2, 1); // pan
-		addControl(n2 = new APKnob(proc.osc2Params.pan, true), 2, 1);
-		addControl(n3 = new APKnob(proc.osc3Params.pan, true), 2, 1);
-		addControl(n4 = new APKnob(proc.osc4Params.pan, true), 2, 1);
+		addControl(n1 = new APKnob(proc.osc1Params.pan, true), 3, 1); // pan
+		addControl(n2 = new APKnob(proc.osc2Params.pan, true), 3, 1);
+		addControl(n3 = new APKnob(proc.osc3Params.pan, true), 3, 1);
+		addControl(n4 = new APKnob(proc.osc4Params.pan, true), 3, 1);
 		addControl(wave1 = new gin::Select(proc.osc1Params.wave)); // saw
 		addControl(wave2 = new gin::Select(proc.osc2Params.wave));
 		addControl(wave3 = new gin::Select(proc.osc3Params.wave));

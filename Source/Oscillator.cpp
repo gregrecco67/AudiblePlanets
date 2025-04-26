@@ -2,9 +2,9 @@
 
 #include "SynthVoice2.h"
 
-void APOscillator::renderPositions(float note, const Params& params, StereoPosition positions[], const int numSamples) {
-    float freq = float (std::min (sampleRate / 2.0, 440.0 * std::pow (2.0, (note - 69.0) / 12.0)));
+void APOscillator::renderPositions(float freq, const Params& params, StereoPosition positions[], const int numSamples) {
     float delta = 1.0f / (float ((1.0f / freq) * sampleRate));
+	float note = gin::getMidiNoteFromHertz<float>(freq);
     
     for (int i = 0; i < numSamples; i++)
     {
