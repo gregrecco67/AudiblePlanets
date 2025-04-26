@@ -16,39 +16,8 @@
 #include "SynthVoice2.h"
 #include "PluginProcessor.h"
 
-
-inline mipp::Reg<float> SynthVoice2::minimaxSin(mipp::Reg<float> x1) {
-	mipp::Reg<float> x2 = x1 * x1;
-	return mipp::mul(x1, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(s6, x2, s5), s4), s3), s2), s1));
-}
-
 inline std::array<float, 2> SynthVoice2::panWeights(const float in) { // -1 to 1
 	return { std::sqrt((in + 1.f) * 0.5f), std::sqrt(1.f - ((in + 1.f) * 0.5f)) };
-}
-
-inline mipp::Reg<float> SynthVoice2::mmAtan(mipp::Reg<float> x1) {
-	mipp::Reg<float> x2 = x1 * x1;
-	return mipp::mul(x1, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, mipp::fmadd(x2, t1, t2), t3), t4), t5), t6));
-}
-inline mipp::Reg<float> SynthVoice2::fastAtan2(mipp::Reg<float> x, mipp::Reg<float> y) {
-	mipp::Reg<float> out = 0.f;
-	mipp::Msk<mipp::N<float>()> xEqZero = mipp::cmpeq<float>(x, 0.0f);
-	mipp::Msk<mipp::N<float>()> yEqZero = mipp::cmpeq<float>(y, 0.0f);
-	mipp::Msk<mipp::N<float>()> xGtZero = mipp::cmpgt<float>(x, 0.0f);
-	mipp::Msk<mipp::N<float>()> yGtEqZero = mipp::cmpge<float>(y, 0.0f);
-	mipp::Msk<mipp::N<float>()> yGtZero = mipp::cmpgt<float>(y, 0.0f);
-	mipp::Msk<mipp::N<float>()> xGty = mipp::cmpgt<float>(mipp::abs(x), mipp::abs(y));
-	mipp::Reg<float> z = mipp::blend<float>(y / x, x / y, xGty);
-    mipp::Reg<float> atanZ = mmAtan(z);
-	out = mipp::blend<float>(piReg * 0.5f, out, yGtZero & xEqZero); // #1
-	out = mipp::blend<float>(piReg * -.5f, out, ~yGtZero & xEqZero); // #2
-	out = mipp::blend<float>(atanZ, out, xGty & xGtZero); // #3
-	out = mipp::blend<float>(atanZ + piReg, out, xGty & ~xGtZero & yGtEqZero); // #4
-	out = mipp::blend<float>(atanZ - piReg, out, xGty & ~xGtZero & ~yGtEqZero); // #5
-	out = mipp::blend<float>(atanZ * -1.f + piReg * 0.5f, out, ~xGty & yGtZero); // #6
-	out = mipp::blend<float>(atanZ * -1.f - piReg * 0.5f, out, ~xGty & ~yGtZero); // #7
-	out = mipp::blend<float>(0.f, out, xEqZero & yEqZero); // #8
-	return out;
 }
 
 //==============================================================================
@@ -109,14 +78,11 @@ void SynthVoice2::noteStarted()
 
 	updateParams(0);
 	snapParams();
-	//updateParams(0);
-	//snapParams();
-	//
+
 	osc1.noteOn(proc.osc1Params.phase->getUserValue());
 	osc2.noteOn(proc.osc2Params.phase->getUserValue());
 	osc3.noteOn(proc.osc3Params.phase->getUserValue());
 	osc4.noteOn(proc.osc4Params.phase->getUserValue());
-
 
 	env1.noteOn();
 	env2.noteOn();
@@ -154,16 +120,10 @@ void SynthVoice2::noteRetriggered()
 
 	updateParams(0);
 
-	osc1.noteOn();
-	osc2.noteOn();
-	osc3.noteOn();
-	osc4.noteOn();
-
 	env1.noteOn();
 	env2.noteOn();
 	env3.noteOn();
 	env4.noteOn();
-
 }
 
 void SynthVoice2::noteStopped(bool allowTailOff)
@@ -255,82 +215,46 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         
         // calculate squash matrix
         // get distances in order to normalize vectors
-        float distanceL = std::sqrt(osc1Positions[i].xL * osc1Positions[i].xL + (osc1Positions[i].yL - equant) * (osc1Positions[i].yL - equant));
-        float distanceR = std::sqrt(osc1Positions[i].xR * osc1Positions[i].xR + (osc1Positions[i].yR - equant) * (osc1Positions[i].yR - equant));
-        float invDistanceL = 1.f / (distanceL + .000001f);
-        float invDistanceR = 1.f / (distanceR + .000001f);
+        float distance = std::sqrt(osc1Positions[i].x * osc1Positions[i].x + (osc1Positions[i].y - equant) * (osc1Positions[i].y - equant));
+        float invDistance = 1.f / (distance + .000001f);
+
         // normalized vectors
-        float cosThetaL = (osc1Positions[i].yL - equant) * invDistanceL; // what we want is the tangent to the orbit at this point
-        float sinThetaL = -osc1Positions[i].xL * invDistanceL; // so swap x and y and negate y
-        float cosThetaR = (osc1Positions[i].yR - equant) * invDistanceR;
-        float sinThetaR = -osc1Positions[i].xR * invDistanceR; // +.000001f to avoid divide by zero
-        float cos2ThetaL = cosThetaL * cosThetaL;
-        float cos2ThetaR = cosThetaR * cosThetaR;
-        float sin2ThetaL = sinThetaL * sinThetaL;
-        float sin2ThetaR = sinThetaR * sinThetaR;
+        float cosTheta = (osc1Positions[i].y - equant) * invDistance; // what we want is the tangent to the orbit at this point
+        float sinTheta = -osc1Positions[i].x * invDistance; // so swap x and y and negate y
+        float cos2Theta = cosTheta * cosTheta;
+        float sin2Theta = sinTheta * sinTheta;
         
         // plug in to transform matrix
-        StereoMatrix squash1 = {
-            .left = {
-                .a = cos2ThetaL + k * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k),
-                .c = cosThetaL * sinThetaL * (1.0f - k), .d = sin2ThetaL + k * cos2ThetaL
-            },
-                .right = {
-                    .a = cos2ThetaR + k * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k),
-                    .c = cosThetaR * sinThetaR * (1.0f - k), .d = sin2ThetaR + k * cos2ThetaR
-                }
+        APMatrix squash1 = {
+                .a = cos2Theta + k * sin2Theta, .b = cosTheta * sinTheta * (1.0f - k),
+                .c = cosTheta * sinTheta * (1.0f - k), .d = sin2Theta + k * cos2Theta
         };
         
-        distanceL = std::sqrt(osc2Positions[i].xL * osc2Positions[i].xL + (osc2Positions[i].yL - equant) * (osc2Positions[i].yL - equant));
-        distanceR = std::sqrt(osc2Positions[i].xR * osc2Positions[i].xR + (osc2Positions[i].yR - equant) * (osc2Positions[i].yR - equant));
-        invDistanceL = 1.f / (distanceL + .000001f);
-        invDistanceR = 1.f / (distanceR + .000001f);
+        distance = std::sqrt(osc2Positions[i].x * osc2Positions[i].x + (osc2Positions[i].y - equant) * (osc2Positions[i].y - equant));
+        invDistance = 1.f / (distance + .000001f);
         
-        cosThetaL =  (osc2Positions[i].yL - equant) * invDistanceL;
-        sinThetaL = -osc2Positions[i].xL			* invDistanceL;
-        cosThetaR =  (osc2Positions[i].yR - equant) * invDistanceR;
-        sinThetaR = -osc2Positions[i].xR			* invDistanceR;
-        cos2ThetaL = cosThetaL * cosThetaL;
-        cos2ThetaR = cosThetaR * cosThetaR;
-        sin2ThetaL = sinThetaL * sinThetaL;
-        sin2ThetaR = sinThetaR * sinThetaR;
+        cosTheta =  (osc2Positions[i].y - equant) * invDistance;
+        sinTheta = -osc2Positions[i].x * invDistance;
+        cos2Theta = cosTheta * cosTheta;
+        sin2Theta = sinTheta * sinTheta;
         
-        StereoMatrix squash2 = {
-            .left = {
-                .a = cos2ThetaL + k * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k),
-                .c = cosThetaL * sinThetaL * (1.0f - k), .d = sin2ThetaL + k * cos2ThetaL
-            },
-                .right = {
-                    .a = cos2ThetaR + k * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k),
-                    .c = cosThetaR * sinThetaR * (1.0f - k), .d = sin2ThetaR + k * cos2ThetaR
-                }
+        APMatrix squash2 = {
+			.a = cos2Theta + k * sin2Theta, .b = cosTheta * sinTheta * (1.0f - k),
+			.c = cosTheta * sinTheta * (1.0f - k), .d = sin2Theta + k * cos2Theta
         };
         
-        distanceL = std::sqrt(osc3Positions[i].xL * osc3Positions[i].xL + (osc3Positions[i].yL - equant) * (osc3Positions[i].yL - equant));
-        distanceR = std::sqrt(osc3Positions[i].xR * osc3Positions[i].xR + (osc3Positions[i].yR - equant) * (osc3Positions[i].yR - equant));
-        invDistanceL = 1.f / (distanceL + .000001f);
-        invDistanceR = 1.f / (distanceR + .000001f);
+        distance = std::sqrt(osc3Positions[i].x * osc3Positions[i].x + (osc3Positions[i].y - equant) * (osc3Positions[i].y - equant));
+        invDistance = 1.f / (distance + .000001f);
         
-        cosThetaL =  (osc3Positions[i].yL - equant) * invDistanceL;
-        sinThetaL = -osc3Positions[i].xL			* invDistanceL;
-        cosThetaR =  (osc3Positions[i].yR - equant) * invDistanceR;
-        sinThetaR = -osc3Positions[i].xR			* invDistanceR;
-        cos2ThetaL = cosThetaL * cosThetaL;
-        cos2ThetaR = cosThetaR * cosThetaR;
-        sin2ThetaL = sinThetaL * sinThetaL;
-        sin2ThetaR = sinThetaR * sinThetaR;
+        cosTheta =  (osc3Positions[i].y - equant) * invDistance;
+        sinTheta = -osc3Positions[i].x * invDistance;
+        cos2Theta = cosTheta * cosTheta;
+        sin2Theta = sinTheta * sinTheta;
         
-        StereoMatrix squash3 = {
-            .left = {
-                .a = cos2ThetaL + k * sin2ThetaL, .b = cosThetaL * sinThetaL * (1.0f - k),
-                .c = cosThetaL * sinThetaL * (1.0f - k), .d = sin2ThetaL + k * cos2ThetaL
-            },
-                .right = {
-                    .a = cos2ThetaR + k * sin2ThetaR, .b = cosThetaR * sinThetaR * (1.0f - k),
-                    .c = cosThetaR * sinThetaR * (1.0f - k), .d = sin2ThetaR + k * cos2ThetaR
-                }
+        APMatrix squash3 = {
+			.a = cos2Theta + k * sin2Theta, .b = cosTheta * sinTheta * (1.0f - k),
+			.c = cosTheta * sinTheta * (1.0f - k), .d = sin2Theta + k * cos2Theta
         };
-    
         
         epi1 = osc1Positions[i] * (a * osc1Vol);
         
@@ -338,95 +262,100 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         epi2 = epi1 + ((osc2Positions[i] * squash1) * (b * osc2Vol));
         
         // get bodies 3 & 4 position by algorithm
-        if (algo == 0) // 1-2-3-(4)
-        {
-            epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
-            epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
-        }
-        if (algo == 1) { // 1-2-(3), 2-(4)
-            epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
-            epi4 = epi2 + ((osc4Positions[i] * squash2) * (d * osc4Vol));
-        }
-        if (algo == 2) { // 1-(2), 1-3-(4)
-            epi3 = epi1 + ((osc3Positions[i] * squash1) * (c * osc3Vol));
-            epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
-        }
-        if (algo == 3) { // 1-(2), 1-(3), 1-(4)
-            epi3 = epi1 + ((osc3Positions[i] * squash1) * (c * osc3Vol));
-            epi4 = epi1 + ((osc4Positions[i] * squash1) * (d * osc4Vol));
-        }
+		switch (algo) {
+		case 0: // 1-2-3-(4)
+			epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
+			epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
+			break;
+		case 1: // 1-2-(3), 2-(4)
+			epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
+			epi4 = epi2 + ((osc4Positions[i] * squash2) * (d * osc4Vol));
+			break;
+		case 2:  // 1-(2), 1-3-(4)
+			epi3 = epi1 + ((osc3Positions[i] * squash1) * (c * osc3Vol));
+			epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
+			break;
+		case 3:  // 1-(2), 1-(3), 1-(4)
+			epi3 = epi1 + ((osc3Positions[i] * squash1) * (c * osc3Vol));
+			epi4 = epi1 + ((osc4Positions[i] * squash1) * (d * osc4Vol));
+			break;
+		default:
+			epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
+			epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
+			break;
+		}
         
-        epi2xls[i] = epi2.xL; epi2yls[i] = epi2.yL; epi2xrs[i] = epi2.xR; epi2yrs[i] = epi2.yR;
-		epi3xls[i] = epi3.xL; epi3yls[i] = epi3.yL; epi3xrs[i] = epi3.xR; epi3yrs[i] = epi3.yR;
-		epi4xls[i] = epi4.xL; epi4yls[i] = epi4.yL; epi4xrs[i] = epi4.xR; epi4yrs[i] = epi4.yR;
+        epi2xs[i] = epi2.x; epi2ys[i] = epi2.y;
+		epi3xs[i] = epi3.x; epi3ys[i] = epi3.y;
+		epi4xs[i] = epi4.x; epi4ys[i] = epi4.y;
     }
 
 	auto synthBufferL = synthBuffer.getWritePointer(0);
 	auto synthBufferR = synthBuffer.getWritePointer(1);
 
-
-
 	for (int i = 0; i < std::ceil(((float)numSamples)/4.f); i++)
     {
-		epi2xL = { epi2xls[i * 4], epi2xls[i * 4 + 1], epi2xls[i * 4 + 2], epi2xls[i * 4 + 3] };
-		epi2yL = { epi2yls[i * 4], epi2yls[i * 4 + 1], epi2yls[i * 4 + 2], epi2yls[i * 4 + 3] };
-		epi2xR = { epi2xrs[i * 4], epi2xrs[i * 4 + 1], epi2xrs[i * 4 + 2], epi2xrs[i * 4 + 3] };
-		epi2yR = { epi2yrs[i * 4], epi2yrs[i * 4 + 1], epi2yrs[i * 4 + 2], epi2yrs[i * 4 + 3] };
-		epi3xL = { epi3xls[i * 4], epi3xls[i * 4 + 1], epi3xls[i * 4 + 2], epi3xls[i * 4 + 3] };
-		epi3yL = { epi3yls[i * 4], epi3yls[i * 4 + 1], epi3yls[i * 4 + 2], epi3yls[i * 4 + 3] };
-		epi3xR = { epi3xrs[i * 4], epi3xrs[i * 4 + 1], epi3xrs[i * 4 + 2], epi3xrs[i * 4 + 3] };
-		epi3yR = { epi3yrs[i * 4], epi3yrs[i * 4 + 1], epi3yrs[i * 4 + 2], epi3yrs[i * 4 + 3] };
-		epi4xL = { epi4xls[i * 4], epi4xls[i * 4 + 1], epi4xls[i * 4 + 2], epi4xls[i * 4 + 3] };
-		epi4yL = { epi4yls[i * 4], epi4yls[i * 4 + 1], epi4yls[i * 4 + 2], epi4yls[i * 4 + 3] };
-		epi4xR = { epi4xrs[i * 4], epi4xrs[i * 4 + 1], epi4xrs[i * 4 + 2], epi4xrs[i * 4 + 3] };
-		epi4yR = { epi4yrs[i * 4], epi4yrs[i * 4 + 1], epi4yrs[i * 4 + 2], epi4yrs[i * 4 + 3] };
-        
-    // ----------------------------------------
+		epi2x = { epi2xs[i * 4], epi2xs[i * 4 + 1], epi2xs[i * 4 + 2], epi2xs[i * 4 + 3] };
+		epi2y = { epi2ys[i * 4], epi2ys[i * 4 + 1], epi2ys[i * 4 + 2], epi2ys[i * 4 + 3] };
+		epi3x = { epi3xs[i * 4], epi3xs[i * 4 + 1], epi3xs[i * 4 + 2], epi3xs[i * 4 + 3] };
+		epi3y = { epi3ys[i * 4], epi3ys[i * 4 + 1], epi3ys[i * 4 + 2], epi3ys[i * 4 + 3] };
+		epi4x = { epi4xs[i * 4], epi4xs[i * 4 + 1], epi4xs[i * 4 + 2], epi4xs[i * 4 + 3] };
+		epi4y = { epi4ys[i * 4], epi4ys[i * 4 + 1], epi4ys[i * 4 + 2], epi4ys[i * 4 + 3] };
+		
+		// ----------------------------------------
 		// interpret bodies' positions by algorithm
 		// ----------------------------------------
 
-		sine4L = (epi4yL - equant) / (mipp::sqrt((epi4yL - equant) * (epi4yL - equant) + (epi4xL * epi4xL)) + .000001f);
-		sine4R = (epi4yR - equant) / (mipp::sqrt((epi4yR - equant) * (epi4yR - equant) + (epi4xR * epi4xR)) + .000001f);
-		sine3L = (epi3yL - equant) / (mipp::sqrt((epi3yL - equant) * (epi3yL - equant) + (epi3xL * epi3xL)) + .000001f);
-		sine3R = (epi3yR - equant) / (mipp::sqrt((epi3yR - equant) * (epi3yR - equant) + (epi3xR * epi3xR)) + .000001f);
-		sine2L = (epi2yL - equant) / (mipp::sqrt((epi2yL - equant) * (epi2yL - equant) + (epi2xL * epi2xL)) + .000001f);
-		sine2R = (epi2yR - equant) / (mipp::sqrt((epi2yR - equant) * (epi2yR - equant) + (epi2xR * epi2xR)) + .000001f);
-
-		demodSample2L = (epi2yL - equant) * demodVol; // adjustable balancing term
-		demodSample2R = (epi2yR - equant) * demodVol;
-		demodSample3L = (epi3yL - equant) * demodVol;
-		demodSample3R = (epi3yR - equant) * demodVol;
-		demodSample4L = (epi4yL - equant) * demodVol;
-		demodSample4R = (epi4yR - equant) * demodVol;
+		auto dist4 = mipp::sqrt((epi4y - equant) * (epi4y - equant) + (epi4x * epi4x)) + .000001f;
+		auto dist3 = mipp::sqrt((epi3y - equant) * (epi3y - equant) + (epi3x * epi3x)) + .000001f;
+		auto dist2 = mipp::sqrt((epi2y - equant) * (epi2y - equant) + (epi2x * epi2x)) + .000001f;
+		sine4 = (epi4y - equant) / dist4;
+		cos4 =   epi4x / dist4;
+		sine3 = (epi3y - equant) / dist3;
+		cos3 = epi3x / dist3;
+		sine2 = (epi2y - equant) / dist2;
+		cos2 = epi2x / dist2;
+		
+		demodSample2L = (epi2y - equant) * demodVol; // adjustable balancing term
+		demodSample2R = epi2x * demodVol;
+		demodSample3L = (epi3y - equant) * demodVol;
+		demodSample3R = epi3x * demodVol;
+		demodSample4L = (epi4y - equant) * demodVol;
+		demodSample4R = epi4x * demodVol;
 
 		// since mod samples are angle-only, we need to reapply their envelope values
-		sine2L *= envs[1]->getOutput();
-		sine2R *= envs[1]->getOutput();
-		sine3L *= envs[2]->getOutput();
-		sine3R *= envs[2]->getOutput();
-		sine4L *= envs[3]->getOutput();
-		sine4R *= envs[3]->getOutput();
+		sine2 *= envs[1]->getOutput();
+		cos2 *= envs[1]->getOutput();
+		sine3 *= envs[2]->getOutput();
+		cos3 *= envs[2]->getOutput();
+		sine4 *= envs[3]->getOutput();
+		cos4 *= envs[3]->getOutput();
 
 		// 6. mix by demodmix AND ALGO
 
 		auto demodmix = getValue(proc.timbreParams.demodmix);
-		if (algo == 0) {
-			sampleL = (sine4L * (1.0f - demodmix) + demodSample4L * demodmix);
-			sampleR = (sine4R * (1.0f - demodmix) + demodSample4R * demodmix);
+		switch (algo) {
+		case 0:
+			sampleL = (sine4 * (1.0f - demodmix) + demodSample4L * demodmix);
+			sampleR = (cos4 * (1.0f - demodmix) + demodSample4R * demodmix);
+			break;
+		case 1:
+			sampleL = ((sine3 + sine4) * 0.5f * (1.0f - demodmix) + (demodSample3L + demodSample4L) * 0.5f * demodmix);
+			sampleR = ((cos3 + cos4) * 0.5f * (1.0f - demodmix) + (demodSample3R + demodSample4R) * 0.5f * demodmix);
+			break;
+		case 2:
+			sampleL = ((sine2 + sine4) * 0.5f * (1.0f - demodmix) + (demodSample2L + demodSample4L) * 0.5f * demodmix);
+			sampleR = ((cos2 + cos4) * 0.5f * (1.0f - demodmix) + (demodSample2R + demodSample4R) * 0.5f * demodmix);
+			break;
+		case 3:
+			sampleL = ((sine2 + sine3 + sine4) * 0.333f * (1.0f - demodmix) + (demodSample2L + demodSample3L + demodSample4L) * 0.333f * demodmix);
+			sampleR = ((cos2 + cos3 + cos4) * 0.333f * (1.0f - demodmix) + (demodSample2R + demodSample3L + demodSample4R) * 0.333f * demodmix);
+			break;
+		default:
+			sampleL = (sine4 * (1.0f - demodmix) + demodSample4L * demodmix);
+			sampleR = (cos4 * (1.0f - demodmix) + demodSample4R * demodmix);
+			break;
 		}
-		if (algo == 1) {
-			sampleL = ((sine3L + sine4L) * 0.5f * (1.0f - demodmix) + (demodSample3L + demodSample4L) * 0.5f * demodmix);
-			sampleR = ((sine3R + sine4R) * 0.5f * (1.0f - demodmix) + (demodSample3R + demodSample4R) * 0.5f * demodmix);
-		}
-		if (algo == 2) {
-			sampleL = ((sine2L + sine4L) * 0.5f * (1.0f - demodmix) + (demodSample2L + demodSample4L) * 0.5f * demodmix);
-			sampleR = ((sine2R + sine4R) * 0.5f * (1.0f - demodmix) + (demodSample2R + demodSample4R) * 0.5f * demodmix);
-		}
-		if (algo == 3) {
-			sampleL = ((sine2L + sine3L + sine4L) * 0.333f * (1.0f - demodmix) + (demodSample2L + demodSample3L + demodSample4L) * 0.333f * demodmix);
-			sampleR = ((sine2R + sine3R + sine4R) * 0.333f * (1.0f - demodmix) + (demodSample2R + demodSample3L + demodSample4R) * 0.333f * demodmix);
-		}
-
 		sampleL = mipp::sat(sampleL, -1.0f, 1.0f);
 		sampleR = mipp::sat(sampleR, -1.0f, 1.0f);
 
@@ -520,7 +449,6 @@ void SynthVoice2::updateParams(int blockSize)
 
 	osc1Params.wave = waveForChoice(int(getValue(proc.osc1Params.wave)));
 	osc1Params.tones = getValue(proc.osc1Params.tones);
-	osc1Params.pan = getValue(proc.osc1Params.pan);
 	osc1Params.phaseShift = getValue(proc.osc1Params.phase);
 	osc1Vol = getValue(proc.osc1Params.volume);
 
@@ -546,7 +474,6 @@ void SynthVoice2::updateParams(int blockSize)
 
 	osc2Params.wave = waveForChoice(int(getValue(proc.osc2Params.wave)));
 	osc2Params.tones = getValue(proc.osc2Params.tones);
-	osc2Params.pan = getValue(proc.osc2Params.pan);
 	osc2Params.phaseShift = getValue(proc.osc2Params.phase);
 	osc2Vol = getValue(proc.osc2Params.volume);
 	switch(proc.osc2Params.env->getUserValueInt())
@@ -570,7 +497,6 @@ void SynthVoice2::updateParams(int blockSize)
 
 	osc3Params.wave = waveForChoice(int(getValue(proc.osc3Params.wave)));
 	osc3Params.tones = getValue(proc.osc3Params.tones);
-	osc3Params.pan = getValue(proc.osc3Params.pan);
 	osc3Params.phaseShift = getValue(proc.osc3Params.phase);
 	osc3Vol = getValue(proc.osc3Params.volume);
 	switch(proc.osc3Params.env->getUserValueInt())
@@ -593,7 +519,6 @@ void SynthVoice2::updateParams(int blockSize)
 	// -------------
 	osc4Params.wave = waveForChoice(int(getValue(proc.osc4Params.wave)));
 	osc4Params.tones = getValue(proc.osc4Params.tones);
-	osc4Params.pan = getValue(proc.osc4Params.pan);
 	osc4Params.phaseShift = getValue(proc.osc4Params.phase);
 	osc4Vol = getValue(proc.osc4Params.volume);
 	switch(proc.osc4Params.env->getUserValueInt())

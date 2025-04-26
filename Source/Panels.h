@@ -74,10 +74,7 @@ public:
 		f4->setLookAndFeel(&lnf4);
 		v4->setLookAndFeel(&lnf4);
 
-		addControl(n1 = new APKnob(proc.osc1Params.pan, true), 3, 1); // pan
-		addControl(n2 = new APKnob(proc.osc2Params.pan, true), 3, 1);
-		addControl(n3 = new APKnob(proc.osc3Params.pan, true), 3, 1);
-		addControl(n4 = new APKnob(proc.osc4Params.pan, true), 3, 1);
+
 		addControl(wave1 = new gin::Select(proc.osc1Params.wave)); // saw
 		addControl(wave2 = new gin::Select(proc.osc2Params.wave));
 		addControl(wave3 = new gin::Select(proc.osc3Params.wave));
@@ -164,10 +161,10 @@ public:
 
 	void show(int osc)
 	{
-		for (gin::ParamComponent::Ptr c : {c1, f1, v1, t1, p1, n1, wave1, env1, fixed1,
-										   c2, f2, v2, t2, p2, n2, wave2, env2, fixed2,
-										   c3, f3, v3, t3, p3, n3, wave3, env3, fixed3,
-										   c4, f4, v4, t4, p4, n4, wave4, env4, fixed4})
+		for (gin::ParamComponent::Ptr c : {c1, f1, v1, t1, p1, wave1, env1, fixed1,
+										   c2, f2, v2, t2, p2, wave2, env2, fixed2,
+										   c3, f3, v3, t3, p3, wave3, env3, fixed3,
+										   c4, f4, v4, t4, p4, wave4, env4, fixed4})
 		{
 			c->setVisible(false);
 		}
@@ -188,7 +185,6 @@ public:
 			v1->setVisible(true);
 			t1->setVisible(true);
 			p1->setVisible(true);
-			n1->setVisible(true);
 			wave1->setVisible(true);
 			env1->setVisible(true);
 			fixed1->setVisible(true);
@@ -201,7 +197,6 @@ public:
 			v2->setVisible(true);
 			t2->setVisible(true);
 			p2->setVisible(true);
-			n2->setVisible(true);
 			wave2->setVisible(true);
 			env2->setVisible(true);
 			fixed2->setVisible(true);
@@ -214,7 +209,6 @@ public:
 			v3->setVisible(true);
 			t3->setVisible(true);
 			p3->setVisible(true);
-			n3->setVisible(true);
 			wave3->setVisible(true);
 			env3->setVisible(true);
 			fixed3->setVisible(true);
@@ -227,7 +221,6 @@ public:
 			v4->setVisible(true);
 			t4->setVisible(true);
 			p4->setVisible(true);
-			n4->setVisible(true);
 			wave4->setVisible(true);
 			env4->setVisible(true);
 			fixed4->setVisible(true);
@@ -365,10 +358,10 @@ public:
 	APLookAndFeel3 lnf3;
 	APLookAndFeel4 lnf4;
 	APAudioProcessor &proc;
-	gin::ParamComponent::Ptr c1, f1, v1, t1, p1, n1, wave1, env1, fixed1;
-	gin::ParamComponent::Ptr c2, f2, v2, t2, p2, n2, wave2, env2, fixed2;
-	gin::ParamComponent::Ptr c3, f3, v3, t3, p3, n3, wave3, env3, fixed3;
-	gin::ParamComponent::Ptr c4, f4, v4, t4, p4, n4, wave4, env4, fixed4;
+	gin::ParamComponent::Ptr c1, f1, v1, t1, p1, wave1, env1, fixed1;
+	gin::ParamComponent::Ptr c2, f2, v2, t2, p2, wave2, env2, fixed2;
+	gin::ParamComponent::Ptr c3, f3, v3, t3, p3, wave3, env3, fixed3;
+	gin::ParamComponent::Ptr c4, f4, v4, t4, p4, wave4, env4, fixed4;
 
 	juce::Label fixedHz1, fixedHz2, fixedHz3, fixedHz4;
 	juce::TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};

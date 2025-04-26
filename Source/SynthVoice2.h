@@ -27,37 +27,27 @@ class APAudioProcessor;
 
 using namespace std::numbers;
 
-struct Matrix {
-	inline friend Matrix operator*(const Matrix& m, const float s) { // scalar multiplication
+struct APMatrix {
+	inline friend APMatrix operator*(const APMatrix& m, const float s) { // scalar multiplication
 		return { m.a * s, m.b * s, m.c * s, m.d * s };
 	}
 	float a, b, c, d;
 };
 
-struct StereoMatrix {
-	Matrix left, right;
-	inline friend StereoMatrix operator*(const StereoMatrix& m, const float s) { // scalar multiplication
-		return { m.left * s, m.right * s };
-	}
-};
+struct Position {
+	float x{ 0.f }, y{ 0.f };
 
-struct StereoPosition {
-	float xL{ 0.f }, yL{ 0.f }, xR{ 0.f }, yR{ 0.f };
-
-	inline friend StereoPosition operator*(const StereoPosition& p, const StereoMatrix& m) { // apply matrix to position
-		return { .xL = m.left.a * p.xL + m.left.b * p.yL,
-				.yL = m.left.c * p.xL + m.left.d * p.yL,
-				.xR = m.right.a * p.xR + m.right.b * p.yR,
-				.yR = m.right.c * p.xR + m.right.d * p.yR };
+	inline friend Position operator*(const Position& p, const APMatrix& m) { // apply matrix to position
+		return { .x = m.a * p.x + m.b * p.y,
+				.y = m.c * p.x + m.d * p.y, };
 	}
 
-	inline friend StereoPosition operator*(const StereoPosition& p, const float s) { // scalar multiplication
-		return { p.xL * s, p.yL * s, p.xR * s, p.yR * s };
+	inline friend Position operator*(const Position& p, const float s) { // scalar multiplication
+		return { p.x * s, p.y * s };
 	}
 
-	inline StereoPosition operator+(const StereoPosition otherPos) {
-		return { this->xL + otherPos.xL, this->yL + otherPos.yL,
-			this->xR + otherPos.xR, this->yR + otherPos.yR };
+	inline Position operator+(const Position otherPos) {
+		return { this->x + otherPos.x, this->y + otherPos.y };
 	}
 };
 
@@ -67,13 +57,11 @@ class SynthVoice2 : public gin::SynthesiserVoice,
                    public gin::ModVoice
 {
 public:
-	inline mipp::Reg<float> minimaxSin(mipp::Reg<float> x1);
-	inline mipp::Reg<float> mmAtan(mipp::Reg<float> x1);
-	inline mipp::Reg<float> fastAtan2(mipp::Reg<float> x, mipp::Reg<float> y);
-	inline std::array<float, 2> panWeights(const float in);
 	SynthVoice2(APAudioProcessor& p);
     
-    void noteStarted() override;
+	inline std::array<float, 2> panWeights(const float in);
+
+	void noteStarted() override;
     void noteRetriggered() override;
     void noteStopped(bool allowTailOff) override;
 
@@ -96,8 +84,6 @@ public:
 	float getMSEG3Phase();
 	float getMSEG4Phase();
 	gin::Wave waveForChoice(int choice);
-
-
   
 private:
     void updateParams(int blockSize);
@@ -114,15 +100,15 @@ private:
     Envelope env1, env2, env3, env4;
     std::array<Envelope*, 4> envs{&env1, &env2, &env3, &env4};
     
-	StereoPosition epi1{ 1.0f, 0.0f, 1.0f, 0.0f};
-	StereoPosition epi2{ 1.0, 0.0f, 1.0f, 0.0f };
-	StereoPosition epi3{ 1.0f, 0.0f, 1.0f, 0.0f };
-	StereoPosition epi4{ 1.0f, 0.0f, 1.0f, 0.0f };
+	Position epi1{ 1.0f, 0.0f };
+	Position epi2{ 1.0f,  0.0f };
+	Position epi3{ 1.0f, 0.0f };
+	Position epi4{ 1.0f, 0.0f };
 
-	StereoPosition osc1Positions[32];
-	StereoPosition osc2Positions[32];
-	StereoPosition osc3Positions[32];
-	StereoPosition osc4Positions[32];
+	Position osc1Positions[32];
+	Position osc2Positions[32];
+	Position osc3Positions[32];
+	Position osc4Positions[32];
 
     float currentMidiNote = -1;
     gin::StereoOscillator::Params osc1Params, osc2Params, osc3Params, osc4Params;
@@ -138,47 +124,21 @@ private:
 	juce::AudioBuffer<float> synthBuffer;
 
 	int n = mipp::N<float>() * 8;
-	float epi2xls[32], epi2yls[32], epi2xrs[32], epi2yrs[32],
-        epi3xls[32], epi3yls[32], epi3xrs[32], epi3yrs[32],
-        epi4xls[32], epi4yls[32], epi4xrs[32], epi4yrs[32];
+	float epi2xs[32], epi2ys[32],
+          epi3xs[32], epi3ys[32],
+          epi4xs[32], epi4ys[32];
     
-	// constants for minimaxSin
-	const mipp::Reg<float> s1 = 0.99999999997884898600402426033768998f;
-	const mipp::Reg<float> s2 = -0.166666666088260696413164261885310067f;
-	const mipp::Reg<float> s3 = 0.00833333072055773645376566203656709979f;
-	const mipp::Reg<float> s4 = -0.000198408328232619552901560108010257242f;
-	const mipp::Reg<float> s5 = 2.75239710746326498401791551303359689e-6f;
-	const mipp::Reg<float> s6 = -2.3868346521031027639830001794722295e-8f;
 
-	const mipp::Reg<float> t1 = -.011719135f; // constants for mmAtan 
-	const mipp::Reg<float> t2 = .052647351f;
-	const mipp::Reg<float> t3 = -.11642648f;
-	const mipp::Reg<float> t4 = .19354038f;
-	const mipp::Reg<float> t5 = -.33262283f;
-	const mipp::Reg<float> t6 = .99997722f;
 
-	mipp::Reg<float> epi2xL;
-	mipp::Reg<float> epi2yL;
-	mipp::Reg<float> epi2xR;
-	mipp::Reg<float> epi2yR;
-	mipp::Reg<float> epi3xL;
-	mipp::Reg<float> epi3yL;
-	mipp::Reg<float> epi3xR;
-	mipp::Reg<float> epi3yR;
-	mipp::Reg<float> epi4xL;
-	mipp::Reg<float> epi4yL;
-	mipp::Reg<float> epi4xR;
-	mipp::Reg<float> epi4yR;
+	mipp::Reg<float> epi2x;
+	mipp::Reg<float> epi2y;
+	mipp::Reg<float> epi3x;
+	mipp::Reg<float> epi3y;
+	mipp::Reg<float> epi4x;
+	mipp::Reg<float> epi4y;
 
-	mipp::Reg<float> atanAngle2L;
-	mipp::Reg<float> atanAngle2R;
-	mipp::Reg<float> atanAngle3L;
-	mipp::Reg<float> atanAngle3R;
-	mipp::Reg<float> atanAngle4L;
-	mipp::Reg<float> atanAngle4R;
-
-	mipp::Reg<float> sine2L{ 0.f, 0.f, 0.f, 0.f }, sine2R{ 0.f, 0.f, 0.f, 0.f }, sine3L{ 0.f, 0.f, 0.f, 0.f }, sine3R{ 0.f, 0.f, 0.f, 0.f },
-		sine4L{ 0.f, 0.f, 0.f, 0.f }, sine4R{ 0.f, 0.f, 0.f, 0.f };
+	mipp::Reg<float> sine2{ 0.f, 0.f, 0.f, 0.f }, cos2{ 0.f, 0.f, 0.f, 0.f }, sine3{ 0.f, 0.f, 0.f, 0.f }, cos3{ 0.f, 0.f, 0.f, 0.f },
+		sine4{ 0.f, 0.f, 0.f, 0.f }, cos4{ 0.f, 0.f, 0.f, 0.f };
 	// redundant??
 	mipp::Reg<float> sample2L, sample2R, sample3L, sample3R, sample4L, sample4R;
 

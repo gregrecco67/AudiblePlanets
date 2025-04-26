@@ -3,7 +3,7 @@
 #include <gin_plugin/gin_plugin.h>
 
 
-struct StereoPosition;
+struct Position;
 class APOscillator : public gin::StereoOscillator
 {
 public:
@@ -23,7 +23,7 @@ public:
     //     float asym = 0.0f;
     // };
 
-    void renderPositions(float note, const Params& params, StereoPosition positions[], const int numSamples);
+    void renderPositions(float note, const Params& params, Position positions[], const int numSamples);
     
 };
 
