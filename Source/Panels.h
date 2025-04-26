@@ -609,7 +609,7 @@ public:
 		auto &globalParams = proc.globalParams;
 		addControl(equant = new APKnob(timbreparams.equant, true), 0, 0);
 		addControl(new APKnob(timbreparams.pitch), 0, 1);
-		addControl(new APKnob(timbreparams.blend), 1, 1);
+		//addControl(new APKnob(timbreparams.blend), 1, 1);
 		addControl(algo = new APKnob(timbreparams.algo), 1, 0);
 		addControl(new APKnob(timbreparams.demodmix), 2, 0);
 		addControl(new APKnob(timbreparams.demodVol, true), 2, 1);

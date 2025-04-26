@@ -108,22 +108,22 @@ void Editor::timerCallback() {
     auto defPhaseIncrement = defRatio * phaseIncrement;
     vizDefPhase += defPhaseIncrement * speed;
     if (vizDefPhase > juce::MathConstants<float>::twoPi)
-    vizDefPhase -= juce::MathConstants<float>::twoPi;
+        vizDefPhase -= juce::MathConstants<float>::twoPi;
     auto epi1Ratio = live ? proc.viz.epi1Rat : proc.viz2.epi1Rat;
     auto vizEpi1PhaseIncrement = epi1Ratio * phaseIncrement;
     vizEpi1Phase += vizEpi1PhaseIncrement * speed;
     if (vizEpi1Phase > juce::MathConstants<float>::twoPi)
-    vizEpi1Phase -= juce::MathConstants<float>::twoPi;
+        vizEpi1Phase -= juce::MathConstants<float>::twoPi;
     auto epi2Ratio = live ? proc.viz.epi2Rat : proc.viz2.epi2Rat;
     auto vizEpi2PhaseIncrement = epi2Ratio * phaseIncrement;
     vizEpi2Phase += vizEpi2PhaseIncrement * speed;
     if (vizEpi2Phase > juce::MathConstants<float>::twoPi)
-    vizEpi2Phase -= juce::MathConstants<float>::twoPi;
+        vizEpi2Phase -= juce::MathConstants<float>::twoPi;
     auto epi3Ratio = live ? proc.viz.epi3Rat : proc.viz2.epi3Rat;
     auto vizEpi3PhaseIncrement = epi3Ratio * phaseIncrement;
     vizEpi3Phase += vizEpi3PhaseIncrement * speed;
     if (vizEpi3Phase > juce::MathConstants<float>::twoPi)
-    vizEpi3Phase -= juce::MathConstants<float>::twoPi;
+        vizEpi3Phase -= juce::MathConstants<float>::twoPi;
     orbitViz.setEquant(live ? proc.viz.equant : proc.viz2.equant);
 	
     orbitViz.setDefRad(live ? proc.viz.defRad : proc.viz2.defRad);

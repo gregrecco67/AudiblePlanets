@@ -179,11 +179,7 @@ private:
 
 	mipp::Reg<float> sine2L{ 0.f, 0.f, 0.f, 0.f }, sine2R{ 0.f, 0.f, 0.f, 0.f }, sine3L{ 0.f, 0.f, 0.f, 0.f }, sine3R{ 0.f, 0.f, 0.f, 0.f },
 		sine4L{ 0.f, 0.f, 0.f, 0.f }, sine4R{ 0.f, 0.f, 0.f, 0.f };
-	mipp::Reg<float> square2L{ 0.f, 0.f, 0.f, 0.f }, square2R{ 0.f, 0.f, 0.f, 0.f }, square3L{ 0.f, 0.f, 0.f, 0.f }, square3R{ 0.f, 0.f, 0.f, 0.f },
-		square4L{ 0.f, 0.f, 0.f, 0.f }, square4R{ 0.f, 0.f, 0.f, 0.f };
-	mipp::Reg<float> saw2L{ 0.f, 0.f, 0.f, 0.f }, saw2R{ 0.f, 0.f, 0.f, 0.f }, saw3L{ 0.f, 0.f, 0.f, 0.f }, saw3R{ 0.f, 0.f, 0.f, 0.f },
-		saw4L{ 0.f, 0.f, 0.f, 0.f }, saw4R{ 0.f, 0.f, 0.f, 0.f };
-
+	// redundant??
 	mipp::Reg<float> sample2L, sample2R, sample3L, sample3R, sample4L, sample4R;
 
 	mipp::Reg<float> modSample2L, demodSample2L, modSample2R, demodSample2R;

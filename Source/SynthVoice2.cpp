@@ -232,6 +232,7 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 
 	synthBuffer.setSize(2, numSamples, false, false, true);
 
+	// 1. fill positions vectors
 	osc1.renderPositions(osc1Freq, osc1Params, osc1Positions, numSamples); 
 	osc2.renderPositions(osc2Freq, osc2Params, osc2Positions, numSamples);
 	osc3.renderPositions(osc3Freq, osc3Params, osc3Positions, numSamples);
@@ -383,143 +384,47 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
     // ----------------------------------------
 		// interpret bodies' positions by algorithm
 		// ----------------------------------------
-		
-		// 1. get angles
-		atanAngle2L = { 0.f, 0.f, 0.f, 0.f };
-		atanAngle2R = { 0.f, 0.f, 0.f, 0.f };
-		atanAngle3L = { 0.f, 0.f, 0.f, 0.f };
-		atanAngle3R = { 0.f, 0.f, 0.f, 0.f };
-		atanAngle4L = { 0.f, 0.f, 0.f, 0.f };
-		atanAngle4R = { 0.f, 0.f, 0.f, 0.f };
 
-		atanAngle4L = fastAtan2(epi4yL - equant, epi4xL);
-		atanAngle4R = fastAtan2(epi4yR - equant, epi4xR);
-		if (algo == 1)
-		{
-			atanAngle3L = fastAtan2(epi3yL - equant, epi3xL);
-			atanAngle3R = fastAtan2(epi3yR - equant, epi3xR);
-		}
-		if (algo == 2) {
-			atanAngle2L = fastAtan2(epi2yL - equant, epi2xL);
-			atanAngle2R = fastAtan2(epi2yR - equant, epi2xR);
-		}
-		if (algo == 3) {
-			atanAngle2L = fastAtan2(epi2yL - equant, epi2xL);
-			atanAngle2R = fastAtan2(epi2yR - equant, epi2xR);
-			atanAngle3L = fastAtan2(epi3yL - equant, epi3xL);
-			atanAngle3R = fastAtan2(epi3yR - equant, epi3xR);
-		}
+		sine4L = (epi4yL - equant) / (mipp::sqrt((epi4yL - equant) * (epi4yL - equant) + (epi4xL * epi4xL)) + .000001f);
+		sine4R = (epi4yR - equant) / (mipp::sqrt((epi4yR - equant) * (epi4yR - equant) + (epi4xR * epi4xR)) + .000001f);
+		sine3L = (epi3yL - equant) / (mipp::sqrt((epi3yL - equant) * (epi3yL - equant) + (epi3xL * epi3xL)) + .000001f);
+		sine3R = (epi3yR - equant) / (mipp::sqrt((epi3yR - equant) * (epi3yR - equant) + (epi3xR * epi3xR)) + .000001f);
+		sine2L = (epi2yL - equant) / (mipp::sqrt((epi2yL - equant) * (epi2yL - equant) + (epi2xL * epi2xL)) + .000001f);
+		sine2R = (epi2yR - equant) / (mipp::sqrt((epi2yR - equant) * (epi2yR - equant) + (epi2xR * epi2xR)) + .000001f);
 
-		// 2. generate component waveforms from angles
-
-
-		sine4L = minimaxSin(atanAngle4L);
-		sine4R = minimaxSin(atanAngle4R);
-
-		//auto atan4LGtZero = atanAngle4L > 0.f;
-		//auto atan4RGtZero = atanAngle4R > 0.f;
-		square4L = mipp::blend<float>(1.0f, -1.0f, atanAngle4L > 0.f);
-		square4R = mipp::blend<float>(1.0f, -1.0f, atanAngle4R > 0.f);
-		saw4L = (atanAngle4L * (float)inv_pi) * 2.0f - 1.0f;
-		saw4R = (atanAngle4R * (float)inv_pi) * 2.0f - 1.0f;
-		if (algo == 1) {
-			sine3L = minimaxSin(atanAngle3L);
-			sine3R = minimaxSin(atanAngle3R);
-			square3L = mipp::blend<float>(1.0f, -1.0f, atanAngle3L > 0.f);
-			square3R = mipp::blend<float>(1.0f, -1.0f, atanAngle3R > 0.f);
-			saw3L = (atanAngle3L * (float)inv_pi) * 2.0f - 1.0f;
-			saw3R = (atanAngle3R * (float)inv_pi) * 2.0f - 1.0f;
-		}
-		if (algo == 2) {
-			sine2L = minimaxSin(atanAngle2L);
-			sine2R = minimaxSin(atanAngle2R);
-			square2L = mipp::blend<float>(1.0f, -1.0f, atanAngle2L > 0.f);
-			square2R = mipp::blend<float>(1.0f, -1.0f, atanAngle2R > 0.f);
-			saw2L = (atanAngle2L * (float)inv_pi) * 2.0f - 1.0f;
-			saw2R = (atanAngle2R * (float)inv_pi) * 2.0f - 1.0f;
-		}
-		if (algo == 3) {
-			sine2L = minimaxSin(atanAngle2L);
-			sine2R = minimaxSin(atanAngle2R);
-			square2L = mipp::blend<float>(1.0f, -1.0f, atanAngle2L > 0.f);
-			square2R = mipp::blend<float>(1.0f, -1.0f, atanAngle2R > 0.f);
-			saw2L = (atanAngle2L * (float)inv_pi) * 2.0f - 1.0f;
-			saw2R = (atanAngle2R * (float)inv_pi) * 2.0f - 1.0f;
-			sine3L = minimaxSin(atanAngle3L);
-			sine3R = minimaxSin(atanAngle3R);
-			square3L = mipp::blend<float>(1.0f, -1.0f, atanAngle3L > 0.f);
-			square3R = mipp::blend<float>(1.0f, -1.0f, atanAngle3R > 0.f);
-			saw3L = (atanAngle3L * (float)inv_pi) * 2.0f - 1.0f;
-			saw3R = (atanAngle3R * (float)inv_pi) * 2.0f - 1.0f;
-		}
-
-		// 3. mix component waveforms by blend value
-
-		auto blend = getValue(proc.timbreParams.blend);
-		if (blend < 0.5f)
-		{
-			sample2L = (sine2L * (1.f - blend * 2.0f) + square2L * blend * 2.0f);
-			sample2R = (sine2R * (1.f - blend * 2.0f) + square2R * blend * 2.0f);
-			sample3L = (sine3L * (1.f - blend * 2.0f) + square3L * blend * 2.0f);
-			sample3R = (sine3R * (1.f - blend * 2.0f) + square3R * blend * 2.0f);
-			sample4L = (sine4L * (1.f - blend * 2.0f) + square4L * blend * 2.0f);
-			sample4R = (sine4R * (1.f - blend * 2.0f) + square4R * blend * 2.0f);
-		}
-		else {
-			sample2L = (square2L * (1.0f - blend) * 2.0f + saw2L * (blend - 0.5f) * 2.f);
-			sample2R = (square2R * (1.0f - blend) * 2.0f + saw2R * (blend - 0.5f) * 2.f);
-			sample3L = (square3L * (1.0f - blend) * 2.0f + saw3L * (blend - 0.5f) * 2.f);
-			sample3R = (square3R * (1.0f - blend) * 2.0f + saw3R * (blend - 0.5f) * 2.f);
-			sample4L = (square4L * (1.0f - blend) * 2.0f + saw4L * (blend - 0.5f) * 2.f);
-			sample4R = (square4R * (1.0f - blend) * 2.0f + saw4R * (blend - 0.5f) * 2.f);
-		}
-
-		// 4. compute modulated and demodulated samples, and mix them by demodmix
-		modSample2L = sample2L; demodSample2L = sample2L; modSample2R = sample2R; demodSample2R = sample2R;
-		modSample3L = sample3L; demodSample3L = sample3L; modSample3R = sample3R; demodSample3R = sample3R;
-		modSample4L = sample4L; demodSample4L = sample4L; modSample4R = sample4R; demodSample4R = sample4R;
-
-		// 5. demodulate by considering not just angle, but also magnitude of planet vector
-		auto atanDistance2L = mipp::sqrt(epi2xL * epi2xL + (epi2yL + equant) * (epi2yL + equant));
-		auto atanDistance2R = mipp::sqrt(epi2xR * epi2xR + (epi2yR + equant) * (epi2yR + equant));
-		auto atanDistance3L = mipp::sqrt(epi3xL * epi3xL + (epi3yL + equant) * (epi3yL + equant));
-		auto atanDistance3R = mipp::sqrt(epi3xR * epi3xR + (epi3yR + equant) * (epi3yR + equant));
-		auto atanDistance4L = mipp::sqrt(epi4xL * epi4xL + (epi4yL + equant) * (epi4yL + equant));
-		auto atanDistance4R = mipp::sqrt(epi4xR * epi4xR + (epi4yR + equant) * (epi4yR + equant));
-
-		demodSample2L *= (atanDistance2L * demodVol); // adjustable balancing term
-		demodSample2R *= (atanDistance2R * demodVol);
-		demodSample3L *= (atanDistance3L * demodVol);
-		demodSample3R *= (atanDistance3R * demodVol);
-		demodSample4L *= (atanDistance4L * demodVol);
-		demodSample4R *= (atanDistance4R * demodVol);
+		demodSample2L = sine2L * demodVol; // adjustable balancing term
+		demodSample2R = sine2R * demodVol;
+		demodSample3L = sine3L * demodVol;
+		demodSample3R = sine3R * demodVol;
+		demodSample4L = sine4L * demodVol;
+		demodSample4R = sine4R * demodVol;
 
 		// since mod samples are angle-only, we need to reapply their envelope values
-		modSample2L *= envs[1]->getOutput();
-		modSample2R *= envs[1]->getOutput();
-		modSample3L *= envs[2]->getOutput();
-		modSample3R *= envs[2]->getOutput();
-		modSample4L *= envs[3]->getOutput();
-		modSample4R *= envs[3]->getOutput();
+		sine2L *= envs[1]->getOutput();
+		sine2R *= envs[1]->getOutput();
+		sine3L *= envs[2]->getOutput();
+		sine3R *= envs[2]->getOutput();
+		sine4L *= envs[3]->getOutput();
+		sine4R *= envs[3]->getOutput();
 
 		// 6. mix by demodmix AND ALGO
 
 		auto demodmix = getValue(proc.timbreParams.demodmix);
 		if (algo == 0) {
-			sampleL = (modSample4L * (1.0f - demodmix) + demodSample4L * demodmix);
-			sampleR = (modSample4R * (1.0f - demodmix) + demodSample4R * demodmix);
+			sampleL = (sine4L * (1.0f - demodmix) + demodSample4L * demodmix);
+			sampleR = (sine4R * (1.0f - demodmix) + demodSample4R * demodmix);
 		}
 		if (algo == 1) {
-			sampleL = ((modSample3L + modSample4L) * 0.5f * (1.0f - demodmix) + (demodSample3L + demodSample4L) * 0.5f * demodmix);
-			sampleR = ((modSample3R + modSample4R) * 0.5f * (1.0f - demodmix) + (demodSample3R + demodSample4R) * 0.5f * demodmix);
+			sampleL = ((sine3L + sine4L) * 0.5f * (1.0f - demodmix) + (demodSample3L + demodSample4L) * 0.5f * demodmix);
+			sampleR = ((sine3R + sine4R) * 0.5f * (1.0f - demodmix) + (demodSample3R + demodSample4R) * 0.5f * demodmix);
 		}
 		if (algo == 2) {
-			sampleL = ((modSample2L + modSample4L) * 0.5f * (1.0f - demodmix) + (demodSample2L + demodSample4L) * 0.5f * demodmix);
-			sampleR = ((modSample2R + modSample4R) * 0.5f * (1.0f - demodmix) + (demodSample2R + demodSample4R) * 0.5f * demodmix);
+			sampleL = ((sine2L + sine4L) * 0.5f * (1.0f - demodmix) + (demodSample2L + demodSample4L) * 0.5f * demodmix);
+			sampleR = ((sine2R + sine4R) * 0.5f * (1.0f - demodmix) + (demodSample2R + demodSample4R) * 0.5f * demodmix);
 		}
 		if (algo == 3) {
-			sampleL = ((modSample2L + modSample3L + modSample4L) * 0.333f * (1.0f - demodmix) + (demodSample2L + demodSample3L + demodSample4L) * 0.333f * demodmix);
-			sampleR = ((modSample2R + modSample3R + modSample4R) * 0.333f * (1.0f - demodmix) + (demodSample2R + demodSample3L + demodSample4R) * 0.333f * demodmix);
+			sampleL = ((sine2L + sine3L + sine4L) * 0.333f * (1.0f - demodmix) + (demodSample2L + demodSample3L + demodSample4L) * 0.333f * demodmix);
+			sampleR = ((sine2R + sine3R + sine4R) * 0.333f * (1.0f - demodmix) + (demodSample2R + demodSample3L + demodSample4R) * 0.333f * demodmix);
 		}
 
 		sampleL = mipp::sat(sampleL, -1.0f, 1.0f);

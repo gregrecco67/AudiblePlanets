@@ -3,7 +3,7 @@
 #include <gin_plugin/gin_plugin.h>
 
 
-class StereoPosition;
+struct StereoPosition;
 class APOscillator : public gin::StereoOscillator
 {
 public:
