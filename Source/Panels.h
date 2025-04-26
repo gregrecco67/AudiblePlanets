@@ -338,10 +338,10 @@ public:
 		fixedHz2.setBounds(56, 23 + 70 + 10, 56, 15);
 		fixedHz3.setBounds(56, 23 + 70 + 10, 56, 15);
 		fixedHz4.setBounds(56, 23 + 70 + 10, 56, 15);
-		p1->setBounds(56 * 4, 23, 56, 70);
-		p2->setBounds(56 * 4, 23, 56, 70);
-		p3->setBounds(56 * 4, 23, 56, 70);
-		p4->setBounds(56 * 4, 23, 56, 70);
+		p1->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
+		p2->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
+		p3->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
+		p4->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
 		wave1->setBounds(0, 93, 56, 35);
 		wave2->setBounds(0, 93, 56, 35);
 		wave3->setBounds(0, 93, 56, 35);

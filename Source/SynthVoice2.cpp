@@ -330,7 +330,7 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
                     .c = cosThetaR * sinThetaR * (1.0f - k), .d = sin2ThetaR + k * cos2ThetaR
                 }
         };
-        
+    
         
         epi1 = osc1Positions[i] * (a * osc1Vol);
         
@@ -392,12 +392,12 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 		sine2L = (epi2yL - equant) / (mipp::sqrt((epi2yL - equant) * (epi2yL - equant) + (epi2xL * epi2xL)) + .000001f);
 		sine2R = (epi2yR - equant) / (mipp::sqrt((epi2yR - equant) * (epi2yR - equant) + (epi2xR * epi2xR)) + .000001f);
 
-		demodSample2L = sine2L * demodVol; // adjustable balancing term
-		demodSample2R = sine2R * demodVol;
-		demodSample3L = sine3L * demodVol;
-		demodSample3R = sine3R * demodVol;
-		demodSample4L = sine4L * demodVol;
-		demodSample4R = sine4R * demodVol;
+		demodSample2L = (epi2yL - equant) * demodVol; // adjustable balancing term
+		demodSample2R = (epi2yR - equant) * demodVol;
+		demodSample3L = (epi3yL - equant) * demodVol;
+		demodSample3R = (epi3yR - equant) * demodVol;
+		demodSample4L = (epi4yL - equant) * demodVol;
+		demodSample4R = (epi4yR - equant) * demodVol;
 
 		// since mod samples are angle-only, we need to reapply their envelope values
 		sine2L *= envs[1]->getOutput();

@@ -7,7 +7,7 @@ relocate StereoPosition and matrix mult from QuadOsc.h to ... somewhere accessib
 run at 4x...
 
 
-1 calc squash params as vectors
-
+1 get rid of stereo / pan
+2 calc squash params as vectors
 3 FFT forward / cut above downsampled SR
-4 Downsample with HIIR, ship it out to synth
+4 ship it out to synth, downsample with HIIR
