@@ -19,6 +19,17 @@ public:
 	std::vector<float> getMSEG2Phases();
 	std::vector<float> getMSEG3Phases();
 	std::vector<float> getMSEG4Phases();
+
+	template <typename floatType>
+	void renderNextBlock(juce::AudioBuffer<floatType>& outputAudio,
+		const juce::MidiBuffer& inputMidi,
+		int startSample,
+		int numSamples) 
+	{
+		// detach samplerate of this from that of parent class
+		// create infrastructure to manage downsampling
+		gin::Synthesiser::renderNextBlock(outputAudio, inputMidi, startSample, numSamples);
+	}
     
 private:
     APAudioProcessor& proc;
