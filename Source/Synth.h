@@ -20,6 +20,8 @@ public:
 	std::vector<float> getMSEG3Phases();
 	std::vector<float> getMSEG4Phases();
 
+	void setCurrentPlaybackSampleRate(double newRate) override;
+
 	template <typename floatType>
 	void renderNextBlock(juce::AudioBuffer<floatType>& outputAudio,
 		const juce::MidiBuffer& inputMidi,

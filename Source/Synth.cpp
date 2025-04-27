@@ -84,6 +84,12 @@ std::vector<float> APSynth::getMSEG4Phases() {
 	return values;
 }
 
+void APSynth::setCurrentPlaybackSampleRate(double newRate)
+{
+	 // juce::MPESynthesiser::setCurrentPlaybackSampleRate(newRate * 2);
+	juce::MPESynthesiser::setCurrentPlaybackSampleRate(newRate);
+}
+
 
 void APSynth::handleMidiEvent(const juce::MidiMessage& m) {
     MPESynthesiser::handleMidiEvent(m);

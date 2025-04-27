@@ -873,8 +873,8 @@ public:
         sampleRate = spec.sampleRate;
 
         // see https://signalsmith-audio.co.uk/writing/2022/warm-distortion/
-		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
-		*postCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 63.0f);
+		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 25.f);
+		*postCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 6500.f, 1.0f, 0.04f);
 		lowPassPostWet.setCutoffFrequency(2000.0f);
         
 		preGain.prepare(spec);
@@ -886,7 +886,7 @@ public:
 		preBoost.prepare(spec);
 		postCut.prepare(spec);
 		lowPassPostWet.prepare(spec);
-		*highPassPost.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 5.0f);
+		*highPassPost.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 40.0f);
 		highPassPost.prepare(spec);
 	}
 
@@ -932,9 +932,9 @@ public:
 	}
 	
 	void setHighShelfFreqAndQ(float freq, float q) {
-		*preBoost.state= *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 63.0f);
+		*preBoost.state= *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 25.0f);
 		//*preBoostR.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 63.0f);
-		*postCut.state= *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 0.015849f);
+		*postCut.state= *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 0.04f);
 		//*postCutR.coefficients = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq, q, 0.015849f);
 	}
 
