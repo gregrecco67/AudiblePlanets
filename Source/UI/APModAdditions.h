@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "PluginProcessor.h"
+#include "DSP/PluginProcessor.h"
 #include <numbers>
 #include "BinaryData.h"
 #include "Fonts.h"

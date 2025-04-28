@@ -5,7 +5,7 @@
 #include "SynthVoice2.h"
 
 class APAudioProcessor;
-
+ 
 class APSynth : public gin::Synthesiser
 {
 public:

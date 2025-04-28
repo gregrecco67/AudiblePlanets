@@ -14,7 +14,6 @@
 
 #pragma once
 
-
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <gin_dsp/gin_dsp.h>
 #include <gin_plugin/gin_plugin.h>

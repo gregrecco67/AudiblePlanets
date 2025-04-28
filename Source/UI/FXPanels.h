@@ -12,7 +12,7 @@
  * https://github.com/gregrecco67/AudiblePlanets
  */
 #pragma once
-#include "PluginProcessor.h"
+#include "DSP/PluginProcessor.h"
 #include "APModAdditions.h"
 
 

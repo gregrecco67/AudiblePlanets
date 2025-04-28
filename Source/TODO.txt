@@ -11,3 +11,4 @@ run at 4x...
 3 make voice calc 4x FFT forward / cut above downsampled SR
 4 ship it out to synth, downsample with HIIR
 
+clean up Oscillator params

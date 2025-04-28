@@ -69,13 +69,34 @@ endif ()
 set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
 
 file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/*.h
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.h
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.h
+
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.c
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.cpp
+)
 
 target_sources (${PROJECT_NAME} PRIVATE ${source_files})
 source_group (TREE ${CMAKE_CURRENT_SOURCE_DIR}/Source PREFIX Source FILES ${source_files})
+target_include_directories(${PROJECT_NAME} PUBLIC 
+		"${CMAKE_CURRENT_SOURCE_DIR}/Source"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Source/UI"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party"
+	)
 
 file(GLOB_RECURSE AssetFiles CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.png"
@@ -92,6 +113,12 @@ juce_add_binary_data(Assets SOURCES ${AssetFiles})
 set_target_properties(Assets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
+
+#target_include_directories(${PROJECT_NAME} PUBLIC 
+#	"${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP"
+#	"${CMAKE_CURRENT_SOURCE_DIR}/Source/UI"
+#	"${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party"
+#)
 
 target_link_libraries (${PROJECT_NAME} 
 					PRIVATE

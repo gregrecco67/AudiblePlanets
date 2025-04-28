@@ -16,7 +16,7 @@
 
 #include <gin_plugin/gin_plugin.h>
 #include <juce_audio_processors/juce_audio_processors.h>
-#include "PluginProcessor.h"
+#include "DSP/PluginProcessor.h"
 #include "Editor.h"
 #include "FXEditor.h"
 #include "APColors.h"

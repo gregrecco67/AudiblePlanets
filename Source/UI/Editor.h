@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gin_plugin/gin_plugin.h>
-#include "PluginProcessor.h"
+#include "DSP/PluginProcessor.h"
 #include "Panels.h"
 #include "BinaryData.h"
 #include "OrbitViz.h"
