@@ -13,17 +13,18 @@ public:
     // struct Params
     // {
     //     gin::Wave wave = gin::Wave::sine;
-    //     float leftGain = 1.0;
-    //     float rightGain = 1.0;
+    //          float leftGain = 1.0;
+    //          float rightGain = 1.0;
     //     float tones = 1.0f;
-    //     float pan = 0.0f;
+    //          float pan = 0.0f;
     //     float phaseShift = 0.0f;
-    //     float pw = 0.5;
-    //     float fold = 0.0f;
-    //     float asym = 0.0f;
+    //          float pw = 0.5;
+    //          float fold = 0.0f;
+    //          float asym = 0.0f;
     // };
 
     void renderPositions(float note, const Params& params, Position positions[], const int numSamples);
+    void renderFloats(float note, const Params& params, float* xs, float* ys, const int numSamples);
     
 };
 

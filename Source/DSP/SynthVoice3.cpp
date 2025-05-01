@@ -13,15 +13,15 @@
  */
 
 //#define MIPP_ALIGNED_LOADS
-#include "SynthVoice2.h"
+#include "SynthVoice3.h"
 #include "PluginProcessor.h"
 
-inline std::array<float, 2> SynthVoice2::panWeights(const float in) { // -1 to 1
+inline std::array<float, 2> SynthVoice3::panWeights(const float in) { // -1 to 1
 	return { std::sqrt((in + 1.f) * 0.5f), std::sqrt(1.f - ((in + 1.f) * 0.5f)) };
 }
 
 //==============================================================================
-SynthVoice2::SynthVoice2(APAudioProcessor& p)
+SynthVoice3::SynthVoice3(APAudioProcessor& p)
 	: proc(p), mseg1(proc.mseg1Data), mseg2(proc.mseg2Data), mseg3(proc.mseg3Data), mseg4(proc.mseg4Data),
 	osc1(p.analogTables), osc2(p.analogTables), osc3(p.analogTables), osc4(p.analogTables)
 {
@@ -32,7 +32,7 @@ SynthVoice2::SynthVoice2(APAudioProcessor& p)
 	filter.setNumChannels(2);
 }
 
-void SynthVoice2::noteStarted()
+void SynthVoice3::noteStarted()
 {
     curNote = getCurrentlyPlayingNote();
 
@@ -96,7 +96,7 @@ void SynthVoice2::noteStarted()
 
 }
 
-void SynthVoice2::noteRetriggered()
+void SynthVoice3::noteRetriggered()
 {
 	auto note = getCurrentlyPlayingNote();
     curNote = getCurrentlyPlayingNote();
@@ -126,7 +126,7 @@ void SynthVoice2::noteRetriggered()
 	env4.noteOn();
 }
 
-void SynthVoice2::noteStopped(bool allowTailOff)
+void SynthVoice3::noteStopped(bool allowTailOff)
 {
 	env1.noteOff();
 	env2.noteOff();
@@ -141,19 +141,19 @@ void SynthVoice2::noteStopped(bool allowTailOff)
 
 }
 
-void SynthVoice2::notePressureChanged()
+void SynthVoice3::notePressureChanged()
 {
 	auto note = getCurrentlyPlayingNote();
 	proc.modMatrix.setPolyValue(*this, proc.modSrcPressure, note.pressure.asUnsignedFloat());
 }
 
-void SynthVoice2::noteTimbreChanged()
+void SynthVoice3::noteTimbreChanged()
 {
 	auto note = getCurrentlyPlayingNote();
 	proc.modMatrix.setPolyValue(*this, proc.modSrcTimbre, note.timbre.asUnsignedFloat());
 }
 
-void SynthVoice2::setCurrentSampleRate(double newRate)
+void SynthVoice3::setCurrentSampleRate(double newRate)
 {
 	MPESynthesiserVoice::setCurrentSampleRate(newRate);
 
@@ -186,23 +186,24 @@ void SynthVoice2::setCurrentSampleRate(double newRate)
 	mseg4.setSampleRate(newRate);
 }
 
-void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
+void SynthVoice3::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
 {
 	updateParams(numSamples);
 
 	synthBuffer.setSize(2, numSamples, false, false, true);
+	auto synthBufferL = synthBuffer.getWritePointer(0);
+	auto synthBufferR = synthBuffer.getWritePointer(1);
 
 	// 1. fill positions vectors
-	osc1.renderPositions(osc1Freq, osc1Params, osc1Positions, numSamples); 
-	osc2.renderPositions(osc2Freq, osc2Params, osc2Positions, numSamples);
-	osc3.renderPositions(osc3Freq, osc3Params, osc3Positions, numSamples);
-	osc4.renderPositions(osc4Freq, osc4Params, osc4Positions, numSamples);
+	osc1.renderFloats(osc1Freq, osc1Params, osc1xs, osc1ys, numSamples); 
+	osc2.renderFloats(osc2Freq, osc2Params, osc2xs, osc2ys, numSamples);
+	osc3.renderFloats(osc3Freq, osc3Params, osc3xs, osc3ys, numSamples);
+	osc4.renderFloats(osc4Freq, osc4Params, osc4xs, osc4ys, numSamples);
 
-	// more squash = smaller k, which scales about the perpendicular to the vector to the equant
 	float k = 1.f - getValue(proc.globalParams.squash); 
     
 	// the whole enchilada
-	for (int i = 0; i < numSamples; i++)
+	for (int i = 0; i < std::ceil(((float)numSamples)/4.f); i++)
     {
         env1.getNextSample(); // advance each envelope, we'll read them below as necessary
         env2.getNextSample();
@@ -212,124 +213,253 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         auto b = envs[1]->getOutput(); // a = current output of envelope assigned to osc1, etc.
         auto c = envs[2]->getOutput(); //
         auto d = envs[3]->getOutput();
-        
-        // calculate squash matrix
-        // get distances in order to normalize vectors
-        float distance = std::sqrt(osc1Positions[i].x * osc1Positions[i].x + (osc1Positions[i].y - equant) * (osc1Positions[i].y - equant));
-        float invDistance = 1.f / (distance + .000001f);
+    
+		mipp::Reg<float> osc1x, osc1y, osc2x, osc2y, osc3x, osc3y, osc4x, osc4y;
+		osc1x.load(&osc1xs[i*4]);
+		osc1y.load(&osc1ys[i*4]);
 
-        // normalized vectors
-        float cosTheta = (osc1Positions[i].y - equant) * invDistance; // what we want is the tangent to the orbit at this point
-        float sinTheta = -osc1Positions[i].x * invDistance; // so swap x and y and negate y
-        float cos2Theta = cosTheta * cosTheta;
-        float sin2Theta = sinTheta * sinTheta;
-        
-        // plug in to transform matrix
-        APMatrix squash1 = {
-                .a = cos2Theta + k * sin2Theta, .b = cosTheta * sinTheta * (1.0f - k),
-                .c = cosTheta * sinTheta * (1.0f - k), .d = sin2Theta + k * cos2Theta
-        };
-        
-        distance = std::sqrt(osc2Positions[i].x * osc2Positions[i].x + (osc2Positions[i].y - equant) * (osc2Positions[i].y - equant));
-        invDistance = 1.f / (distance + .000001f);
-        
-        cosTheta =  (osc2Positions[i].y - equant) * invDistance;
-        sinTheta = -osc2Positions[i].x * invDistance;
-        cos2Theta = cosTheta * cosTheta;
-        sin2Theta = sinTheta * sinTheta;
-        
-        APMatrix squash2 = {
-			.a = cos2Theta + k * sin2Theta, .b = cosTheta * sinTheta * (1.0f - k),
-			.c = cosTheta * sinTheta * (1.0f - k), .d = sin2Theta + k * cos2Theta
-        };
-        
-        distance = std::sqrt(osc3Positions[i].x * osc3Positions[i].x + (osc3Positions[i].y - equant) * (osc3Positions[i].y - equant));
-        invDistance = 1.f / (distance + .000001f);
-        
-        cosTheta =  (osc3Positions[i].y - equant) * invDistance;
-        sinTheta = -osc3Positions[i].x * invDistance;
-        cos2Theta = cosTheta * cosTheta;
-        sin2Theta = sinTheta * sinTheta;
-        
-        APMatrix squash3 = {
-			.a = cos2Theta + k * sin2Theta, .b = cosTheta * sinTheta * (1.0f - k),
-			.c = cosTheta * sinTheta * (1.0f - k), .d = sin2Theta + k * cos2Theta
-        };
-        
-        epi1 = osc1Positions[i] * (a * osc1Vol);
-        
-		// apply vol and env in per-block code above
-		// then assign 
-		// 1
-		// 1 <-- 2 * s1
-		// [0,1] 2 <-- 3 * s2 | [2,3] 1 <-- 3 * s1
-		// [0,2] 3 <-- 4 * s3 | [1] 2 <-- 4 * s2 | [3] 1 <-- 4 * s1
+        epi1xs[i] = osc1x * a;
+		epi1ys[i] = osc1y * a;
+
+		// prep to calc squash on tangents to epi1, and store distances for later use
+		auto dist1sq = (epi1ys[i] - equant) * (epi1ys[i] - equant) + (epi1xs[i] * epi1xs[i]);
+		mipp::Reg<float> dist1 = mipp::sqrt(dist1sq);
+		mipp::Reg<float> invDist1 = mipp::rsqrt(dist1 + .000001f);
+		auto cosTheta = (epi1ys[i] - equant) * invDist1; // what we want is the tangent to the orbit at this point
+		auto sinTheta = -epi1xs[i] * invDist1; // so swap x and y and negate y
+		auto cos2Theta = cosTheta * cosTheta;
+		auto sin2Theta = sinTheta * sinTheta;
+		auto cross = cosTheta * sinTheta * (1.0f - k);
+		APRegMatrix squash1 = {
+				.a = cos2Theta + sin2Theta * k, .b = cross,
+				.c = cross, .d = sin2Theta + cos2Theta * k
+		};
 
 
-        // apply the squash matrix to squash secondary orbits along the tangent of the one they're orbiting
-        epi2 = epi1 + ((osc2Positions[i] * squash1) * (b * osc2Vol));
+		epi2xs[i] = 
+		{ 	
+			osc2xs[i*4]     * squash1.a.get(0) + osc2ys[i*4]     * squash1.b.get(0) + osc1xs[i*4],
+			osc2xs[i*4 + 1] * squash1.a.get(1) + osc2ys[i*4 + 1] * squash1.b.get(1) + osc1xs[i*4+1],
+			osc2xs[i*4 + 2] * squash1.a.get(2) + osc2ys[i*4 + 2] * squash1.b.get(2) + osc1xs[i*4+2],
+			osc2xs[i*4 + 3] * squash1.a.get(3) + osc2ys[i*4 + 3] * squash1.b.get(3) + osc1xs[i*4+3] 
+		};
+		epi2ys[i] = 
+		{ 	
+			osc2xs[i*4]     * squash1.c.get(0) + osc2ys[i*4]     * squash1.d.get(0) + osc1ys[i*4],
+			osc2xs[i*4 + 1] * squash1.c.get(1) + osc2ys[i*4 + 1] * squash1.d.get(1) + osc1ys[i*4],
+			osc2xs[i*4 + 2] * squash1.c.get(2) + osc2ys[i*4 + 2] * squash1.d.get(2) + osc1ys[i*4],
+			osc2xs[i*4 + 3] * squash1.c.get(3) + osc2ys[i*4 + 3] * squash1.d.get(3) + osc1ys[i*4], 
+		};
+		epi1xs[i] *= a;
+		epi1ys[i] *= a;
+
+        auto dist2sq = (epi2ys[i] - equant) * (epi2ys[i] - equant) + (epi2xs[i] * epi2xs[i]);
+		mipp::Reg<float> dist2 = mipp::sqrt(dist2sq);
+		mipp::Reg<float> invDist2 = mipp::rsqrt(dist2) + .000001f;
+		cosTheta = (epi2ys[i] - equant) * invDist2; // what we want is the tangent to the orbit at this point
+		sinTheta = -epi2xs[i] * invDist2; // so swap x and y and negate y
+		cos2Theta = cosTheta * cosTheta;
+		sin2Theta = sinTheta * sinTheta;
+		cross = cosTheta * sinTheta * (1.0f - k);
+
+		APRegMatrix squash2 = {
+				.a = cos2Theta + sin2Theta * k, .b = cross,
+				.c = cross, .d = sin2Theta + cos2Theta * k
+		};
+
         
         // get bodies 3 & 4 position by algorithm
 		switch (algo) {
-		case 0: // 1-2-3-(4)
-			epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
-			epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
+			case 0: // 1-2-3-(4)
+			epi3xs[i] = 
+			{
+				osc3xs[i*4]     * squash2.a.get(0) + osc2ys[i*4]     * squash2.b.get(0) + epi2xs[i*4].get(0),
+				osc3xs[i*4 + 1] * squash2.a.get(1) + osc2ys[i*4 + 1] * squash2.b.get(1) + epi2xs[i*4].get(1),
+				osc3xs[i*4 + 2] * squash2.a.get(2) + osc2ys[i*4 + 2] * squash2.b.get(2) + epi2xs[i*4].get(2),
+				osc3xs[i*4 + 3] * squash2.a.get(3) + osc2ys[i*4 + 3] * squash2.b.get(3) + epi2xs[i*4].get(3)
+			};
+			epi3ys[i] = 
+			{
+				osc3xs[i*4]     * squash2.c.get(0) + osc3ys[i*4]     * squash2.d.get(0) + epi2xs[i*4].get(0),
+				osc3xs[i*4 + 1] * squash2.c.get(1) + osc3ys[i*4 + 1] * squash2.d.get(1) + epi2xs[i*4].get(1),
+				osc3xs[i*4 + 2] * squash2.c.get(2) + osc3ys[i*4 + 2] * squash2.d.get(2) + epi2xs[i*4].get(2),
+				osc3xs[i*4 + 3] * squash2.c.get(3) + osc3ys[i*4 + 3] * squash2.d.get(3) + epi2xs[i*4].get(3)
+			};
+			epi3xs[i] *= b;
+			epi3ys[i] *= b;
+
+			dist3sq = (epi3ys[i] - equant) * (epi3ys[i] - equant) + (epi3xs[i] * epi3xs[i]);
+			dist3 = mipp::sqrt(dist3sq);
+			invDist3 = mipp::rsqrt(dist3) + .000001f;
+			cosTheta = (epi2ys[i] - equant) * invDist2; // what we want is the tangent to the orbit at this point
+			sinTheta = -epi2xs[i] * invDist2; // so swap x and y and negate y
+			cos2Theta = cosTheta * cosTheta;
+			sin2Theta = sinTheta * sinTheta;
+			cross = cosTheta * sinTheta * (1.0f - k);
+
+			squash3 = {
+				.a = cos2Theta + sin2Theta * k, .b = cross,
+				.c = cross, .d = sin2Theta + cos2Theta * k
+			};
+
+			epi4xs[i] = 
+			{
+				osc3xs[i*4]     * squash3.a.get(0) + osc3ys[i*4]     * squash3.b.get(0) + epi3xs[i*4].get(0),
+				osc3xs[i*4 + 1] * squash3.a.get(1) + osc3ys[i*4 + 1] * squash3.b.get(1) + epi3xs[i*4].get(1),
+				osc3xs[i*4 + 2] * squash3.a.get(2) + osc3ys[i*4 + 2] * squash3.b.get(2) + epi3xs[i*4].get(2),
+				osc3xs[i*4 + 3] * squash3.a.get(3) + osc3ys[i*4 + 3] * squash3.b.get(3) + epi3xs[i*4].get(3)
+			};
+			epi4ys[i] = 
+			{
+				osc3xs[i*4]     * squash3.c.get(0) + osc3ys[i*4]     * squash3.d.get(0) + epi3xs[i*4].get(0),
+				osc3xs[i*4 + 1] * squash3.c.get(1) + osc3ys[i*4 + 1] * squash3.d.get(1) + epi3xs[i*4].get(1),
+				osc3xs[i*4 + 2] * squash3.c.get(2) + osc3ys[i*4 + 2] * squash3.d.get(2) + epi3xs[i*4].get(2),
+				osc3xs[i*4 + 3] * squash3.c.get(3) + osc3ys[i*4 + 3] * squash3.d.get(3) + epi3xs[i*4].get(3) 
+			};
+			epi4xs[i] *= d;
+			epi4ys[i] *= d;
 			break;
 		case 1: // 1-2-(3), 2-(4)
-			epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
-			epi4 = epi2 + ((osc4Positions[i] * squash2) * (d * osc4Vol));
+			epi3xs[i] = 
+			{
+				osc3xs[i*4]     * squash2.a.get(0) + osc3ys[i*4]     * squash2.b.get(0) + epi2xs[i*4].get(0),
+				osc3xs[i*4 + 1] * squash2.a.get(1) + osc3ys[i*4 + 1] * squash2.b.get(1) + epi2xs[i*4].get(1),
+				osc3xs[i*4 + 2] * squash2.a.get(2) + osc3ys[i*4 + 2] * squash2.b.get(2) + epi2xs[i*4].get(2),
+				osc3xs[i*4 + 3] * squash2.a.get(3) + osc3ys[i*4 + 3] * squash2.b.get(3) + epi2xs[i*4].get(3), 
+			};
+			epi3ys[i] = 
+			{
+				osc3xs[i*4]     * squash2.c.get(0) + osc2ys[i*4]     * squash2.d.get(0)+ epi2ys[i*4].get(0),
+				osc3xs[i*4 + 1] * squash2.c.get(1) + osc2ys[i*4 + 1] * squash2.d.get(1)+ epi2ys[i*4].get(1),
+				osc3xs[i*4 + 2] * squash2.c.get(2) + osc2ys[i*4 + 2] * squash2.d.get(2)+ epi2ys[i*4].get(2),
+				osc3xs[i*4 + 3] * squash2.c.get(3) + osc2ys[i*4 + 3] * squash2.d.get(3)+ epi2ys[i*4].get(3) 
+			};
+			epi4xs[i] = 
+			{
+				osc4xs[i*4]     * squash2.a.get(0) + osc4ys[i*4]     * squash2.b.get(0) + epi2xs[i*4].get(0),
+				osc4xs[i*4 + 1] * squash2.a.get(1) + osc4ys[i*4 + 1] * squash2.b.get(1) + epi2xs[i*4].get(1),
+				osc4xs[i*4 + 2] * squash2.a.get(2) + osc4ys[i*4 + 2] * squash2.b.get(2) + epi2xs[i*4].get(2),
+				osc4xs[i*4 + 3] * squash2.a.get(3) + osc4ys[i*4 + 3] * squash2.b.get(3) + epi2xs[i*4].get(3) 
+			};
+			epi4ys[i] = 
+			{
+				osc4xs[i*4]     * squash2.c.get(0) + osc4ys[i*4]     * squash2.d.get(0) + epi2ys[i*4].get(0),
+				osc4xs[i*4 + 1] * squash2.c.get(1) + osc4ys[i*4 + 1] * squash2.d.get(1) + epi2ys[i*4].get(1),
+				osc4xs[i*4 + 2] * squash2.c.get(2) + osc4ys[i*4 + 2] * squash2.d.get(2) + epi2ys[i*4].get(2),
+				osc4xs[i*4 + 3] * squash2.c.get(3) + osc4ys[i*4 + 3] * squash2.d.get(3) + epi2ys[i*4].get(3)
+			};
+			epi3xs[i] *= c;
+			epi3ys[i] *= c;
+			epi4xs[i] *= d;
+			epi4ys[i] *= d;
+			//epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
+			//epi4 = epi2 + ((osc4Positions[i] * squash2) * (d * osc4Vol));
 			break;
 		case 2:  // 1-(2), 1-3-(4)
-			epi3 = epi1 + ((osc3Positions[i] * squash1) * (c * osc3Vol));
-			epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
+			epi3xs[i] = 
+			{
+				osc3xs[i*4]     * squash1.a.get(0) + osc3ys[i*4]     * squash1.b.get(0) + epi1xs[i*4].get(0),
+				osc3xs[i*4 + 1] * squash1.a.get(1) + osc3ys[i*4 + 1] * squash1.b.get(1) + epi1xs[i*4].get(0),
+				osc3xs[i*4 + 2] * squash1.a.get(2) + osc3ys[i*4 + 2] * squash1.b.get(2) + epi1xs[i*4].get(0),
+				osc3xs[i*4 + 3] * squash1.a.get(3) + osc3ys[i*4 + 3] * squash1.b.get(3) + epi1xs[i*4].get(0),
+			};
+			epi3ys[i] = 
+			{
+				osc3xs[i*4]     * squash1.c.get(0) + osc3ys[i*4]     * squash1.d.get(0) + epi1ys[i*4].get(0),
+				osc3xs[i*4 + 1] * squash1.c.get(1) + osc3ys[i*4 + 1] * squash1.d.get(1) + epi1ys[i*4].get(0),
+				osc3xs[i*4 + 2] * squash1.c.get(2) + osc3ys[i*4 + 2] * squash1.d.get(2) + epi1ys[i*4].get(0),
+				osc3xs[i*4 + 3] * squash1.c.get(3) + osc3ys[i*4 + 3] * squash1.d.get(3) + epi1ys[i*4].get(0)
+			};
+			
+			epi3xs[i] *= c;
+			epi3ys[i] *= c;
+
+			dist3sq = (epi3ys[i] - equant) * (epi3ys[i] - equant) + (epi3xs[i] * epi3xs[i]);
+			dist3 = mipp::sqrt(dist3sq);
+			invDist3 = mipp::rsqrt(dist3) + .000001f;
+			cosTheta = (epi2ys[i] - equant) * invDist2; // what we want is the tangent to the orbit at this point
+			sinTheta = -epi2xs[i] * invDist2; // so swap x and y and negate y
+			cos2Theta = cosTheta * cosTheta;
+			sin2Theta = sinTheta * sinTheta;
+			cross = cosTheta * sinTheta * (1.0f - k);
+
+			squash3 = {
+				.a = cos2Theta + sin2Theta * k, .b = cross,
+				.c = cross, .d = sin2Theta + cos2Theta * k
+			};
+
+			epi4xs[i] = 
+			{
+				osc4xs[i*4]     * squash3.a.get(0) + osc4ys[i*4]     * squash3.b.get(0) + epi3xs[i*4].get(0),
+				osc4xs[i*4 + 1] * squash3.a.get(1) + osc4ys[i*4 + 1] * squash3.b.get(1) + epi3xs[i*4].get(0),
+				osc4xs[i*4 + 2] * squash3.a.get(2) + osc4ys[i*4 + 2] * squash3.b.get(2) + epi3xs[i*4].get(0),
+				osc4xs[i*4 + 3] * squash3.a.get(3) + osc4ys[i*4 + 3] * squash3.b.get(3) + epi3xs[i*4].get(0)
+			};
+			epi4ys[i] = 
+			{
+				osc4xs[i*4]     * squash3.c.get(0) + osc4ys[i*4]     * squash3.d.get(0) + epi3ys[i*4].get(0),
+				osc4xs[i*4 + 1] * squash3.c.get(1) + osc4ys[i*4 + 1] * squash3.d.get(1) + epi3ys[i*4].get(0),
+				osc4xs[i*4 + 2] * squash3.c.get(2) + osc4ys[i*4 + 2] * squash3.d.get(2) + epi3ys[i*4].get(0),
+				osc4xs[i*4 + 3] * squash3.c.get(3) + osc4ys[i*4 + 3] * squash3.d.get(3) + epi3ys[i*4].get(0)
+			};
+			epi4xs[i] *= d;
+			epi4ys[i] *= d;
 			break;
 		case 3:  // 1-(2), 1-(3), 1-(4)
-			epi3 = epi1 + ((osc3Positions[i] * squash1) * (c * osc3Vol));
-			epi4 = epi1 + ((osc4Positions[i] * squash1) * (d * osc4Vol));
+			epi3xs[i] = 
+			{
+				osc3xs[i*4]     * squash1.a.get(0) + osc3ys[i*4]     * squash1.b.get(0) + epi1xs[i*4].get(0),
+				osc3xs[i*4 + 1] * squash1.a.get(1) + osc3ys[i*4 + 1] * squash1.b.get(1) + epi1xs[i*4].get(0),
+				osc3xs[i*4 + 2] * squash1.a.get(2) + osc3ys[i*4 + 2] * squash1.b.get(2) + epi1xs[i*4].get(0),
+				osc3xs[i*4 + 3] * squash1.a.get(3) + osc3ys[i*4 + 3] * squash1.b.get(3) + epi1xs[i*4].get(0)
+			};
+			epi3ys[i] = 
+			{
+				osc3xs[i*4]     * squash1.c.get(0) + osc3ys[i*4]     * squash1.d.get(0) + epi1ys[i*4].get(0),
+				osc3xs[i*4 + 1] * squash1.c.get(1) + osc3ys[i*4 + 1] * squash1.d.get(1) + epi1ys[i*4].get(0),
+				osc3xs[i*4 + 2] * squash1.c.get(2) + osc3ys[i*4 + 2] * squash1.d.get(2) + epi1ys[i*4].get(0),
+				osc3xs[i*4 + 3] * squash1.c.get(3) + osc3ys[i*4 + 3] * squash1.d.get(3) + epi1ys[i*4].get(0)
+			};
+			epi4xs[i] = 
+			{
+				osc4xs[i*4]     * squash1.a.get(0) + osc4ys[i*4]     * squash1.b.get(0) + epi1xs[i*4].get(0),
+				osc4xs[i*4 + 1] * squash1.a.get(1) + osc4ys[i*4 + 1] * squash1.b.get(1) + epi1xs[i*4].get(0),
+				osc4xs[i*4 + 2] * squash1.a.get(2) + osc4ys[i*4 + 2] * squash1.b.get(2) + epi1xs[i*4].get(0),
+				osc4xs[i*4 + 3] * squash1.a.get(3) + osc4ys[i*4 + 3] * squash1.b.get(3) + epi1xs[i*4].get(0)
+			};
+			epi4ys[i] = 
+			{
+				osc4xs[i*4]     * squash1.c.get(0) + osc4ys[i*4]     * squash1.d.get(0) + epi1ys[i*4].get(0),
+				osc4xs[i*4 + 1] * squash1.c.get(1) + osc4ys[i*4 + 1] * squash1.d.get(1) + epi1ys[i*4].get(0),
+				osc4xs[i*4 + 2] * squash1.c.get(2) + osc4ys[i*4 + 2] * squash1.d.get(2) + epi1ys[i*4].get(0),
+				osc4xs[i*4 + 3] * squash1.c.get(3) + osc4ys[i*4 + 3] * squash1.d.get(3) + epi1ys[i*4].get(0)
+			};
+			epi3xs[i] *= c;
+			epi3ys[i] *= c;
+			epi4xs[i] *= d;
+			epi4ys[i] *= d;
 			break;
 		default:
-			epi3 = epi2 + ((osc3Positions[i] * squash2) * (c * osc3Vol));
-			epi4 = epi3 + ((osc4Positions[i] * squash3) * (d * osc4Vol));
 			break;
 		}
         
-        epi2xs[i] = epi2.x; epi2ys[i] = epi2.y;
-		epi3xs[i] = epi3.x; epi3ys[i] = epi3.y;
-		epi4xs[i] = epi4.x; epi4ys[i] = epi4.y;
-    }
-
-	auto synthBufferL = synthBuffer.getWritePointer(0);
-	auto synthBufferR = synthBuffer.getWritePointer(1);
-
-	for (int i = 0; i < std::ceil(((float)numSamples)/4.f); i++)
-    {
-		epi2x = { epi2xs[i * 4], epi2xs[i * 4 + 1], epi2xs[i * 4 + 2], epi2xs[i * 4 + 3] };
-		epi2y = { epi2ys[i * 4], epi2ys[i * 4 + 1], epi2ys[i * 4 + 2], epi2ys[i * 4 + 3] };
-		epi3x = { epi3xs[i * 4], epi3xs[i * 4 + 1], epi3xs[i * 4 + 2], epi3xs[i * 4 + 3] };
-		epi3y = { epi3ys[i * 4], epi3ys[i * 4 + 1], epi3ys[i * 4 + 2], epi3ys[i * 4 + 3] };
-		epi4x = { epi4xs[i * 4], epi4xs[i * 4 + 1], epi4xs[i * 4 + 2], epi4xs[i * 4 + 3] };
-		epi4y = { epi4ys[i * 4], epi4ys[i * 4 + 1], epi4ys[i * 4 + 2], epi4ys[i * 4 + 3] };
-		
 		// ----------------------------------------
 		// interpret bodies' positions by algorithm
 		// ----------------------------------------
 
-		auto dist4 = mipp::sqrt((epi4y - equant) * (epi4y - equant) + (epi4x * epi4x)) + .000001f;
-		auto dist3 = mipp::sqrt((epi3y - equant) * (epi3y - equant) + (epi3x * epi3x)) + .000001f;
-		auto dist2 = mipp::sqrt((epi2y - equant) * (epi2y - equant) + (epi2x * epi2x)) + .000001f;
-		sine4 = (epi4y - equant) / dist4;
-		cos4 =   epi4x / dist4;
-		sine3 = (epi3y - equant) / dist3;
-		cos3 = epi3x / dist3;
-		sine2 = (epi2y - equant) / dist2;
-		cos2 = epi2x / dist2;
+		sine4 = invDist4 * (epi4ys[i] - equant);
+		cos4 =   epi4xs[i] * invDist4;
+		sine3 = (epi3ys[i] - equant) * invDist3;
+		cos3 = epi3xs[i] * invDist3;
+		sine2 = (epi2ys[i] - equant) * invDist2;
+		cos2 = epi2xs[i] * invDist2;
 		
-		demodSample2L = (epi2y - equant) * demodVol; // adjustable balancing term
-		demodSample2R = epi2x * demodVol;
-		demodSample3L = (epi3y - equant) * demodVol;
-		demodSample3R = epi3x * demodVol;
-		demodSample4L = (epi4y - equant) * demodVol;
-		demodSample4R = epi4x * demodVol;
+		demodSample2L = (epi2ys[i] - equant) * demodVol; // adjustable balancing term
+		demodSample2R = epi2xs[i] * demodVol;
+		demodSample3L = (epi3ys[i] - equant) * demodVol;
+		demodSample3R = epi3xs[i] * demodVol;
+		demodSample4L = (epi4ys[i] - equant) * demodVol;
+		demodSample4R = epi4xs[i] * demodVol;
 
 		// since mod samples are angle-only, we need to reapply their envelope values
 		sine2 *= envs[1]->getOutput();
@@ -411,7 +541,7 @@ void SynthVoice2::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 	finishBlock(numSamples);
 }
 
-void SynthVoice2::updateParams(int blockSize)
+void SynthVoice3::updateParams(int blockSize)
 {
 	algo = (int)getValue(proc.timbreParams.algo);
 	equant = getValue(proc.timbreParams.equant);
@@ -458,7 +588,7 @@ void SynthVoice2::updateParams(int blockSize)
 	osc1Params.wave = waveForChoice(int(getValue(proc.osc1Params.wave)));
 	osc1Params.tones = getValue(proc.osc1Params.tones);
 	osc1Params.phaseShift = getValue(proc.osc1Params.phase);
-	osc1Vol = getValue(proc.osc1Params.volume);
+	osc1Params.leftGain = osc1Params.rightGain = getValue(proc.osc1Params.volume);
 
 	switch(proc.osc1Params.env->getUserValueInt())
 	{
@@ -483,7 +613,7 @@ void SynthVoice2::updateParams(int blockSize)
 	osc2Params.wave = waveForChoice(int(getValue(proc.osc2Params.wave)));
 	osc2Params.tones = getValue(proc.osc2Params.tones);
 	osc2Params.phaseShift = getValue(proc.osc2Params.phase);
-	osc2Vol = getValue(proc.osc2Params.volume);
+	osc2Params.leftGain = osc2Params.rightGain = getValue(proc.osc2Params.volume);
 	switch(proc.osc2Params.env->getUserValueInt())
 	{
 	case 0:
@@ -506,7 +636,7 @@ void SynthVoice2::updateParams(int blockSize)
 	osc3Params.wave = waveForChoice(int(getValue(proc.osc3Params.wave)));
 	osc3Params.tones = getValue(proc.osc3Params.tones);
 	osc3Params.phaseShift = getValue(proc.osc3Params.phase);
-	osc3Vol = getValue(proc.osc3Params.volume);
+	osc3Params.leftGain = osc3Params.rightGain = getValue(proc.osc3Params.volume);
 	switch(proc.osc3Params.env->getUserValueInt())
 	{
 	case 0:
@@ -528,7 +658,7 @@ void SynthVoice2::updateParams(int blockSize)
 	osc4Params.wave = waveForChoice(int(getValue(proc.osc4Params.wave)));
 	osc4Params.tones = getValue(proc.osc4Params.tones);
 	osc4Params.phaseShift = getValue(proc.osc4Params.phase);
-	osc4Vol = getValue(proc.osc4Params.volume);
+	osc4Params.leftGain = osc4Params.rightGain = getValue(proc.osc4Params.volume);
 	switch(proc.osc4Params.env->getUserValueInt())
 	{
 	case 0:
@@ -799,39 +929,39 @@ void SynthVoice2::updateParams(int blockSize)
 	proc.modMatrix.setPolyValue(*this, proc.modSrcMSEG4, mseg4.getOutput());
 }
 
-bool SynthVoice2::isVoiceActive()
+bool SynthVoice3::isVoiceActive()
 {
 	return isActive();
 }
 
-float SynthVoice2::getFilterCutoffNormalized()
+float SynthVoice3::getFilterCutoffNormalized()
 {
 	float freq = filter.getFrequency();
 	auto range = proc.filterParams.frequency->getUserRange();
 	return range.convertTo0to1(juce::jlimit(range.start, range.end, gin::getMidiNoteFromHertz(freq)));
 }
 
-float SynthVoice2::getMSEG1Phase()
+float SynthVoice3::getMSEG1Phase()
 {
 	return mseg1.getCurrentPhase();
 }
 
-float SynthVoice2::getMSEG2Phase()
+float SynthVoice3::getMSEG2Phase()
 {
 	return mseg2.getCurrentPhase();
 }
 
-float SynthVoice2::getMSEG3Phase()
+float SynthVoice3::getMSEG3Phase()
 {
 	return mseg3.getCurrentPhase();
 }
 
-float SynthVoice2::getMSEG4Phase()
+float SynthVoice3::getMSEG4Phase()
 {
 	return mseg4.getCurrentPhase();
 }
 
-gin::Wave SynthVoice2::waveForChoice(int choice)
+gin::Wave SynthVoice3::waveForChoice(int choice)
 {
 	switch (choice)
 	{

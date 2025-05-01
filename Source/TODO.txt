@@ -1,14 +1,53 @@
-implement quadosc as a wavetable
-    need a function to read from phi and phi + pi/2 at once
-    no detune/spread, but bring back pan + phase
 
-relocate StereoPosition and matrix mult from QuadOsc.h to ... somewhere accessible to synthvoice2
-
-run at 4x...
-
+To run at 4x...
 
 2 calc squash params as vectors
 3 make voice calc 4x FFT forward / cut above downsampled SR
 4 ship it out to synth, downsample with HIIR
 
 clean up Oscillator params
+
+get phase working properly again (measure phase shifts and shift them!)
+
+-- synthvoice2
+1. make Position into a mipp::Reg<float>, make a single APQuadOsc that does a 
+    renderPositions into a register of the 4 osc positions
+    (or rather, two such at once, oscXs and oscYs)
+2. right now, we operate sample by sample, then fill up registers, then operate
+    on those registers. Start the whole block with registers.
+3. in calculating the squash matrices, we shd cache the distances for use later
+4. envelope and volume calcs shd be looked at: also, vectorize!
+5. might it be possible to vectorize the whole chain?
+    -- from reading wavetable values, through plotting positions, applying squash,
+        etc., etc.
+
+    -- but wait, aren't we calculating squash wrong? we don't know the algo, so
+       we don't know the positions or the angles. we haven't applied the envelopes,
+       so we don't know the radii.
+
+6. from the top:
+    -- [per block] update params , resize buffer
+    -- [per block] read env values (smooth?) into buffers, render positions (w/env), 
+    -- [per register] interpret planets, apply squash,
+       extract sine/cos and demod samples, mix by algo and demodmix
+
+
+-- also: downsampling
+
+    rewrite downsample algo for mipp registers
+
+-- add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
+
+//======================
+
+apply osc_Vol at generation stage (make it an oscParam)
+
+fold up single sample loop into registers of four samples
+
+mipp::Reg<float> osc1xs[8], osc1ys[8], etc.
+tmp for env values?
+interpret planets --> mipp::Reg<float> plt1, 2, 3, 4 (PITA mask)
+calc invdistance234, squash234, apply 234 to planets
+get sin/cos234 via sqdist234 (squashed distance)
+combine with demod samples via demodmix and algo
+
