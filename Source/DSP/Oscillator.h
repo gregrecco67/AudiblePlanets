@@ -23,7 +23,6 @@ public:
     //          float asym = 0.0f;
     // };
 
-    void renderPositions(float note, const Params& params, Position positions[], const int numSamples);
     void renderFloats(float note, const Params& params, float* xs, float* ys, const int numSamples);
     
 };

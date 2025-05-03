@@ -91,7 +91,8 @@ void Editor::resized()
     setGrid(&mseg,     0,  4, 2, 8, 5);
 	orbitViz.setBounds( 8 * 56 + 5, 4 * 70 + 2 * 23, 
 		8 * 56, 5 * 70);
-	liveViz.setBounds( 8 * 56.f, 4 * 70.f + 2 * 23.f,
+	liveViz.setBounds( static_cast<int>(8 * 56.f),
+                      static_cast<int>(4 * 70.f + 2 * 23.f),
 		75, 25);
     speedSlider.setBounds(14 * 56 , 4 * 70 + 2 * 23, 112, 25);
 
@@ -130,7 +131,7 @@ void Editor::timerCallback() {
     orbitViz.setEpi1Rad(live ? proc.viz.epi1Rad : proc.viz2.epi1Rad);
     orbitViz.setEpi2Rad(live ? proc.viz.epi2Rad : proc.viz2.epi2Rad);
     orbitViz.setEpi3Rad(live ? proc.viz.epi3Rad : proc.viz2.epi3Rad);
-    orbitViz.setAlgo(live ? proc.viz.algo : proc.viz2.algo);
+    orbitViz.setAlgo(static_cast<int>(live ? proc.viz.algo : proc.viz2.algo));
     orbitViz.setDefPhase(vizDefPhase);
     orbitViz.setEpi1Phase(vizEpi1Phase);
     orbitViz.setEpi2Phase(vizEpi2Phase);

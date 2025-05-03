@@ -597,16 +597,9 @@ public:
 		: gin::ParamBox(name)
 	{
 		setName(name);
-
-		auto &timbreparams = proc.timbreParams;
-		auto &globalParams = proc.globalParams;
-		addControl(equant = new APKnob(timbreparams.equant, true), 0, 0);
-		addControl(new APKnob(timbreparams.pitch), 0, 1);
-		//addControl(new APKnob(timbreparams.blend), 1, 1);
-		addControl(algo = new APKnob(timbreparams.algo), 1, 0);
-		addControl(new APKnob(timbreparams.demodmix), 2, 0);
-		addControl(new APKnob(timbreparams.demodVol, true), 2, 1);
-		addControl(squash = new APKnob(globalParams.squash), 3, 0);
+		addControl(equant = new APKnob(proc.timbreParams.equant, true), 0, 0);
+		addControl(new APKnob(proc.timbreParams.pitch), 0, 1);
+		addControl(algo = new APKnob(proc.timbreParams.algo), 1, 0);
 		addControl(new APKnob(proc.globalParams.velSens), 3, 1);
 	}
 	

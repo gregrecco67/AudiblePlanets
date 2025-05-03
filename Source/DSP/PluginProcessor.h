@@ -112,7 +112,7 @@ public:
 	{
 		TimbreParams() = default;
 
-		gin::Parameter::Ptr equant, pitch, demodmix, algo, demodVol;
+		gin::Parameter::Ptr equant, pitch, algo;
 
 		void setup(APAudioProcessor& p);
 

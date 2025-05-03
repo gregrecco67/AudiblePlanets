@@ -92,7 +92,22 @@ public:
 	void noteOn() noexcept;
 	void noteOff() noexcept;
 	float getNextSample() noexcept;
+    void advance(int frames) {
+        for (int i = 0; i < frames; i++) {
+            getNextSample();
+        }
+    }
 	void processMultiplying(juce::AudioSampleBuffer& buffer);
+    void processMultiplying(float* buffer, const int numSamples, const float volume)
+    {
+        for (int i = 0; i < numSamples; ++i)
+            buffer[i] *= ((float)getNextSample() * volume);
+    }
+    void dumpValues(float* buffer, const int numSamples)
+    {
+        for (int i = 0; i < numSamples; ++i)
+            buffer[i] = (float)getNextSample();
+    }
     static double convex[2000], concave[2000];
 	static bool isInitialized;
     

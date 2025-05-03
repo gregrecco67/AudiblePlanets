@@ -78,11 +78,11 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 		if (parameters.aCurve > 0.0f) {
-			curveVal = convex[(int)(linearIdxVal * 2000.)];
+			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			finalOut = std::clamp((1.0 - parameters.aCurve) * linearIdxVal + parameters.aCurve * curveVal, 0.0, 1.0);
 		}
 		else {
-			curveVal = concave[(int)(linearIdxVal * 2000.)];
+			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			finalOut = std::clamp((1.0 + parameters.aCurve) * linearIdxVal - parameters.aCurve * curveVal, 0.0, 1.0);
 		}
 
@@ -104,11 +104,11 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 		if (parameters.aCurve > 0.0f) {
-			curveVal = convex[(int)(linearIdxVal * 2000.)];
+			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			finalOut = std::clamp((1.0 - parameters.aCurve) * linearIdxVal + parameters.aCurve * curveVal, 0.0, 1.0);
 		}
 		else {
-			curveVal = concave[(int)(linearIdxVal * 2000.)];
+			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			finalOut = std::clamp((1.0 + parameters.aCurve) * linearIdxVal - parameters.aCurve * curveVal, 0.0, 1.0);
 		}
 
@@ -137,11 +137,11 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 		if (parameters.dRCurve > 0.0) {
-			curveVal = convex[(int)(linearIdxVal * 2000.)];
+			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			unmappedVal = std::clamp(((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal), 0.0, 1.0);
 		}
 		else {
-			curveVal = concave[(int)(linearIdxVal * 2000.)];
+			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			unmappedVal = std::clamp(((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal), 0.0, 1.0);
 		}
 
@@ -163,11 +163,11 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 		if (parameters.dRCurve > 0.0) {
-			curveVal = convex[(int)(linearIdxVal * 2000.)];
+			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			unmappedVal = std::clamp(((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal), 0.0, 1.0);
 		}
 		else {
-			curveVal = concave[(int)(linearIdxVal * 2000.)];
+			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			unmappedVal = std::clamp(((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal), 0.0, 1.0);
 		}
 
@@ -202,11 +202,11 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 		if (parameters.dRCurve > 0.0) {
-			curveVal = convex[(int)(linearIdxVal * 2000.)];
+			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			unmappedVal = std::clamp((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal, 0.0, 1.0);
 		}
 		else if (parameters.dRCurve <= 0.0) {
-			curveVal = concave[(int)(linearIdxVal * 2000.)];
+			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			unmappedVal = std::clamp((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal, 0.0, 1.0);
 		}
 
@@ -220,14 +220,14 @@ float Envelope::getNextSample() noexcept
 	case State::ADRrelease:
 	{
 		linearIdxVal -= releaseRate;
-		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
+		linearIdxVal = std::clamp(linearIdxVal, 0.0, 0.999);
 
 		if (parameters.dRCurve > 0.0) {
-			curveVal = convex[(int)(linearIdxVal * 2000.)];
+			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			unmappedVal = std::clamp((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal, 0.0, 1.0);
 		}
 		else if (parameters.dRCurve <= 0.0) {
-			curveVal = concave[(int)(linearIdxVal * 2000.)];
+			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 			unmappedVal = std::clamp((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal, 0.0, 1.0);
 		}
 
@@ -335,11 +335,11 @@ void Envelope::processMultiplying(juce::AudioSampleBuffer& buffer) {
 			linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 			if (parameters.dRCurve > 0.0) {
-				curveVal = convex[(int)(linearIdxVal * 2000.)];
+				curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 				unmappedVal = std::clamp(((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal), 0.0, 1.0);
 			}
 			else {
-				curveVal = concave[(int)(linearIdxVal * 2000.)];
+				curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 				unmappedVal = std::clamp(((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal), 0.0, 1.0);
 			}
 
@@ -361,11 +361,11 @@ void Envelope::processMultiplying(juce::AudioSampleBuffer& buffer) {
 			linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 			if (parameters.dRCurve > 0.0) {
-				curveVal = convex[(int)(linearIdxVal * 2000.)];
+				curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 				unmappedVal = std::clamp(((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal), 0.0, 1.0);
 			}
 			else {
-				curveVal = concave[(int)(linearIdxVal * 2000.)];
+				curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
 				unmappedVal = std::clamp(((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal), 0.0, 1.0);
 			}
 

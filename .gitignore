@@ -4,6 +4,7 @@ libs/
 out/
 build/
 ninja-build/
+xcode-build/
 
 # Prerequisites
 *.d
