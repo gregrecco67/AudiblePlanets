@@ -132,15 +132,6 @@ private:
 
     Envelope env1, env2, env3, env4;
     std::array<Envelope*, 4> envs{&env1, &env2, &env3, &env4};
-    
-    // Position epi1{ 1.0f, 0.0f };
-    // Position epi2{ 1.0f,  0.0f };
-    // Position epi3{ 1.0f, 0.0f };
-    // Position epi4{ 1.0f, 0.0f };
-    // Position osc1Positions[32];
-    // Position osc2Positions[32];
-    // Position osc3Positions[32];
-    // Position osc4Positions[32];
 
     float osc1xs[32];
     float osc1ys[32];
@@ -160,16 +151,18 @@ private:
     mipp::Reg<float> epi4xs[8];
     mipp::Reg<float> epi4ys[8];
 
+    mipp::Reg<float> epi4sEqnt[8], epi3sEqnt[8], epi2sEqnt[8], epi1sEqnt[8];
+     
+     mipp::Reg<float> osc1x, osc1y, osc2x, osc2y, osc3x, osc3y, osc4x, osc4y;
 
     mipp::Reg<float> dist2sq, dist2, invDist2;
     mipp::Reg<float> dist3sq, dist3, invDist3;
     mipp::Reg<float> dist4sq, dist4, invDist4;
-    APRegMatrix squash1, squash2, squash3;
 
 
 
     float currentMidiNote = -1;
-    gin::StereoOscillator::Params osc1Params, osc2Params, osc3Params, osc4Params;
+    APOscillator::Settings osc1Params, osc2Params, osc3Params, osc4Params;
     float osc1Freq = 0.0f, osc2Freq = 0.0f, osc3Freq = 0.0f, osc4Freq = 0.0f;
     float osc1Vol = 0.0f, osc2Vol = 0.0f, osc3Vol = 0.0f, osc4Vol = 0.0f;
     int algo{ 0 };

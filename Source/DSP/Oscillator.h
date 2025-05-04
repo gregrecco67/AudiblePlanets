@@ -4,26 +4,44 @@
 
 
 struct Position;
-class APOscillator : public gin::StereoOscillator
+class APOscillator // : public gin::StereoOscillator
 {
 public:
-    APOscillator (gin::BandLimitedLookupTables& bllt_) : gin::StereoOscillator (bllt_) {}
+    APOscillator (gin::BandLimitedLookupTables& bllt_); // : gin::StereoOscillator (bllt_) {}
     ~APOscillator() = default;
 
-    // struct Params
-    // {
-    //     gin::Wave wave = gin::Wave::sine;
-    //          float leftGain = 1.0;
-    //          float rightGain = 1.0;
-    //     float tones = 1.0f;
-    //          float pan = 0.0f;
-    //     float phaseShift = 0.0f;
-    //          float pw = 0.5;
-    //          float fold = 0.0f;
-    //          float asym = 0.0f;
-    // };
+    float qrtPhase(const float phase_) {
+        float p2 = phase_ + 0.25f;
+        if (p2 >= 1.0f) {
+            p2 -= 1.0f;
+        }
+        return p2;
+    }
 
-    void renderFloats(float note, const Params& params, float* xs, float* ys, const int numSamples);
+    void noteOn (float p = -1) {
+        if (p >= 0.0f)
+            phase = p;
+        else
+            phase = 0.0f;
+    }
+
+    void setSampleRate (double sr)  { 
+        sampleRate = sr;
+        invSampleRate = 1.0f / sampleRate; 
+    }
+
+    struct Settings
+    {
+        gin::Wave wave = gin::Wave::sine;
+        float vol = 0.0f;
+    };
+
+    void renderFloats(float note, const Settings& settings, float* xs, float* ys, const int numSamples);
+
+    gin::BandLimitedLookupTables& bllt;
+    float sampleRate = 44100.0f;
+    float invSampleRate = 1.0f / sampleRate;
+    float phase = 0.0f;
     
 };
 

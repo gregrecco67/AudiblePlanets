@@ -2,12 +2,18 @@
 
 #include "SynthVoice3.h"
 
-void APOscillator::renderFloats(float freq, const Params& params, float* xs, float* ys, const int numSamples) {
-    float delta = 1.0f / (float ((1.0f / freq) * sampleRate));
+APOscillator::APOscillator(gin::BandLimitedLookupTables& bllt_)
+    : bllt(bllt_)
+{
+    setSampleRate(sampleRate); //bllt.setSampleRate(sampleRate);
+}
+
+void APOscillator::renderFloats(float freq, const Settings& settings, float* xs, float* ys, const int numSamples) {
+    float delta = freq * invSampleRate;
     for (int i = 0; i < numSamples; i++)
     {
-        xs[i] = bllt.process(params.wave, freq, phase); // optional: add fold param? do postprocess
-        ys[i] = bllt.process(params.wave, freq, qrtPhase(phase));
+        xs[i] = bllt.process(settings.wave, freq, phase) * settings.vol;
+        ys[i] = bllt.process(settings.wave, freq, qrtPhase(phase)) * settings.vol;
         phase += delta;
         if (phase >= 1.0f)
             phase -= 1.0f;

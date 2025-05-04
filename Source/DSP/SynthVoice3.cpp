@@ -199,8 +199,7 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 	osc2.renderFloats(osc2Freq, osc2Params, osc2xs, osc2ys, numSamples);
 	osc3.renderFloats(osc3Freq, osc3Params, osc3xs, osc3ys, numSamples);
 	osc4.renderFloats(osc4Freq, osc4Params, osc4xs, osc4ys, numSamples);
-	
-	// float k = 1.f - getValue(proc.globalParams.squash); 
+
     
 	// the whole enchilada
 	for (int i = 0; i < std::ceil(((float)numSamples)/4.f); i++)
@@ -214,7 +213,6 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         float c = envs[2]->getOutput();
         float d = envs[3]->getOutput();
         
-        mipp::Reg<float> osc1x, osc1y, osc2x, osc2y, osc3x, osc3y, osc4x, osc4y;
 		osc1x.load(&osc1xs[i*4]);
 		osc1y.load(&osc1ys[i*4]);
         osc2x.load(&osc2xs[i*4]);
@@ -226,86 +224,61 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         
         epi1xs[i] = osc1x * a;
 		epi1ys[i] = osc1y * a;
-
-		auto dist1sq = (epi1ys[i] - equant) * (epi1ys[i] - equant) + (epi1xs[i] * epi1xs[i]);
-		mipp::Reg<float> dist1 = mipp::sqrt(dist1sq);
-		mipp::Reg<float> invDist1 = mipp::rsqrt(dist1 + .000001f);
 	
 		epi2xs[i] = osc2x * b + epi1xs[i];
 		epi2ys[i] = osc2y * b + epi1ys[i];
 
         dist2sq = (epi2ys[i] - equant) * (epi2ys[i] - equant) + (epi2xs[i] * epi2xs[i]);
 		dist2 = mipp::sqrt(dist2sq);
-		invDist2 = mipp::rsqrt(dist2 + .000001f);
+        invDist2 = mipp::Reg<float>(1.0f) / (dist2 + .000001f);
 
 		// get bodies 3 & 4 position by algorithm
-		switch (algo) {
-			case 0: // 1-2-3-(4)
-			epi3xs[i] = osc3x * c + epi2xs[i];
-			epi3ys[i] = osc3y * c + epi2ys[i];
+		// replace switch with mask
 
-			dist3sq = (epi3ys[i] - equant) * (epi3ys[i] - equant) + (epi3xs[i] * epi3xs[i]);
-			dist3 = mipp::sqrt(dist3sq);
-			invDist3 = mipp::rsqrt(dist3 + .000001f);
-
-			epi4xs[i] = osc4x * d + epi3xs[i];
-			epi4ys[i] = osc4y * d + epi3ys[i];
-			break;
-		case 1: // 1-2-(3), 2-(4)
-			epi3xs[i] = osc3x * c + epi2xs[i];
-			epi3ys[i] = osc3y * c + epi2ys[i];
-
-			dist3sq = (epi3ys[i] - equant) * (epi3ys[i] - equant) + (epi3xs[i] * epi3xs[i]);
-			dist3 = mipp::sqrt(dist3sq);
-			invDist3 = mipp::rsqrt(dist3 + .000001f);
-
-			epi4xs[i] = osc4x * d + epi2xs[i];
-			epi4ys[i] = osc4y * d + epi2ys[i];
-			break;
-		case 2:  // 1-(2), 1-3-(4)
-			epi3xs[i] = osc3x * c + epi1xs[i];
-			epi3ys[i] = osc3y * c + epi1ys[i];
-
-			dist3sq = (epi3ys[i] - equant) * (epi3ys[i] - equant) + (epi3xs[i] * epi3xs[i]);
-			dist3 = mipp::sqrt(dist3sq);
-			invDist3 = mipp::rsqrt(dist3 + .000001f);
-
-			epi4xs[i] = osc4x * d + epi3xs[i];
-			epi4ys[i] = osc4y * d + epi3ys[i];
-			break;
-		case 3:  // 1-(2), 1-(3), 1-(4)
-			epi3xs[i] = osc3x * c + epi1xs[i];
-			epi3ys[i] = osc3y * c + epi1ys[i];
-			epi4xs[i] = osc4x * d + epi1xs[i];
-			epi4ys[i] = osc4y * d + epi1ys[i];
-			break;
-		default:
-			epi3xs[i] = osc3x * c + epi2xs[i];
-			epi3ys[i] = osc3y * c + epi2ys[i];
-
-			dist3sq = (epi3ys[i] - equant) * (epi3ys[i] - equant) + (epi3xs[i] * epi3xs[i]);
-			dist3 = mipp::sqrt(dist3sq);
-			invDist3 = mipp::rsqrt(dist3 + .000001f);
-
-			epi4xs[i] = osc4x * d + epi3xs[i];
-			epi4ys[i] = osc4y * d + epi3ys[i];
-			break;
-		}
+        switch (algo) {
+            case 0:
+                epi3xs[i] = (osc3x * c) + epi2xs[i];
+                epi3ys[i] = (osc3y * c) + epi2ys[i];
+                epi4xs[i] = (osc4x * d) + epi3xs[i];
+                epi4ys[i] = (osc4y * d) + epi3ys[i];
+                break;
+            case 1:
+                epi3xs[i] = (osc3x * c) + epi2xs[i];
+                epi3ys[i] = (osc3y * c) + epi2ys[i];
+                epi4xs[i] = (osc4x * d) + epi2xs[i];
+                epi4ys[i] = (osc4y * d) + epi2ys[i];
+                break;
+            case 2:
+                epi3xs[i] = (osc3x * c) + epi1xs[i];
+                epi3ys[i] = (osc3y * c) + epi1ys[i];
+                epi4xs[i] = (osc4x * d) + epi3xs[i];
+                epi4ys[i] = (osc4y * d) + epi3ys[i];
+                break;
+            case 3:
+                epi3xs[i] = (osc3x * c) + epi1xs[i];
+                epi3ys[i] = (osc3y * c) + epi1ys[i];
+                epi4xs[i] = (osc4x * d) + epi1xs[i];
+                epi4ys[i] = (osc4y * d) + epi1ys[i];
+                break;
+        }
         
+		dist3sq = (epi3ys[i] - equant) * (epi3ys[i] - equant) + (epi3xs[i] * epi3xs[i]);
+		dist3 = mipp::sqrt(dist3sq);
+		invDist3 = mipp::Reg<float>(1.0f) / (dist3 + .000001f);
 		dist4sq = (epi4ys[i] - equant) * (epi4ys[i] - equant) + (epi4xs[i] * epi4xs[i]);
 		dist4 = mipp::sqrt(dist4sq);
-		invDist4 = mipp::rsqrt(dist4 + .000001f);
+		invDist4 = mipp::Reg<float>(1.0f) / (dist4 + .000001f);
 
 		// ----------------------------------------
 		// interpret bodies' positions by algorithm
 		// ----------------------------------------
 
-		sine4 = invDist4 * (epi4ys[i] - equant) * d;
+		sine4 = (epi4ys[i] - equant) * invDist4 * d;
 		cos4 =   epi4xs[i] * invDist4 * d;
 		sine3 = (epi3ys[i] - equant) * invDist3 * c;
-		cos3 = epi3xs[i] * invDist3 * c;
-		sine2 = (epi2ys[i] - equant) * invDist2 * c;
-		cos2 = epi2xs[i] * invDist2 * c;
+		cos3 =   epi3xs[i] * invDist3 * c;
+		sine2 = (epi2ys[i] - equant) * invDist2 * b;
+		cos2 =   epi2xs[i] * invDist2 * b;
 		
 		// 6. mix by ALGO
 		switch (algo) {
@@ -324,10 +297,6 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 		case 3:
 			sampleL = (sine2 + sine3 + sine4) * 0.333f;
 			sampleR = (cos2 + cos3 + cos4) * 0.333f;
-			break;
-		default:
-			sampleL = sine4;
-			sampleR = cos4;
 			break;
 		}
 		sampleL = mipp::sat(sampleL, -1.0f, 1.0f);
@@ -419,9 +388,9 @@ void SynthVoice3::updateParams(int blockSize)
 	}
 
 	osc1Params.wave = waveForChoice(int(getValue(proc.osc1Params.wave)));
-	osc1Params.tones = getValue(proc.osc1Params.tones);
-	osc1Params.phaseShift = getValue(proc.osc1Params.phase);
-	osc1Params.leftGain = osc1Params.rightGain = getValue(proc.osc1Params.volume);
+	osc1Params.vol = getValue(proc.osc1Params.volume);
+	//osc1Params.tones = getValue(proc.osc1Params.tones);
+	//osc1Params.phaseShift = getValue(proc.osc1Params.phase);
 
 	switch(proc.osc1Params.env->getUserValueInt())
 	{
@@ -444,9 +413,9 @@ void SynthVoice3::updateParams(int blockSize)
 	//==================================================
 
 	osc2Params.wave = waveForChoice(int(getValue(proc.osc2Params.wave)));
-	osc2Params.tones = getValue(proc.osc2Params.tones);
-	osc2Params.phaseShift = getValue(proc.osc2Params.phase);
-	osc2Params.leftGain = osc2Params.rightGain = getValue(proc.osc2Params.volume);
+	// osc2Params.tones = getValue(proc.osc2Params.tones);
+	// osc2Params.phaseShift = getValue(proc.osc2Params.phase);
+	osc2Params.vol = getValue(proc.osc2Params.volume);
 	switch(proc.osc2Params.env->getUserValueInt())
 	{
 	case 0:
@@ -467,9 +436,9 @@ void SynthVoice3::updateParams(int blockSize)
 	// ------------------
 
 	osc3Params.wave = waveForChoice(int(getValue(proc.osc3Params.wave)));
-	osc3Params.tones = getValue(proc.osc3Params.tones);
-	osc3Params.phaseShift = getValue(proc.osc3Params.phase);
-	osc3Params.leftGain = osc3Params.rightGain = getValue(proc.osc3Params.volume);
+	osc3Params.vol = getValue(proc.osc3Params.volume);
+	// osc3Params.tones = getValue(proc.osc3Params.tones);
+	// osc3Params.phaseShift = getValue(proc.osc3Params.phase);
 	switch(proc.osc3Params.env->getUserValueInt())
 	{
 	case 0:
@@ -489,9 +458,9 @@ void SynthVoice3::updateParams(int blockSize)
 	// osc4 
 	// -------------
 	osc4Params.wave = waveForChoice(int(getValue(proc.osc4Params.wave)));
-	osc4Params.tones = getValue(proc.osc4Params.tones);
-	osc4Params.phaseShift = getValue(proc.osc4Params.phase);
-	osc4Params.leftGain = osc4Params.rightGain = getValue(proc.osc4Params.volume);
+	osc4Params.vol = getValue(proc.osc4Params.volume);
+	// osc4Params.tones = getValue(proc.osc4Params.tones);
+	// osc4Params.phaseShift = getValue(proc.osc4Params.phase);
 	switch(proc.osc4Params.env->getUserValueInt())
 	{
 	case 0:
@@ -810,7 +779,6 @@ gin::Wave SynthVoice3::waveForChoice(int choice)
 		return gin::Wave::pinkNoise;
 	case 5:
 		return gin::Wave::whiteNoise;
-	default:
-		return gin::Wave::sine;
 	}
+    return gin::Wave::sine;
 }
