@@ -355,6 +355,7 @@ void SynthVoice3::updateParams(int blockSize)
 	proc.modMatrix.setPolyValue(*this, proc.modSrcNote, note.initialNote / 127.0f);
 	currentMidiNote = noteSmoother.getCurrentValue() * 127.0f;
 	if (glideInfo.glissando) currentMidiNote = (float)juce::roundToInt(currentMidiNote);
+	noteSmoother.process(blockSize);
 
 	float dummy;
 	float remainder = std::modf(currentMidiNote, &dummy);
@@ -392,21 +393,7 @@ void SynthVoice3::updateParams(int blockSize)
 	//osc1Params.tones = getValue(proc.osc1Params.tones);
 	//osc1Params.phaseShift = getValue(proc.osc1Params.phase);
 
-	switch(proc.osc1Params.env->getUserValueInt())
-	{
-	case 0:
-		envs[0] = &env1;
-		break;
-	case 1:
-		envs[0] = &env2;
-		break;
-	case 2:
-		envs[0] = &env3;
-		break;
-	case 3:
-		envs[0] = &env4;
-		break;
-	}
+	envs[0] = envsByNum[proc.osc1Params.env->getUserValueInt()];
 
 	// osc 2
 	// 
@@ -416,21 +403,7 @@ void SynthVoice3::updateParams(int blockSize)
 	// osc2Params.tones = getValue(proc.osc2Params.tones);
 	// osc2Params.phaseShift = getValue(proc.osc2Params.phase);
 	osc2Params.vol = getValue(proc.osc2Params.volume);
-	switch(proc.osc2Params.env->getUserValueInt())
-	{
-	case 0:
-		envs[1] = &env1;
-		break;
-	case 1:
-		envs[1] = &env2;
-		break;
-	case 2:
-		envs[1] = &env3;
-		break;
-	case 3:
-		envs[1] = &env4;
-		break;
-	}
+	envs[1] = envsByNum[proc.osc2Params.env->getUserValueInt()];
 
 	// osc 3
 	// ------------------
@@ -439,21 +412,7 @@ void SynthVoice3::updateParams(int blockSize)
 	osc3Params.vol = getValue(proc.osc3Params.volume);
 	// osc3Params.tones = getValue(proc.osc3Params.tones);
 	// osc3Params.phaseShift = getValue(proc.osc3Params.phase);
-	switch(proc.osc3Params.env->getUserValueInt())
-	{
-	case 0:
-		envs[2] = &env1;
-		break;
-	case 1:
-		envs[2] = &env2;
-		break;
-	case 2:
-		envs[2] = &env3;
-		break;
-	case 3:
-		envs[2] = &env4;
-		break;
-	}
+	envs[2] = envsByNum[proc.osc3Params.env->getUserValueInt()];
 
 	// osc4 
 	// -------------
@@ -461,22 +420,7 @@ void SynthVoice3::updateParams(int blockSize)
 	osc4Params.vol = getValue(proc.osc4Params.volume);
 	// osc4Params.tones = getValue(proc.osc4Params.tones);
 	// osc4Params.phaseShift = getValue(proc.osc4Params.phase);
-	switch(proc.osc4Params.env->getUserValueInt())
-	{
-	case 0:
-		envs[3] = &env1;
-		break;
-	case 1:
-		envs[3] = &env2;
-		break;
-	case 2:
-		envs[3] = &env3;
-		break;
-	case 3:
-		envs[3] = &env4;
-		break;
-	}
-
+	envs[3] = envsByNum[proc.osc4Params.env->getUserValueInt()];
 
 	float noteNum = getValue(proc.filterParams.frequency);
 	noteNum += (currentlyPlayingNote.initialNote - 50) * getValue(proc.filterParams.keyTracking);
@@ -487,40 +431,44 @@ void SynthVoice3::updateParams(int blockSize)
 
 	float q = gin::Q / (1.0f - (getValue(proc.filterParams.resonance) / 100.0f) * 0.99f);
 
-	switch (int(proc.filterParams.type->getUserValue()))
-	{
-	case 0:
-		filter.setType(gin::Filter::lowpass);
-		filter.setSlope(gin::Filter::db12);
-		break;
-	case 1:
-		filter.setType(gin::Filter::lowpass);
-		filter.setSlope(gin::Filter::db24);
-		break;
-	case 2:
-		filter.setType(gin::Filter::highpass);
-		filter.setSlope(gin::Filter::db12);
-		break;
-	case 3:
-		filter.setType(gin::Filter::highpass);
-		filter.setSlope(gin::Filter::db24);
-		break;
-	case 4:
-		filter.setType(gin::Filter::bandpass);
-		filter.setSlope(gin::Filter::db12);
-		break;
-	case 5:
-		filter.setType(gin::Filter::bandpass);
-		filter.setSlope(gin::Filter::db24);
-		break;
-	case 6:
-		filter.setType(gin::Filter::notch);
-		filter.setSlope(gin::Filter::db12);
-		break;
-	case 7:
-		filter.setType(gin::Filter::notch);
-		filter.setSlope(gin::Filter::db24);
-		break;
+	int newType = proc.filterParams.type->getUserValueInt();
+	if (newType != filterType) {
+		filterType = newType;
+		switch (filterType)
+		{
+		case 0:
+			filter.setType(gin::Filter::lowpass);
+			filter.setSlope(gin::Filter::db12);
+			break;
+		case 1:
+			filter.setType(gin::Filter::lowpass);
+			filter.setSlope(gin::Filter::db24);
+			break;
+		case 2:
+			filter.setType(gin::Filter::highpass);
+			filter.setSlope(gin::Filter::db12);
+			break;
+		case 3:
+			filter.setType(gin::Filter::highpass);
+			filter.setSlope(gin::Filter::db24);
+			break;
+		case 4:
+			filter.setType(gin::Filter::bandpass);
+			filter.setSlope(gin::Filter::db12);
+			break;
+		case 5:
+			filter.setType(gin::Filter::bandpass);
+			filter.setSlope(gin::Filter::db24);
+			break;
+		case 6:
+			filter.setType(gin::Filter::notch);
+			filter.setSlope(gin::Filter::db12);
+			break;
+		case 7:
+			filter.setType(gin::Filter::notch);
+			filter.setSlope(gin::Filter::db24);
+			break;
+		}
 	}
 
 	filter.setParams(f, q);
@@ -533,7 +481,7 @@ void SynthVoice3::updateParams(int blockSize)
 		freq = 1.0f / gin::NoteDuration::getNoteDurations()[size_t(proc.lfo1Params.beat->getUserValue())].toSeconds(proc.playhead);
 	else
 		freq = getValue(proc.lfo1Params.rate);
-		params.waveShape = (gin::LFO::WaveShape) int(proc.lfo1Params.wave->getUserValue());
+	params.waveShape = (gin::LFO::WaveShape) int(proc.lfo1Params.wave->getUserValue());
 	params.frequency = freq;
 	params.phase = getValue(proc.lfo1Params.phase);
 	params.offset = getValue(proc.lfo1Params.offset);
@@ -673,7 +621,7 @@ void SynthVoice3::updateParams(int blockSize)
 	proc.modMatrix.setPolyValue(*this, proc.modSrcEnv3, env3.getOutput());
 	proc.modMatrix.setPolyValue(*this, proc.modSrcEnv4, env4.getOutput());
 
-	noteSmoother.process(blockSize);
+
 
 	if (proc.mseg1Params.sync->isOn()) {
 		mseg1Params.frequency = 1 / gin::NoteDuration::getNoteDurations()[size_t(getValue(proc.mseg1Params.beat))].toSeconds(proc.playhead);

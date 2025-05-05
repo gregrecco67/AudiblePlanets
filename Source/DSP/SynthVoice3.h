@@ -132,6 +132,9 @@ private:
 
     Envelope env1, env2, env3, env4;
     std::array<Envelope*, 4> envs{&env1, &env2, &env3, &env4};
+	std::array<Envelope*, 4> envsByNum{ &env1, &env2, &env3, &env4 };
+
+	int filterType{ 0 };
 
     float osc1xs[32];
     float osc1ys[32];
@@ -151,9 +154,9 @@ private:
     mipp::Reg<float> epi4xs[8];
     mipp::Reg<float> epi4ys[8];
 
-    mipp::Reg<float> epi4sEqnt[8], epi3sEqnt[8], epi2sEqnt[8], epi1sEqnt[8];
+   // mipp::Reg<float> epi4sEqnt[8], epi3sEqnt[8], epi2sEqnt[8], epi1sEqnt[8];
      
-     mipp::Reg<float> osc1x, osc1y, osc2x, osc2y, osc3x, osc3y, osc4x, osc4y;
+    mipp::Reg<float> osc1x, osc1y, osc2x, osc2y, osc3x, osc3y, osc4x, osc4y;
 
     mipp::Reg<float> dist2sq, dist2, invDist2;
     mipp::Reg<float> dist3sq, dist3, invDist3;

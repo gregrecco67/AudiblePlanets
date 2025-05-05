@@ -885,7 +885,7 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
     juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
 
-    synth.setCurrentPlaybackSampleRate(newSampleRate); // rollback to 1x
+    synth.setCurrentPlaybackSampleRate(newSampleRate);
 	auxSynth.setCurrentPlaybackSampleRate(newSampleRate);
 	modMatrix.setSampleRate(newSampleRate);
 
@@ -1007,9 +1007,10 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     while (todo > 0)
     {
         int thisBlock = std::min(todo, 32);
-		updateParams(thisBlock); // now also gets fx choices
+		updateParams(thisBlock); 
         
 		if (auxParams.enable->isOn()) { auxSynth.renderNextBlock(auxBuffer, midi, pos, thisBlock); }
+
         synth.renderNextBlock(buffer, midi, pos, thisBlock);
         
         auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);

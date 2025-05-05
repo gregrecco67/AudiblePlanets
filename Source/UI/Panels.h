@@ -1239,8 +1239,8 @@ public:
 
 	void clearAll()
 	{
-		auto &params = proc.getPluginParameters();
-		for (auto *param : params)
+		auto &pluginParams = proc.getPluginParameters();
+		for (auto *param : pluginParams)
 		{
 			if (param->getModIndex() == -1)
 				continue;
