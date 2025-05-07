@@ -23,7 +23,7 @@ inline std::array<float, 2> SynthVoice3::panWeights(const float in) { // -1 to 1
 //==============================================================================
 SynthVoice3::SynthVoice3(APAudioProcessor& p)
 	: proc(p), mseg1(proc.mseg1Data), mseg2(proc.mseg2Data), mseg3(proc.mseg3Data), mseg4(proc.mseg4Data),
-	osc1(p.analogTables), osc2(p.analogTables), osc3(p.analogTables), osc4(p.analogTables)
+	osc1(p.upsampledTables), osc2(p.upsampledTables), osc3(p.upsampledTables), osc4(p.upsampledTables)
 {
 	mseg1.reset();
 	mseg2.reset();

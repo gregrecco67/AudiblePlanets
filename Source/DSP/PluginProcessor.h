@@ -24,6 +24,7 @@
 #include "FXProcessors.h"
 #include "Synth.h"
 #include "AuxSynth.h"
+#include "Downsampling.h"
 #include <random>
 
 //==============================================================================
@@ -339,12 +340,14 @@ public:
     APSynth synth;
 	juce::AudioBuffer<float> auxBuffer;
 	juce::AudioBuffer<float> auxSlice;
-	
+	juce::AudioBuffer<float> synthBuffer;
+
 	MTSClient* client;
 	juce::String scaleName, learningLabel;
 
 	AuxSynth auxSynth;
 	gin::BandLimitedLookupTables analogTables;
+	gin::BandLimitedLookupTables upsampledTables;
 
 	const int numVoices = 8;
 	
@@ -359,6 +362,7 @@ public:
 	std::random_device rd;
 	std::mt19937 gen{ rd() };
 	std::uniform_real_distribution<> dist{ -1.f, 1.f };
+	std::unique_ptr<Downsampling<float>> downsampler;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)

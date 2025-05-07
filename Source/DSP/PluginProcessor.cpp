@@ -751,6 +751,8 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
              
 	modMatrix.setMonoValue(randSrc1Mono, 0.0f);
 	modMatrix.setMonoValue(randSrc2Mono, 0.0f);
+
+    downsampler = std::make_unique<Downsampler>(2, 0.06f, -60.0f);
 }
 
 APAudioProcessor::~APAudioProcessor()
@@ -884,8 +886,15 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
 {
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
     juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
+    
+    downsampler->reset();
+    downsampler->initProcessing(1024);
+    
+    setLatencySamples(downsampler->getLatencyInSamples());
+    
+    upsampledTables.setSampleRate(newSampleRate * 2.0f);
 
-    synth.setCurrentPlaybackSampleRate(newSampleRate);
+    synth.setCurrentPlaybackSampleRate(newSampleRate * 2.0);
 	auxSynth.setCurrentPlaybackSampleRate(newSampleRate);
 	modMatrix.setSampleRate(newSampleRate);
 
@@ -1002,6 +1011,8 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 	auxSynth.setPortamento(globalParams.glideMode->getUserValue() == 2.0f);
 	auxSynth.setGlideRate(globalParams.glideRate->getUserValue());
 	auxSynth.setNumVoices(numVoices);
+
+    synthBuffer.setSize(2, numSamples * 2.0f, false, false, true);
 	auxBuffer.clear();
 
     while (todo > 0)
@@ -1011,9 +1022,12 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
         
 		if (auxParams.enable->isOn()) { auxSynth.renderNextBlock(auxBuffer, midi, pos, thisBlock); }
 
-        synth.renderNextBlock(buffer, midi, pos, thisBlock);
-        
+        synth.renderNextBlock(synthBuffer, midi, pos*2, thisBlock*2);
+        downsampler->loadSamples(synthBuffer, pos*2, thisBlock*2);
+
         auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);
+        downsampler->processSamplesDown(bufferSlice, thisBlock);
+
 		auxSlice = gin::sliceBuffer(auxBuffer, pos, thisBlock);
 
 		if (auxParams.prefx->isOn()) {

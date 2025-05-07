@@ -26,58 +26,6 @@
  
  using namespace std::numbers;
  
- struct APMatrix {
-     //inline friend APMatrix operator*(const APMatrix& m, const float s) { // scalar multiplication
-     //    return { m.a * s, m.b * s, m.c * s, m.d * s };
-     //}
-
-     float a, b, c, d;
-};
-
-struct APRegMatrix {
-     inline friend APRegMatrix operator*(const APRegMatrix& m, const float s) { // scalar multiplication
-         return { m.a * s, m.b * s, m.c * s, m.d * s };
-     }
- 
-     mipp::Reg<float> a, b, c, d;
-};
-
-struct RegPosition {
-     mipp::Reg<float> x, y;
- 
-     inline friend RegPosition operator*(const RegPosition& p, const APRegMatrix& m) { // apply matrix to position
-         return { .x = p.x * m.a + p.y * m.b,
-                 .y = p.x * m.c + p.y * m.d, };
-     }
- 
-     inline friend RegPosition operator*(const RegPosition& p, const float s) { // scalar multiplication
-         return { p.x * s, p.y * s };
-     }
- 
-     inline RegPosition operator+(const RegPosition otherPos) {
-         return { this->x + otherPos.x, this->y + otherPos.y };
-     }
- }; 
-
-
-struct Position {
-     float x{ 0.f }, y{ 0.f };
- 
-     inline friend Position operator*(const Position& p, const APMatrix& m) { // apply matrix to position
-         return { .x = m.a * p.x + m.b * p.y,
-                 .y = m.c * p.x + m.d * p.y, };
-     }
- 
-     inline friend Position operator*(const Position& p, const float s) { // scalar multiplication
-         return { p.x * s, p.y * s };
-     }
- 
-     inline Position operator+(const Position otherPos) {
-         return { this->x + otherPos.x, this->y + otherPos.y };
-     }
- };
- 
- 
  //==============================================================================
  class SynthVoice3 : public gin::SynthesiserVoice,
                     public gin::ModVoice
@@ -110,13 +58,6 @@ struct Position {
     float getMSEG3Phase();
     float getMSEG4Phase();
     gin::Wave waveForChoice(int choice);
-    void matrixMultiply(const APMatrix& m, float* x, float* y) {
-        for (int i = 0; i < n; i += 4) {
-            float tmpX = x[i];
-            x[i] = x[i] * m.a + y[i] * m.b;
-            y[i] = tmpX * m.c + y[i] * m.d;
-        }
-    }
 
 private:
     void updateParams(int blockSize);
@@ -136,23 +77,23 @@ private:
 
 	int filterType{ 0 };
 
-    float osc1xs[32];
-    float osc1ys[32];
-    float osc2xs[32];
-    float osc2ys[32];
-    float osc3xs[32];
-    float osc3ys[32];
-    float osc4xs[32];
-    float osc4ys[32];
+    float osc1xs[64];
+    float osc1ys[64];
+    float osc2xs[64];
+    float osc2ys[64];
+    float osc3xs[64];
+    float osc3ys[64];
+    float osc4xs[64];
+    float osc4ys[64];
 
-    mipp::Reg<float> epi1xs[8];
-    mipp::Reg<float> epi1ys[8];
-    mipp::Reg<float> epi2xs[8];
-    mipp::Reg<float> epi2ys[8];
-    mipp::Reg<float> epi3xs[8];
-    mipp::Reg<float> epi3ys[8];
-    mipp::Reg<float> epi4xs[8];
-    mipp::Reg<float> epi4ys[8];
+    mipp::Reg<float> epi1xs[16];
+    mipp::Reg<float> epi1ys[16];
+    mipp::Reg<float> epi2xs[16];
+    mipp::Reg<float> epi2ys[16];
+    mipp::Reg<float> epi3xs[16];
+    mipp::Reg<float> epi3ys[16];
+    mipp::Reg<float> epi4xs[16];
+    mipp::Reg<float> epi4ys[16];
 
    // mipp::Reg<float> epi4sEqnt[8], epi3sEqnt[8], epi2sEqnt[8], epi1sEqnt[8];
      
