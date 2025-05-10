@@ -363,25 +363,25 @@ void SynthVoice3::updateParams(int blockSize)
 	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
 	
 	if (proc.osc1Params.fixed->isOn()) {
-		osc1Freq = ((int)(getValue(proc.osc1Params.coarse) + 0.0001f) + getValue(proc.osc1Params.fine)) * 100.f;
+		osc1Freq = std::clamp(((int)(getValue(proc.osc1Params.coarse) + 0.0001f) + getValue(proc.osc1Params.fine)) * 100.f, 0.01f, 20000.f);
 	}
 	else {
 		osc1Freq = baseFreq * ((int)(getValue(proc.osc1Params.coarse) + 0.0001f) + getValue(proc.osc1Params.fine));
 	}
 	if (proc.osc2Params.fixed->isOn()) {
-		osc2Freq = ((int)(getValue(proc.osc2Params.coarse) + 0.0001f) + getValue(proc.osc2Params.fine)) * 100.f;
+		osc2Freq = std::clamp(((int)(getValue(proc.osc2Params.coarse) + 0.0001f) + getValue(proc.osc2Params.fine)) * 100.f, 0.01f, 20000.f);
 	}
 	else {
 		osc2Freq = baseFreq * ((int)(getValue(proc.osc2Params.coarse) + 0.0001f) + getValue(proc.osc2Params.fine));
 	}
 	if (proc.osc3Params.fixed->isOn()) {
-		osc3Freq = ((int)(getValue(proc.osc3Params.coarse) + 0.0001f) + getValue(proc.osc3Params.fine)) * 100.f;
+		osc3Freq = std::clamp(((int)(getValue(proc.osc3Params.coarse) + 0.0001f) + getValue(proc.osc3Params.fine)) * 100.f, 0.01f, 20000.f);
 	}
 	else {
 		osc3Freq = baseFreq * ((int)(getValue(proc.osc3Params.coarse) + 0.0001f) + getValue(proc.osc3Params.fine));
 	}
 	if (proc.osc4Params.fixed->isOn()) {
-		osc4Freq = ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine)) * 100.f;
+		osc4Freq = std::clamp(((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine)) * 100.f, 0.01f, 20000.f);
 	}
 	else {
 		osc4Freq = baseFreq * ((int)(getValue(proc.osc4Params.coarse) + 0.0001f) + getValue(proc.osc4Params.fine));

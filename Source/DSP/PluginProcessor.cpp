@@ -753,7 +753,7 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	modMatrix.setMonoValue(randSrc2Mono, 0.0f);
 
     osFactor = pow(2.0f, osExpo);
-    firCoeffs = juce::dsp::FilterDesign<float>::designFIRLowpassHalfBandEquirippleMethod(0.09f, -55.0f);
+    firCoeffs = juce::dsp::FilterDesign<float>::designFIRLowpassHalfBandEquirippleMethod(0.09f, -65.0f);
     aaN = firCoeffs->getFilterOrder() + 1;
     aaNdiv2 = aaN / 2;
     aaNdiv4 = aaNdiv2 / 2;
