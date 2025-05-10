@@ -274,7 +274,6 @@ public:
 	};
 
 	void newRand();
-	void loadSample(const juce::String& path);
 	gin::ProcessorOptions getOptions();
 
     //==============================================================================
@@ -344,7 +343,8 @@ public:
 	juce::AudioBuffer<float> synthBuffer;
 
 	MTSClient* client;
-	juce::String scaleName, learningLabel;
+	juce::String scaleName;
+	bool isLearning;
 
 	AuxSynth auxSynth;
 	gin::BandLimitedLookupTables analogTables;

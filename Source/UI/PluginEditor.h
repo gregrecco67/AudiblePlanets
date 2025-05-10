@@ -27,31 +27,32 @@ class APAudioProcessorEditor : public gin::ProcessorEditor,
 	public juce::DragAndDropContainer, public juce::KeyListener, public juce::Timer
 {
 public:
-    APAudioProcessorEditor(APAudioProcessor&);
-    ~APAudioProcessorEditor() override;
+	APAudioProcessorEditor(APAudioProcessor&);
+	~APAudioProcessorEditor() override;
 
-    //==============================================================================
-    void paint(juce::Graphics&) override;
-    void resized() override;
-    void addMenuItems(juce::PopupMenu& m) override;
-    bool keyPressed(const juce::KeyPress& key, Component* originatingComponent) override;
-    using juce::Component::keyPressed; // above is overloaded
+	//==============================================================================
+	void paint(juce::Graphics&) override;
+	void resized() override;
+	void addMenuItems(juce::PopupMenu& m) override;
+	bool keyPressed(const juce::KeyPress& key, Component* originatingComponent) override;
+	using juce::Component::keyPressed; // above is overloaded
 	void timerCallback() override;
 	void showAboutInfo() override;
 
 private:
-    APAudioProcessor& proc;
+	APAudioProcessor& proc;
 
-    gin::SynthesiserUsage usage { proc.synth };
-    
-    juce::TabbedComponent tabbed{juce::TabbedButtonBar::TabsAtBottom };
-    juce::Component tab1, tab2;
+	gin::SynthesiserUsage usage{ proc.synth };
 
-    Editor editor { proc };
+	juce::TabbedComponent tabbed{ juce::TabbedButtonBar::TabsAtBottom };
+	juce::Component tab1, tab2;
+
+	Editor editor{ proc };
 	FXEditor fxEditor{ proc };
-    APLevelMeter levelMeter{ proc.levelTracker};
+	APLevelMeter levelMeter{ proc.levelTracker };
 
 	juce::Label scaleName, learningLabel;
+	APKnob mainvol{ proc.globalParams.level }, auxvol{proc.auxParams.volume};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessorEditor)
 };

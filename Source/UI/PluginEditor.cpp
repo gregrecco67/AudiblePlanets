@@ -40,14 +40,16 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
     scaleName.setFont(juce::FontOptions(12.0f));
 	scaleName.setColour(juce::Label::textColourId, juce::Colour(0xffE6E6E9));
 	scaleName.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
-	scaleName.setJustificationType(juce::Justification::centred);
-	learningLabel.setJustificationType(juce::Justification::centred);
+	scaleName.setJustificationType(juce::Justification::centredLeft);
+	learningLabel.setJustificationType(juce::Justification::centredLeft);
     setSize(1186,725);
     startTimerHz(4);
     addKeyListener(this);
     this->setWantsKeyboardFocus(true);
 	titleBar.setShowBrowser(true);
 	addAndMakeVisible(levelMeter);
+	addAndMakeVisible(mainvol);
+	addAndMakeVisible(auxvol);
 }
 
 bool APAudioProcessorEditor::keyPressed(const juce::KeyPress& key, Component* /*originatingComponent*/) {
@@ -79,14 +81,14 @@ void APAudioProcessorEditor::timerCallback()
 		scaleName.setText("", juce::dontSendNotification);
 		scaleName.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
 	}
-	if (proc.learningLabel.isEmpty())
+	if (!proc.isLearning)
 	{
 		learningLabel.setText("", juce::dontSendNotification);
 		learningLabel.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
 	}
 	else
 	{
-		learningLabel.setText(proc.learningLabel, juce::dontSendNotification);
+		learningLabel.setText("L", juce::dontSendNotification);
 		learningLabel.setColour(juce::Label::backgroundColourId, juce::Colour(0xff16171A).brighter(0.3f));
 	}
 }
@@ -142,7 +144,9 @@ void APAudioProcessorEditor::resized()
     patchBrowser.setBounds(rc);
 	usage.setBounds(45, 12, 95, 20);
 	scaleName.setBounds(165, 12, 200, 16);
-	learningLabel.setBounds(834, 12, 184, 16);
+	learningLabel.setBounds(834, 12, 16, 16); // move to mod src panel?
+	mainvol.setBounds(900, 0, 40, 40);
+	auxvol.setBounds(950, 0, 40, 40);
 	levelMeter.setBounds(1050, 12, 90, 22);
 	fxEditor.setBounds(editorArea);
 }

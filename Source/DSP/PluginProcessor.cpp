@@ -1030,10 +1030,10 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     }
     
 	if (modMatrix.getLearn().id != -1) {
-		learningLabel = "Learning: " + modMatrix.getModSrcName(modMatrix.getLearn());
+		isLearning = true;
 	}
 	else {
-		learningLabel = "";
+		isLearning = false;
 	}
 
     if (presetLoaded)

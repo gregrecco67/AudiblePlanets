@@ -30,264 +30,65 @@ inline void gradientRect (juce::Graphics& g, juce::Rectangle<int> rc, juce::Colo
     g.fillRect (rc);
 }
 
-
-//==============================================================================
-
-/*
+//===============================================================================
 
 class OSCBox : public gin::ParamBox
 {
 public:
-	OSCBox(APAudioProcessor& proc, int num) : gin::ParamBox("  OSC " + juce::String(num))
+	OSCBox(APAudioProcessor& proc_, APAudioProcessor::OSCParams& params_, int num)
+		: gin::ParamBox(juce::String("OSC ") += (num+1)), proc(proc_), params(params_)
 	{
-		switch(num) {
-		case 1:
-			addControl(new APKnob(proc.osc1Params.coarse), 0, 0);
-			addControl(new APKnob(proc.osc1Params.fine), 1, 0);
-			addControl(new APKnob(proc.osc1Params.volume), 2, 0);
-			addControl(new APKnob(proc.osc1Params.tones), 3, 0);
-			addControl(new MoonKnob(proc.osc1Params.phase), 2, 1);
-			addControl(wave = new gin::Select(proc.osc1Params.wave)); // saw
-			addControl(env = new gin::Select(proc.osc1Params.env)); // env select
-			addControl(fixed = new gin::Select(proc.osc1Params.fixed)); // fixed
-			
-			// setColour(juce::Slider::rotarySliderFillColourId, APColors::red);
-			// setColour(juce::Slider::trackColourId, APColors::redMuted);
-		}
-	}
-	~OSCBox() override
-	{
-		setLookAndFeel(nullptr);
-	}
-	
-	void resized() override {
-		gin::ParamBox::resized();
-		fixedHz.setBounds(56, 23 + 70 + 10, 56, 15); // 23/70/10 header, first row, padding
-		wave->setBounds(0, 93, 56, 35);
-		env->setBounds(0, 128, 56, 35);
-		fixed->setBounds(56, 128, 56, 35);
-	}
+		addControl(c1 = new APKnob(params.coarse), 0, 0); // coarse
+		addControl(f1 = new APKnob(params.fine), 1, 0); // fine
+		addControl(v1 = new APKnob(params.volume), 2, 0); // volume
+		// addControl(t1 = new APKnob(params.tones), 3, 0); // tones
+		addControl(p1 = new APKnob(params.phase), 2, 1); // phase
 
-	juce::Label fixedHz;
-	gin::ParamComponent::Ptr coarse, fine, volume, wave, fixed, env, tones, phase,
-		wave, env, fixed;
-	// APLNF lnf1;
-};
+		c1->setLookAndFeel(lnfs[num]);
+		f1->setLookAndFeel(lnfs[num]);
+		v1->setLookAndFeel(lnfs[num]);
 
-*/
-//==============================================================================
-class OscillatorBox : public gin::ParamBox
-{
-public:
-	OscillatorBox(APAudioProcessor &proc_)
-		: gin::ParamBox("  OSC"), proc(proc_)
-	{
-		addControl(c1 = new APKnob(proc.osc1Params.coarse), 0, 0); // coarse
-		addControl(c2 = new APKnob(proc.osc2Params.coarse), 0, 0);
-		addControl(c3 = new APKnob(proc.osc3Params.coarse), 0, 0);
-		addControl(c4 = new APKnob(proc.osc4Params.coarse), 0, 0);
-		addControl(f1 = new APKnob(proc.osc1Params.fine), 1, 0); // fine
-		addControl(f2 = new APKnob(proc.osc2Params.fine, true), 1, 0);
-		addControl(f3 = new APKnob(proc.osc3Params.fine, true), 1, 0);
-		addControl(f4 = new APKnob(proc.osc4Params.fine, true), 1, 0);
-		addControl(v1 = new APKnob(proc.osc1Params.volume), 2, 0); // volume
-		addControl(v2 = new APKnob(proc.osc2Params.volume), 2, 0);
-		addControl(v3 = new APKnob(proc.osc3Params.volume), 2, 0);
-		addControl(v4 = new APKnob(proc.osc4Params.volume), 2, 0);
-		addControl(t1 = new APKnob(proc.osc1Params.tones), 3, 0); // tones
-		addControl(t2 = new APKnob(proc.osc2Params.tones), 3, 0);
-		addControl(t3 = new APKnob(proc.osc3Params.tones), 3, 0);
-		addControl(t4 = new APKnob(proc.osc4Params.tones), 3, 0);
-		addControl(p1 = new MoonKnob(proc.osc1Params.phase), 2, 1); // phase
-		addControl(p2 = new MoonKnob(proc.osc2Params.phase), 2, 1);
-		addControl(p3 = new MoonKnob(proc.osc3Params.phase), 2, 1);
-		addControl(p4 = new MoonKnob(proc.osc4Params.phase), 2, 1);
-
-		
-		c1->setLookAndFeel(&lnf1);
-		lnf1.setColour(juce::Slider::trackColourId, juce::Colours::black);
-		f1->setLookAndFeel(&lnf1);
-		v1->setLookAndFeel(&lnf1);
-		c2->setLookAndFeel(&lnf2);
-		f2->setLookAndFeel(&lnf2);
-		v2->setLookAndFeel(&lnf2);
-		c3->setLookAndFeel(&lnf3);
-		f3->setLookAndFeel(&lnf3);
-		v3->setLookAndFeel(&lnf3);
-		c4->setLookAndFeel(&lnf4);
-		f4->setLookAndFeel(&lnf4);
-		v4->setLookAndFeel(&lnf4);
-
-
-		addControl(wave1 = new gin::Select(proc.osc1Params.wave)); // saw
-		addControl(wave2 = new gin::Select(proc.osc2Params.wave));
-		addControl(wave3 = new gin::Select(proc.osc3Params.wave));
-		addControl(wave4 = new gin::Select(proc.osc4Params.wave));
-		addControl(env1 = new gin::Select(proc.osc1Params.env)); // env select
-		addControl(env2 = new gin::Select(proc.osc2Params.env));
-		addControl(env3 = new gin::Select(proc.osc3Params.env));
-		addControl(env4 = new gin::Select(proc.osc4Params.env));
-		addControl(fixed1 = new gin::Select(proc.osc1Params.fixed)); // fixed
-		addControl(fixed2 = new gin::Select(proc.osc2Params.fixed));
-		addControl(fixed3 = new gin::Select(proc.osc3Params.fixed));
-		addControl(fixed4 = new gin::Select(proc.osc4Params.fixed));
-		watchParam(proc.osc1Params.fixed);
-		watchParam(proc.osc2Params.fixed);
-		watchParam(proc.osc3Params.fixed);
-		watchParam(proc.osc4Params.fixed);
-		watchParam(proc.osc1Params.wave);
-		watchParam(proc.osc2Params.wave);
-		watchParam(proc.osc3Params.wave);
-		watchParam(proc.osc4Params.wave);
-		watchParam(proc.osc1Params.coarse);
-		watchParam(proc.osc2Params.coarse);
-		watchParam(proc.osc3Params.coarse);
-		watchParam(proc.osc4Params.coarse);
-		watchParam(proc.osc1Params.fine);
-		watchParam(proc.osc2Params.fine);
-		watchParam(proc.osc3Params.fine);
-		watchParam(proc.osc4Params.fine);
+		addControl(wave1 = new gin::Select(params.wave)); // saw
+		addControl(env1 = new gin::Select(params.env)); // env select
+		addControl(fixed1 = new gin::Select(params.fixed)); // fixed
+		watchParam(params.fixed);
+		watchParam(params.wave);
+		watchParam(params.coarse);
+		watchParam(params.fine);
 		addAndMakeVisible(fixedHz1);
-		addAndMakeVisible(fixedHz2);
-		addAndMakeVisible(fixedHz3);
-		addAndMakeVisible(fixedHz4);
-		addAndMakeVisible(select1);
-		addAndMakeVisible(select2);
-		addAndMakeVisible(select3);
-		addAndMakeVisible(select4);
 		setColour(juce::TextButton::buttonOnColourId, juce::Colours::beige);
 
+		addAndMakeVisible(coarseLabel);
+		coarseLabel.setJustificationType(juce::Justification::centredBottom);
+		coarseLabel.setFont(juce::Font(14.0f));
 		fixedHz1.setJustificationType(juce::Justification::centred);
-		fixedHz2.setJustificationType(juce::Justification::centred);
-		fixedHz3.setJustificationType(juce::Justification::centred);
-		fixedHz4.setJustificationType(juce::Justification::centred);
 
-
-		select1.onClick = [this]()
-		{ show(1); };
-		select2.onClick = [this]()
-		{ show(2); };
-		select3.onClick = [this]()
-		{ show(3); };
-		select4.onClick = [this]()
-		{ show(4); };
-
-		show(1);
 	}
 
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
+	void paint(juce::Graphics& g) override
+	{
+		auto rc = getLocalBounds().withTrimmedTop(23);
 		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
+			findColour(gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
+			(float)rc.getX(), (float)rc.getY(),
+			findColour(gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
+			(float)rc.getWidth(), (float)rc.getBottom(), false);
+		gradient.addColour(0.3f, findColour(gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
+		g.setGradientFill(gradient);
+		g.fillRect(rc);
 		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
 		if (right)
 			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 1, getHeight());
-    }
-
-	bool top{false}, right{false}, bottom{false}, left{false};
-	void setTop(bool t) { top = t; }
-	void setRight(bool r) { right = r; }
-	void setBottom(bool b) { bottom = b; }
-	void setLeft(bool l) { left = l; }
-
-	void show(int osc)
-	{
-		for (gin::ParamComponent::Ptr c : {c1, f1, v1, t1, p1, wave1, env1, fixed1,
-										   c2, f2, v2, t2, p2, wave2, env2, fixed2,
-										   c3, f3, v3, t3, p3, wave3, env3, fixed3,
-										   c4, f4, v4, t4, p4, wave4, env4, fixed4})
-		{
-			c->setVisible(false);
-		}
-		for (auto &viz : {&fixedHz1, &fixedHz2, &fixedHz3, &fixedHz4})
-		{
-			viz->setVisible(false);
-		}
-		select1.setToggleState(false, juce::dontSendNotification);
-		select2.setToggleState(false, juce::dontSendNotification);
-		select3.setToggleState(false, juce::dontSendNotification);
-		select4.setToggleState(false, juce::dontSendNotification);
-		switch (osc)
-		{
-		case 1:
-			currentOsc = 1;
-			c1->setVisible(true);
-			f1->setVisible(true);
-			v1->setVisible(true);
-			t1->setVisible(true);
-			p1->setVisible(true);
-			wave1->setVisible(true);
-			env1->setVisible(true);
-			fixed1->setVisible(true);
-			select1.setToggleState(true, juce::dontSendNotification);
-			break;
-		case 2:
-			currentOsc = 2;
-			c2->setVisible(true);
-			f2->setVisible(true);
-			v2->setVisible(true);
-			t2->setVisible(true);
-			p2->setVisible(true);
-			wave2->setVisible(true);
-			env2->setVisible(true);
-			fixed2->setVisible(true);
-			select2.setToggleState(true, juce::dontSendNotification);
-			break;
-		case 3:
-			currentOsc = 3;
-			c3->setVisible(true);
-			f3->setVisible(true);
-			v3->setVisible(true);
-			t3->setVisible(true);
-			p3->setVisible(true);
-			wave3->setVisible(true);
-			env3->setVisible(true);
-			fixed3->setVisible(true);
-			select3.setToggleState(true, juce::dontSendNotification);
-			break;
-		case 4:
-			currentOsc = 4;
-			c4->setVisible(true);
-			f4->setVisible(true);
-			v4->setVisible(true);
-			t4->setVisible(true);
-			p4->setVisible(true);
-			wave4->setVisible(true);
-			env4->setVisible(true);
-			fixed4->setVisible(true);
-			select4.setToggleState(true, juce::dontSendNotification);
-			break;
-		}
-		paramChanged();
 	}
 
-	~OscillatorBox() override
+	bool right{ false };
+	void setRight(bool r) { right = r; }
+	
+	~OSCBox() override
 	{
 		c1->setLookAndFeel(nullptr);
 		f1->setLookAndFeel(nullptr);
 		v1->setLookAndFeel(nullptr);
-		c2->setLookAndFeel(nullptr);
-		f2->setLookAndFeel(nullptr);
-		v2->setLookAndFeel(nullptr);
-		c3->setLookAndFeel(nullptr);
-		f3->setLookAndFeel(nullptr);
-		v3->setLookAndFeel(nullptr);
-		c4->setLookAndFeel(nullptr);
-		f4->setLookAndFeel(nullptr);
-		v4->setLookAndFeel(nullptr);
 	}
 
 	class APLookAndFeel1 : public APLNF
@@ -296,7 +97,7 @@ public:
 		APLookAndFeel1()
 		{
 			setColour(juce::Slider::rotarySliderFillColourId, APColors::red);
-			setColour(juce::Slider::trackColourId, APColors::redMuted);
+			setColour(juce::Slider::trackColourId, juce::Colours::black);
 		}
 	};
 	class APLookAndFeel2 : public APLNF
@@ -305,7 +106,7 @@ public:
 		APLookAndFeel2()
 		{
 			setColour(juce::Slider::rotarySliderFillColourId, APColors::yellow);
-			setColour(juce::Slider::trackColourId, APColors::yellowMuted);
+			setColour(juce::Slider::trackColourId, juce::Colours::black);
 		}
 	};
 	class APLookAndFeel3 : public APLNF
@@ -314,7 +115,7 @@ public:
 		APLookAndFeel3()
 		{
 			setColour(juce::Slider::rotarySliderFillColourId, APColors::green);
-			setColour(juce::Slider::trackColourId, APColors::greenMuted);
+			setColour(juce::Slider::trackColourId, juce::Colours::black);
 		}
 	};
 	class APLookAndFeel4 : public APLNF
@@ -323,172 +124,96 @@ public:
 		APLookAndFeel4()
 		{
 			setColour(juce::Slider::rotarySliderFillColourId, APColors::blue);
-			setColour(juce::Slider::trackColourId, APColors::blueMuted);
+			setColour(juce::Slider::trackColourId, juce::Colours::black);
 		}
 	};
 
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-		if (proc.osc1Params.fixed->isOn() && currentOsc == 1)
+		if (params.fixed->isOn())
 		{
 			fixedHz1.setVisible(true);
-			fixedHz1.setText(juce::String((proc.osc1Params.coarse->getUserValue() + proc.osc1Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
+			fixedHz1.setText(juce::String((params.coarse->getUserValue() + params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
 		else
 		{
 			fixedHz1.setVisible(false);
 		}
-		if (proc.osc2Params.fixed->isOn() && currentOsc == 2)
-		{
-			fixedHz2.setVisible(true);
-			fixedHz2.setText(juce::String((proc.osc2Params.coarse->getUserValue() + proc.osc2Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
-		}
+		auto coarseString = juce::String(params.coarse->getUserValueInt());
+		if (params.fine->getUserValue() > 0.01f)
+			coarseString += "+";
+		else if (params.fine->getUserValue() < -0.01f)
+			coarseString += "-";
 		else
-		{
-			fixedHz2.setVisible(false);
-		}
-		if (proc.osc3Params.fixed->isOn() && currentOsc == 3)
-		{
-			fixedHz3.setVisible(true);
-			fixedHz3.setText(juce::String((proc.osc3Params.coarse->getUserValue() + proc.osc3Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
-		}
-		else
-		{
-			fixedHz3.setVisible(false);
-		}
-		if (proc.osc4Params.fixed->isOn() && currentOsc == 4)
-		{
-			fixedHz4.setVisible(true);
-			fixedHz4.setText(juce::String((proc.osc4Params.coarse->getUserValue() + proc.osc4Params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
-		}
-		else
-		{
-			fixedHz4.setVisible(false);
-		}
+			coarseString += "x";
+		coarseLabel.setText(coarseString, juce::dontSendNotification);
 	}
 
 	void resized() override
 	{
 		gin::ParamBox::resized();
 		fixedHz1.setBounds(56, 23 + 70 + 10, 56, 15); // 23/70/10 header, first row, padding
-		fixedHz2.setBounds(56, 23 + 70 + 10, 56, 15);
-		fixedHz3.setBounds(56, 23 + 70 + 10, 56, 15);
-		fixedHz4.setBounds(56, 23 + 70 + 10, 56, 15);
 		p1->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
-		p2->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
-		p3->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
-		p4->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
-		wave1->setBounds(0, 93, 56, 35);
-		wave2->setBounds(0, 93, 56, 35);
-		wave3->setBounds(0, 93, 56, 35);
-		wave4->setBounds(0, 93, 56, 35);
-		env1->setBounds(0, 128, 56, 35);
-		env2->setBounds(0, 128, 56, 35);
-		env3->setBounds(0, 128, 56, 35);
-		env4->setBounds(0, 128, 56, 35);
+		wave1->setBounds(56 * 3, 93, 56, 70);
+		env1->setBounds(56 * 3, 0, 56, 70);
 		fixed1->setBounds(56, 128, 56, 35);
-		fixed2->setBounds(56, 128, 56, 35);
-		fixed3->setBounds(56, 128, 56, 35);
-		fixed4->setBounds(56, 128, 56, 35);
-		select1.setBounds(100, 0, 20, 23);
-		select2.setBounds(120, 0, 20, 23);
-		select3.setBounds(140, 0, 20, 23);
-		select4.setBounds(160, 0, 20, 23);
+		coarseLabel.setBounds(4, 93, 52, 45);
 	}
 
 	APLookAndFeel1 lnf1;
 	APLookAndFeel2 lnf2;
 	APLookAndFeel3 lnf3;
 	APLookAndFeel4 lnf4;
-	APAudioProcessor &proc;
+	std::array<APLNF*, 4> lnfs{ &lnf1, &lnf2, &lnf3, &lnf4 };
+	APAudioProcessor& proc;
 	gin::ParamComponent::Ptr c1, f1, v1, t1, p1, wave1, env1, fixed1;
-	gin::ParamComponent::Ptr c2, f2, v2, t2, p2, wave2, env2, fixed2;
-	gin::ParamComponent::Ptr c3, f3, v3, t3, p3, wave3, env3, fixed3;
-	gin::ParamComponent::Ptr c4, f4, v4, t4, p4, wave4, env4, fixed4;
+	APAudioProcessor::OSCParams& params;
 
-	juce::Label fixedHz1, fixedHz2, fixedHz3, fixedHz4;
-	juce::TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
+	juce::Label fixedHz1, coarseLabel;
 
-	int currentOsc{1};
+	int currentOsc{ 1 };
 };
 
 //==============================================================================
 class ENVBox : public gin::ParamBox
 {
 public:
-	ENVBox(APAudioProcessor &proc_)
-		: gin::ParamBox("  ENV"), proc(proc_)
+	ENVBox(APAudioProcessor &proc_, APAudioProcessor::ENVParams& params_, int num)
+		: gin::ParamBox(juce::String("ENV ") += (num+1)), proc(proc_), params(params_)
 	{
 		// in reverse order
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv4, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv3, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv2, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
+		switch (num) {
+		case 3:
+			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv4, true));
+			break;
+		case 2:
+			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv3, true));
+			break;
+		case 1:
+			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv2, true));
+			break;
+		case 0:
+			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
+			break;
+		}
+		addControl(a1 = new APKnob(params.attack), 0, 0);
+		addControl(d1 = new APKnob(params.decay), 1, 0);
+		addControl(s1 = new APKnob(params.sustain), 2, 0);
+		addControl(r1 = new APKnob(params.release), 3, 0);
+		addControl(ac1 = new APKnob(params.acurve, true), 4, 0);
+		addControl(dc1 = new APKnob(params.drcurve, true), 5, 0);
+		addControl(rpt1 = new gin::Select(params.syncrepeat), 4, 1);
+		addControl(beats1 = new gin::Select(params.duration), 5, 1);
+		addControl(rate1 = new APKnob(params.time), 5, 1);
 
-		addControl(a1 = new APKnob(proc.env1Params.attack), 0, 0);
-		addControl(a2 = new APKnob(proc.env2Params.attack), 0, 0);
-		addControl(a3 = new APKnob(proc.env3Params.attack), 0, 0);
-		addControl(a4 = new APKnob(proc.env4Params.attack), 0, 0);
-		addControl(d1 = new APKnob(proc.env1Params.decay), 1, 0);
-		addControl(d2 = new APKnob(proc.env2Params.decay), 1, 0);
-		addControl(d3 = new APKnob(proc.env3Params.decay), 1, 0);
-		addControl(d4 = new APKnob(proc.env4Params.decay), 1, 0);
-		addControl(s1 = new APKnob(proc.env1Params.sustain), 2, 0);
-		addControl(s2 = new APKnob(proc.env2Params.sustain), 2, 0);
-		addControl(s3 = new APKnob(proc.env3Params.sustain), 2, 0);
-		addControl(s4 = new APKnob(proc.env4Params.sustain), 2, 0);
-		addControl(r1 = new APKnob(proc.env1Params.release), 3, 0);
-		addControl(r2 = new APKnob(proc.env2Params.release), 3, 0);
-		addControl(r3 = new APKnob(proc.env3Params.release), 3, 0);
-		addControl(r4 = new APKnob(proc.env4Params.release), 3, 0);
-		addControl(ac1 = new APKnob(proc.env1Params.acurve, true), 4, 0);
-		addControl(ac2 = new APKnob(proc.env2Params.acurve, true), 4, 0);
-		addControl(ac3 = new APKnob(proc.env3Params.acurve, true), 4, 0);
-		addControl(ac4 = new APKnob(proc.env4Params.acurve, true), 4, 0);
-		addControl(dc1 = new APKnob(proc.env1Params.drcurve, true), 5, 0);
-		addControl(dc2 = new APKnob(proc.env2Params.drcurve, true), 5, 0);
-		addControl(dc3 = new APKnob(proc.env3Params.drcurve, true), 5, 0);
-		addControl(dc4 = new APKnob(proc.env4Params.drcurve, true), 5, 0);
-		addControl(rpt1 = new gin::Select(proc.env1Params.syncrepeat), 4, 1);
-		addControl(rpt2 = new gin::Select(proc.env2Params.syncrepeat), 4, 1);
-		addControl(rpt3 = new gin::Select(proc.env3Params.syncrepeat), 4, 1);
-		addControl(rpt4 = new gin::Select(proc.env4Params.syncrepeat), 4, 1);
-		addControl(beats1 = new gin::Select(proc.env1Params.duration), 5, 1);
-		addControl(beats2 = new gin::Select(proc.env2Params.duration), 5, 1);
-		addControl(beats3 = new gin::Select(proc.env3Params.duration), 5, 1);
-		addControl(beats4 = new gin::Select(proc.env4Params.duration), 5, 1);
-		addControl(rate1 = new APKnob(proc.env1Params.time), 5, 1);
-		addControl(rate2 = new APKnob(proc.env2Params.time), 5, 1);
-		addControl(rate3 = new APKnob(proc.env3Params.time), 5, 1);
-		addControl(rate4 = new APKnob(proc.env4Params.time), 5, 1);
+		beats1->setVisible(false);
+		rate1->setVisible(false);
 
-		watchParam(proc.env1Params.syncrepeat);
-		watchParam(proc.env2Params.syncrepeat);
-		watchParam(proc.env3Params.syncrepeat);
-		watchParam(proc.env4Params.syncrepeat);
+		watchParam(params.syncrepeat);
 
-		// TODO: add and implement selectors
-		addAndMakeVisible(select1);
-		addAndMakeVisible(select2);
-		addAndMakeVisible(select3);
-		addAndMakeVisible(select4);
-
-		addAndMakeVisible(env1Viz);
-		addAndMakeVisible(env2Viz);
-		addAndMakeVisible(env3Viz);
-		addAndMakeVisible(env4Viz);
-
-		select1.onClick = [this]()
-		{ show(1); };
-		select2.onClick = [this]()
-		{ show(2); };
-		select3.onClick = [this]()
-		{ show(3); };
-		select4.onClick = [this]()
-		{ show(4); };
-
-		show(1);
+		envViz = new EnvelopeComponent(proc, num+1);
+		addAndMakeVisible(envViz);
 	}
 
 	void paint (juce::Graphics& g) override
@@ -503,134 +228,45 @@ public:
 		g.setGradientFill (gradient);
 		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
 		if (right)
 			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 1, getHeight());
     }
 
-	bool top{false}, right{false}, bottom{false}, left{false};
-	void setTop(bool t) { top = t; }
+	bool right{false};
 	void setRight(bool r) { right = r; }
-	void setBottom(bool b) { bottom = b; }
-	void setLeft(bool l) { left = l; }
-
-	void show(int env)
-	{
-		for (gin::ParamComponent::Ptr c : {a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1,
-										   a2, d2, s2, r2, ac2, dc2, rpt2, beats2, rate2,
-										   a3, d3, s3, r3, ac3, dc3, rpt3, beats3, rate3,
-										   a4, d4, s4, r4, ac4, dc4, rpt4, beats4, rate4})
-		{
-			c->setVisible(false);
-		}
-		for (auto &viz : {&env1Viz, &env2Viz, &env3Viz, &env4Viz})
-		{
-			viz->setVisible(false);
-		}
-		select1.setToggleState(false, juce::dontSendNotification);
-		select2.setToggleState(false, juce::dontSendNotification);
-		select3.setToggleState(false, juce::dontSendNotification);
-		select4.setToggleState(false, juce::dontSendNotification);
-		int choice;
-		switch (env)
-		{
-		case 1:
-			currentEnv = 1;
-			a1->setVisible(true);
-			d1->setVisible(true);
-			s1->setVisible(true);
-			r1->setVisible(true);
-			ac1->setVisible(true);
-			dc1->setVisible(true);
-			rpt1->setVisible(true);
-			env1Viz.setVisible(true);
-			choice = proc.env1Params.syncrepeat->getUserValueInt();
-			beats1->setVisible(choice == 1);
-			rate1->setVisible(choice == 2);
-			select1.setToggleState(true, juce::dontSendNotification);
-			break;
-		case 2:
-			currentEnv = 2;
-			a2->setVisible(true);
-			d2->setVisible(true);
-			s2->setVisible(true);
-			r2->setVisible(true);
-			ac2->setVisible(true);
-			dc2->setVisible(true);
-			rpt2->setVisible(true);
-			env2Viz.setVisible(true);
-			choice = proc.env2Params.syncrepeat->getUserValueInt();
-			beats2->setVisible(choice == 1);
-			rate2->setVisible(choice == 2);
-			select2.setToggleState(true, juce::dontSendNotification);
-			break;
-		case 3:
-			currentEnv = 3;
-			a3->setVisible(true);
-			d3->setVisible(true);
-			s3->setVisible(true);
-			r3->setVisible(true);
-			ac3->setVisible(true);
-			dc3->setVisible(true);
-			rpt3->setVisible(true);
-			env3Viz.setVisible(true);
-			choice = proc.env3Params.syncrepeat->getUserValueInt();
-			beats3->setVisible(choice == 1);
-			rate3->setVisible(choice == 2);
-			select3.setToggleState(true, juce::dontSendNotification);
-			break;
-		case 4:
-			currentEnv = 4;
-			a4->setVisible(true);
-			d4->setVisible(true);
-			s4->setVisible(true);
-			r4->setVisible(true);
-			ac4->setVisible(true);
-			dc4->setVisible(true);
-			rpt4->setVisible(true);
-			env4Viz.setVisible(true);
-			choice = proc.env4Params.syncrepeat->getUserValueInt();
-			beats4->setVisible(choice == 1);
-			rate4->setVisible(choice == 2);
-			select4.setToggleState(true, juce::dontSendNotification);
-			break;
-		}
-	}
 
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-
-		show(currentEnv);
+		auto choice = params.syncrepeat->getUserValueInt();
+		switch (choice) {
+		case 0:
+			beats1->setVisible(false);
+			rate1->setVisible(false);
+			break;
+		case 1:
+			beats1->setVisible(true);
+			rate1->setVisible(false);
+			break;
+		case 2:
+			beats1->setVisible(false);
+			rate1->setVisible(true);
+			break;
+		}
 	}
 
 	void resized() override
 	{
 		gin::ParamBox::resized();
-		select1.setBounds(100, 0, 20, 23);
-		select2.setBounds(120, 0, 20, 23);
-		select3.setBounds(140, 0, 20, 23);
-		select4.setBounds(160, 0, 20, 23);
-		env1Viz.setBounds(0, 23 + 70, 56 * 4, 70);
-		env2Viz.setBounds(0, 23 + 70, 56 * 4, 70);
-		env3Viz.setBounds(0, 23 + 70, 56 * 4, 70);
-		env4Viz.setBounds(0, 23 + 70, 56 * 4, 70);
+		envViz->setBounds(0, 23 + 70, 56 * 4, 70);
 	}
 
 	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1;
-	gin::ParamComponent::Ptr a2, d2, s2, r2, ac2, dc2, rpt2, beats2, rate2;
-	gin::ParamComponent::Ptr a3, d3, s3, r3, ac3, dc3, rpt3, beats3, rate3;
-	gin::ParamComponent::Ptr a4, d4, s4, r4, ac4, dc4, rpt4, beats4, rate4;
 
-	EnvelopeComponent env1Viz{proc, 1}, env2Viz{proc, 2}, env3Viz{proc, 3}, env4Viz{proc, 4};
+	EnvelopeComponent* envViz;
 	int currentEnv{1};
-	juce::TextButton select1{"1"}, select2{"2"}, select3{"3"}, select4{"4"};
+	APAudioProcessor::ENVParams& params;
 };
 
 //==============================================================================
@@ -644,7 +280,7 @@ public:
 		addControl(equant = new APKnob(proc.timbreParams.equant, true), 0, 0);
 		addControl(new APKnob(proc.timbreParams.pitch), 0, 1);
 		addControl(algo = new APKnob(proc.timbreParams.algo), 1, 0);
-		addControl(new APKnob(proc.globalParams.velSens), 3, 1);
+		addControl(new APKnob(proc.globalParams.velSens), 1, 1);
 	}
 	
 	void paint (juce::Graphics& g) override

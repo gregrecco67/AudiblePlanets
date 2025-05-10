@@ -74,6 +74,37 @@ private:
 };
 
 
+class MainVolSlider : public juce::Slider
+{
+public:
+	MainVolSlider() : juce::Slider() //, juce::Slider::NoTextBox)
+	{
+		setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
+		setColour(juce::Slider::textBoxTextColourId, juce::Colours::transparentBlack);
+	}
+
+	void mouseEnter(const juce::MouseEvent& ev) override
+	{
+		juce::Slider::mouseEnter(ev);
+		setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+		setColour(juce::Slider::thumbColourId, juce::Colours::darkgrey);
+	}
+
+	void mouseExit(const juce::MouseEvent& ev) override
+	{
+		juce::Slider::mouseExit(ev);
+		setColour(juce::Slider::textBoxTextColourId, juce::Colours::transparentBlack);
+		setColour(juce::Slider::thumbColourId, juce::Colour(0xffCC8866));
+	}
+
+	juce::String getTextFromValue(double value) override
+	{
+		return juce::String(value, 3);
+	}
+
+	std::function<juce::String(double)> onTextFromValue;
+};
+
 //==============================================================================
 /** A list box of all assigned
 */

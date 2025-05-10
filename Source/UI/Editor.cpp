@@ -19,9 +19,16 @@
 Editor::Editor(APAudioProcessor& proc_)
     : proc(proc_)
 {
-    addAndMakeVisible(osc);
-	addAndMakeVisible(env);
-    addAndMakeVisible(lfo);
+    addAndMakeVisible(osc1);
+	addAndMakeVisible(osc2);
+	addAndMakeVisible(osc3);
+	addAndMakeVisible(osc4);
+
+	addAndMakeVisible(env1);
+	addAndMakeVisible(env2);
+	addAndMakeVisible(env3);
+	addAndMakeVisible(env4);
+    // addAndMakeVisible(lfo);
 	addAndMakeVisible(filter);
 	addAndMakeVisible(modsrc);
 	addAndMakeVisible(global);
@@ -32,24 +39,31 @@ Editor::Editor(APAudioProcessor& proc_)
 	liveViz.setLookAndFeel(&aplnf);
 	proc.globalParams.pitchbendRange->addListener(this);
 	proc.globalParams.mpe->addListener(this);
-    startTimerHz(frameRate);
 	// addAndMakeVisible(liveViz);
     addAndMakeVisible(aux);
     addAndMakeVisible(matrix);
-    addAndMakeVisible(mseg);
-	addAndMakeVisible(macros);
+//    addAndMakeVisible(mseg);
+//	addAndMakeVisible(macros);
     addAndMakeVisible(speedSlider);
     speedSlider.setRange(0.0, 2.0);
     speedSlider.setSkewFactor(0.5);
     speedSlider.setValue(0.1);
-	osc.setRight(true);
-	env.setRight(true);
+	osc1.setRight(true);
+	osc2.setRight(true);
+	osc3.setRight(true);
+	osc4.setRight(true);
+
+	env1.setRight(true);
+	env2.setRight(true);
+	env3.setRight(true);
+	env4.setRight(true);
+	
 	filter.setRight(true);
 	timbre.setRight(true);
-	lfo.setRight(true);
-	macros.setRight(true);
 	aux.setRight(true);
 	global.setRight(true);
+    
+	startTimerHz(frameRate);
 }
 
 Editor::~Editor()
@@ -80,18 +94,24 @@ void Editor::resized()
 		return;
 	}
 
-    setGrid(&osc,      0,  0, 0, 4, 2);
-    setGrid(&env,      4,  0, 0, 6, 2);
+    setGrid(&osc1,      0,  0, 0, 4, 2);
+	setGrid(&osc2,		0,  2, 1, 4, 2);
+	setGrid(&osc3,		0,  4, 2, 4, 2);
+	setGrid(&osc4,		0,  6, 3, 4, 2);
+    setGrid(&env1,      4,  0, 0, 6, 2);
+	setGrid(&env2,		4,	2, 1, 6, 2);
+	setGrid(&env3,		4,	4, 2, 6, 2);
+	setGrid(&env4,		4,	6, 3, 6, 2);
     setGrid(&filter,  10,  0, 0, 2, 2);
-	setGrid(&timbre,  12,  0, 0, 4, 2);
-	setGrid(&lfo,      0,  2, 1, 5, 2);
-	setGrid(&aux,      5,  2, 1, 5, 2);
-	setGrid(&macros,  10,  2, 1, 3, 2);
-	setGrid(&global,   13, 2, 1, 3, 2);
-    setGrid(&mseg,     0,  4, 2, 8, 5);
-	orbitViz.setBounds( 8 * 56 + 5, 4 * 70 + 2 * 23, 
-		8 * 56, 5 * 70);
-	liveViz.setBounds( static_cast<int>(8 * 56.f),
+	setGrid(&timbre,  12,  0, 0, 2, 2);
+//	setGrid(&lfo,      0,  2, 1, 5, 2);
+	setGrid(&aux,     10,  2, 1, 5, 2);
+//	setGrid(&macros,  10,  2, 1, 3, 2);
+	setGrid(&global,   14, 0, 0, 2, 2);
+//    setGrid(&mseg,     0,  4, 2, 8, 5);
+	orbitViz.setBounds( 10 * 56 + 5, 4 * 70 + 2 * 23, 
+		6 * 56, 5 * 70);
+	liveViz.setBounds( static_cast<int>(10 * 56.f),
                       static_cast<int>(4 * 70.f + 2 * 23.f),
 		75, 25);
     speedSlider.setBounds(14 * 56 , 4 * 70 + 2 * 23, 112, 25);
@@ -137,6 +157,6 @@ void Editor::timerCallback() {
     orbitViz.setEpi2Phase(vizEpi2Phase);
     orbitViz.setEpi3Phase(vizEpi3Phase);
 	orbitViz.setScale(1.0f);
-	orbitViz.setSquash(live ? proc.viz.squash : proc.viz2.squash);
+	// orbitViz.setSquash(live ? proc.viz.squash : proc.viz2.squash);
     orbitViz.repaint();
 }

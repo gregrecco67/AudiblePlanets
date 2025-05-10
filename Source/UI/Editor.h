@@ -36,8 +36,16 @@ public:
 private:
     APAudioProcessor& proc;
 
-	OscillatorBox osc{ proc };
-	ENVBox env{ proc };
+	OSCBox osc1{ proc, proc.osc1Params, 0 };
+	OSCBox osc2{ proc, proc.osc2Params, 1 };
+	OSCBox osc3{ proc, proc.osc3Params, 2 };
+	OSCBox osc4{ proc, proc.osc4Params, 3 };
+
+	ENVBox env1{ proc, proc.env1Params, 0 };
+	ENVBox env2{ proc, proc.env2Params, 1 };
+	ENVBox env3{ proc, proc.env3Params, 2 };
+	ENVBox env4{ proc, proc.env4Params, 3 };
+
     FilterBox filter                        { "  flt", proc };
     LFOBox lfo{ proc };
     ModBox modsrc                              { "  mod", proc };
@@ -52,6 +60,7 @@ private:
     float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };
     juce::ToggleButton liveViz{ "Live" };
     APModMatrixBox::Row::APDepthSlider speedSlider;
+	// MainVolSlider mainvol2{ proc.globalParams.level };
     float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * frameRate) };
 	APLNF aplnf;
 };
