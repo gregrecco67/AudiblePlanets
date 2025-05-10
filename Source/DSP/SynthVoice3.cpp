@@ -233,7 +233,6 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         invDist2 = mipp::Reg<float>(1.0f) / (dist2 + .000001f);
 
 		// get bodies 3 & 4 position by algorithm
-		// replace switch with mask
 
         switch (algo) {
             case 0:

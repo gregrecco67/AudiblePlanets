@@ -32,6 +32,50 @@ inline void gradientRect (juce::Graphics& g, juce::Rectangle<int> rc, juce::Colo
 
 
 //==============================================================================
+
+/*
+
+class OSCBox : public gin::ParamBox
+{
+public:
+	OSCBox(APAudioProcessor& proc, int num) : gin::ParamBox("  OSC " + juce::String(num))
+	{
+		switch(num) {
+		case 1:
+			addControl(new APKnob(proc.osc1Params.coarse), 0, 0);
+			addControl(new APKnob(proc.osc1Params.fine), 1, 0);
+			addControl(new APKnob(proc.osc1Params.volume), 2, 0);
+			addControl(new APKnob(proc.osc1Params.tones), 3, 0);
+			addControl(new MoonKnob(proc.osc1Params.phase), 2, 1);
+			addControl(wave = new gin::Select(proc.osc1Params.wave)); // saw
+			addControl(env = new gin::Select(proc.osc1Params.env)); // env select
+			addControl(fixed = new gin::Select(proc.osc1Params.fixed)); // fixed
+			
+			// setColour(juce::Slider::rotarySliderFillColourId, APColors::red);
+			// setColour(juce::Slider::trackColourId, APColors::redMuted);
+		}
+	}
+	~OSCBox() override
+	{
+		setLookAndFeel(nullptr);
+	}
+	
+	void resized() override {
+		gin::ParamBox::resized();
+		fixedHz.setBounds(56, 23 + 70 + 10, 56, 15); // 23/70/10 header, first row, padding
+		wave->setBounds(0, 93, 56, 35);
+		env->setBounds(0, 128, 56, 35);
+		fixed->setBounds(56, 128, 56, 35);
+	}
+
+	juce::Label fixedHz;
+	gin::ParamComponent::Ptr coarse, fine, volume, wave, fixed, env, tones, phase,
+		wave, env, fixed;
+	// APLNF lnf1;
+};
+
+*/
+//==============================================================================
 class OscillatorBox : public gin::ParamBox
 {
 public:

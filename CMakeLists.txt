@@ -51,7 +51,7 @@ if (APPLE)
 			-Wall -Wstrict-aliasing -Wunused-parameter -Wconditional-uninitialized -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wbool-conversion -Wextra-semi 
 			-Wunreachable-code -Winconsistent-missing-destructor-override -Wshift-sign-overflow -Wnullable-to-nonnull-conversion -Wuninitialized -Wno-missing-field-initializers 
 			-Wno-ignored-qualifiers -Wno-missing-braces -Wno-char-subscripts -Wno-unused-private-field -fno-aligned-allocation -Wunused-private-field -Wunreachable-code 
-			-Wenum-compare -Wshadow -Wfloat-conversion -Wshadow-uncaptured-local -Wshadow-field -Wsign-compare -Wdeprecated-this-capture -Wimplicit-float-conversion 
+			-Wenum-compare -Wshadow -Wno-float-conversion -Wshadow-uncaptured-local -Wshadow-field -Wsign-compare -Wdeprecated-this-capture -Wno-implicit-float-conversion 
 			-ffast-math -fno-finite-math-only -Wfloat-equal
 #			"$<$<CONFIG:RELEASE>:-Werror>"
 		)
@@ -114,12 +114,6 @@ set_target_properties(Assets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
 
-#target_include_directories(${PROJECT_NAME} PUBLIC 
-#	"${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP"
-#	"${CMAKE_CURRENT_SOURCE_DIR}/Source/UI"
-#	"${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party"
-#)
-
 target_link_libraries (${PROJECT_NAME} 
 					PRIVATE
 						gin
@@ -140,7 +134,7 @@ target_link_libraries (${PROJECT_NAME}
 						Assets
 						juce::juce_recommended_config_flags
 						#juce::juce_recommended_lto_flags
-						juce::juce_recommended_warning_flags
+						#juce::juce_recommended_warning_flags
 					)
 
 if (APPLE)

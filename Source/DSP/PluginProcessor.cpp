@@ -752,7 +752,17 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	modMatrix.setMonoValue(randSrc1Mono, 0.0f);
 	modMatrix.setMonoValue(randSrc2Mono, 0.0f);
 
-    downsampler = std::make_unique<Downsampler>(2, 0.06f, -60.0f);
+    osFactor = pow(2.0f, osExpo);
+    firCoeffs = juce::dsp::FilterDesign<float>::designFIRLowpassHalfBandEquirippleMethod(0.09f, -55.0f);
+    aaN = firCoeffs->getFilterOrder() + 1;
+    aaNdiv2 = aaN / 2;
+    aaNdiv4 = aaNdiv2 / 2;
+    aaPosition.resize(2);
+    aaPosition.fill(0);
+    state1.setSize(2, static_cast<int>(aaN));
+    state2.setSize(2, static_cast<int>(aaNdiv4 + 1));
+    state1.clear();
+    state2.clear();
 }
 
 APAudioProcessor::~APAudioProcessor()
@@ -887,14 +897,9 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
     Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
     juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
     
-    downsampler->reset();
-    downsampler->initProcessing(1024);
-    
-    setLatencySamples(downsampler->getLatencyInSamples());
-    
-    upsampledTables.setSampleRate(newSampleRate * 2.0f);
+    upsampledTables.setSampleRate(newSampleRate * osFactor);
 
-    synth.setCurrentPlaybackSampleRate(newSampleRate * 2.0);
+    synth.setCurrentPlaybackSampleRate(newSampleRate * osFactor);
 	auxSynth.setCurrentPlaybackSampleRate(newSampleRate);
 	modMatrix.setSampleRate(newSampleRate);
 
@@ -931,6 +936,60 @@ void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBloc
 void APAudioProcessor::releaseResources()
 {
 }
+
+void APAudioProcessor::processSamplesDown(const juce::dsp::AudioBlock<float>& inputBlock, 
+    juce::dsp::AudioBlock<float>& outputBlock) 
+{
+    auto fir = firCoeffs->getRawCoefficients();
+    auto N = firCoeffs->getFilterOrder() + 1;
+    auto Ndiv2 = N / 2;
+    auto Ndiv4 = Ndiv2 / 2;
+    auto numSamples = outputBlock.getNumSamples();
+
+    // Processing
+    for (size_t channel = 0; channel < outputBlock.getNumChannels(); ++channel)
+    {
+        auto bufferSamples = inputBlock.getChannelPointer (static_cast<int> (channel));
+        auto buf = state1.getWritePointer (static_cast<int> (channel));
+        auto buf2 = state2.getWritePointer (static_cast<int> (channel));
+        auto samples = outputBlock.getChannelPointer (channel);
+        auto pos = aaPosition.getUnchecked (static_cast<int> (channel));
+        
+        for (size_t i = 0; i < numSamples; ++i)
+        {
+            buf[N - 1] = bufferSamples[i << 1];
+            auto out = 0.f;
+            for (size_t k = 0; k < Ndiv2; k += 2)
+                out += (buf[k] + buf[N - k - 1]) * fir[k];
+            out += buf2[pos] * fir[Ndiv2];
+            buf2[pos] = bufferSamples[(i << 1) + 1];
+            samples[i] = out;
+            for (size_t k = 0; k < N - 2; ++k)
+                buf[k] = buf[k + 2];
+            pos = (pos == 0 ? Ndiv4 : pos - 1);
+        }
+            
+        aaPosition.setUnchecked (static_cast<int> (channel), pos);
+    }
+            
+}
+            /*
+    for (size_t channel = 0; channel < outputBlock.getNumChannels(); ++channel)
+    {
+        auto bufferSamples = inputBlock.getChannelPointer (static_cast<int> (channel));
+        auto samples = outputBlock.getChannelPointer (channel);
+        
+        for (size_t i = 0; i < numSamples; ++i)
+        {
+            samples[i] = bufferSamples[i << 1];
+        }
+        
+        aaPosition.setUnchecked (static_cast<int> (channel), 0);
+    }
+    
+    */
+
+
 
 void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
@@ -989,30 +1048,31 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
 	auxSynth.startBlock();
 	auxSynth.setMPE(globalParams.mpe->isOn());
-	auxBuffer.setSize(2, numSamples, false, false, true);
-
+    
 	playhead = getPlayHead();
-
+    
     int pos = 0;
     int todo = numSamples;
-
+    
     buffer.clear(); // then clear it from output buffer
-
+    
 	synth.setMono(globalParams.mono->isOn());
     synth.setLegato(globalParams.legato->isOn());
     synth.setGlissando(globalParams.glideMode->getUserValue() == 1.0f);
     synth.setPortamento(globalParams.glideMode->getUserValue() == 2.0f);
     synth.setGlideRate(globalParams.glideRate->getUserValue());
     synth.setNumVoices(numVoices);
-
+    
 	auxSynth.setMono(globalParams.mono->isOn());
 	auxSynth.setLegato(globalParams.legato->isOn());
 	auxSynth.setGlissando(globalParams.glideMode->getUserValue() == 1.0f);
 	auxSynth.setPortamento(globalParams.glideMode->getUserValue() == 2.0f);
 	auxSynth.setGlideRate(globalParams.glideRate->getUserValue());
 	auxSynth.setNumVoices(numVoices);
-
-    synthBuffer.setSize(2, numSamples * 2.0f, false, false, true);
+    
+    synthBuffer.setSize(2, numSamples * 2, false, false, true);
+    synthBuffer.clear();
+	auxBuffer.setSize(2, numSamples, false, false, true);
 	auxBuffer.clear();
 
     while (todo > 0)
@@ -1023,10 +1083,13 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 		if (auxParams.enable->isOn()) { auxSynth.renderNextBlock(auxBuffer, midi, pos, thisBlock); }
 
         synth.renderNextBlock(synthBuffer, midi, pos*2, thisBlock*2);
-        downsampler->loadSamples(synthBuffer, pos*2, thisBlock*2);
+        auto synthBufferSlice = gin::sliceBuffer(synthBuffer, pos * 2, thisBlock * 2);
+        auto synthBufferSliceBlock = juce::dsp::AudioBlock<float>(synthBufferSlice);
 
         auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);
-        downsampler->processSamplesDown(bufferSlice, thisBlock);
+        auto bufferSliceBlock = juce::dsp::AudioBlock<float>(bufferSlice);
+        
+        processSamplesDown(synthBufferSliceBlock, bufferSliceBlock);
 
 		auxSlice = gin::sliceBuffer(auxBuffer, pos, thisBlock);
 
@@ -1052,7 +1115,7 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
     levelTracker.trackBuffer(buffer);
 
-    synth.endBlock(numSamples);
+    synth.endBlock(numSamples*2);
 	auxSynth.endBlock(numSamples);
 }
 

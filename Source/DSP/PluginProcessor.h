@@ -24,7 +24,6 @@
 #include "FXProcessors.h"
 #include "Synth.h"
 #include "AuxSynth.h"
-#include "Downsampling.h"
 #include <random>
 
 //==============================================================================
@@ -55,6 +54,8 @@ public:
 	void updateState() override;
 
     void updatePitchbend();
+
+	void processSamplesDown(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
     
     //==============================================================================
     
@@ -362,7 +363,14 @@ public:
 	std::random_device rd;
 	std::mt19937 gen{ rd() };
 	std::uniform_real_distribution<> dist{ -1.f, 1.f };
-	std::unique_ptr<Downsampling<float>> downsampler;
+	
+	// antialiasing downsampling filter stuff
+	int osExpo{ 1 }; // oversampling exponent n: 2^n
+	int osFactor; // oversampling factor f: f = 2^n
+	juce::dsp::FilterDesign<float>::FIRCoefficientsPtr firCoeffs;
+	size_t aaN, aaNdiv2, aaNdiv4;
+	juce::Array<size_t> aaPosition;
+	juce::AudioBuffer<float> state1, state2;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)
