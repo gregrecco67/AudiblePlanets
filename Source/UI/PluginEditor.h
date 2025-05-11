@@ -19,6 +19,7 @@
 #include "DSP/PluginProcessor.h"
 #include "Editor.h"
 #include "FXEditor.h"
+#include "ModEditor.h"
 #include "APColors.h"
 #include "APLevelMeter.h"
 
@@ -45,10 +46,11 @@ private:
 	gin::SynthesiserUsage usage{ proc.synth };
 
 	juce::TabbedComponent tabbed{ juce::TabbedButtonBar::TabsAtBottom };
-	juce::Component tab1, tab2;
+	juce::Component tab1, tab2, tab3;
 
 	Editor editor{ proc };
 	FXEditor fxEditor{ proc };
+	ModEditor modEditor{ proc };
 	APLevelMeter levelMeter{ proc.levelTracker };
 
 	juce::Label scaleName, learningLabel;

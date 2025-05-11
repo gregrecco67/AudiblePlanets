@@ -27,10 +27,12 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor& p)
 	//tabbed.setName("tabbed");
     addAndMakeVisible(tabbed);
     tabbed.addTab("1. Main", APColors::tabBkgd, &tab1, false, 0);
-    tabbed.addTab("2. Effects", APColors::tabBkgd, &tab2, false, 1);
+    tabbed.addTab("2. Mods", APColors::tabBkgd, &tab2, false, 1);
+    tabbed.addTab("3. Effects", APColors::tabBkgd, &tab3, false, 2);
 
     tab1.addAndMakeVisible(editor);
-	tab2.addAndMakeVisible(fxEditor);
+	tab2.addAndMakeVisible(modEditor);
+	tab3.addAndMakeVisible(fxEditor);
     
     usage.panic.onClick = [this] { proc.presetLoaded = true; };
     addAndMakeVisible(usage);
@@ -59,6 +61,10 @@ bool APAudioProcessorEditor::keyPressed(const juce::KeyPress& key, Component* /*
         }
         if (key.isKeyCode(50) || key.isKeyCode(juce::KeyPress::numberPad2)) {
             tabbed.setCurrentTabIndex(1);
+            return true;
+        }
+		if (key.isKeyCode(51) || key.isKeyCode(juce::KeyPress::numberPad3)) {
+            tabbed.setCurrentTabIndex(2);
             return true;
         }
 		if (key.isKeyCode(juce::KeyPress::escapeKey) || key.isKeyCode(76)) { // "L" for learning
@@ -149,6 +155,7 @@ void APAudioProcessorEditor::resized()
 	auxvol.setBounds(950, 0, 40, 40);
 	levelMeter.setBounds(1050, 12, 90, 22);
 	fxEditor.setBounds(editorArea);
+	modEditor.setBounds(editorArea);
 }
 
 void APAudioProcessorEditor::addMenuItems(juce::PopupMenu& m)

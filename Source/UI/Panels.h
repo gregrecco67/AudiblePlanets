@@ -36,7 +36,7 @@ class OSCBox : public gin::ParamBox
 {
 public:
 	OSCBox(APAudioProcessor& proc_, APAudioProcessor::OSCParams& params_, int num)
-		: gin::ParamBox(juce::String("OSC ") += (num+1)), proc(proc_), params(params_)
+		: gin::ParamBox(juce::String("  OSC ") += (num+1)), proc(proc_), params(params_)
 	{
 		addControl(c1 = new APKnob(params.coarse), 0, 0); // coarse
 		addControl(f1 = new APKnob(params.fine), 1, 0); // fine
@@ -156,7 +156,7 @@ public:
 		fixedHz1.setBounds(56, 23 + 70 + 10, 56, 15); // 23/70/10 header, first row, padding
 		p1->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
 		wave1->setBounds(56 * 3, 93, 56, 70);
-		env1->setBounds(56 * 3, 0, 56, 70);
+		env1->setBounds(56 * 3, 23, 56, 70);
 		fixed1->setBounds(56, 128, 56, 35);
 		coarseLabel.setBounds(4, 93, 52, 45);
 	}
@@ -180,7 +180,7 @@ class ENVBox : public gin::ParamBox
 {
 public:
 	ENVBox(APAudioProcessor &proc_, APAudioProcessor::ENVParams& params_, int num)
-		: gin::ParamBox(juce::String("ENV ") += (num+1)), proc(proc_), params(params_)
+		: gin::ParamBox(juce::String("  ENV ") += (num+1)), proc(proc_), params(params_)
 	{
 		// in reverse order
 		switch (num) {
