@@ -47,14 +47,14 @@ private:
 	ENVBox env4{ proc, proc.env4Params, 3 };
 
     FilterBox filter                        { "  flt", proc };
-    LFOBox lfo{ proc };
-    ModBox modsrc                              { "  mod", proc };
+    // LFOBox lfo{ proc };
+	// MacrosBox macros{ proc };
+    // MsegBox mseg{ proc };
     GlobalBox global                        { "  global", proc };
+    ModBox modsrc                              { "  mod", proc };
 	TimbreBox timbre						{ "  timbre", proc };
     AuxBox aux{ "      Aux Oscillator", proc };
     MainMatrixBox matrix{ "  Mod Matrix", proc };
-    MsegBox mseg{ proc };
-	MacrosBox macros{ proc };
     OrbitViz orbitViz;
     int frameRate{ 24 };
     float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };

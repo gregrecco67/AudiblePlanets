@@ -17,6 +17,7 @@
 #include <gin_plugin/gin_plugin.h>
 #include "DSP/PluginProcessor.h"
 #include "Panels.h"
+#include "ModPanels.h"
 
 
 //==============================================================================
@@ -34,7 +35,11 @@ public:
 private:
     APAudioProcessor& proc;
 
-    LFOBox lfo{ proc };
+    LFOBox lfo1{ proc, proc.lfo1Params, 1 };
+    LFOBox lfo2{ proc, proc.lfo2Params, 2 };
+    LFOBox lfo3{ proc, proc.lfo3Params, 3 };
+    LFOBox lfo4{ proc, proc.lfo4Params, 4 };
+    
     MainMatrixBox matrix{ "  Mod Matrix", proc };
     ModBox modsrc                              { "  mod", proc };
     MsegBox mseg{ proc };

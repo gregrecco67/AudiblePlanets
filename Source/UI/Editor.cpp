@@ -28,7 +28,6 @@ Editor::Editor(APAudioProcessor& proc_)
 	addAndMakeVisible(env2);
 	addAndMakeVisible(env3);
 	addAndMakeVisible(env4);
-    // addAndMakeVisible(lfo);
 	addAndMakeVisible(filter);
 	addAndMakeVisible(modsrc);
 	addAndMakeVisible(global);
@@ -39,11 +38,8 @@ Editor::Editor(APAudioProcessor& proc_)
 	liveViz.setLookAndFeel(&aplnf);
 	proc.globalParams.pitchbendRange->addListener(this);
 	proc.globalParams.mpe->addListener(this);
-	// addAndMakeVisible(liveViz);
     addAndMakeVisible(aux);
     addAndMakeVisible(matrix);
-//    addAndMakeVisible(mseg);
-//	addAndMakeVisible(macros);
     addAndMakeVisible(speedSlider);
     speedSlider.setRange(0.0, 2.0);
     speedSlider.setSkewFactor(0.5);
@@ -104,11 +100,8 @@ void Editor::resized()
 	setGrid(&env4,		4,	6, 3, 6, 2);
     setGrid(&filter,  10,  0, 0, 2, 2);
 	setGrid(&timbre,  12,  0, 0, 2, 2);
-//	setGrid(&lfo,      0,  2, 1, 5, 2);
 	setGrid(&aux,     10,  2, 1, 5, 2);
-//	setGrid(&macros,  10,  2, 1, 3, 2);
 	setGrid(&global,   14, 0, 0, 2, 2);
-//    setGrid(&mseg,     0,  4, 2, 8, 5);
 	orbitViz.setBounds( 10 * 56 + 5, 4 * 70 + 2 * 23, 
 		6 * 56, 5 * 70);
 	liveViz.setBounds( static_cast<int>(10 * 56.f),

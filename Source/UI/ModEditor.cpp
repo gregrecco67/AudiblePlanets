@@ -22,7 +22,10 @@ ModEditor::ModEditor(APAudioProcessor& proc_)
     addAndMakeVisible(matrix);
     addAndMakeVisible(mseg);
 	addAndMakeVisible(macros);
-    addAndMakeVisible(lfo);
+    addAndMakeVisible(lfo1);
+    addAndMakeVisible(lfo2);
+    addAndMakeVisible(lfo3);
+    addAndMakeVisible(lfo4);
     
 	//startTimerHz(x);
 }
@@ -55,9 +58,11 @@ void ModEditor::resized()
 	//	return;
 	//}
 
-	setGrid(&lfo,      0,  2, 1, 5, 2);
-	setGrid(&macros,  10,  2, 1, 3, 2);
-    setGrid(&mseg,     0,  4, 2, 8, 5);
+	setGrid(&lfo1,      0,  0, 0, 5, 2);
+	setGrid(&lfo2,      0,  2, 1, 5, 2);
+	setGrid(&lfo3,      0,  4, 2, 5, 2);
+	setGrid(&lfo4,      0,  6, 3, 5, 2);
+
 
     setGrid(&modsrc,  16,  0, 0, 5, 4.328571f);
     setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
