@@ -17,6 +17,7 @@
 #include <gin_plugin/gin_plugin.h>
 #include "DSP/PluginProcessor.h"
 #include "BinaryData.h"
+#include "Panels.h"
 #include "FXPanels.h"
 #include "APModAdditions.h"
 
@@ -30,6 +31,8 @@ public:
 	void valueUpdated(gin::Parameter* param) override;
 	void removeDuplicates(int effect, int componentToSkip);
     void setAllControls();
+
+	void setGrid(gin::ParamBox* box, float x, float y, float heds, float w, float h);
 
 private:
 	APAudioProcessor& proc;
@@ -50,8 +53,13 @@ private:
 		fxb2Selector{ proc.fxOrderParams.fxb2 },
 		fxb3Selector{ proc.fxOrderParams.fxb3 },
 		fxb4Selector{ proc.fxOrderParams.fxb4 };
-    FXModBox mod{"mod", proc};
-	MatrixBox matrix{"matrix", proc};
+    // FXModBox mod{"mod", proc};
+	// MatrixBox matrix{"matrix", proc};
+	
+	MainMatrixBox matrix{ "  Mod Matrix", proc };
+    ModBox mod                              { "  mod", proc };
+    
+	
 	APKnob laneAGain{ proc.fxOrderParams.laneAGain },  laneAFreq{proc.fxOrderParams.laneAFreq}, laneARes{proc.fxOrderParams.laneARes}, laneAPan{proc.fxOrderParams.laneAPan},
 		laneBGain{ proc.fxOrderParams.laneBGain }, laneBFreq{proc.fxOrderParams.laneBFreq}, laneBRes{proc.fxOrderParams.laneBRes}, laneBPan{proc.fxOrderParams.laneBPan};
 	gin::Select laneAType{ proc.fxOrderParams.laneAType }, laneBType{ proc.fxOrderParams.laneBType }, 

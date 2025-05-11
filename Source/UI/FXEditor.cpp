@@ -101,13 +101,20 @@ FXEditor::~FXEditor()
 	proc.fxOrderParams.fxb4->removeListener(this);
 }
 
+void FXEditor::setGrid(gin::ParamBox* box, float x, float y, float heds, float w, float h) {
+	box->setBounds((int)(x * 56.f), (int)(y * 70.f + 23.f * heds), (int)(w * 56.f), (int)(h * 70.f + 23.f));
+}
 
 void FXEditor::resized()
 {
-	mod.setBounds(900, 7, 280, 303);
-	matrix.setBounds(900, 320, 280, 303);
+	
+	
+	//mod.setBounds(896, 0, 280, 335);
+	//matrix.setBounds(896, 335, 280, 335);
 
-
+	setGrid(&mod,  16,  0, 0, 5, 4.328571f);
+    setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
+	
 	fxa1Selector.setBounds(188, 7, 168, 15); 
 	fxa2Selector.setBounds(366, 7, 168, 15);
 	fxa3Selector.setBounds(544, 7, 168, 15);

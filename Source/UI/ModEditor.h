@@ -34,8 +34,8 @@ public:
 private:
     APAudioProcessor& proc;
 
-    MainMatrixBox matrix{ "  Mod Matrix", proc };
     LFOBox lfo{ proc };
+    MainMatrixBox matrix{ "  Mod Matrix", proc };
     ModBox modsrc                              { "  mod", proc };
     MsegBox mseg{ proc };
 	MacrosBox macros{ proc };
