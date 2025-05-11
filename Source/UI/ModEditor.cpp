@@ -20,7 +20,8 @@ ModEditor::ModEditor(APAudioProcessor& proc_)
 {
 	addAndMakeVisible(modsrc);
     addAndMakeVisible(matrix);
-    addAndMakeVisible(mseg);
+    addAndMakeVisible(msegA);
+	addAndMakeVisible(msegB);
 	addAndMakeVisible(macros);
     addAndMakeVisible(lfo1);
     addAndMakeVisible(lfo2);
@@ -34,7 +35,6 @@ ModEditor::~ModEditor()
 {
 	proc.globalParams.pitchbendRange->removeListener(this);
 	proc.globalParams.mpe->removeListener(this);
-	setLookAndFeel(nullptr);
 }
 
 
@@ -52,18 +52,12 @@ void ModEditor::setGrid(gin::ParamBox* box, float x, float y, float heds, float 
 
 void ModEditor::resized()
 {
-    auto area = getLocalBounds();
-
-	//if (area.getWidth() > 1186 || area.getHeight() > 725) {
-	//	return;
-	//}
-
 	setGrid(&lfo1,      0,  0, 0, 5, 2);
 	setGrid(&lfo2,      0,  2, 1, 5, 2);
 	setGrid(&lfo3,      0,  4, 2, 5, 2);
 	setGrid(&lfo4,      0,  6, 3, 5, 2);
-
-
+	setGrid(&msegA,     5,  0, 0, 8, 4.328571f);
+	setGrid(&msegB,     5,  4.328571f, 1, 8, 4.328571f);
     setGrid(&modsrc,  16,  0, 0, 5, 4.328571f);
     setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
 }

@@ -63,4 +63,6 @@ private:
 	// MainVolSlider mainvol2{ proc.globalParams.level };
     float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * frameRate) };
 	APLNF aplnf;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Editor)
 };

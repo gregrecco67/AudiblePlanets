@@ -17,7 +17,6 @@
 #include <gin_plugin/gin_plugin.h>
 #include "DSP/PluginProcessor.h"
 #include "APColors.h"
-#include "MoonKnob.h"
 #include "APModAdditions.h"
 #include "EnvelopeComponent.h"
 
@@ -179,8 +178,8 @@ public:
 class ENVBox : public gin::ParamBox
 {
 public:
-	ENVBox(APAudioProcessor &proc_, APAudioProcessor::ENVParams& params_, int num)
-		: gin::ParamBox(juce::String("  ENV ") += (num+1)), proc(proc_), params(params_)
+	ENVBox(APAudioProcessor &proc_, APAudioProcessor::ENVParams& params_, int num_)
+		: gin::ParamBox(juce::String("  ENV ") += (num_+1)), proc(proc_), params(params_), num(num_)
 	{
 		// in reverse order
 		switch (num) {
@@ -211,8 +210,6 @@ public:
 		rate1->setVisible(false);
 
 		watchParam(params.syncrepeat);
-
-		envViz = new EnvelopeComponent(proc, num+1);
 		addAndMakeVisible(envViz);
 	}
 
@@ -258,13 +255,14 @@ public:
 	void resized() override
 	{
 		gin::ParamBox::resized();
-		envViz->setBounds(0, 23 + 70, 56 * 4, 70);
+		envViz.setBounds(0, 23 + 70, 56 * 4, 70);
 	}
 
 	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1;
 
-	EnvelopeComponent* envViz;
+	int num;
+	EnvelopeComponent envViz{proc, num};
 	int currentEnv{1};
 	APAudioProcessor::ENVParams& params;
 };

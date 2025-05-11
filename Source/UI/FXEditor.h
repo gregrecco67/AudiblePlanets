@@ -65,4 +65,6 @@ private:
 	gin::Select laneAType{ proc.fxOrderParams.laneAType }, laneBType{ proc.fxOrderParams.laneBType }, 
 		laneAPrePost{ proc.fxOrderParams.laneAPrePost }, laneBPrePost{ proc.fxOrderParams.laneBPrePost };
 	juce::Label laneALabel{ "Lane A", "Lane A"}, laneBLabel{"Lane B", "Lane B"};
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FXEditor)
 };

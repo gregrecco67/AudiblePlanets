@@ -39,10 +39,13 @@ private:
     LFOBox lfo2{ proc, proc.lfo2Params, 2 };
     LFOBox lfo3{ proc, proc.lfo3Params, 3 };
     LFOBox lfo4{ proc, proc.lfo4Params, 4 };
-    
+
     MainMatrixBox matrix{ "  Mod Matrix", proc };
     ModBox modsrc                              { "  mod", proc };
-    MsegBox mseg{ proc };
+    MsegBox msegA{ proc, proc.mseg1Params, proc.mseg2Params, proc.mseg1Data, proc.mseg2Data, 1 };
+    MsegBox msegB{ proc, proc.mseg3Params, proc.mseg4Params, proc.mseg3Data, proc.mseg4Data, 3 };
 	MacrosBox macros{ proc };
     APLNF aplnf;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ModEditor)
 };

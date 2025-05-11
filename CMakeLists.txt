@@ -31,7 +31,7 @@ juce_add_plugin (${PROJECT_NAME}
 				COMPANY_NAME "Void-Star"
 				COMPANY_WEBSITE "https://void-star.com/"
     			ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
-				FORMATS "VST3" #"AU" "Standalone" "LV2"
+				FORMATS "VST3" "Standalone" #"AU" "LV2"
 				BUNDLE_ID com.void-star.audible-planets
 				DESCRIPTION "An expressive, quasi-Ptolemaic semi-modular synthesizer."
 				PLUGIN_MANUFACTURER_CODE "Vdst"
