@@ -59,7 +59,7 @@ endif ()
 
 if (MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE 
-			/wd26495 /wd4459 /wd4244 /wd4996 /wd4267 /wd4244
+			# /wd26495 /wd4459 /wd4244 /wd4996 /wd4267 /wd4244
 		)
     add_compile_definitions(MIPP_ALIGNED_LOADS)
 endif ()
@@ -140,8 +140,6 @@ target_link_libraries (${PROJECT_NAME}
 if (APPLE)
 	set_target_properties(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO")
 endif()
-
-#juce_generate_juce_header (${PROJECT_NAME})
 
 get_property (debug_configs GLOBAL PROPERTY DEBUG_CONFIGURATIONS)
 

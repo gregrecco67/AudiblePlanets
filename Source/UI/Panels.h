@@ -35,25 +35,24 @@ class OSCBox : public gin::ParamBox
 {
 public:
 	OSCBox(APAudioProcessor& proc_, APAudioProcessor::OSCParams& params_, int num)
-		: gin::ParamBox(juce::String("  OSC ") += (num+1)), proc(proc_), params(params_)
+		: gin::ParamBox(juce::String("  OSC ") += (num+1)), proc(proc_), oscparams(params_)
 	{
-		addControl(c1 = new APKnob(params.coarse), 0, 0); // coarse
-		addControl(f1 = new APKnob(params.fine), 1, 0); // fine
-		addControl(v1 = new APKnob(params.volume), 2, 0); // volume
-		// addControl(t1 = new APKnob(params.tones), 3, 0); // tones
-		addControl(p1 = new APKnob(params.phase), 2, 1); // phase
+		addControl(c1 = new APKnob(oscparams.coarse), 0, 0); // coarse
+		addControl(f1 = new APKnob(oscparams.fine), 1, 0); // fine
+		addControl(v1 = new APKnob(oscparams.volume), 2, 0); // volume
+		addControl(p1 = new APKnob(oscparams.phase), 2, 1); // phase
 
 		c1->setLookAndFeel(lnfs[num]);
 		f1->setLookAndFeel(lnfs[num]);
 		v1->setLookAndFeel(lnfs[num]);
 
-		addControl(wave1 = new gin::Select(params.wave)); // saw
-		addControl(env1 = new gin::Select(params.env)); // env select
-		addControl(fixed1 = new gin::Select(params.fixed)); // fixed
-		watchParam(params.fixed);
-		watchParam(params.wave);
-		watchParam(params.coarse);
-		watchParam(params.fine);
+		addControl(wave1 = new gin::Select (oscparams.wave)); // saw
+		addControl(env1 = new gin::Select  (oscparams.env)); // env select
+		addControl(fixed1 = new gin::Select(oscparams.fixed)); // fixed
+		watchParam(oscparams.fixed);
+		watchParam(oscparams.wave);
+		watchParam(oscparams.coarse);
+		watchParam(oscparams.fine);
 		addAndMakeVisible(fixedHz1);
 		setColour(juce::TextButton::buttonOnColourId, juce::Colours::beige);
 
@@ -130,19 +129,19 @@ public:
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-		if (params.fixed->isOn())
+		if (oscparams.fixed->isOn())
 		{
 			fixedHz1.setVisible(true);
-			fixedHz1.setText(juce::String((params.coarse->getUserValue() + params.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
+			fixedHz1.setText(juce::String((oscparams.coarse->getUserValue() + oscparams.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
 		}
 		else
 		{
 			fixedHz1.setVisible(false);
 		}
-		auto coarseString = juce::String(params.coarse->getUserValueInt());
-		if (params.fine->getUserValue() > 0.01f)
+		auto coarseString = juce::String(oscparams.coarse->getUserValueInt());
+		if (oscparams.fine->getUserValue() > 0.01f)
 			coarseString += "+";
-		else if (params.fine->getUserValue() < -0.01f)
+		else if (oscparams.fine->getUserValue() < -0.01f)
 			coarseString += "-";
 		else
 			coarseString += "x";
@@ -166,12 +165,10 @@ public:
 	APLookAndFeel4 lnf4;
 	std::array<APLNF*, 4> lnfs{ &lnf1, &lnf2, &lnf3, &lnf4 };
 	APAudioProcessor& proc;
-	gin::ParamComponent::Ptr c1, f1, v1, t1, p1, wave1, env1, fixed1;
-	APAudioProcessor::OSCParams& params;
+	gin::ParamComponent::Ptr c1, f1, v1, p1, wave1, env1, fixed1;
+	APAudioProcessor::OSCParams& oscparams;
 
 	juce::Label fixedHz1, coarseLabel;
-
-	int currentOsc{ 1 };
 };
 
 //==============================================================================
@@ -179,7 +176,7 @@ class ENVBox : public gin::ParamBox
 {
 public:
 	ENVBox(APAudioProcessor &proc_, APAudioProcessor::ENVParams& params_, int num_)
-		: gin::ParamBox(juce::String("  ENV ") += (num_+1)), proc(proc_), params(params_), num(num_)
+		: gin::ParamBox(juce::String("  ENV ") += (num_+1)), proc(proc_), envparams(params_), num(num_)
 	{
 		// in reverse order
 		switch (num) {
@@ -196,20 +193,20 @@ public:
 			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
 			break;
 		}
-		addControl(a1 = new APKnob(params.attack), 0, 0);
-		addControl(d1 = new APKnob(params.decay), 1, 0);
-		addControl(s1 = new APKnob(params.sustain), 2, 0);
-		addControl(r1 = new APKnob(params.release), 3, 0);
-		addControl(ac1 = new APKnob(params.acurve, true), 4, 0);
-		addControl(dc1 = new APKnob(params.drcurve, true), 5, 0);
-		addControl(rpt1 = new gin::Select(params.syncrepeat), 4, 1);
-		addControl(beats1 = new gin::Select(params.duration), 5, 1);
-		addControl(rate1 = new APKnob(params.time), 5, 1);
+		addControl(a1 = new APKnob(envparams.attack), 0, 0);
+		addControl(d1 = new APKnob(envparams.decay), 1, 0);
+		addControl(s1 = new APKnob(envparams.sustain), 2, 0);
+		addControl(r1 = new APKnob(envparams.release), 3, 0);
+		addControl(ac1 = new APKnob(envparams.acurve, true), 4, 0);
+		addControl(dc1 = new APKnob(envparams.drcurve, true), 5, 0);
+		addControl(rpt1 = new gin::Select(envparams.syncrepeat), 4, 1);
+		addControl(beats1 = new gin::Select(envparams.duration), 5, 1);
+		addControl(rate1 = new APKnob(envparams.time), 5, 1);
 
 		beats1->setVisible(false);
 		rate1->setVisible(false);
 
-		watchParam(params.syncrepeat);
+		watchParam(envparams.syncrepeat);
 		addAndMakeVisible(envViz);
 	}
 
@@ -235,7 +232,7 @@ public:
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-		auto choice = params.syncrepeat->getUserValueInt();
+		auto choice = envparams.syncrepeat->getUserValueInt();
 		switch (choice) {
 		case 0:
 			beats1->setVisible(false);
@@ -262,9 +259,8 @@ public:
 	gin::ParamComponent::Ptr a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1;
 
 	int num;
-	EnvelopeComponent envViz{proc, num};
-	int currentEnv{1};
-	APAudioProcessor::ENVParams& params;
+	EnvelopeComponent envViz{proc, num+1};
+	APAudioProcessor::ENVParams& envparams;
 };
 
 //==============================================================================
@@ -293,22 +289,13 @@ public:
 		g.setGradientFill (gradient);
 		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
 		if (right)
 			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 1, getHeight());
     }
 
-	APKnob* equant, *algo, *squash;
-	bool top{false}, right{false}, bottom{false}, left{false};
-	void setTop(bool t) { top = t; }
+	APKnob* equant, *algo;
+	bool right{false};
 	void setRight(bool r) { right = r; }
-	void setBottom(bool b) { bottom = b; }
-	void setLeft(bool l) { left = l; }
 };
 
 //==============================================================================
@@ -615,16 +602,10 @@ public:
 		g.setGradientFill (gradient);
 		g.fillRect (rc);
 		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
 		if (right)
 			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 1, getHeight());
     }
-	bool top{false}, right{false}, bottom{false}, left{false};
+	bool right{false};
 	juce::TextButton clearAllButton{"Clear All"};
 
 	APAudioProcessor &proc;
@@ -881,63 +862,40 @@ public:
 }; // MacrosBox
 
 //==============================================================================
-/*
+
 class VolumeBox : public gin::ParamBox
 {
 public:
 	VolumeBox(APAudioProcessor &proc_)
-		: gin::ParamBox("  volume"), proc(proc_)
+		: gin::ParamBox("  vol"), proc(proc_)
 	{
-		setName("  volume");
-		addControl(level = new APKnob(proc.globalParams.level));
-		addControl(aux = new APKnob(proc.auxParams.volume));
-		addAndMakeVisible(levelMeter);
-		level->setDisplayName("Main");
-		aux->setDisplayName("Aux");
-		proc.auxParams.enable->addListener(this);
-		valueUpdated(proc.auxParams.enable);
+		setName("  vol");
+		level = new gin::PluginSlider(proc.globalParams.level, 
+			juce::Slider::LinearBarVertical, juce::Slider::NoTextBox);
+		addAndMakeVisible(level);
 	}
 
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), findColour (gin::PluginLookAndFeel::matte2ColourId));
+        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), 
+			findColour (gin::PluginLookAndFeel::matte2ColourId));
 		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
 		if (right)
 			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 2, getHeight());
     }
 
-	bool top{false}, right{false}, bottom{false}, left{false};
-	void setTop(bool t) { top = t; }
+	bool right{false};
 	void setRight(bool r) { right = r; }
-	void setBottom(bool b) { bottom = b; }
-	void setLeft(bool l) { left = l; }
 
 	void resized() override
 	{
 		gin::ParamBox::resized();
-		level->setBounds(0, 43, 80, 100);
-		aux->setBounds(80, 43, 80, 100);
-		levelMeter.setBounds(280 - 38, 43, 30, 100);
+		level->setBounds(0, 23, 56, 140);
 	}
 
-	void valueUpdated(gin::Parameter *p) override
-	{
-		if (p == proc.auxParams.enable)
-		{
-			aux->setEnabled(proc.auxParams.enable->isOn());
-		}
-	}
 
 	APAudioProcessor &proc;
-	APKnob *level, *aux;
-
-	gin::LevelMeter levelMeter{proc.levelTracker};
+	gin::PluginSlider* level;
 };
-*/
+

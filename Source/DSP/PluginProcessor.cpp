@@ -490,7 +490,7 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
     glideMode      = p.addIntParam("gMode",   "Glide Mode", "Glide", "",   { 0.0, 2.0, 0.0, 1.0 }, 0.0f, 0.0f, glideModeTextFunction);
     glideRate      = p.addExtParam("gRate",   "Glide Rate", "Rate",  " s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
     legato         = p.addIntParam("legato",  "Legato",     "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
-    level          = p.addExtParam("level",   "Main Vol.",      "",      " dB", { -100.0, 12.0, 0.0, 4.0f }, 0.0, 0.0f);
+    level          = p.addExtParam("level",   "Main Vol.",      "",      " dB", { -100.0, 12.0, 0.0, 1.0f }, 0.0, 0.0f);
     mpe            = p.addIntParam("mpe",     "MPE",        "",      "",   { 0.0, 1.0, 1.0, 1.0 }, 0.0f, 0.0f, enableTextFunction);
     pitchbendRange = p.addIntParam("pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
 

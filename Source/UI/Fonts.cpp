@@ -124,3 +124,19 @@ void APLNF::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int hei
         }
     }
 }
+
+void APLNF::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos, float maxSliderPos, juce::Slider::SliderStyle style, juce::Slider& slider)
+{
+	if (style != juce::Slider::LinearBarVertical)
+	{
+		gin::CopperLookAndFeel::drawLinearSlider(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+		return;
+	}
+	g.setColour(slider.findColour(juce::Slider::trackColourId));
+	g.fillRect(float(x), y + height - 2.0f, float(width), 4.0f);
+	g.setColour(slider.findColour(juce::Slider::thumbColourId));
+	g.fillRect( 
+		juce::Rectangle<float>((float)x + 7.5f, sliderPos, (float)width - 15.0f, (float)y + ((float)height - sliderPos))
+	);
+}
+

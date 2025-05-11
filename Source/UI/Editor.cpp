@@ -40,6 +40,7 @@ Editor::Editor(APAudioProcessor& proc_)
 	proc.globalParams.mpe->addListener(this);
     addAndMakeVisible(aux);
     addAndMakeVisible(matrix);
+	addAndMakeVisible(volumeBox);
     addAndMakeVisible(speedSlider);
     speedSlider.setRange(0.0, 2.0);
     speedSlider.setSkewFactor(0.5);
@@ -102,6 +103,7 @@ void Editor::resized()
 	setGrid(&timbre,  12,  0, 0, 2, 2);
 	setGrid(&aux,     10,  2, 1, 5, 2);
 	setGrid(&global,   14, 0, 0, 2, 2);
+	volumeBox.setBounds(15*56, 163, 56, 163);
 	orbitViz.setBounds( 10 * 56 + 5, 4 * 70 + 2 * 23, 
 		6 * 56, 5 * 70);
 	liveViz.setBounds( static_cast<int>(10 * 56.f),
@@ -110,7 +112,8 @@ void Editor::resized()
     speedSlider.setBounds(14 * 56 , 4 * 70 + 2 * 23, 112, 25);
 
     setGrid(&modsrc,  16,  0, 0, 5, 4.328571f);
-    setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
+    //setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
+	matrix.setBounds(16 * 56, 326, 5 * 56, 326);
 }
 
 void Editor::timerCallback() {

@@ -47,20 +47,17 @@ private:
 	ENVBox env4{ proc, proc.env4Params, 3 };
 
     FilterBox filter                        { "  flt", proc };
-    // LFOBox lfo{ proc };
-	// MacrosBox macros{ proc };
-    // MsegBox mseg{ proc };
     GlobalBox global                        { "  global", proc };
     ModBox modsrc                              { "  mod", proc };
 	TimbreBox timbre						{ "  timbre", proc };
     AuxBox aux{ "      Aux Oscillator", proc };
     MainMatrixBox matrix{ "  Mod Matrix", proc };
     OrbitViz orbitViz;
+	VolumeBox volumeBox{ proc };
     int frameRate{ 24 };
     float vizDefPhase{ 0.f }, vizEpi1Phase{ 0.f }, vizEpi2Phase{ 0.f }, vizEpi3Phase{ 0.f };
     juce::ToggleButton liveViz{ "Live" };
     APModMatrixBox::Row::APDepthSlider speedSlider;
-	// MainVolSlider mainvol2{ proc.globalParams.level };
     float phaseIncrement{ juce::MathConstants<float>::pi / (2.0f * frameRate) };
 	APLNF aplnf;
     
