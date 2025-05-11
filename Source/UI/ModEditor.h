@@ -44,6 +44,10 @@ private:
     ModBox modsrc                              { "  mod", proc };
     MsegBox msegA{ proc, proc.mseg1Params, proc.mseg2Params, proc.mseg1Data, proc.mseg2Data, 1 };
     MsegBox msegB{ proc, proc.mseg3Params, proc.mseg4Params, proc.mseg3Data, proc.mseg4Data, 3 };
+    FilterBox filter                       { "  flt", proc };
+    TimbreBox timbre { "  timbre", proc };
+    GlobalBox global { "  global", proc };
+
 	MacrosBox macros{ proc };
     APLNF aplnf;
     
