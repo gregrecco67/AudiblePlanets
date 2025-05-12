@@ -58,7 +58,7 @@ public:
 
 		addAndMakeVisible(coarseLabel);
 		coarseLabel.setJustificationType(juce::Justification::centredBottom);
-		coarseLabel.setFont(juce::Font(14.0f));
+		//coarseLabel.setFont(juce::Font(14.0f));
 		fixedHz1.setJustificationType(juce::Justification::centred);
 
 	}
@@ -176,7 +176,7 @@ class ENVBox : public gin::ParamBox
 {
 public:
 	ENVBox(APAudioProcessor &proc_, APAudioProcessor::ENVParams& params_, int num_)
-		: gin::ParamBox(juce::String("  ENV ") += (num_+1)), proc(proc_), envparams(params_), num(num_)
+		: gin::ParamBox(juce::String("  ENV ") += (num_+1)), proc(proc_), num(num_), envparams(params_)
 	{
 		// in reverse order
 		switch (num) {

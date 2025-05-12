@@ -77,23 +77,23 @@ private:
 
 	int filterType{ 0 };
 
-    float osc1xs[64];
-    float osc1ys[64];
-    float osc2xs[64];
-    float osc2ys[64];
-    float osc3xs[64];
-    float osc3ys[64];
-    float osc4xs[64];
-    float osc4ys[64];
+    float osc1xs[128];
+    float osc1ys[128];
+    float osc2xs[128];
+    float osc2ys[128];
+    float osc3xs[128];
+    float osc3ys[128];
+    float osc4xs[128];
+    float osc4ys[128];
 
-    mipp::Reg<float> epi1xs[16];
-    mipp::Reg<float> epi1ys[16];
-    mipp::Reg<float> epi2xs[16];
-    mipp::Reg<float> epi2ys[16];
-    mipp::Reg<float> epi3xs[16];
-    mipp::Reg<float> epi3ys[16];
-    mipp::Reg<float> epi4xs[16];
-    mipp::Reg<float> epi4ys[16];
+    mipp::Reg<float> epi1xs[32];
+    mipp::Reg<float> epi1ys[32];
+    mipp::Reg<float> epi2xs[32];
+    mipp::Reg<float> epi2ys[32];
+    mipp::Reg<float> epi3xs[32];
+    mipp::Reg<float> epi3ys[32];
+    mipp::Reg<float> epi4xs[32];
+    mipp::Reg<float> epi4ys[32];
 
    // mipp::Reg<float> epi4sEqnt[8], epi3sEqnt[8], epi2sEqnt[8], epi1sEqnt[8];
      

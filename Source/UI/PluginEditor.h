@@ -54,7 +54,6 @@ private:
 	APLevelMeter levelMeter{ proc.levelTracker };
 
 	juce::Label scaleName, learningLabel;
-	APKnob mainvol{ proc.globalParams.level }, auxvol{proc.auxParams.volume};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessorEditor)
 };

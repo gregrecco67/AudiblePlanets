@@ -171,13 +171,13 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 
 	noteSmoother.setSampleRate(newRate);
     Envelope::Params p;
-    env1.setSampleRate(newRate);
+    env1.setSampleRate(newRate * 0.25);
+    env2.setSampleRate(newRate * 0.25);
+    env3.setSampleRate(newRate * 0.25);
+    env4.setSampleRate(newRate * 0.25);
     env1.setParameters(p);
-	env2.setSampleRate(newRate);
     env2.setParameters(p);
-	env3.setSampleRate(newRate);
     env3.setParameters(p);
-	env4.setSampleRate(newRate);
     env4.setParameters(p);
 
 	mseg1.setSampleRate(newRate);
@@ -204,10 +204,10 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 	// the whole enchilada
 	for (int i = 0; i < std::ceil(((float)numSamples)/4.f); i++)
     {
-        env1.advance(4);
-        env2.advance(4);
-        env3.advance(4);
-        env4.advance(4);
+        env1.advance(1);
+        env2.advance(1);
+        env3.advance(1);
+        env4.advance(1);
         float a = envs[0]->getOutput();
         float b = envs[1]->getOutput();
         float c = envs[2]->getOutput();
@@ -430,45 +430,42 @@ void SynthVoice3::updateParams(int blockSize)
 
 	float q = gin::Q / (1.0f - (getValue(proc.filterParams.resonance) / 100.0f) * 0.99f);
 
-	int newType = proc.filterParams.type->getUserValueInt();
-	if (newType != filterType) {
-		filterType = newType;
-		switch (filterType)
-		{
-		case 0:
-			filter.setType(gin::Filter::lowpass);
-			filter.setSlope(gin::Filter::db12);
-			break;
-		case 1:
-			filter.setType(gin::Filter::lowpass);
-			filter.setSlope(gin::Filter::db24);
-			break;
-		case 2:
-			filter.setType(gin::Filter::highpass);
-			filter.setSlope(gin::Filter::db12);
-			break;
-		case 3:
-			filter.setType(gin::Filter::highpass);
-			filter.setSlope(gin::Filter::db24);
-			break;
-		case 4:
-			filter.setType(gin::Filter::bandpass);
-			filter.setSlope(gin::Filter::db12);
-			break;
-		case 5:
-			filter.setType(gin::Filter::bandpass);
-			filter.setSlope(gin::Filter::db24);
-			break;
-		case 6:
-			filter.setType(gin::Filter::notch);
-			filter.setSlope(gin::Filter::db12);
-			break;
-		case 7:
-			filter.setType(gin::Filter::notch);
-			filter.setSlope(gin::Filter::db24);
-			break;
-		}
-	}
+	filterType = proc.filterParams.type->getUserValueInt();
+    switch (filterType)
+    {
+    case 0:
+        filter.setType(gin::Filter::lowpass);
+        filter.setSlope(gin::Filter::db12);
+        break;
+    case 1:
+        filter.setType(gin::Filter::lowpass);
+        filter.setSlope(gin::Filter::db24);
+        break;
+    case 2:
+        filter.setType(gin::Filter::highpass);
+        filter.setSlope(gin::Filter::db12);
+        break;
+    case 3:
+        filter.setType(gin::Filter::highpass);
+        filter.setSlope(gin::Filter::db24);
+        break;
+    case 4:
+        filter.setType(gin::Filter::bandpass);
+        filter.setSlope(gin::Filter::db12);
+        break;
+    case 5:
+        filter.setType(gin::Filter::bandpass);
+        filter.setSlope(gin::Filter::db24);
+        break;
+    case 6:
+        filter.setType(gin::Filter::notch);
+        filter.setSlope(gin::Filter::db12);
+        break;
+    case 7:
+        filter.setType(gin::Filter::notch);
+        filter.setSlope(gin::Filter::db24);
+        break;
+    }
 
 	filter.setParams(f, q);
 	

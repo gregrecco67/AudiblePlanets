@@ -56,6 +56,7 @@ public:
     void updatePitchbend();
 
 	void processSamplesDown(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
+	void processSamplesDown2(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
     
     //==============================================================================
     
@@ -340,10 +341,11 @@ public:
     APSynth synth;
 	juce::AudioBuffer<float> auxBuffer;
 	juce::AudioBuffer<float> auxSlice;
-	juce::AudioBuffer<float> synthBuffer;
+	juce::AudioBuffer<float> synthBuffer;    // 2x
+	juce::AudioBuffer<float> preSynthBuffer; // 4x
 
 	MTSClient* client;
-	juce::String scaleName;
+	juce::String scaleName, learning;
 	bool isLearning;
 
 	AuxSynth auxSynth;
@@ -365,12 +367,12 @@ public:
 	std::uniform_real_distribution<> dist{ -1.f, 1.f };
 	
 	// antialiasing downsampling filter stuff
-	int osExpo{ 1 }; // oversampling exponent n: 2^n
+	int osExpo{ 2 }; // oversampling exponent n: 2^n
 	int osFactor; // oversampling factor f: f = 2^n
-	juce::dsp::FilterDesign<float>::FIRCoefficientsPtr firCoeffs;
-	size_t aaN, aaNdiv2, aaNdiv4;
-	juce::Array<size_t> aaPosition;
-	juce::AudioBuffer<float> state1, state2;
+	juce::dsp::FilterDesign<float>::FIRCoefficientsPtr firCoeffs1, firCoeffs2;
+	size_t aa1N, aa1Ndiv2, aa1Ndiv4, aa2N, aa2Ndiv2, aa2Ndiv4;
+	juce::Array<size_t> aa1Position, aa2Position;
+	juce::AudioBuffer<float> astate1, astate2, bstate1, bstate2;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)
