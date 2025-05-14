@@ -32,8 +32,8 @@ public:
 
     void bumpPhase(float bump) {
         phase += bump;
-        if (phase >= 1.0f) { phase -= 1.0f; }
-        if (phase < 0.0f) { phase += 1.0f; }
+        while (phase >= 1.0f) { phase -= 1.0f; }
+        while (phase < 0.0f) { phase += 1.0f; }
     }
     
     struct Settings
