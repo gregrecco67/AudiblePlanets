@@ -30,6 +30,12 @@ public:
         invSampleRate = 1.0f / sampleRate; 
     }
 
+    void bumpPhase(float bump) {
+        phase += bump;
+        if (phase >= 1.0f) { phase -= 1.0f; }
+        if (phase < 0.0f) { phase += 1.0f; }
+    }
+    
     struct Settings
     {
         gin::Wave wave = gin::Wave::sine;

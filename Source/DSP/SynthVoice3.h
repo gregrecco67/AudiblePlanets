@@ -69,6 +69,7 @@ private:
     gin::LFO lfo1, lfo2, lfo3, lfo4;
     gin::MSEG mseg1, mseg2, mseg3, mseg4;
     APOscillator osc1, osc2, osc3, osc4;
+    float lastp1{0.f}, lastp2{0.f}, lastp3{0.f}, lastp4{0.f};
     gin::MSEG::Parameters mseg1Params, mseg2Params, mseg3Params, mseg4Params;
 
     Envelope env1, env2, env3, env4;
@@ -78,14 +79,18 @@ private:
 	int filterType{ 0 };
 
     float osc1xs[128]; // at 4x sr, processed down to 32
-    float osc1ys[128];
+    float osc1ys[128]; // direct output from oscillators
     float osc2xs[128];
     float osc2ys[128];
     float osc3xs[128];
     float osc3ys[128];
     float osc4xs[128];
     float osc4ys[128];
-
+    
+    // the same, as registers
+    mipp::Reg<float> osc1x, osc1y, osc2x, osc2y, osc3x, osc3y, osc4x, osc4y;
+     
+    // interpreted positions, added together according to algo
     mipp::Reg<float> epi1xs[32];
     mipp::Reg<float> epi1ys[32];
     mipp::Reg<float> epi2xs[32];
@@ -95,15 +100,12 @@ private:
     mipp::Reg<float> epi4xs[32];
     mipp::Reg<float> epi4ys[32];
 
-   // mipp::Reg<float> epi4sEqnt[8], epi3sEqnt[8], epi2sEqnt[8], epi1sEqnt[8];
+     int tilUpdate{0};
      
-    mipp::Reg<float> osc1x, osc1y, osc2x, osc2y, osc3x, osc3y, osc4x, osc4y;
-
+    // distances and inverse distances
     mipp::Reg<float> dist2sq, dist2, invDist2;
     mipp::Reg<float> dist3sq, dist3, invDist3;
     mipp::Reg<float> dist4sq, dist4, invDist4;
-
-
 
     float currentMidiNote = -1;
     APOscillator::Settings osc1Params, osc2Params, osc3Params, osc4Params;
@@ -118,18 +120,12 @@ private:
     
     juce::AudioBuffer<float> synthBuffer;
 
-    int n = mipp::N<float>() * 8;
-
     mipp::Reg<float> sine2{ 0.f, 0.f, 0.f, 0.f }, cos2{ 0.f, 0.f, 0.f, 0.f }, sine3{ 0.f, 0.f, 0.f, 0.f }, cos3{ 0.f, 0.f, 0.f, 0.f },
         sine4{ 0.f, 0.f, 0.f, 0.f }, cos4{ 0.f, 0.f, 0.f, 0.f };
     // redundant??
     mipp::Reg<float> sample2L, sample2R, sample3L, sample3R, sample4L, sample4R;
 
     mipp::Reg<float> sampleL{ 0.f, 0.f, 0.f, 0.f }, sampleR{ 0.f, 0.f, 0.f, 0.f };
-    mipp::Reg<float> piReg = static_cast<float>(pi);
-
-    float maxPos = 0.0f;
-    float minPos = 0.0f;
 
     friend class APSynth;
     juce::MPENote curNote;

@@ -79,10 +79,10 @@ void SynthVoice3::noteStarted()
 	updateParams(0);
 	snapParams();
 
-	osc1.noteOn(proc.osc1Params.phase->getUserValue());
-	osc2.noteOn(proc.osc2Params.phase->getUserValue());
-	osc3.noteOn(proc.osc3Params.phase->getUserValue());
-	osc4.noteOn(proc.osc4Params.phase->getUserValue());
+    osc1.noteOn(lastp1 = proc.osc1Params.phase->getUserValue());
+	osc2.noteOn(lastp2 = proc.osc2Params.phase->getUserValue());
+	osc3.noteOn(lastp3 = proc.osc3Params.phase->getUserValue());
+	osc4.noteOn(lastp4 = proc.osc4Params.phase->getUserValue());
 
 	env1.noteOn();
 	env2.noteOn();
@@ -347,6 +347,8 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 
 void SynthVoice3::updateParams(int blockSize)
 {
+    if (tilUpdate != 0) { --tilUpdate; return; } // at 4x os, we don't need this every block
+    else { tilUpdate = 4; }
 	algo = (int)getValue(proc.timbreParams.algo);
 	equant = getValue(proc.timbreParams.equant);
 
@@ -390,8 +392,11 @@ void SynthVoice3::updateParams(int blockSize)
 	osc1Params.wave = waveForChoice(int(getValue(proc.osc1Params.wave)));
 	osc1Params.vol = getValue(proc.osc1Params.volume);
 	//osc1Params.tones = getValue(proc.osc1Params.tones);
-	//osc1Params.phaseShift = getValue(proc.osc1Params.phase);
-
+	auto phaseParam = getValue(proc.osc1Params.phase);
+    auto diff = phaseParam - lastp1;
+    osc1.bumpPhase(diff);
+    lastp1 = phaseParam;
+    
 	envs[0] = envsByNum[proc.osc1Params.env->getUserValueInt()];
 
 	// osc 2
@@ -400,8 +405,13 @@ void SynthVoice3::updateParams(int blockSize)
 
 	osc2Params.wave = waveForChoice(int(getValue(proc.osc2Params.wave)));
 	// osc2Params.tones = getValue(proc.osc2Params.tones);
-	// osc2Params.phaseShift = getValue(proc.osc2Params.phase);
-	osc2Params.vol = getValue(proc.osc2Params.volume);
+	phaseParam = getValue(proc.osc2Params.phase);
+    diff = phaseParam - lastp2;
+    osc2.bumpPhase(diff);
+    lastp2 = phaseParam;
+    
+    osc2Params.vol = getValue(proc.osc2Params.volume);
+    
 	envs[1] = envsByNum[proc.osc2Params.env->getUserValueInt()];
 
 	// osc 3
@@ -410,7 +420,11 @@ void SynthVoice3::updateParams(int blockSize)
 	osc3Params.wave = waveForChoice(int(getValue(proc.osc3Params.wave)));
 	osc3Params.vol = getValue(proc.osc3Params.volume);
 	// osc3Params.tones = getValue(proc.osc3Params.tones);
-	// osc3Params.phaseShift = getValue(proc.osc3Params.phase);
+	phaseParam = getValue(proc.osc3Params.phase);
+    diff = phaseParam - lastp3;
+    osc3.bumpPhase(diff);
+    lastp3 = phaseParam;
+    
 	envs[2] = envsByNum[proc.osc3Params.env->getUserValueInt()];
 
 	// osc4 
@@ -418,7 +432,11 @@ void SynthVoice3::updateParams(int blockSize)
 	osc4Params.wave = waveForChoice(int(getValue(proc.osc4Params.wave)));
 	osc4Params.vol = getValue(proc.osc4Params.volume);
 	// osc4Params.tones = getValue(proc.osc4Params.tones);
-	// osc4Params.phaseShift = getValue(proc.osc4Params.phase);
+	phaseParam = getValue(proc.osc4Params.phase);
+    diff = phaseParam - lastp4;
+    osc4.bumpPhase(diff);
+    lastp4 = phaseParam;
+    
 	envs[3] = envsByNum[proc.osc4Params.env->getUserValueInt()];
 
 	float noteNum = getValue(proc.filterParams.frequency);

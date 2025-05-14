@@ -385,6 +385,12 @@ public:
 	// size_t aa1N, aa1Ndiv2, aa1Ndiv4, aa2N, aa2Ndiv2, aa2Ndiv4;
 	// juce::Array<size_t> aa1Position, aa2Position;
 	// juce::AudioBuffer<float> astate1, astate2, bstate1, bstate2;
+
+    
+    static constexpr int nbr_coefs1 = 3;
+    static constexpr int nbr_coefs2 = 8;
+    double coefs1 [nbr_coefs1];
+    double coefs2 [nbr_coefs2];
     
 #if APPLE
     // hiir::Downsampler2x4Neon <nbr_coefs1> dspl1L, dspl1R;
@@ -393,10 +399,7 @@ public:
     hiir::Downsampler2xNeon <nbr_coefs2> dspl2L, dspl2R;
 #endif
     
-    static constexpr int nbr_coefs1 = 3;
-    static constexpr int nbr_coefs2 = 8;
-    double coefs1 [nbr_coefs1];
-    double coefs2 [nbr_coefs2];
+
     
 
     // juce::Array<float> coefficientsDown1, coefficientsDown2;
