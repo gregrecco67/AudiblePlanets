@@ -33,8 +33,6 @@
  public:
     SynthVoice3(APAudioProcessor& p);
     
-    // inline std::array<float, 2> panWeights(const float in);
-
     void noteStarted() override;
     void noteRetriggered() override;
     void noteStopped(bool allowTailOff) override;
@@ -63,13 +61,12 @@ private:
     void updateParams(int blockSize);
 
     APAudioProcessor& proc;
-
     
     gin::Filter filter;
     gin::LFO lfo1, lfo2, lfo3, lfo4;
     gin::MSEG mseg1, mseg2, mseg3, mseg4;
     APOscillator osc1, osc2, osc3, osc4;
-    float lastp1{0.f}, lastp2{0.f}, lastp3{0.f}, lastp4{0.f};
+    float lastp1{0.f}, lastp2{0.f}, lastp3{0.f}, lastp4{0.f}; // last phase
     gin::MSEG::Parameters mseg1Params, mseg2Params, mseg3Params, mseg4Params;
 
     Envelope env1, env2, env3, env4;
@@ -100,7 +97,7 @@ private:
     mipp::Reg<float> epi4xs[32]{0.f};
 	mipp::Reg<float> epi4ys[32]{0.f};
 
-     int tilUpdate{0};
+    int tilUpdate{0}; // only update envelopes/lfo/mseg every 4th block
      
     // distances and inverse distances
     mipp::Reg<float> dist2sq, dist2, invDist2;
