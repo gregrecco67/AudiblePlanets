@@ -16,9 +16,9 @@
 #include "SynthVoice3.h"
 #include "PluginProcessor.h"
 
-inline std::array<float, 2> SynthVoice3::panWeights(const float in) { // -1 to 1
-	return { std::sqrt((in + 1.f) * 0.5f), std::sqrt(1.f - ((in + 1.f) * 0.5f)) };
-}
+// inline std::array<float, 2> SynthVoice3::panWeights(const float in) { // -1 to 1
+// 	return { std::sqrt((in + 1.f) * 0.5f), std::sqrt(1.f - ((in + 1.f) * 0.5f)) };
+// }
 
 //==============================================================================
 SynthVoice3::SynthVoice3(APAudioProcessor& p)

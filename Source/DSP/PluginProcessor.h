@@ -25,6 +25,11 @@
 #include "Synth.h"
 #include "AuxSynth.h"
 #include <random>
+#include "hiir/PolyphaseIir2Designer.h"
+#if APPLE
+    #include "hiir/Downsampler2x4Neon.h"
+    #include "hiir/Downsampler2xNeon.h"
+#endif
 
 //==============================================================================
 class APAudioProcessor : public gin::Processor
@@ -57,6 +62,13 @@ public:
 
 	void processSamplesDown(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
 	void processSamplesDown2(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
+    
+    void dnsplStage1(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
+    void dnsplStage2(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
+    
+    void prcsIirDown1(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
+    void prcsIirDown2(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
+    juce::dsp::IIR::Coefficients<float> getCoefficients(juce::dsp::FilterDesign<float>::IIRPolyphaseAllpassStructure& structure) const;
     
     //==============================================================================
     
@@ -373,6 +385,26 @@ public:
 	size_t aa1N, aa1Ndiv2, aa1Ndiv4, aa2N, aa2Ndiv2, aa2Ndiv4;
 	juce::Array<size_t> aa1Position, aa2Position;
 	juce::AudioBuffer<float> astate1, astate2, bstate1, bstate2;
+    
+    static constexpr int nbr_coefs1 = 3;
+    static constexpr int nbr_coefs2 = 8;
+    double coefs1 [nbr_coefs1];
+    double coefs2 [nbr_coefs2];
+    
+#if APPLE
+    // hiir::Downsampler2x4Neon <nbr_coefs1> dspl1L, dspl1R;
+    // hiir::Downsampler2x4Neon <nbr_coefs2> dspl2L, dspl2R;
+    hiir::Downsampler2xNeon <nbr_coefs1> dspl1L, dspl1R;
+    hiir::Downsampler2xNeon <nbr_coefs2> dspl2L, dspl2R;
+#endif
+    
+    
+    juce::Array<float> coefficientsDown1, coefficientsDown2;
+    float latency1, latency2;
+
+    juce::AudioBuffer<float> v1Down, v2Down;
+    juce::Array<float> delay1Down, delay2Down;
+    
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)

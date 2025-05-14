@@ -4,6 +4,7 @@ if (APPLE)
 	set (CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum OS X deployment version" FORCE)
 	set (CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 	set (CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+    add_definitions( -DAPPLE )
 endif()
 
 
@@ -55,6 +56,8 @@ if (APPLE)
 			-ffast-math -fno-finite-math-only -Wfloat-equal
 #			"$<$<CONFIG:RELEASE>:-Werror>"
 		)
+	add_compile_definitions(NDEBUG)
+	#add_compile_options(-mfloat-abi=hard)
 endif ()
 
 if (MSVC)
@@ -69,10 +72,9 @@ endif ()
 set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
 
 file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/*.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/hiir/*.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.cpp

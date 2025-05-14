@@ -18,7 +18,7 @@
  #include <gin_dsp/gin_dsp.h>
  #include <gin_plugin/gin_plugin.h>
  #include "Envelope.h"
- #include "libMTSClient.h"
+ #include "MTS-ESP/libMTSClient.h"
  #include "Oscillator.h"
  #include <numbers>
  #include <random>
@@ -33,7 +33,7 @@
  public:
     SynthVoice3(APAudioProcessor& p);
     
-    inline std::array<float, 2> panWeights(const float in);
+    // inline std::array<float, 2> panWeights(const float in);
 
     void noteStarted() override;
     void noteRetriggered() override;
@@ -77,7 +77,7 @@ private:
 
 	int filterType{ 0 };
 
-    float osc1xs[128];
+    float osc1xs[128]; // at 4x sr, processed down to 32
     float osc1ys[128];
     float osc2xs[128];
     float osc2ys[128];

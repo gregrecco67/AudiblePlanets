@@ -17,7 +17,7 @@
 #include <gin_dsp/gin_dsp.h>
 #include <gin_plugin/gin_plugin.h>
 #include "Envelope.h"
-#include "third_party/libMTSClient.h"
+#include "third_party/MTS-ESP/libMTSClient.h"
 #include <numbers>
 class APAudioProcessor;
 

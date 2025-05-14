@@ -3,7 +3,7 @@ clean up Oscillator params
 
 get phase working properly again (measure phase shifts and shift them!)
 
-rewrite downsample algo for mipp registers
+use hiir for downsampling: get coefs from coefs folder C4x.h
 
 -- add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
 

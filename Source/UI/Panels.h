@@ -875,6 +875,8 @@ public:
 		addAndMakeVisible(level);
 	}
 
+    ~VolumeBox() override { delete level; }
+    
 	void paint (juce::Graphics& g) override
     {
         auto rc = getLocalBounds().withTrimmedTop (23);
