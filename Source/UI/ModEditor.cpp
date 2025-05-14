@@ -37,8 +37,11 @@ ModEditor::ModEditor(APAudioProcessor& proc_)
 	lfo4.setRight(true);
 	msegA.setRight(true);
 	msegB.setRight(true);
-    
-	//startTimerHz(x);
+	macros.setRight(true);
+	filter.setRight(true);
+	timbre.setRight(true);
+	global.setRight(true);
+	proc.globalParams.pitchbendRange->addListener(this);
 }
 
 ModEditor::~ModEditor()
@@ -77,8 +80,5 @@ void ModEditor::resized()
 	setGrid(&global,   13,  6, 3, 3, 2);
 	modsrc.setBounds(16 * 56, 0, 5 * 56, 326);
 	matrix.setBounds(16 * 56, 326, 5 * 56, 4.328571f * 70 + 23.f);
-	
-    // setGrid(&modsrc,  16,  0, 0, 5, 4.328571f);
-	// setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
 }
 

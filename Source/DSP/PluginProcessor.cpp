@@ -701,39 +701,6 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     dspl2L.set_coefs(coefs2); // 2x down with narrow tb
     dspl2R.set_coefs(coefs2); // 2x down with narrow tb
     
-    // auto structureDown1 = juce::dsp::FilterDesign<float>::designIIRLowpassHalfBandPolyphaseAllpassMethod(.12, -65.0);
-    // auto coeffsDown1 = getCoefficients (structureDown1);
-    // latency1 = static_cast<float> (-(coeffsDown1.getPhaseForFrequency (0.0001, 1.0)) / (0.0001 * juce::MathConstants<double>::twoPi));
-//
-    // for (auto i = 0; i < structureDown1.directPath.size(); ++i)
-    //     coefficientsDown1.add (structureDown1.directPath.getObjectPointer (i)->coefficients[0]);
-//
-    // for (auto i = 1; i < structureDown1.delayedPath.size(); ++i)
-    //     coefficientsDown1.add (structureDown1.delayedPath.getObjectPointer (i)->coefficients[0]);
-//
-    // v1Down.setSize (2, coefficientsDown1.size());
-    // delay1Down.resize (2);
-    //
-    // v1Down.clear();
-    // delay1Down.fill(0);
-    //
-    // auto structureDown2 = juce::dsp::FilterDesign<float>::designIIRLowpassHalfBandPolyphaseAllpassMethod(.06, -75.0);
-    // auto coeffsDown2 = getCoefficients(structureDown2);
-    // latency2 = static_cast<float> (-(coeffsDown2.getPhaseForFrequency (0.0001, 1.0)) / (0.0001 * juce::MathConstants<double>::twoPi));
-    //
-    // for (auto i = 0; i < structureDown2.directPath.size(); ++i)
-    //     coefficientsDown2.add (structureDown2.directPath.getObjectPointer (i)->coefficients[0]);
-//
-    // for (auto i = 1; i < structureDown2.delayedPath.size(); ++i)
-    //     coefficientsDown2.add (structureDown2.delayedPath.getObjectPointer (i)->coefficients[0]);
-//
-    // v2Down.setSize (2, coefficientsDown2.size());
-    // delay2Down.resize (2);
-    //
-    // v2Down.clear();
-    // delay2Down.fill(0);
-
-	// poly params 
     osc1Params.setup(*this, juce::String{ "1" });
     osc2Params.setup(*this, juce::String{ "2" });
     osc3Params.setup(*this, juce::String{ "3" });
@@ -791,30 +758,6 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
              
 	modMatrix.setMonoValue(randSrc1Mono, 0.0f);
 	modMatrix.setMonoValue(randSrc2Mono, 0.0f);
-
-    osFactor = pow(2.0f, osExpo);
-    // firCoeffs1 = juce::dsp::FilterDesign<float>::designFIRLowpassHalfBandEquirippleMethod(0.12f, -65.0f);
-    // aa1N = firCoeffs1->getFilterOrder() + 1;
-    // aa1Ndiv2 = aa1N / 2;
-    // aa1Ndiv4 = aa1Ndiv2 / 2;
-    // aa1Position.resize(2);
-    // aa1Position.fill(0);
-    // astate1.setSize(2, static_cast<int>(aa1N));
-    // astate2.setSize(2, static_cast<int>(aa1Ndiv4 + 1));
-    // astate1.clear();
-    // astate2.clear();
-//
-    // firCoeffs2 = juce::dsp::FilterDesign<float>::designFIRLowpassHalfBandEquirippleMethod(0.06f, -75.0f);
-    // aa2N = firCoeffs2->getFilterOrder() + 1;
-    // aa2Ndiv2 = aa2N / 2;
-    // aa2Ndiv4 = aa2Ndiv2 / 2;
-    // aa2Position.resize(2);
-    // aa2Position.fill(0);
-    // bstate1.setSize(2, static_cast<int>(aa2N));
-    // bstate2.setSize(2, static_cast<int>(aa2Ndiv4 + 1));
-    // bstate1.clear();
-    // bstate2.clear();
-
 }
 
 APAudioProcessor::~APAudioProcessor()
@@ -882,6 +825,7 @@ void APAudioProcessor::setupModMatrix()
 void APAudioProcessor::stateUpdated() // called when loading a preset
 {
     modMatrix.stateUpdated(state);
+	stereoDelay.resetBuffers();
 
     if (state.getOrCreateChildWithName("mseg1", nullptr).getNumChildren() > 0) {
         mseg1Data.fromValueTree(state.getChildWithName("mseg1"));
@@ -939,176 +883,8 @@ void APAudioProcessor::reset()
     lfo4.reset();
 
     waveshaper.reset();
-    compressor.reset();
-    
-    
+    compressor.reset();   
 }
-
-
-juce::dsp::IIR::Coefficients<float> APAudioProcessor::getCoefficients(juce::dsp::FilterDesign<float>::IIRPolyphaseAllpassStructure& /*structure*/) const
-{
-//     constexpr auto one = static_cast<float> (1.0);
-//
-//     juce::dsp::Polynomial<float> numerator1 ({ one }), denominator1 ({ one }),
-//                            numerator2 ({ one }), denominator2 ({ one });
-//
-//     for (auto* i : structure.directPath)
-//     {
-//         auto coeffs = i->getRawCoefficients();
-//
-//         if (i->getFilterOrder() == 1)
-//         {
-//             numerator1   = numerator1  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1] }));
-//             denominator1 = denominator1.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[2] }));
-//         }
-//         else
-//         {
-//             numerator1   = numerator1  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1], coeffs[2] }));
-//             denominator1 = denominator1.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[3], coeffs[4] }));
-//         }
-//     }
-//
-//     for (auto* i : structure.delayedPath)
-//     {
-//         auto coeffs = i->getRawCoefficients();
-//
-//         if (i->getFilterOrder() == 1)
-//         {
-//             numerator2   = numerator2  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1] }));
-//             denominator2 = denominator2.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[2] }));
-//         }
-//         else
-//         {
-//             numerator2   = numerator2  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1], coeffs[2] }));
-//             denominator2 = denominator2.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[3], coeffs[4] }));
-//         }
-//     }
-//
-//     auto numeratorf1 = numerator1.getProductWith (denominator2);
-//     auto numeratorf2 = numerator2.getProductWith (denominator1);
-//     auto numerator   = numeratorf1.getSumWith (numeratorf2);
-//     auto denominator = denominator1.getProductWith (denominator2);
-//
-     juce::dsp::IIR::Coefficients<float> coeffs;
-//
-//     coeffs.coefficients.clear();
-//     auto inversion = one / denominator[0];
-//
-//     for (int i = 0; i <= numerator.getOrder(); ++i)
-//         coeffs.coefficients.add (numerator[i] * inversion);
-//
-//     for (int i = 1; i <= denominator.getOrder(); ++i)
-//         coeffs.coefficients.add (denominator[i] * inversion);
-//
-     return coeffs;
-}
-
-void APAudioProcessor::prcsIirDown1(const juce::dsp::AudioBlock<float>& /*inputBlock*/, juce::dsp::AudioBlock<float>& /*outputBlock*/)
-{
-    // Initialization
-    //auto coeffs = coefficientsDown1.getRawDataPointer();
-    //auto numStages = coefficientsDown1.size();
-    //auto delayedStages = numStages / 2;
-    //auto directStages = numStages - delayedStages;
-    //auto numSamples = outputBlock.getNumSamples();
-//
-    //// Processing
-    //for (size_t channel = 0; channel < outputBlock.getNumChannels(); ++channel)
-    //{
-    //    auto bufferSamples = inputBlock.getChannelPointer (static_cast<int> (channel));
-    //    auto lv1 = v1Down.getWritePointer (static_cast<int> (channel));
-    //    auto samples = outputBlock.getChannelPointer (channel);
-    //    auto delay = delay1Down.getUnchecked (static_cast<int> (channel));
-//
-    //    for (size_t i = 0; i < numSamples; ++i)
-    //    {
-    //        // Direct path cascaded allpass filters
-    //        auto input = bufferSamples[i << 1];
-//
-    //        for (auto n = 0; n < directStages; ++n)
-    //        {
-    //            auto alpha = coeffs[n];
-    //            auto output = alpha * input + lv1[n];
-    //            lv1[n] = input - alpha * output;
-    //            input = output;
-    //        }
-//
-    //        auto directOut = input;
-//
-    //        // Delayed path cascaded allpass filters
-    //        input = bufferSamples[(i << 1) + 1];
-//
-    //        for (auto n = directStages; n < numStages; ++n)
-    //        {
-    //            auto alpha = coeffs[n];
-    //            auto output = alpha * input + lv1[n];
-    //            lv1[n] = input - alpha * output;
-    //            input = output;
-    //        }
-//
-    //        // Output
-    //        samples[i] = (delay + directOut) * static_cast<float> (0.5);
-    //        delay = input;
-    //    }
-//
-    //    delay1Down.setUnchecked (static_cast<int> (channel), delay);
-    //}
-}
-
-void APAudioProcessor::prcsIirDown2(const juce::dsp::AudioBlock<float>& /*inputBlock*/,
-                                    juce::dsp::AudioBlock<float>& /*outputBlock*/)
-{
-//
-//     // Initialization
-//     auto coeffs = coefficientsDown2.getRawDataPointer();
-//     auto numStages = coefficientsDown2.size();
-//     auto delayedStages = numStages / 2;
-//     auto directStages = numStages - delayedStages;
-//     auto numSamples = outputBlock.getNumSamples();
-//
-//     // Processing
-//     for (size_t channel = 0; channel < outputBlock.getNumChannels(); ++channel)
-//     {
-//         auto bufferSamples = inputBlock.getChannelPointer (static_cast<int> (channel));
-//         auto lv1 = v2Down.getWritePointer (static_cast<int> (channel));
-//         auto samples = outputBlock.getChannelPointer (channel);
-//         auto delay = delay2Down.getUnchecked (static_cast<int> (channel));
-//
-//         for (size_t i = 0; i < numSamples; ++i)
-//         {
-//             // Direct path cascaded allpass filters
-//             auto input = bufferSamples[i << 1];
-//
-//             for (auto n = 0; n < directStages; ++n)
-//             {
-//                 auto alpha = coeffs[n];
-//                 auto output = alpha * input + lv1[n];
-//                 lv1[n] = input - alpha * output;
-//                 input = output;
-//             }
-//
-//             auto directOut = input;
-//
-//             // Delayed path cascaded allpass filters
-//             input = bufferSamples[(i << 1) + 1];
-//
-//             for (auto n = directStages; n < numStages; ++n)
-//             {
-//                 auto alpha = coeffs[n];
-//                 auto output = alpha * input + lv1[n];
-//                 lv1[n] = input - alpha * output;
-//                 input = output;
-//             }
-//
-//             // Output
-//             samples[i] = (delay + directOut) * static_cast<float> (0.5);
-//             delay = input;
-//         }
-//
-//         delay2Down.setUnchecked (static_cast<int> (channel), delay);
-//     }
-}
-
 
 void APAudioProcessor::prepareToPlay(double newSampleRate, int newSamplesPerBlock)
 {
@@ -1179,84 +955,6 @@ void APAudioProcessor::dnsplStage2(const juce::dsp::AudioBlock<float>& inputBloc
     dspl2L.process_block(outSamplesL, inSamplesL, samples);
     dspl2R.process_block(outSamplesR, inSamplesR, samples);
 }
-
-
-
-
-void APAudioProcessor::processSamplesDown(const juce::dsp::AudioBlock<float>& /*inputBlock*/,
-    juce::dsp::AudioBlock<float>& /*outputBlock*/)
-{
-    // auto fir = firCoeffs1->getRawCoefficients();
-    // auto N = firCoeffs1->getFilterOrder() + 1;
-    // auto Ndiv2 = N / 2;
-    // auto Ndiv4 = Ndiv2 / 2;
-    // auto numSamples = outputBlock.getNumSamples();
-//
-    // // Processing
-    // for (size_t channel = 0; channel < outputBlock.getNumChannels(); ++channel)
-    // {
-    //     auto bufferSamples = inputBlock.getChannelPointer (static_cast<int> (channel));
-    //     auto buf = astate1.getWritePointer (static_cast<int> (channel));
-    //     auto buf2 = astate2.getWritePointer (static_cast<int> (channel));
-    //     auto samples = outputBlock.getChannelPointer (channel);
-    //     auto pos = aa1Position.getUnchecked (static_cast<int> (channel));
-    //
-    //     for (size_t i = 0; i < numSamples; ++i)
-    //     {
-    //         buf[N - 1] = bufferSamples[i << 1];
-    //         auto out = 0.f;
-    //         for (size_t k = 0; k < Ndiv2; k += 2)
-    //             out += (buf[k] + buf[N - k - 1]) * fir[k];
-    //         out += buf2[pos] * fir[Ndiv2];
-    //         buf2[pos] = bufferSamples[(i << 1) + 1];
-    //         samples[i] = out;
-    //         for (size_t k = 0; k < N - 2; ++k)
-    //             buf[k] = buf[k + 2];
-    //         pos = (pos == 0 ? Ndiv4 : pos - 1);
-    //     }
-    //
-    //     aa1Position.setUnchecked (static_cast<int> (channel), pos);
-    // }
-    //
-}
-
-void APAudioProcessor::processSamplesDown2(const juce::dsp::AudioBlock<float>& /*inputBlock*/,
-    juce::dsp::AudioBlock<float>& /*outputBlock*/)
-{
-    // auto fir = firCoeffs2->getRawCoefficients();
-    // auto N = firCoeffs2->getFilterOrder() + 1;
-    // auto Ndiv2 = N / 2;
-    // auto Ndiv4 = Ndiv2 / 2;
-    // auto numSamples = outputBlock.getNumSamples();
-//
-    // // Processing
-    // for (size_t channel = 0; channel < outputBlock.getNumChannels(); ++channel)
-    // {
-    //     auto bufferSamples = inputBlock.getChannelPointer (static_cast<int> (channel));
-    //     auto buf = bstate1.getWritePointer (static_cast<int> (channel));
-    //     auto buf2 = bstate2.getWritePointer (static_cast<int> (channel));
-    //     auto samples = outputBlock.getChannelPointer (channel);
-    //     auto pos = aa2Position.getUnchecked (static_cast<int> (channel));
-    //
-    //     for (size_t i = 0; i < numSamples; ++i)
-    //     {
-    //         buf[N - 1] = bufferSamples[i << 1];
-    //         auto out = 0.f;
-    //         for (size_t k = 0; k < Ndiv2; k += 2)
-    //             out += (buf[k] + buf[N - k - 1]) * fir[k];
-    //         out += buf2[pos] * fir[Ndiv2];
-    //         buf2[pos] = bufferSamples[(i << 1) + 1];
-    //         samples[i] = out;
-    //         for (size_t k = 0; k < N - 2; ++k)
-    //             buf[k] = buf[k + 2];
-    //         pos = (pos == 0 ? Ndiv4 : pos - 1);
-    //     }
-    //
-    //     aa2Position.setUnchecked (static_cast<int> (channel), pos);
-    // }
-    //
-}
-
 
 void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {

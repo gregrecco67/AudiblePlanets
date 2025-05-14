@@ -53,8 +53,6 @@ private:
 		fxb2Selector{ proc.fxOrderParams.fxb2 },
 		fxb3Selector{ proc.fxOrderParams.fxb3 },
 		fxb4Selector{ proc.fxOrderParams.fxb4 };
-    // FXModBox mod{"mod", proc};
-	// MatrixBox matrix{"matrix", proc};
 	
 	MainMatrixBox matrix{ "  Mod Matrix", proc };
     ModBox mod                              { "  mod", proc };

@@ -1,8 +1,7 @@
 /*****************************************************************************
 
-        StageDataAvx.h
-        Port of StageDataAvx.h from SSE to AVX by Dario Mambro
-        StageDataAvx.h by Laurent de Soras
+        StageDataSse.h
+        Author: Laurent de Soras, 2005
 
 --- Legal stuff ---
 
@@ -16,13 +15,9 @@ http://sam.zoy.org/wtfpl/COPYING for more details.
 
 
 
-#if !defined(hiir_StageDataAvx_HEADER_INCLUDED)
-#define hiir_StageDataAvx_HEADER_INCLUDED
-
-#if defined(_MSC_VER)
 #pragma once
-#pragma warning(4 : 4250) // "Inherits via dominance."
-#endif
+#if ! defined (hiir_StageDataSse_HEADER_INCLUDED)
+#define hiir_StageDataSse_HEADER_INCLUDED
 
 
 
@@ -35,23 +30,25 @@ namespace hiir
 
 
 
-class StageDataAvx
+class StageDataSse
 {
 
 public:
 
-	alignas (32) float
-	               _coef [8];
-	alignas (32) float
-                  _mem [8];   // y of the stage
+	alignas (16) float
+	               _coef [4];  // a_{4n+1}, a_{4n}, a_{4n+3}, a_{4n+2}
+	alignas (16) float
+	               _mem [4];   // y of the stage
 
-}; // class StageDataAvx
-
-} // namespace hiir
+}; // class StageDataSse
 
 
 
-#endif // hiir_StageDataAvx_HEADER_INCLUDED
+}  // namespace hiir
+
+
+
+#endif   // hiir_StageDataSse_HEADER_INCLUDED
 
 
 

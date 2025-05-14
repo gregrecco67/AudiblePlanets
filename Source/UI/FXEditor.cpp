@@ -107,13 +107,8 @@ void FXEditor::setGrid(gin::ParamBox* box, float x, float y, float heds, float w
 
 void FXEditor::resized()
 {
-	
-	
-	//mod.setBounds(896, 0, 280, 335);
-	//matrix.setBounds(896, 335, 280, 335);
-
 	setGrid(&mod,  16,  0, 0, 5, 4.328571f);
-    //setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
+
 	matrix.setBounds(16 * 56, 326, 5 * 56, 326);
 
 	fxa1Selector.setBounds(188, 7, 168, 15); 

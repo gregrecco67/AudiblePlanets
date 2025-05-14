@@ -109,8 +109,6 @@ public:
 		addControl(ldrtype = new APKnob(proc.ladderParams.type), 1, 0);
 		addControl(ldrgain = new APKnob(proc.ladderParams.gain), 1, 1);
 		
-		
-        
         addAndMakeVisible(dynamicsMeter);
         addAndMakeVisible(funcImage);
         

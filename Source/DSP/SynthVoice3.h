@@ -78,27 +78,27 @@ private:
 
 	int filterType{ 0 };
 
-    float osc1xs[128]; // at 4x sr, processed down to 32
-    float osc1ys[128]; // direct output from oscillators
-    float osc2xs[128];
-    float osc2ys[128];
-    float osc3xs[128];
-    float osc3ys[128];
-    float osc4xs[128];
-    float osc4ys[128];
+    float osc1xs[128]{0.f}; // at 4x sr, processed down to 32
+    float osc1ys[128]{0.f}; // direct output from oscillators
+    float osc2xs[128]{0.f};
+    float osc2ys[128]{0.f};
+    float osc3xs[128]{0.f};
+    float osc3ys[128]{0.f};
+    float osc4xs[128]{0.f};
+    float osc4ys[128]{0.f};
     
     // the same, as registers
     mipp::Reg<float> osc1x, osc1y, osc2x, osc2y, osc3x, osc3y, osc4x, osc4y;
      
     // interpreted positions, added together according to algo
-    mipp::Reg<float> epi1xs[32];
-    mipp::Reg<float> epi1ys[32];
-    mipp::Reg<float> epi2xs[32];
-    mipp::Reg<float> epi2ys[32];
-    mipp::Reg<float> epi3xs[32];
-    mipp::Reg<float> epi3ys[32];
-    mipp::Reg<float> epi4xs[32];
-    mipp::Reg<float> epi4ys[32];
+    mipp::Reg<float> epi1xs[32]{0.f};
+    mipp::Reg<float> epi1ys[32]{0.f};
+    mipp::Reg<float> epi2xs[32]{0.f};
+    mipp::Reg<float> epi2ys[32]{0.f};
+    mipp::Reg<float> epi3xs[32]{0.f};
+    mipp::Reg<float> epi3ys[32]{0.f};
+    mipp::Reg<float> epi4xs[32]{0.f};
+	mipp::Reg<float> epi4ys[32]{0.f};
 
      int tilUpdate{0};
      

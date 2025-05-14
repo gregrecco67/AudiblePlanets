@@ -7,3 +7,7 @@ use hiir for downsampling: get coefs from coefs folder C4x.h
 //======================
 
 consider a generic destination box on the mods page, with a popup for mod dests
+
+orbitViz remove squash
+
+clean up Envelope

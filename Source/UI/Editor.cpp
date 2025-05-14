@@ -59,6 +59,7 @@ Editor::Editor(APAudioProcessor& proc_)
 	timbre.setRight(true);
 	aux.setRight(true);
 	global.setRight(true);
+	volumeBox.setRight(true);
     
 	startTimerHz(frameRate);
 }
@@ -153,6 +154,5 @@ void Editor::timerCallback() {
     orbitViz.setEpi2Phase(vizEpi2Phase);
     orbitViz.setEpi3Phase(vizEpi3Phase);
 	orbitViz.setScale(1.0f);
-	// orbitViz.setSquash(live ? proc.viz.squash : proc.viz2.squash);
     orbitViz.repaint();
 }

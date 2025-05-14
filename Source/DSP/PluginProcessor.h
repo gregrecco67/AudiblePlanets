@@ -31,6 +31,9 @@
     #include "hiir/Downsampler2xNeon.h"
 #endif
 
+#if USE_SSE
+	#include "hiir/Downsampler2xSse.h"
+#endif
 //==============================================================================
 class APAudioProcessor : public gin::Processor
 {
@@ -60,16 +63,9 @@ public:
 
     void updatePitchbend();
 
-	void processSamplesDown(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
-	void processSamplesDown2(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
-    
     void dnsplStage1(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
     void dnsplStage2(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
-    
-    void prcsIirDown1(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
-    void prcsIirDown2(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock);
-    juce::dsp::IIR::Coefficients<float> getCoefficients(juce::dsp::FilterDesign<float>::IIRPolyphaseAllpassStructure& structure) const;
-    
+        
     //==============================================================================
     
     //==============================================================================
@@ -349,7 +345,7 @@ public:
 	int fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4; // effect choices
 	std::unordered_set<int> activeEffects;
 
-	gin::LevelTracker levelTracker{10.f};
+	gin::LevelTracker levelTracker{20.f};
     APSynth synth;
 	juce::AudioBuffer<float> auxBuffer;
 	juce::AudioBuffer<float> auxSlice;
@@ -358,7 +354,6 @@ public:
 
 	MTSClient* client;
 	juce::String scaleName, learning;
-	bool isLearning;
 
 	AuxSynth auxSynth;
 	gin::BandLimitedLookupTables analogTables;
@@ -379,14 +374,6 @@ public:
 	std::uniform_real_distribution<> dist{ -1.f, 1.f };
 	
 	// antialiasing downsampling filter stuff
-	int osExpo{ 2 }; // oversampling exponent n: 2^n
-	int osFactor; // oversampling factor f: f = 2^n
-	// juce::dsp::FilterDesign<float>::FIRCoefficientsPtr firCoeffs1, firCoeffs2;
-	// size_t aa1N, aa1Ndiv2, aa1Ndiv4, aa2N, aa2Ndiv2, aa2Ndiv4;
-	// juce::Array<size_t> aa1Position, aa2Position;
-	// juce::AudioBuffer<float> astate1, astate2, bstate1, bstate2;
-
-    
     static constexpr int nbr_coefs1 = 3;
     static constexpr int nbr_coefs2 = 8;
     double coefs1 [nbr_coefs1];
@@ -399,15 +386,10 @@ public:
     hiir::Downsampler2xNeon <nbr_coefs2> dspl2L, dspl2R;
 #endif
     
-
-    
-
-    // juce::Array<float> coefficientsDown1, coefficientsDown2;
-    // float latency1, latency2;
-//
-    // juce::AudioBuffer<float> v1Down, v2Down;
-    // juce::Array<float> delay1Down, delay2Down;
-    
+#if USE_SSE
+	hiir::Downsampler2xSse <nbr_coefs1> dspl1L, dspl1R;
+	hiir::Downsampler2xSse <nbr_coefs2> dspl2L, dspl2R;
+#endif
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (APAudioProcessor)
