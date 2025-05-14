@@ -1,18 +1,9 @@
-
 clean up Oscillator params
-
-get phase working properly again (measure phase shifts and shift them!)
 
 use hiir for downsampling: get coefs from coefs folder C4x.h
 
 -- add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
 
 //======================
-
-break out LFO boxes into 4
-
-divide MSEG panel into two (1/2, 3/4)
-
-place macros box
 
 consider a generic destination box on the mods page, with a popup for mod dests

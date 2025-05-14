@@ -32,7 +32,7 @@ public:
 
     void bumpPhase(float bump) {
         phase += bump;
-        while (phase >= 1.0f) { phase -= 1.0f; }
+        if (phase >= 1.0f) { phase -= std::trunc(phase); }
         while (phase < 0.0f) { phase += 1.0f; }
     }
     

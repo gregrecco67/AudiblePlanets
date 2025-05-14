@@ -157,6 +157,7 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 {
 	MPESynthesiserVoice::setCurrentSampleRate(newRate);
 
+    auto quarter = newRate * 0.25;
 	osc1.setSampleRate(newRate);
 	osc2.setSampleRate(newRate);
 	osc3.setSampleRate(newRate);
@@ -164,26 +165,26 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 
 	filter.setSampleRate(newRate);
 
-	lfo1.setSampleRate(newRate);
-	lfo2.setSampleRate(newRate);
-	lfo3.setSampleRate(newRate);
-	lfo4.setSampleRate(newRate);
+	lfo1.setSampleRate(quarter);
+	lfo2.setSampleRate(quarter);
+	lfo3.setSampleRate(quarter);
+	lfo4.setSampleRate(quarter);
 
 	noteSmoother.setSampleRate(newRate);
     Envelope::Params p;
-    env1.setSampleRate(newRate * 0.25);
-    env2.setSampleRate(newRate * 0.25);
-    env3.setSampleRate(newRate * 0.25);
-    env4.setSampleRate(newRate * 0.25);
+    env1.setSampleRate(quarter);
+    env2.setSampleRate(quarter);
+    env3.setSampleRate(quarter);
+    env4.setSampleRate(quarter);
     env1.setParameters(p);
     env2.setParameters(p);
     env3.setParameters(p);
     env4.setParameters(p);
 
-	mseg1.setSampleRate(newRate);
-	mseg2.setSampleRate(newRate);
-	mseg3.setSampleRate(newRate);
-	mseg4.setSampleRate(newRate);
+	mseg1.setSampleRate(newRate * 0.25);
+	mseg2.setSampleRate(newRate * 0.25);
+	mseg3.setSampleRate(newRate * 0.25);
+	mseg4.setSampleRate(newRate * 0.25);
 }
 
 void SynthVoice3::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)

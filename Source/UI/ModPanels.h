@@ -16,8 +16,28 @@ public:
 	{
 		setName("lfo");
 
-		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcLFO1, true));
-		addModSource(mono1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMonoLFO1, false));
+        gin::ModSrcId src;
+        gin::ModSrcId monoSrc;
+        switch(num) {
+            case 1:
+                src = proc.modSrcLFO1;
+                monoSrc = proc.modSrcMonoLFO1;
+                break;
+            case 2:
+                src = proc.modSrcLFO2;
+                monoSrc = proc.modSrcMonoLFO2;
+                break;
+            case 3:
+                src = proc.modSrcLFO3;
+                monoSrc = proc.modSrcMonoLFO3;
+                break;
+            case 4:
+                src = proc.modSrcLFO4;
+                monoSrc = proc.modSrcMonoLFO4;
+                break;
+        }
+		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, src, true));
+		addModSource(mono1 = new gin::ModulationSourceButton(proc.modMatrix, monoSrc, false));
         poly1->getProperties().set("polysrc", true);
 
 		addControl(r1 = new APKnob(lfoParams.rate), 0, 0);
@@ -41,7 +61,7 @@ public:
 		l1->phaseCallback = [this]
 		{
 			std::vector<float> res;
-			res.push_back(proc.monoLFOs[0]->getCurrentPhase());
+			res.push_back(proc.monoLFOs[num-1]->getCurrentPhase());
 			return res;
 		};
 		l1->setParams(lfoParams.wave, lfoParams.sync, lfoParams.rate, lfoParams.beat, lfoParams.depth,
@@ -75,8 +95,8 @@ public:
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-        r1->setVisible(!proc.lfo1Params.sync->isOn());
-        b1->setVisible(proc.lfo1Params.sync->isOn());
+        r1->setVisible(!lfoParams.sync->isOn());
+        b1->setVisible(lfoParams.sync->isOn());
 	}
 
 	void resized() override
@@ -136,9 +156,15 @@ public:
 		msegComponent2.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(m2.drawmode->getUserValue()));
 
 
-		addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG2, true));
-		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG1, true));
-
+        if (num == 1) {
+            addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG2, true));
+            addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG1, true));
+        }
+        else {
+            addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG4, true));
+            addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG3, true));
+        }
+            
 		addControl(r1 = new APKnob(m1.rate), 0, 0);
 		addControl(r2 = new APKnob(m2.rate), 0, 0);
 
@@ -169,10 +195,6 @@ public:
 		addControl(y1 = new gin::Select(m1.ygrid));
 		addControl(y2 = new gin::Select(m2.ygrid));
 
-		// rate, beat, sync, loop, depth, offset, draw, drawmode, xgrid, ygrid
-		// r, b, s, l, d, o, d, m, x, y
-		// msegComponent
-		// msegDstSelector
 		watchParam(m1.sync);
 		watchParam(m2.sync);
 		watchParam(m1.draw);
@@ -183,23 +205,33 @@ public:
 		addAndMakeVisible(msegComponent2);
         addAndMakeVisible(select1);
         addAndMakeVisible(select2);
-		addAndMakeVisible(learn1);
-		addAndMakeVisible(learn2);
-		addAndMakeVisible(learn3);
-		addAndMakeVisible(learn4);
 
 		msegComponent1.phaseCallback = [this]()
 		{
-			std::vector<float> auxVals = proc.auxSynth.getMSEG1Phases();
-			std::vector<float> synthVals = proc.synth.getMSEG1Phases();
+            std::vector<float> auxVals, synthVals;
+            if (num == 1) {
+                auxVals = proc.auxSynth.getMSEG1Phases();
+                synthVals = proc.synth.getMSEG1Phases();
+            }
+            else {
+                auxVals = proc.auxSynth.getMSEG3Phases();
+                synthVals = proc.synth.getMSEG3Phases();
+            }
 			synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
 			return synthVals;
 		};
 		msegComponent2.phaseCallback = [this]()
 		{
-			std::vector<float> auxVals = proc.auxSynth.getMSEG2Phases();
-			std::vector<float> synthVals = proc.synth.getMSEG2Phases();
-			synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
+            std::vector<float> auxVals, synthVals;
+            if (num == 1) {
+                auxVals = proc.auxSynth.getMSEG2Phases();
+                synthVals = proc.synth.getMSEG2Phases();
+            }
+            else {
+                auxVals = proc.auxSynth.getMSEG4Phases();
+                synthVals = proc.synth.getMSEG4Phases();
+            }
+            synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
 			return synthVals;
 		};
         
@@ -338,17 +370,13 @@ public:
 	}
 
 	APAudioProcessor &proc;
-	// r, b, s, l, d, o, d, m, x, y
 	gin::ParamComponent::Ptr r1, b1, s1, l1, dp1, o1, dr1, ms1, x1, y1,
 		r2, b2, s2, l2, dp2, o2, dr2, ms2, x2, y2;
 	juce::Button *poly1, *poly2;
 
-	// create textbuttons for learn
-
 	gin::MSEGComponent msegComponent1, msegComponent2;
 	int currentMSEG{1};
 	juce::TextButton select1{"1"}, select2{"2"};
-	juce::TextButton learn1{"learn"}, learn2{"learn"}, learn3{"learn"}, learn4{"learn"};
 
     APAudioProcessor::MSEGParams& m1;
     APAudioProcessor::MSEGParams& m2;
