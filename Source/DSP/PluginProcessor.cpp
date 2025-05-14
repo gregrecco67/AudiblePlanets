@@ -945,7 +945,7 @@ void APAudioProcessor::reset()
 }
 
 
-juce::dsp::IIR::Coefficients<float> APAudioProcessor::getCoefficients(juce::dsp::FilterDesign<float>::IIRPolyphaseAllpassStructure& structure) const
+juce::dsp::IIR::Coefficients<float> APAudioProcessor::getCoefficients(juce::dsp::FilterDesign<float>::IIRPolyphaseAllpassStructure& /*structure*/) const
 {
 //     constexpr auto one = static_cast<float> (1.0);
 //
@@ -989,7 +989,7 @@ juce::dsp::IIR::Coefficients<float> APAudioProcessor::getCoefficients(juce::dsp:
 //     auto numerator   = numeratorf1.getSumWith (numeratorf2);
 //     auto denominator = denominator1.getProductWith (denominator2);
 //
-//     juce::dsp::IIR::Coefficients<float> coeffs;
+     juce::dsp::IIR::Coefficients<float> coeffs;
 //
 //     coeffs.coefficients.clear();
 //     auto inversion = one / denominator[0];
@@ -1000,10 +1000,10 @@ juce::dsp::IIR::Coefficients<float> APAudioProcessor::getCoefficients(juce::dsp:
 //     for (int i = 1; i <= denominator.getOrder(); ++i)
 //         coeffs.coefficients.add (denominator[i] * inversion);
 //
-//     return coeffs;
+     return coeffs;
 }
 
-void APAudioProcessor::prcsIirDown1(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock) 
+void APAudioProcessor::prcsIirDown1(const juce::dsp::AudioBlock<float>& /*inputBlock*/, juce::dsp::AudioBlock<float>& /*outputBlock*/)
 {
     // Initialization
     //auto coeffs = coefficientsDown1.getRawDataPointer();
@@ -1055,7 +1055,8 @@ void APAudioProcessor::prcsIirDown1(const juce::dsp::AudioBlock<float>& inputBlo
     //}
 }
 
-void APAudioProcessor::prcsIirDown2(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock) 
+void APAudioProcessor::prcsIirDown2(const juce::dsp::AudioBlock<float>& /*inputBlock*/,
+                                    juce::dsp::AudioBlock<float>& /*outputBlock*/)
 {
 //
 //     // Initialization
@@ -1182,8 +1183,8 @@ void APAudioProcessor::dnsplStage2(const juce::dsp::AudioBlock<float>& inputBloc
 
 
 
-void APAudioProcessor::processSamplesDown(const juce::dsp::AudioBlock<float>& inputBlock, 
-    juce::dsp::AudioBlock<float>& outputBlock) 
+void APAudioProcessor::processSamplesDown(const juce::dsp::AudioBlock<float>& /*inputBlock*/,
+    juce::dsp::AudioBlock<float>& /*outputBlock*/)
 {
     // auto fir = firCoeffs1->getRawCoefficients();
     // auto N = firCoeffs1->getFilterOrder() + 1;
@@ -1219,8 +1220,8 @@ void APAudioProcessor::processSamplesDown(const juce::dsp::AudioBlock<float>& in
     //
 }
 
-void APAudioProcessor::processSamplesDown2(const juce::dsp::AudioBlock<float>& inputBlock, 
-    juce::dsp::AudioBlock<float>& outputBlock) 
+void APAudioProcessor::processSamplesDown2(const juce::dsp::AudioBlock<float>& /*inputBlock*/,
+    juce::dsp::AudioBlock<float>& /*outputBlock*/)
 {
     // auto fir = firCoeffs2->getRawCoefficients();
     // auto N = firCoeffs2->getFilterOrder() + 1;
