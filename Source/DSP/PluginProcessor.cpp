@@ -692,26 +692,8 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 				if (auto data = BinaryData::getNamedResource(BinaryData::namedResourceList[i], sz))
 					extractProgram(BinaryData::originalFilenames[i], data, sz);
 	}
-
-    // double coefs1[3] = {
-    //     0.064871212918289664,
-    //     0.26990325432357809,
-    //     0.67132720810807256
-    // };
-    //
-    // double coefs2[8] = {
-    //     0.038927716817571831,
-    //     0.1447065207203321,
-    //     0.29070001093670539,
-    //     0.44813928150889282,
-    //     0.59667390381274976,
-    //     0.72756709523681729,
-    //     0.84178734600949523,
-    //     0.94699056169241524
-    // };
     
-    
-    hiir::PolyphaseIir2Designer::compute_coefs_spec_order_tbw(coefs1, nbr_coefs1, .15);
+    hiir::PolyphaseIir2Designer::compute_coefs_spec_order_tbw(coefs1, nbr_coefs1, .28);
     hiir::PolyphaseIir2Designer::compute_coefs_spec_order_tbw(coefs2, nbr_coefs2, .03);
     
     dspl1L.set_coefs(coefs1); // 2x down with wide tb
@@ -719,39 +701,37 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
     dspl2L.set_coefs(coefs2); // 2x down with narrow tb
     dspl2R.set_coefs(coefs2); // 2x down with narrow tb
     
-    auto structureDown1 = juce::dsp::FilterDesign<float>::designIIRLowpassHalfBandPolyphaseAllpassMethod(.12, -65.0);
-    auto coeffsDown1 = getCoefficients (structureDown1);
-    latency1 = static_cast<float> (-(coeffsDown1.getPhaseForFrequency (0.0001, 1.0)) / (0.0001 * juce::MathConstants<double>::twoPi));
-
-    for (auto i = 0; i < structureDown1.directPath.size(); ++i)
-        coefficientsDown1.add (structureDown1.directPath.getObjectPointer (i)->coefficients[0]);
-
-    for (auto i = 1; i < structureDown1.delayedPath.size(); ++i)
-        coefficientsDown1.add (structureDown1.delayedPath.getObjectPointer (i)->coefficients[0]);
-
-    v1Down.setSize (2, coefficientsDown1.size());
-    delay1Down.resize (2);
-    
-    v1Down.clear();
-    delay1Down.fill(0);
-    
-    auto structureDown2 = juce::dsp::FilterDesign<float>::designIIRLowpassHalfBandPolyphaseAllpassMethod(.06, -75.0);
-    auto coeffsDown2 = getCoefficients(structureDown2);
-    latency2 = static_cast<float> (-(coeffsDown2.getPhaseForFrequency (0.0001, 1.0)) / (0.0001 * juce::MathConstants<double>::twoPi));
-    
-    for (auto i = 0; i < structureDown2.directPath.size(); ++i)
-        coefficientsDown2.add (structureDown2.directPath.getObjectPointer (i)->coefficients[0]);
-
-    for (auto i = 1; i < structureDown2.delayedPath.size(); ++i)
-        coefficientsDown2.add (structureDown2.delayedPath.getObjectPointer (i)->coefficients[0]);
-
-    v2Down.setSize (2, coefficientsDown2.size());
-    delay2Down.resize (2);
-    
-    v2Down.clear();
-    delay2Down.fill(0);
-
-    
+    // auto structureDown1 = juce::dsp::FilterDesign<float>::designIIRLowpassHalfBandPolyphaseAllpassMethod(.12, -65.0);
+    // auto coeffsDown1 = getCoefficients (structureDown1);
+    // latency1 = static_cast<float> (-(coeffsDown1.getPhaseForFrequency (0.0001, 1.0)) / (0.0001 * juce::MathConstants<double>::twoPi));
+//
+    // for (auto i = 0; i < structureDown1.directPath.size(); ++i)
+    //     coefficientsDown1.add (structureDown1.directPath.getObjectPointer (i)->coefficients[0]);
+//
+    // for (auto i = 1; i < structureDown1.delayedPath.size(); ++i)
+    //     coefficientsDown1.add (structureDown1.delayedPath.getObjectPointer (i)->coefficients[0]);
+//
+    // v1Down.setSize (2, coefficientsDown1.size());
+    // delay1Down.resize (2);
+    //
+    // v1Down.clear();
+    // delay1Down.fill(0);
+    //
+    // auto structureDown2 = juce::dsp::FilterDesign<float>::designIIRLowpassHalfBandPolyphaseAllpassMethod(.06, -75.0);
+    // auto coeffsDown2 = getCoefficients(structureDown2);
+    // latency2 = static_cast<float> (-(coeffsDown2.getPhaseForFrequency (0.0001, 1.0)) / (0.0001 * juce::MathConstants<double>::twoPi));
+    //
+    // for (auto i = 0; i < structureDown2.directPath.size(); ++i)
+    //     coefficientsDown2.add (structureDown2.directPath.getObjectPointer (i)->coefficients[0]);
+//
+    // for (auto i = 1; i < structureDown2.delayedPath.size(); ++i)
+    //     coefficientsDown2.add (structureDown2.delayedPath.getObjectPointer (i)->coefficients[0]);
+//
+    // v2Down.setSize (2, coefficientsDown2.size());
+    // delay2Down.resize (2);
+    //
+    // v2Down.clear();
+    // delay2Down.fill(0);
 
 	// poly params 
     osc1Params.setup(*this, juce::String{ "1" });
@@ -813,27 +793,27 @@ APAudioProcessor::APAudioProcessor() : gin::Processor(
 	modMatrix.setMonoValue(randSrc2Mono, 0.0f);
 
     osFactor = pow(2.0f, osExpo);
-    firCoeffs1 = juce::dsp::FilterDesign<float>::designFIRLowpassHalfBandEquirippleMethod(0.12f, -65.0f);
-    aa1N = firCoeffs1->getFilterOrder() + 1;
-    aa1Ndiv2 = aa1N / 2;
-    aa1Ndiv4 = aa1Ndiv2 / 2;
-    aa1Position.resize(2);
-    aa1Position.fill(0);
-    astate1.setSize(2, static_cast<int>(aa1N));
-    astate2.setSize(2, static_cast<int>(aa1Ndiv4 + 1));
-    astate1.clear();
-    astate2.clear();
-
-    firCoeffs2 = juce::dsp::FilterDesign<float>::designFIRLowpassHalfBandEquirippleMethod(0.06f, -75.0f);
-    aa2N = firCoeffs2->getFilterOrder() + 1;
-    aa2Ndiv2 = aa2N / 2;
-    aa2Ndiv4 = aa2Ndiv2 / 2;
-    aa2Position.resize(2);
-    aa2Position.fill(0);
-    bstate1.setSize(2, static_cast<int>(aa2N));
-    bstate2.setSize(2, static_cast<int>(aa2Ndiv4 + 1));
-    bstate1.clear();
-    bstate2.clear();
+    // firCoeffs1 = juce::dsp::FilterDesign<float>::designFIRLowpassHalfBandEquirippleMethod(0.12f, -65.0f);
+    // aa1N = firCoeffs1->getFilterOrder() + 1;
+    // aa1Ndiv2 = aa1N / 2;
+    // aa1Ndiv4 = aa1Ndiv2 / 2;
+    // aa1Position.resize(2);
+    // aa1Position.fill(0);
+    // astate1.setSize(2, static_cast<int>(aa1N));
+    // astate2.setSize(2, static_cast<int>(aa1Ndiv4 + 1));
+    // astate1.clear();
+    // astate2.clear();
+//
+    // firCoeffs2 = juce::dsp::FilterDesign<float>::designFIRLowpassHalfBandEquirippleMethod(0.06f, -75.0f);
+    // aa2N = firCoeffs2->getFilterOrder() + 1;
+    // aa2Ndiv2 = aa2N / 2;
+    // aa2Ndiv4 = aa2Ndiv2 / 2;
+    // aa2Position.resize(2);
+    // aa2Position.fill(0);
+    // bstate1.setSize(2, static_cast<int>(aa2N));
+    // bstate2.setSize(2, static_cast<int>(aa2Ndiv4 + 1));
+    // bstate1.clear();
+    // bstate2.clear();
 
 }
 
@@ -967,60 +947,60 @@ void APAudioProcessor::reset()
 
 juce::dsp::IIR::Coefficients<float> APAudioProcessor::getCoefficients(juce::dsp::FilterDesign<float>::IIRPolyphaseAllpassStructure& structure) const
 {
-    constexpr auto one = static_cast<float> (1.0);
-
-    juce::dsp::Polynomial<float> numerator1 ({ one }), denominator1 ({ one }),
-                           numerator2 ({ one }), denominator2 ({ one });
-
-    for (auto* i : structure.directPath)
-    {
-        auto coeffs = i->getRawCoefficients();
-
-        if (i->getFilterOrder() == 1)
-        {
-            numerator1   = numerator1  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1] }));
-            denominator1 = denominator1.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[2] }));
-        }
-        else
-        {
-            numerator1   = numerator1  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1], coeffs[2] }));
-            denominator1 = denominator1.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[3], coeffs[4] }));
-        }
-    }
-
-    for (auto* i : structure.delayedPath)
-    {
-        auto coeffs = i->getRawCoefficients();
-
-        if (i->getFilterOrder() == 1)
-        {
-            numerator2   = numerator2  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1] }));
-            denominator2 = denominator2.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[2] }));
-        }
-        else
-        {
-            numerator2   = numerator2  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1], coeffs[2] }));
-            denominator2 = denominator2.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[3], coeffs[4] }));
-        }
-    }
-
-    auto numeratorf1 = numerator1.getProductWith (denominator2);
-    auto numeratorf2 = numerator2.getProductWith (denominator1);
-    auto numerator   = numeratorf1.getSumWith (numeratorf2);
-    auto denominator = denominator1.getProductWith (denominator2);
-
-    juce::dsp::IIR::Coefficients<float> coeffs;
-
-    coeffs.coefficients.clear();
-    auto inversion = one / denominator[0];
-
-    for (int i = 0; i <= numerator.getOrder(); ++i)
-        coeffs.coefficients.add (numerator[i] * inversion);
-
-    for (int i = 1; i <= denominator.getOrder(); ++i)
-        coeffs.coefficients.add (denominator[i] * inversion);
-
-    return coeffs;
+//     constexpr auto one = static_cast<float> (1.0);
+//
+//     juce::dsp::Polynomial<float> numerator1 ({ one }), denominator1 ({ one }),
+//                            numerator2 ({ one }), denominator2 ({ one });
+//
+//     for (auto* i : structure.directPath)
+//     {
+//         auto coeffs = i->getRawCoefficients();
+//
+//         if (i->getFilterOrder() == 1)
+//         {
+//             numerator1   = numerator1  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1] }));
+//             denominator1 = denominator1.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[2] }));
+//         }
+//         else
+//         {
+//             numerator1   = numerator1  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1], coeffs[2] }));
+//             denominator1 = denominator1.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[3], coeffs[4] }));
+//         }
+//     }
+//
+//     for (auto* i : structure.delayedPath)
+//     {
+//         auto coeffs = i->getRawCoefficients();
+//
+//         if (i->getFilterOrder() == 1)
+//         {
+//             numerator2   = numerator2  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1] }));
+//             denominator2 = denominator2.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[2] }));
+//         }
+//         else
+//         {
+//             numerator2   = numerator2  .getProductWith (juce::dsp::Polynomial<float> ({ coeffs[0], coeffs[1], coeffs[2] }));
+//             denominator2 = denominator2.getProductWith (juce::dsp::Polynomial<float> ({ one,       coeffs[3], coeffs[4] }));
+//         }
+//     }
+//
+//     auto numeratorf1 = numerator1.getProductWith (denominator2);
+//     auto numeratorf2 = numerator2.getProductWith (denominator1);
+//     auto numerator   = numeratorf1.getSumWith (numeratorf2);
+//     auto denominator = denominator1.getProductWith (denominator2);
+//
+//     juce::dsp::IIR::Coefficients<float> coeffs;
+//
+//     coeffs.coefficients.clear();
+//     auto inversion = one / denominator[0];
+//
+//     for (int i = 0; i <= numerator.getOrder(); ++i)
+//         coeffs.coefficients.add (numerator[i] * inversion);
+//
+//     for (int i = 1; i <= denominator.getOrder(); ++i)
+//         coeffs.coefficients.add (denominator[i] * inversion);
+//
+//     return coeffs;
 }
 
 void APAudioProcessor::prcsIirDown1(const juce::dsp::AudioBlock<float>& inputBlock, juce::dsp::AudioBlock<float>& outputBlock) 
