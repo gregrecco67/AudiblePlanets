@@ -507,7 +507,7 @@ public:
 		addControl(new APKnob(proc.auxParams.filtercutoff), 1, 1);
 		addControl(new APKnob(proc.auxParams.filterres), 2, 1);
 		addControl(new APKnob(proc.auxParams.filterkeytrack), 3, 1);
-		addControl(new gin::Switch(proc.auxParams.ignorepb), 4, 1);
+		addControl(new gin::Select(proc.auxParams.ignorepb), 4, 1);
 	}
 
 	void paint (juce::Graphics& g) override
