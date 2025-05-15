@@ -74,10 +74,10 @@ void ModEditor::resized()
 	msegA.setBounds(5 * 56, 0, 8 * 56, 326);
 	msegB.setBounds(5 * 56, 326, 8 * 56, 326);
 	
-	setGrid(&macros,   13,  0, 0, 3, 2);
+	setGrid(&global,   13,  0, 0, 3, 2);
 	setGrid(&filter,   13,  2, 1, 3, 2);
 	setGrid(&timbre,   13,  4, 2, 3, 2);
-	setGrid(&global,   13,  6, 3, 3, 2);
+	setGrid(&macros,   13,  6, 3, 3, 2);
 	modsrc.setBounds(16 * 56, 0, 5 * 56, 326);
 	matrix.setBounds(16 * 56, 326, 5 * 56, 4.328571f * 70 + 23.f);
 }

@@ -1,8 +1,5 @@
-clean up Oscillator params
-
-use hiir for downsampling: get coefs from coefs folder C4x.h
-
 -- add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
+-- waveshaper OS and ADAA?
 
 //======================
 
@@ -11,3 +8,16 @@ consider a generic destination box on the mods page, with a popup for mod dests
 orbitViz remove squash
 
 clean up Envelope
+
+is unipolar/bipolar in MM backwards? or only sometimes?
+
+are mod values as displayed on knobs inverted in sign?
+
+which params if any need smoothing built-in?
+
+bring back mod assign menus? at least for mods page
+related: hack Row to allow switching source or destination IN the MM?
+
+volume slider!
+
+mod src buttons on macros box
