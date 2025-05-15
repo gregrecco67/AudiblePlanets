@@ -11,6 +11,7 @@ APLNF::APLNF() {
     setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
     setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffCC8866));
     setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
+    setColour(juce::TooltipWindow::textColourId, findColour(accentColourId));
 	//setColour(juce::TextButton::buttonOnColourId, juce::Colours::grey);
 }
 
@@ -25,7 +26,9 @@ juce::Font APLNF::getPopupMenuFont() {
     return juce::Font{juce::FontOptions{}.withName("Lato").withHeight(20.f * 0.89f)};
 }
 
-
+juce::Font APLNF::getSliderPopupFont(juce::Slider& slider) {
+    return juce::Font{juce::FontOptions{}.withName("Lato").withHeight(20.f * 0.89f)};
+}
 
 void APLNF::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
     const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider)

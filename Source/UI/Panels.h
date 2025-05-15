@@ -371,6 +371,15 @@ public:
 		addControl(new gin::Select(proc.auxParams.ignorepb), 4, 1);
 	}
 
+	void resized() override
+	{
+		ParamBox::resized();
+		wave->setBounds(0, 23, 56, 35);
+		env->setBounds(0, 58, 56, 35);
+		prefx->setBounds(0, 93, 56, 35);
+		filtertype->setBounds(0, 128, 56, 35);
+	}
+
 	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr wave, env, prefx, filtertype;
 };

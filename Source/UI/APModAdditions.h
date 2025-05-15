@@ -49,7 +49,7 @@ public:
 private:
     void paint(juce::Graphics& g) override
     {
-        auto c = juce::Colours::white.withAlpha(0.4f);
+        auto c = findColour(gin::PluginLookAndFeel::title1ColourId).brighter(0.15f);
         g.setColour(c);
 
         auto rc = getLocalBounds().toFloat().reduced(1.5f);

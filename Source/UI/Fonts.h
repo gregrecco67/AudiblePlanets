@@ -40,4 +40,7 @@ public:
 
 	juce::Font getPopupMenuFont() override;
 
+	juce::Font getSliderPopupFont(juce::Slider& slider) override;
+
+
 };
