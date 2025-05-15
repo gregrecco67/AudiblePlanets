@@ -37,4 +37,7 @@ public:
 		float 	maxSliderPos,
 		juce::Slider::SliderStyle style,
 		juce::Slider& slider) override;
+
+	juce::Font getPopupMenuFont() override;
+
 };

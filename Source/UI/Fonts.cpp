@@ -7,7 +7,7 @@ APLNF::APLNF() {
     setColour(juce::Slider::trackColourId, juce::Colour(0xff000000));
     setColour(juce::BubbleComponent::backgroundColourId, juce::Colour(0xff16171A));
     setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
-    setColour(juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
+    setColour(juce::PopupMenu::textColourId, juce::Colour(0xff66AACC));
     setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
     setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffCC8866));
     setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
@@ -20,6 +20,12 @@ juce::Font APLNF::getLabelFont(juce::Label& label)
 {
     return juce::Font{juce::FontOptions{}.withName("Lato").withHeight(label.getHeight() * 0.89f)};
 }
+
+juce::Font APLNF::getPopupMenuFont() {
+    return juce::Font{juce::FontOptions{}.withName("Lato").withHeight(20.f * 0.89f)};
+}
+
+
 
 void APLNF::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
     const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider)

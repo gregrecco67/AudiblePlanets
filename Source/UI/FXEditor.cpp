@@ -25,7 +25,16 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(fxb2Box);
 	addAndMakeVisible(fxb3Box);
 	addAndMakeVisible(fxb4Box);
-	
+	fxa1Box.setOutline(false);
+    fxa2Box.setOutline(false);
+    fxa3Box.setOutline(false);
+    fxa4Box.setOutline(false);
+    fxb1Box.setOutline(false);
+    fxb2Box.setOutline(false);
+    fxb3Box.setOutline(false);
+    fxb4Box.setOutline(false);
+    
+    
 	fxa1Selector.setShowName(false);
 	fxa2Selector.setShowName(false);
 	fxa3Selector.setShowName(false);
