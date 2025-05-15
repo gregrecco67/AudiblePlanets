@@ -54,7 +54,7 @@ private:
 		g.fillEllipse(rc);
 
 		if (auto v = float(getValue()); v > 0.0f || v < 0.0f) {
-			g.setColour(findColour(gin::PluginLookAndFeel::accentColourId, true)
+			g.setColour(findColour(gin::PluginLookAndFeel::accentColourId)
 			        .withAlpha(0.9f));
 
 			juce::Path p;
@@ -396,8 +396,8 @@ public:
 			{
 				setColour(juce::PopupMenu::backgroundColourId,
 				    juce::Colour(0xff16171A));
-				setColour(
-				    juce::PopupMenu::textColourId, juce::Colour(0xffE6E6E9));
+				setColour(juce::PopupMenu::textColourId, 
+					juce::Colour(0xff66AACC));
 				setColour(juce::PopupMenu::headerTextColourId,
 				    juce::Colour(0xff9B9EA5));
 				setColour(juce::PopupMenu::highlightedBackgroundColourId,
@@ -434,8 +434,8 @@ public:
 				juce::Slider::mouseExit(ev);
 				setColour(juce::Slider::textBoxTextColourId,
 				    juce::Colours::transparentBlack);
-				setColour(
-				    juce::Slider::thumbColourId, juce::Colour(0xffCC8866));
+				setColour(juce::Slider::thumbColourId,
+				    findColour(gin::CopperLookAndFeel::accentColourId));
 			}
 
 			juce::String getTextFromValue(double value) override
