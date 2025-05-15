@@ -4,12 +4,12 @@
 //======================
 
 consider a generic destination box on the mods page, with a popup for mod dests
+better than a fourth page that's just sources and destinations?
 
 orbitViz remove squash
 
-clean up Envelope
-
-is unipolar/bipolar in MM backwards? or only sometimes?
+clean up Envelope (in what sense?) 
+sync and free times OK, knob times not OK
 
 are mod values as displayed on knobs inverted in sign?
 
@@ -20,4 +20,4 @@ related: hack Row to allow switching source or destination IN the MM?
 
 volume slider!
 
-mod src buttons on macros box
+switch back to original flavor JUCE, unless there's a reason not to

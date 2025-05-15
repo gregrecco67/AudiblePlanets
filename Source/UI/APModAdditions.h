@@ -223,7 +223,7 @@ public:
 
                         auto ev = owner.modMatrix.getModBipolarMapping(a.src, gin::ModDstId(a.dst->getModIndex()));
                         owner.modMatrix.setModBipolarMapping(a.src, gin::ModDstId(a.dst->getModIndex()), !ev);
-                        biPolarButton.setToggleState(!ev, juce::dontSendNotification);
+                        biPolarButton.setToggleState(ev, juce::dontSendNotification);
                     }
                 };
 
@@ -308,7 +308,7 @@ public:
                 enableButton.setToggleState(ev, juce::dontSendNotification);
 
                 auto b = owner.modMatrix.getModBipolarMapping(a.src, gin::ModDstId(a.dst->getModIndex()));
-                biPolarButton.setToggleState(b, juce::dontSendNotification);
+                biPolarButton.setToggleState(!b, juce::dontSendNotification);
 
                 depth.setValue(owner.modMatrix.getModDepth(a.src, gin::ModDstId(a.dst->getModIndex())), juce::dontSendNotification);
                 curveButton.setCurve(owner.modMatrix.getModFunction(a.src, gin::ModDstId(a.dst->getModIndex())));
