@@ -78,7 +78,7 @@ public:
     {
         OSCParams() = default;
 
-        gin::Parameter::Ptr coarse, fine, volume, tones, env, wave, fixed, phase;
+        gin::Parameter::Ptr coarse, fine, volume, env, wave, fixed, phase;
 
         void setup(APAudioProcessor& p, juce::String number);
 		int num;
@@ -144,7 +144,7 @@ public:
     {
         GlobalParams() = default;
 
-        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, mpe, velSens, pitchbendRange, squash;
+        gin::Parameter::Ptr mono, glideMode, glideRate, legato, level, mpe, velSens, pitchbendRange;
 
         void setup(APAudioProcessor& p);
 
@@ -366,7 +366,7 @@ public:
 	struct VizInfo {
 		float defRat, epi1Rat, epi2Rat, epi3Rat,
 		equant, defRad, epi1Rad, epi2Rad, epi3Rad,
-		algo, squash;
+		algo;
 	} viz, viz2;
 
 	std::random_device rd;

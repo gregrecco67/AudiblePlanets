@@ -17,7 +17,7 @@
 
 static juce::String ladderTypeTextFunction(const gin::Parameter&, float v)
 {
-    switch (int(v))
+    switch (static_cast<int>(v))
     {
         case 0: return "LPF12";
         case 1: return "HPF12";
@@ -33,7 +33,7 @@ static juce::String ladderTypeTextFunction(const gin::Parameter&, float v)
 
 static juce::String waveshaperTypeTextFunction(const gin::Parameter&, float v)
 {
-    switch (int(v))
+    switch (static_cast<int>(v))
     {
         case 0: return "Sine";
         case 1: return "Atan 2";
@@ -60,7 +60,7 @@ static juce::String waveshaperTypeTextFunction(const gin::Parameter&, float v)
 
 static juce::String lfoTextFunction(const gin::Parameter&, float v)
 {
-    switch ((gin::LFO::WaveShape)int(v))
+    switch ((gin::LFO::WaveShape)static_cast<int>(v))
     {
         case gin::LFO::WaveShape::none:          return "None";
         case gin::LFO::WaveShape::sine:          return "Sine";
@@ -98,13 +98,13 @@ static juce::String durationTextFunction(const gin::Parameter&, float v)
 
 static juce::String percentTextFunction(const gin::Parameter&, float v)
 {
-    return juce::String(int(v * 1000.0f)/10.f) + "%";
+    return juce::String(static_cast<int>(v * 1000.0f)/10.f) + "%";
 }
 
 
 
 static juce::String compressorTypeTextFunction(const gin::Parameter&, float v) {
-    switch (int(v))
+    switch (static_cast<int>(v))
     {
     case 0: return "Compressor";
     case 1: return "Limiter";
@@ -119,7 +119,7 @@ static juce::String compressorTypeTextFunction(const gin::Parameter&, float v) {
 
 static juce::String filterTextFunction(const gin::Parameter&, float v)
 {
-    switch (int(v))
+    switch (static_cast<int>(v))
     {
         case 0: return "LP 12";
         case 1: return "LP 24";
@@ -171,7 +171,7 @@ static juce::String envSelectTextFunction(const gin::Parameter&, float v)
 
 static juce::String syncrepeatTextFunction(const gin::Parameter&, float v)
 {
-    switch (int(v))
+    switch (static_cast<int>(v))
     {
         case 0: return "Off";
         case 1: return "Sync";
@@ -184,7 +184,7 @@ static juce::String syncrepeatTextFunction(const gin::Parameter&, float v)
 
 static juce::String fxListTextFunction(const gin::Parameter&, float v)
 {
-    switch (int(v))
+    switch (static_cast<int>(v))
     {
         case 0: return juce::String("--");
         case 1: return juce::String("Waveshaper");
@@ -205,7 +205,7 @@ static juce::String fxListTextFunction(const gin::Parameter&, float v)
 
 static juce::String algoTextFunction(const gin::Parameter&, float v)
 {
-    switch (int(v))
+    switch (static_cast<int>(v))
     {
         case 0: return juce::String("1-2-3-4");
         case 1: return juce::String("1-2-3 / 2-4");
@@ -224,7 +224,7 @@ static juce::String freqTextFunction(const gin::Parameter&, float v)
 
 static juce::String glideModeTextFunction(const gin::Parameter&, float v)
 {
-    switch (int(v))
+    switch (static_cast<int>(v))
     {
         case 0: return "Off";
         case 1: return "Glissando";
@@ -237,7 +237,7 @@ static juce::String glideModeTextFunction(const gin::Parameter&, float v)
 
 static juce::String msegDrawModeTextFunction(const gin::Parameter&, float v)
 {
-    switch (int(v))
+    switch (static_cast<int>(v))
     {
         case 0: return "Step";
         case 1: return "Half";
@@ -257,7 +257,7 @@ static juce::String gridTextFunction(const gin::Parameter&, float v)
 
 static juce::String auxWaveTextFunction(const gin::Parameter&, float v)
 {
-	switch (int(v))
+	switch (static_cast<int>(v))
 	{
 		case 0: return "Sine";
 		case 1: return "Triangle";
@@ -290,7 +290,7 @@ static juce::String decibelsTextFunction(const gin::Parameter&, float v)
 }
 
 static juce::String auxPreFxTextFunction(const gin::Parameter&, float v) {
-		switch (int(v))
+		switch (static_cast<int>(v))
 	{
 	case 0: return "Post FX";
 	case 1: return "Pre FX";
@@ -313,38 +313,35 @@ void APAudioProcessor::OSCParams::setup(APAudioProcessor& p, juce::String numStr
     case 1:
         coarse        = p.addExtParam(id + "coarse",     nm + " Coarse",      "Coarse",    "", { 1.0, 24.0, 1.0, 1.0 }, 1.0, 0.0f);
         fine        = p.addExtParam(id + "fine", nm + " Fine", "Fine", "", osc1FineRange, 0.0, 0.0f);
-        volume        = p.addExtParam(id + "volume",     nm + " Volume",      "Volume",    " dB", { -40.0, 0.0, 0.0f, 1.0 }, -6.f, 0.0f);
+        volume        = p.addExtParam(id + "volume",     nm + " Volume",      "Volume",    " dB", { -40.0, 0.0, 0.0f, 1.0 }, -6.f, 0.02f);
         phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.15f, 0.0f);
         break;
     case 2:
         coarse        = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 2.0, 0.0f);
         fine        = p.addExtParam(id + "fine", nm + " Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
-        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", " dB", { -40.0, 0.0, 0.0f, 1.0 }, -6.f, 0.0f);
+        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", " dB", { -40.0, 0.0, 0.0f, 1.0 }, -6.f, 0.02f);
         phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.3f, 0.0f);
         break;
     case 3:
         coarse        = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 3.0, 0.0f);
         fine        = p.addExtParam(id + "fine", nm + " Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
-        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", " dB", { -40.0, 0.0, 0.0f, 1.0 }, -9.f, 0.0f);
+        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", " dB", { -40.0, 0.0, 0.0f, 1.0 }, -9.f, 0.02f);
         phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.65f, 0.0f);
         break;
     case 4:
         coarse        = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "", { 1.0, 24.0, 1.0, 1.0 }, 4.0, 0.0f);
         fine        = p.addExtParam(id + "fine", nm + " Fine", "Fine", "", defaultFineRange, 0.0, 0.0f);
-        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", " dB", { -40.0, 0.0, 0.0f, 1.0 }, -14.f, 0.0f);
+        volume        = p.addExtParam(id + "volume", nm + " Volume", "Volume", " dB", { -40.0, 0.0, 0.0f, 1.0 }, -14.f, 0.02f);
         phase = p.addExtParam(id + "phase", nm + " Phase", " Phase", "", { 0.0, 1.0, 0.0, 1.0 }, 0.85f, 0.0f);
         break;
     }
-    
-    tones     = p.addExtParam(id + "tones",      nm + " Tones",       "Tones",     "", { 1.0, 5.9f, 0.001f, 1.0 }, 1.0, 0.0f);
-    
     wave       = p.addExtParam(id + "wave",        nm + " Wave",         "Wave",       "", { 0.0, 5.0, 1.0f, 1.0 }, 0.0, 0.0f, auxWaveTextFunction);
     fixed     = p.addIntParam(id + "fixed",      nm + " Fixed",       "Fixed",     "", { 0.0, 1.0, 1.0f, 1.0 }, 0.0, 0.0f, enableTextFunction);
     env       = p.addIntParam(id + "env",        nm + " Env",         "Env",       "", { 0.0, 3.0, 1.0f, 1.0 }, (float)(numStr.getIntValue() - 1), 0.0f, envSelectTextFunction);
     this->num = numStr.getIntValue();
     volume->conversionFunction     = [](float in) { 
         if ( in < -39.5f ) return 0.0f;
-        return juce::Decibels::decibelsToGain (in); 
+        return juce::Decibels::decibelsToGain(in); 
     };
 }
 
@@ -358,7 +355,7 @@ void APAudioProcessor::FilterParams::setup(APAudioProcessor& p)
 
     type             = p.addIntParam(id + "type",    nm + " Type",    "Type",  "", { 0.0, 7.0, 1.0f, 1.0 }, 0.0, 0.0f, filterTextFunction);
     keyTracking      = p.addExtParam(id + "key",     nm + " Key",     "Key",   "%", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
-    frequency        = p.addExtParam(id + "freq",    nm + " Freq",    "Freq",  " Hz", { 0.0, maxFreq, 0.0f, 1.0 }, 95.0, 0.0f, freqTextFunction);
+    frequency        = p.addExtParam(id + "freq",    nm + " Freq",    "Freq",  " Hz", { 0.0, maxFreq, 0.0f, 1.0 }, 95.0, 0.05f, freqTextFunction);
     resonance        = p.addExtParam(id + "res",     nm + " Res",     "Res",   "", { 0.0, 100.0, 0.0f, 1.0 }, 0.0, 0.0f);
 
     keyTracking->conversionFunction      = [] (float in) { return in / 100.0f; };
@@ -457,8 +454,8 @@ void APAudioProcessor::ENVParams::setup(APAudioProcessor& p, juce::String numStr
 //==============================================================================
 void APAudioProcessor::TimbreParams::setup(APAudioProcessor& p)
 {
-    equant = p.addExtParam("equant", "Equant", "", "", { -0.5, 0.5, 0.0, 1.0 }, 0.0, 0.0f);
-    pitch = p.addExtParam("pitch", "Pitch", "", "", { 0.01f, 4.0, 0.0f, 1.0 }, 1.0, 0.0f);
+    equant = p.addExtParam("equant", "Equant", "", "", { -0.5, 0.5, 0.0, 1.0 }, 0.0, 0.03f);
+    pitch = p.addExtParam("pitch", "Pitch", "", "", { 0.01f, 4.0, 0.0f, 1.0 }, 1.0, 0.02f);
     algo = p.addExtParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0, 0.f, algoTextFunction);
 }
 
@@ -485,7 +482,6 @@ void APAudioProcessor::AuxParams::setup(APAudioProcessor& p) {
 void APAudioProcessor::GlobalParams::setup(APAudioProcessor& p)
 {
     velSens        = p.addExtParam("velSens", "Vel. Sens.",   "",      "%",   { 0.0, 100.0, 0.0, 1.0 }, 100.0, 0.0f);
-    squash         = p.addExtParam("squash", "Squash", "", "", {0.0f, 1.0f, 0.0f, 1.0f}, 0.0f, 0.0f);
     mono           = p.addIntParam("mono",    "Mono",       "",      "",   { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, enableTextFunction);
     glideMode      = p.addIntParam("gMode",   "Glide Mode", "Glide", "",   { 0.0, 2.0, 0.0, 1.0 }, 0.0f, 0.0f, glideModeTextFunction);
     glideRate      = p.addExtParam("gRate",   "Glide Rate", "Rate",  " s",   { 0.001f, 20.0, 0.0, 0.2f }, 0.3f, 0.0f);
@@ -670,9 +666,9 @@ void APAudioProcessor::updatePitchbend() {
 
 bool APAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo() ||
+        layouts.getMainInputChannels() != 0)
         return false;
-    
     return true;
 }
 
@@ -975,7 +971,6 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
         viz.epi2Rad = modMatrix.getValue(osc3Params.volume);
         viz.epi3Rad = modMatrix.getValue(osc4Params.volume);
         viz.algo = modMatrix.getValue(timbreParams.algo);
-        viz.squash = modMatrix.getValue(globalParams.squash);
         
         viz2.defRat = osc1Params.coarse->getProcValue() + osc1Params.fine->getProcValue();
         viz2.epi1Rat = osc2Params.coarse->getProcValue() + osc2Params.fine->getProcValue();
@@ -987,7 +982,6 @@ void APAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
         viz2.epi2Rad = osc3Params.volume->getProcValue();
         viz2.epi3Rad = osc4Params.volume->getProcValue();
         viz2.algo = timbreParams.algo->getProcValue();
-        viz2.squash = globalParams.squash->getProcValue();
     }
 
     if (MTS_HasMaster(client)) {

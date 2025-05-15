@@ -63,25 +63,6 @@ public:
 
 	}
 
-	void paint(juce::Graphics& g) override
-	{
-		auto rc = getLocalBounds().withTrimmedTop(23);
-		juce::ColourGradient gradient(
-			findColour(gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float)rc.getX(), (float)rc.getY(),
-			findColour(gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float)rc.getWidth(), (float)rc.getBottom(), false);
-		gradient.addColour(0.3f, findColour(gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill(gradient);
-		g.fillRect(rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-	}
-
-	bool right{ false };
-	void setRight(bool r) { right = r; }
-	
 	~OSCBox() override
 	{
 		c1->setLookAndFeel(nullptr);
@@ -210,25 +191,6 @@ public:
 		addAndMakeVisible(envViz);
 	}
 
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-    }
-
-	bool right{false};
-	void setRight(bool r) { right = r; }
-
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
@@ -276,26 +238,8 @@ public:
 		addControl(algo = new APKnob(proc.timbreParams.algo), 1, 0);
 		addControl(new APKnob(proc.globalParams.velSens), 1, 1);
 	}
-	
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-    }
 
 	APKnob* equant, *algo;
-	bool right{false};
-	void setRight(bool r) { right = r; }
 };
 
 //==============================================================================
@@ -324,34 +268,6 @@ public:
                 return proc.getLiveFilterCutoff();
             return juce::Array<float>(); });
 	}
-	
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 1, getHeight());
-    }
-
-	bool top{false}, right{false}, bottom{false}, left{false};
-	void setTop(bool t) { top = t; }
-	void setRight(bool r) { right = r; }
-	void setBottom(bool b) { bottom = b; }
-	void setLeft(bool l) { left = l; }
 
 	APAudioProcessor &proc;
 };
@@ -369,33 +285,6 @@ public:
 		modlist->setRowHeight(20);
 	}
 
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 1, getHeight());
-    }
-
-	bool top{false}, right{false}, bottom{false}, left{false};
-	void setTop(bool t) { top = t; }
-	void setRight(bool r) { right = r; }
-	void setBottom(bool b) { bottom = b; }
-	void setLeft(bool l) { left = l; }
 	gin::ModSrcListBox *modlist;
 	APAudioProcessor &proc;
 };
@@ -427,34 +316,6 @@ public:
 		vol->setLookAndFeel(nullptr); 
 		auxvol->setLookAndFeel(nullptr);
 	}
-
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 1, getHeight());
-    }
-
-	bool top{false}, right{false}, bottom{false}, left{false};
-	void setTop(bool t) { top = t; }
-	void setRight(bool r) { right = r; }
-	void setBottom(bool b) { bottom = b; }
-	void setLeft(bool l) { left = l; }
 
 	void resized() override
 	{
@@ -510,42 +371,6 @@ public:
 		addControl(new gin::Select(proc.auxParams.ignorepb), 4, 1);
 	}
 
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 1, getHeight());
-    }
-
-	bool top{false}, right{false}, bottom{false}, left{false};
-	void setTop(bool t) { top = t; }
-	void setRight(bool r) { right = r; }
-	void setBottom(bool b) { bottom = b; }
-	void setLeft(bool l) { left = l; }
-	void resized() override
-	{
-		ParamBox::resized();
-		wave->setBounds(0, 23, 56, 35);
-		env->setBounds(0, 58, 56, 35);
-		prefx->setBounds(0, 93, 56, 35);
-		filtertype->setBounds(0, 128, 56, 35);
-	}
-
 	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr wave, env, prefx, filtertype;
 };
@@ -590,22 +415,6 @@ public:
 		}
 	}
 
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-    }
-	bool right{false};
 	juce::TextButton clearAllButton{"Clear All"};
 
 	APAudioProcessor &proc;
@@ -652,34 +461,6 @@ public:
 		midiLearnButton2.setMacroNumber(2);
 		midiLearnButton3.setMacroNumber(3);
 	}
-
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (top)
-			g.fillRect(0, 0, getWidth(), 1);
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-		if (bottom)
-			g.fillRect(0, getHeight() - 1, getWidth(), 1);
-		if (left)
-			g.fillRect(0, 0, 1, getHeight());
-    }
-
-	bool top{false}, right{false}, bottom{false}, left{false};
-	void setTop(bool t) { top = t; }
-	void setRight(bool r) { right = r; }
-	void setBottom(bool b) { bottom = b; }
-	void setLeft(bool l) { left = l; }
 
 	void cancelAssignment(int macroNumber)
 	{
@@ -876,19 +657,6 @@ public:
 	}
 
     ~VolumeBox() override { delete level; }
-    
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-        gradientRect (g, rc, findColour (gin::PluginLookAndFeel::matte1ColourId), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId));
-		g.setColour(juce::Colour(0xFF888888));
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-    }
-
-	bool right{false};
-	void setRight(bool r) { right = r; }
 
 	void resized() override
 	{

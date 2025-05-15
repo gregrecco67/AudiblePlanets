@@ -72,26 +72,6 @@ public:
 		watchParam(lfoParams.sync);
 	}
 
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-    }
-
-	bool right{false};
-	void setRight(bool r) { right = r; }
-	
-
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
@@ -242,25 +222,6 @@ public:
         
 		show(1);
 	}
-
-	void paint (juce::Graphics& g) override
-    {
-        auto rc = getLocalBounds().withTrimmedTop (23);
-		juce::ColourGradient gradient(
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.05f),
-			(float) rc.getX(), (float) rc.getY(), 
-			findColour (gin::PluginLookAndFeel::matte2ColourId).darker(0.08f),
-			(float) rc.getWidth(), (float) rc.getBottom(), false);
-		gradient.addColour (0.3f, findColour (gin::PluginLookAndFeel::matte2ColourId).brighter(0.08f));
-		g.setGradientFill (gradient);
-		g.fillRect (rc);
-		g.setColour(juce::Colour(0xFF888888));
-		if (right)
-			g.fillRect(getWidth() - 1, 0, 1, getHeight());
-    }
-
-	bool right{false};
-	void setRight(bool r) { right = r; }
 
 	void show(int selected)
 	{
