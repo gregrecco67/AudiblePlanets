@@ -6,12 +6,7 @@
 consider a generic destination box on the mods page, with a popup for mod dests
 better than a fourth page that's just sources and destinations?
 
-orbitViz remove squash
-
 clean up Envelope (in what sense?) 
-sync and free times OK, knob times not OK
-
-are mod values as displayed on knobs inverted in sign?
 
 which params if any need smoothing built-in?
 
