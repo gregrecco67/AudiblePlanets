@@ -16,18 +16,16 @@
 
 #include <gin_dsp/gin_dsp.h>
 #include <gin_plugin/gin_plugin.h>
+#include <numbers>
 #include "Envelope.h"
 #include "third_party/MTS-ESP/libMTSClient.h"
-#include <numbers>
 class APAudioProcessor;
 
 using namespace std::numbers;
 //==============================================================================
-class AuxSynthVoice : public gin::SynthesiserVoice,
-	public gin::ModVoice
-{
+class AuxSynthVoice : public gin::SynthesiserVoice, public gin::ModVoice {
 public:
-	AuxSynthVoice(APAudioProcessor& p);
+	AuxSynthVoice(APAudioProcessor &p);
 
 	void noteStarted() override;
 	void noteRetriggered() override;
@@ -40,9 +38,14 @@ public:
 
 	void setCurrentSampleRate(double newRate) override;
 
-	void renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override;
+	void renderNextBlock(juce::AudioBuffer<float> &outputBuffer,
+	                     int startSample,
+	                     int numSamples) override;
 
-	float getCurrentNote() override { return noteSmoother.getCurrentValue() * 127.0f; }
+	float getCurrentNote() override
+	{
+		return noteSmoother.getCurrentValue() * 127.0f;
+	}
 
 	bool isVoiceActive() override;
 
@@ -56,22 +59,19 @@ public:
 private:
 	void updateParams(int blockSize);
 
-	APAudioProcessor& proc;
+	APAudioProcessor &proc;
 
-    gin::BLLTVoicedStereoOscillator osc;
-    gin::LFO lfo1, lfo2, lfo3, lfo4;
+	gin::BLLTVoicedStereoOscillator osc;
+	gin::LFO lfo1, lfo2, lfo3, lfo4;
 	gin::MSEG mseg1, mseg2, mseg3, mseg4;
 	gin::MSEG::Parameters mseg1Params, mseg2Params, mseg3Params, mseg4Params;
-	
-
-	
 
 	gin::Filter filter;
 
 	Envelope env1, env2, env3, env4;
 	int currentEnv;
-	float currentFreq{ 440.f };
-		
+	float currentFreq{440.f};
+
 	float currentMidiNote = -1;
 	gin::VoicedStereoOscillatorParams oscParams;
 

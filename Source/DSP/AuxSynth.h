@@ -5,13 +5,12 @@
 
 class APAudioProcessor;
 
-class AuxSynth : public gin::Synthesiser
-{
+class AuxSynth : public gin::Synthesiser {
 public:
-	AuxSynth(APAudioProcessor& proc_);
+	AuxSynth(APAudioProcessor &proc_);
 	~AuxSynth() override = default;
 
-	void handleMidiEvent(const juce::MidiMessage& m) override;
+	void handleMidiEvent(const juce::MidiMessage &m) override;
 	juce::Array<float> getLiveFilterCutoff();
 
 	std::vector<float> getMSEG1Phases();
@@ -19,8 +18,6 @@ public:
 	std::vector<float> getMSEG3Phases();
 	std::vector<float> getMSEG4Phases();
 
-
 private:
-	APAudioProcessor& proc;
-
+	APAudioProcessor &proc;
 };

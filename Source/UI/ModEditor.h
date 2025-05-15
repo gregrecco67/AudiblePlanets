@@ -16,40 +16,43 @@
 
 #include <gin_plugin/gin_plugin.h>
 #include "DSP/PluginProcessor.h"
-#include "Panels.h"
 #include "ModPanels.h"
-
+#include "Panels.h"
 
 //==============================================================================
-class ModEditor : public juce::Component, public gin::Parameter::ParameterListener // , juce::Timer
+class ModEditor : public juce::Component,
+                  public gin::Parameter::ParameterListener  // , juce::Timer
 {
 public:
-    ModEditor(APAudioProcessor& proc_);
+	ModEditor(APAudioProcessor &proc_);
 	~ModEditor() override;
 
-    void resized() override;
-	void valueUpdated(gin::Parameter* param) override;
-    void setGrid(gin::ParamBox* box, float x, float y, float heds, float w, float h);
-    // void timerCallback() override;
+	void resized() override;
+	void valueUpdated(gin::Parameter *param) override;
+	void setGrid(
+	    gin::ParamBox *box, float x, float y, float heds, float w, float h);
+	// void timerCallback() override;
 
 private:
-    APAudioProcessor& proc;
+	APAudioProcessor &proc;
 
-    LFOBox lfo1{ proc, proc.lfo1Params, 1 };
-    LFOBox lfo2{ proc, proc.lfo2Params, 2 };
-    LFOBox lfo3{ proc, proc.lfo3Params, 3 };
-    LFOBox lfo4{ proc, proc.lfo4Params, 4 };
+	LFOBox lfo1{proc, proc.lfo1Params, 1};
+	LFOBox lfo2{proc, proc.lfo2Params, 2};
+	LFOBox lfo3{proc, proc.lfo3Params, 3};
+	LFOBox lfo4{proc, proc.lfo4Params, 4};
 
-    MainMatrixBox matrix{ "  Mod Matrix", proc };
-    ModBox modsrc                              { "  mod", proc };
-    MsegBox msegA{ proc, proc.mseg1Params, proc.mseg2Params, proc.mseg1Data, proc.mseg2Data, 1 };
-    MsegBox msegB{ proc, proc.mseg3Params, proc.mseg4Params, proc.mseg3Data, proc.mseg4Data, 3 };
-    FilterBox filter                       { "  flt", proc };
-    TimbreBox timbre { "  timbre", proc };
-    GlobalBox global { "  global", proc };
+	MainMatrixBox matrix{"  Mod Matrix", proc};
+	ModBox modsrc{"  mod", proc};
+	MsegBox msegA{proc, proc.mseg1Params, proc.mseg2Params, proc.mseg1Data,
+	    proc.mseg2Data, 1};
+	MsegBox msegB{proc, proc.mseg3Params, proc.mseg4Params, proc.mseg3Data,
+	    proc.mseg4Data, 3};
+	FilterBox filter{"  flt", proc};
+	TimbreBox timbre{"  timbre", proc};
+	GlobalBox global{"  global", proc};
 
-	MacrosBox macros{ proc };
-    APLNF aplnf;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ModEditor)
+	MacrosBox macros{proc};
+	APLNF aplnf;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ModEditor)
 };

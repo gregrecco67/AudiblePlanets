@@ -15,40 +15,44 @@
 #pragma once
 
 #include <gin_plugin/gin_plugin.h>
-#include "DSP/PluginProcessor.h"
 #include "APColors.h"
 #include "APModAdditions.h"
+#include "DSP/PluginProcessor.h"
 #include "EnvelopeComponent.h"
 
-
-inline void gradientRect (juce::Graphics& g, juce::Rectangle<int> rc, juce::Colour c1, juce::Colour c2)
+inline void gradientRect(juce::Graphics &g,
+    juce::Rectangle<int> rc,
+    juce::Colour c1,
+    juce::Colour c2)
 {
-    juce::ColourGradient gradient (c1, (float) rc.getX(), (float) rc.getY(), c2, (float) rc.getRight(), (float) rc.getBottom(), false);
+	juce::ColourGradient gradient(c1, (float)rc.getX(), (float)rc.getY(), c2,
+	    (float)rc.getRight(), (float)rc.getBottom(), false);
 
-    g.setGradientFill (gradient);
-    g.fillRect (rc);
+	g.setGradientFill(gradient);
+	g.fillRect(rc);
 }
 
 //===============================================================================
 
-class OSCBox : public gin::ParamBox
-{
+class OSCBox : public gin::ParamBox {
 public:
-	OSCBox(APAudioProcessor& proc_, APAudioProcessor::OSCParams& params_, int num)
-		: gin::ParamBox(juce::String("  OSC ") += (num+1)), proc(proc_), oscparams(params_)
+	OSCBox(
+	    APAudioProcessor &proc_, APAudioProcessor::OSCParams &params_, int num)
+	    : gin::ParamBox(juce::String("  OSC ") += (num + 1)), proc(proc_),
+	      oscparams(params_)
 	{
-		addControl(c1 = new APKnob(oscparams.coarse), 0, 0); // coarse
-		addControl(f1 = new APKnob(oscparams.fine), 1, 0); // fine
-		addControl(v1 = new APKnob(oscparams.volume), 2, 0); // volume
-		addControl(p1 = new APKnob(oscparams.phase), 2, 1); // phase
+		addControl(c1 = new APKnob(oscparams.coarse), 0, 0);  // coarse
+		addControl(f1 = new APKnob(oscparams.fine), 1, 0);    // fine
+		addControl(v1 = new APKnob(oscparams.volume), 2, 0);  // volume
+		addControl(p1 = new APKnob(oscparams.phase), 2, 1);   // phase
 
 		c1->setLookAndFeel(lnfs[num]);
 		f1->setLookAndFeel(lnfs[num]);
 		v1->setLookAndFeel(lnfs[num]);
 
-		addControl(wave1 = new gin::Select (oscparams.wave)); // saw
-		addControl(env1 = new gin::Select  (oscparams.env)); // env select
-		addControl(fixed1 = new gin::Select(oscparams.fixed)); // fixed
+		addControl(wave1 = new gin::Select(oscparams.wave));    // saw
+		addControl(env1 = new gin::Select(oscparams.env));      // env select
+		addControl(fixed1 = new gin::Select(oscparams.fixed));  // fixed
 		watchParam(oscparams.fixed);
 		watchParam(oscparams.wave);
 		watchParam(oscparams.coarse);
@@ -58,9 +62,8 @@ public:
 
 		addAndMakeVisible(coarseLabel);
 		coarseLabel.setJustificationType(juce::Justification::centredBottom);
-		//coarseLabel.setFont(juce::Font(14.0f));
+		// coarseLabel.setFont(juce::Font(14.0f));
 		fixedHz1.setJustificationType(juce::Justification::centred);
-
 	}
 
 	~OSCBox() override
@@ -70,8 +73,7 @@ public:
 		v1->setLookAndFeel(nullptr);
 	}
 
-	class APLookAndFeel1 : public APLNF
-	{
+	class APLookAndFeel1 : public APLNF {
 	public:
 		APLookAndFeel1()
 		{
@@ -79,8 +81,7 @@ public:
 			setColour(juce::Slider::trackColourId, juce::Colours::black);
 		}
 	};
-	class APLookAndFeel2 : public APLNF
-	{
+	class APLookAndFeel2 : public APLNF {
 	public:
 		APLookAndFeel2()
 		{
@@ -88,8 +89,7 @@ public:
 			setColour(juce::Slider::trackColourId, juce::Colours::black);
 		}
 	};
-	class APLookAndFeel3 : public APLNF
-	{
+	class APLookAndFeel3 : public APLNF {
 	public:
 		APLookAndFeel3()
 		{
@@ -97,8 +97,7 @@ public:
 			setColour(juce::Slider::trackColourId, juce::Colours::black);
 		}
 	};
-	class APLookAndFeel4 : public APLNF
-	{
+	class APLookAndFeel4 : public APLNF {
 	public:
 		APLookAndFeel4()
 		{
@@ -110,13 +109,15 @@ public:
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-		if (oscparams.fixed->isOn())
-		{
+		if (oscparams.fixed->isOn()) {
 			fixedHz1.setVisible(true);
-			fixedHz1.setText(juce::String((oscparams.coarse->getUserValue() + oscparams.fine->getUserValue()) * 100, 2) + juce::String(" Hz"), juce::dontSendNotification);
-		}
-		else
-		{
+			fixedHz1.setText(juce::String((oscparams.coarse->getUserValue() +
+			                                  oscparams.fine->getUserValue()) *
+			                                  100,
+			                     2) +
+			                     juce::String(" Hz"),
+			    juce::dontSendNotification);
+		} else {
 			fixedHz1.setVisible(false);
 		}
 		auto coarseString = juce::String(oscparams.coarse->getUserValueInt());
@@ -132,7 +133,8 @@ public:
 	void resized() override
 	{
 		gin::ParamBox::resized();
-		fixedHz1.setBounds(56, 23 + 70 + 10, 56, 15); // 23/70/10 header, first row, padding
+		fixedHz1.setBounds(
+		    56, 23 + 70 + 10, 56, 15);  // 23/70/10 header, first row, padding
 		p1->setBounds(56 * 2, 70 * 1 + 23, 56, 70);
 		wave1->setBounds(56 * 3, 93, 56, 70);
 		env1->setBounds(56 * 3, 23, 56, 70);
@@ -144,35 +146,40 @@ public:
 	APLookAndFeel2 lnf2;
 	APLookAndFeel3 lnf3;
 	APLookAndFeel4 lnf4;
-	std::array<APLNF*, 4> lnfs{ &lnf1, &lnf2, &lnf3, &lnf4 };
-	APAudioProcessor& proc;
+	std::array<APLNF *, 4> lnfs{&lnf1, &lnf2, &lnf3, &lnf4};
+	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr c1, f1, v1, p1, wave1, env1, fixed1;
-	APAudioProcessor::OSCParams& oscparams;
+	APAudioProcessor::OSCParams &oscparams;
 
 	juce::Label fixedHz1, coarseLabel;
 };
 
 //==============================================================================
-class ENVBox : public gin::ParamBox
-{
+class ENVBox : public gin::ParamBox {
 public:
-	ENVBox(APAudioProcessor &proc_, APAudioProcessor::ENVParams& params_, int num_)
-		: gin::ParamBox(juce::String("  ENV ") += (num_+1)), proc(proc_), num(num_), envparams(params_)
+	ENVBox(
+	    APAudioProcessor &proc_, APAudioProcessor::ENVParams &params_, int num_)
+	    : gin::ParamBox(juce::String("  ENV ") += (num_ + 1)), proc(proc_),
+	      num(num_), envparams(params_)
 	{
 		// in reverse order
 		switch (num) {
-		case 3:
-			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv4, true));
-			break;
-		case 2:
-			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv3, true));
-			break;
-		case 1:
-			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv2, true));
-			break;
-		case 0:
-			addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcEnv1, true));
-			break;
+			case 3:
+				addModSource(new gin::ModulationSourceButton(
+				    proc.modMatrix, proc.modSrcEnv4, true));
+				break;
+			case 2:
+				addModSource(new gin::ModulationSourceButton(
+				    proc.modMatrix, proc.modSrcEnv3, true));
+				break;
+			case 1:
+				addModSource(new gin::ModulationSourceButton(
+				    proc.modMatrix, proc.modSrcEnv2, true));
+				break;
+			case 0:
+				addModSource(new gin::ModulationSourceButton(
+				    proc.modMatrix, proc.modSrcEnv1, true));
+				break;
 		}
 		addControl(a1 = new APKnob(envparams.attack), 0, 0);
 		addControl(d1 = new APKnob(envparams.decay), 1, 0);
@@ -196,18 +203,18 @@ public:
 		gin::ParamBox::paramChanged();
 		auto choice = envparams.syncrepeat->getUserValueInt();
 		switch (choice) {
-		case 0:
-			beats1->setVisible(false);
-			rate1->setVisible(false);
-			break;
-		case 1:
-			beats1->setVisible(true);
-			rate1->setVisible(false);
-			break;
-		case 2:
-			beats1->setVisible(false);
-			rate1->setVisible(true);
-			break;
+			case 0:
+				beats1->setVisible(false);
+				rate1->setVisible(false);
+				break;
+			case 1:
+				beats1->setVisible(true);
+				rate1->setVisible(false);
+				break;
+			case 2:
+				beats1->setVisible(false);
+				rate1->setVisible(true);
+				break;
 		}
 	}
 
@@ -221,16 +228,15 @@ public:
 	gin::ParamComponent::Ptr a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1;
 
 	int num;
-	EnvelopeComponent envViz{proc, num+1};
-	APAudioProcessor::ENVParams& envparams;
+	EnvelopeComponent envViz{proc, num + 1};
+	APAudioProcessor::ENVParams &envparams;
 };
 
 //==============================================================================
-class TimbreBox : public gin::ParamBox
-{
+class TimbreBox : public gin::ParamBox {
 public:
 	TimbreBox(const juce::String &name, APAudioProcessor &proc)
-		: gin::ParamBox(name)
+	    : gin::ParamBox(name)
 	{
 		setName(name);
 		addControl(equant = new APKnob(proc.timbreParams.equant, true), 0, 0);
@@ -239,15 +245,14 @@ public:
 		addControl(new APKnob(proc.globalParams.velSens), 1, 1);
 	}
 
-	APKnob* equant, *algo;
+	APKnob *equant, *algo;
 };
 
 //==============================================================================
-class FilterBox : public gin::ParamBox
-{
+class FilterBox : public gin::ParamBox {
 public:
 	FilterBox(const juce::String &name, APAudioProcessor &proc_)
-		: gin::ParamBox(name), proc(proc_)
+	    : gin::ParamBox(name), proc(proc_)
 	{
 		setName("flt");
 		setTitle("  filter");
@@ -261,27 +266,28 @@ public:
 		addControl(new APKnob(flt.keyTracking), 0, 1);
 		addControl(new gin::Select(flt.type), 1, 1);
 
-		freq->setLiveValuesCallback([this]()
-									{
-            if (proc.filterParams.keyTracking->getUserValue() != 0.0f ||
-                proc.modMatrix.isModulated(gin::ModDstId(proc.filterParams.frequency->getModIndex())))
-                return proc.getLiveFilterCutoff();
-            return juce::Array<float>(); });
+		freq->setLiveValuesCallback([this]() {
+			if (proc.filterParams.keyTracking->getUserValue() != 0.0f ||
+			    proc.modMatrix.isModulated(
+			        gin::ModDstId(proc.filterParams.frequency->getModIndex())))
+				return proc.getLiveFilterCutoff();
+			return juce::Array<float>();
+		});
 	}
 
 	APAudioProcessor &proc;
 };
 
 //==============================================================================
-class ModBox : public gin::ParamBox
-{
+class ModBox : public gin::ParamBox {
 public:
 	ModBox(const juce::String &name, APAudioProcessor &proc_)
-		: gin::ParamBox(name), proc(proc_)
+	    : gin::ParamBox(name), proc(proc_)
 	{
 		setName("mod");
 		setTitle("  mod sources");
-		addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0.f, 0.f, 5.f, 4.3f);
+		addControl(modlist = new gin::ModSrcListBox(proc.modMatrix), 0.f, 0.f,
+		    5.f, 4.3f);
 		modlist->setRowHeight(20);
 	}
 
@@ -290,11 +296,10 @@ public:
 };
 
 //==============================================================================
-class GlobalBox : public gin::ParamBox
-{
+class GlobalBox : public gin::ParamBox {
 public:
 	GlobalBox(const juce::String &name, APAudioProcessor &proc_)
-		: gin::ParamBox(name), proc(proc_)
+	    : gin::ParamBox(name), proc(proc_)
 	{
 		setName("global");
 
@@ -312,8 +317,9 @@ public:
 		auxvol->setLookAndFeel(&aplnf5);
 	}
 
-	~GlobalBox() override { 
-		vol->setLookAndFeel(nullptr); 
+	~GlobalBox() override
+	{
+		vol->setLookAndFeel(nullptr);
 		auxvol->setLookAndFeel(nullptr);
 	}
 
@@ -326,33 +332,29 @@ public:
 		mpe->setBounds(56, 58, 56, 35);
 	}
 
-	class APLookAndFeel5 : public APLNF
-	{
+	class APLookAndFeel5 : public APLNF {
 	public:
 		APLookAndFeel5()
 		{
-			setColour(juce::Slider::rotarySliderFillColourId, 
-				gin::CopperLookAndFeel::findColour(accentColourId));
-			setColour(juce::Slider::trackColourId, 
-				juce::Colours::black);
+			setColour(juce::Slider::rotarySliderFillColourId,
+			    gin::CopperLookAndFeel::findColour(accentColourId));
+			setColour(juce::Slider::trackColourId, juce::Colours::black);
 		}
 	} aplnf5;
 
-	gin::ParamComponent::Ptr legato = nullptr, mono = nullptr, glideMode = nullptr,
-		mpe = nullptr;
-	APKnob  *auxvol, *vol;
+	gin::ParamComponent::Ptr legato = nullptr, mono = nullptr,
+	                         glideMode = nullptr, mpe = nullptr;
+	APKnob *auxvol, *vol;
 	APAudioProcessor &proc;
 };
 
 //==============================================================================
 
-class AuxBox : public gin::ParamBox
-{
+class AuxBox : public gin::ParamBox {
 public:
 	AuxBox(const juce::String &name, APAudioProcessor &proc_)
-		: gin::ParamBox(name), proc(proc_)
+	    : gin::ParamBox(name), proc(proc_)
 	{
-
 		setName("aux");
 		addEnable(proc.auxParams.enable);
 
@@ -364,7 +366,8 @@ public:
 		addControl(new APKnob(proc.auxParams.spread), 4, 0);
 
 		addControl(prefx = new gin::Select(proc.auxParams.prefx), 0, 1);
-		addControl(filtertype = new gin::Select(proc.auxParams.filtertype), 0, 1);
+		addControl(
+		    filtertype = new gin::Select(proc.auxParams.filtertype), 0, 1);
 		addControl(new APKnob(proc.auxParams.filtercutoff), 1, 1);
 		addControl(new APKnob(proc.auxParams.filterres), 2, 1);
 		addControl(new APKnob(proc.auxParams.filterkeytrack), 3, 1);
@@ -386,18 +389,17 @@ public:
 
 //==============================================================================
 
-class MainMatrixBox : public gin::ParamBox
-{
+class MainMatrixBox : public gin::ParamBox {
 public:
 	MainMatrixBox(const juce::String &name, APAudioProcessor &proc_)
-		: gin::ParamBox(name), proc(proc_)
+	    : gin::ParamBox(name), proc(proc_)
 	{
 		setName("mtx");
 
-		addControl(new APModMatrixBox(proc, proc.modMatrix), 0.f, 0.f, 5.f, 4.3f);
+		addControl(
+		    new APModMatrixBox(proc, proc.modMatrix), 0.f, 0.f, 5.f, 4.3f);
 		addAndMakeVisible(clearAllButton);
-		clearAllButton.onClick = [this]
-		{ clearAll(); };
+		clearAllButton.onClick = [this] { clearAll(); };
 	}
 
 	void resized() override
@@ -409,16 +411,15 @@ public:
 	void clearAll()
 	{
 		auto &pluginParams = proc.getPluginParameters();
-		for (auto *param : pluginParams)
-		{
+		for (auto *param : pluginParams) {
 			if (param->getModIndex() == -1)
 				continue;
-			if (proc.modMatrix.isModulated(gin::ModDstId(param->getModIndex())))
-			{
+			if (proc.modMatrix.isModulated(
+			        gin::ModDstId(param->getModIndex()))) {
 				auto modSrcs = proc.modMatrix.getModSources(param);
-				for (auto &modSrc : modSrcs)
-				{
-					proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
+				for (auto &modSrc : modSrcs) {
+					proc.modMatrix.clearModDepth(
+					    modSrc, gin::ModDstId(param->getModIndex()));
 				}
 			}
 		}
@@ -432,11 +433,9 @@ public:
 //==============================================================================
 //==============================================================================
 
-class MacrosBox : public gin::ParamBox
-{
+class MacrosBox : public gin::ParamBox {
 public:
-	MacrosBox(APAudioProcessor &proc_)
-		: gin::ParamBox("  macros"), proc(proc_)
+	MacrosBox(APAudioProcessor &proc_) : gin::ParamBox("  macros"), proc(proc_)
 	{
 		setName("macros");
 
@@ -444,9 +443,12 @@ public:
 		addControl(new APKnob(proc.macroParams.macro2), 1, 0);
 		addControl(new APKnob(proc.macroParams.macro3), 2, 0);
 
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc3, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc2, true));
-		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc1, true));
+		addModSource(new gin::ModulationSourceButton(
+		    proc.modMatrix, proc.macroSrc3, true));
+		addModSource(new gin::ModulationSourceButton(
+		    proc.modMatrix, proc.macroSrc2, true));
+		addModSource(new gin::ModulationSourceButton(
+		    proc.modMatrix, proc.macroSrc1, true));
 
 		addAndMakeVisible(midiLearnButton1);
 		addAndMakeVisible(midiLearnButton2);
@@ -459,12 +461,9 @@ public:
 		proc.macroParams.macro2cc->addListener(this);
 		proc.macroParams.macro3cc->addListener(this);
 
-		clear1.onClick = [this]()
-		{ cancelAssignment(1); };
-		clear2.onClick = [this]()
-		{ cancelAssignment(2); };
-		clear3.onClick = [this]()
-		{ cancelAssignment(3); };
+		clear1.onClick = [this]() { cancelAssignment(1); };
+		clear2.onClick = [this]() { cancelAssignment(2); };
+		clear3.onClick = [this]() { cancelAssignment(3); };
 
 		midiLearnButton1.setMacroNumber(1);
 		midiLearnButton2.setMacroNumber(2);
@@ -473,70 +472,60 @@ public:
 
 	void cancelAssignment(int macroNumber)
 	{
-		switch (macroNumber)
-		{
-		case 1:
-			proc.macroParams.macro1cc->setValue(-1.f);
-			midiLearnButton1.setCCString("Learn");
-			midiLearnButton1.setLearning(false);
-			clear1.setVisible(false);
-			break;
-		case 2:
-			proc.macroParams.macro2cc->setValue(-1.f);
-			midiLearnButton2.setCCString("Learn");
-			midiLearnButton2.setLearning(false);
-			clear2.setVisible(false);
-			break;
-		case 3:
-			proc.macroParams.macro3cc->setValue(-1.f);
-			midiLearnButton3.setCCString("Learn");
-			midiLearnButton3.setLearning(false);
-			clear3.setVisible(false);
-			break;
+		switch (macroNumber) {
+			case 1:
+				proc.macroParams.macro1cc->setValue(-1.f);
+				midiLearnButton1.setCCString("Learn");
+				midiLearnButton1.setLearning(false);
+				clear1.setVisible(false);
+				break;
+			case 2:
+				proc.macroParams.macro2cc->setValue(-1.f);
+				midiLearnButton2.setCCString("Learn");
+				midiLearnButton2.setLearning(false);
+				clear2.setVisible(false);
+				break;
+			case 3:
+				proc.macroParams.macro3cc->setValue(-1.f);
+				midiLearnButton3.setCCString("Learn");
+				midiLearnButton3.setLearning(false);
+				clear3.setVisible(false);
+				break;
 		}
 	}
 	void valueUpdated(gin::Parameter *p) override
 	{
-		if (p == proc.macroParams.macro1cc)
-		{
+		if (p == proc.macroParams.macro1cc) {
 			auto ccValue = proc.macroParams.macro1cc->getUserValueInt();
-			if (ccValue >= 0)
-			{
-				midiLearnButton1.setCCString("CC " + proc.macroParams.macro1cc->getUserValueText());
+			if (ccValue >= 0) {
+				midiLearnButton1.setCCString(
+				    "CC " + proc.macroParams.macro1cc->getUserValueText());
 				clear1.setVisible(true);
-			}
-			else
-			{
+			} else {
 				midiLearnButton1.setCCString("Learn");
 				midiLearnButton1.setLearning(false);
 				clear1.setVisible(false);
 			}
 		}
-		if (p == proc.macroParams.macro2cc)
-		{
+		if (p == proc.macroParams.macro2cc) {
 			auto ccValue = proc.macroParams.macro2cc->getUserValueInt();
-			if (ccValue >= 0)
-			{
-				midiLearnButton2.setCCString("CC " + proc.macroParams.macro2cc->getUserValueText());
+			if (ccValue >= 0) {
+				midiLearnButton2.setCCString(
+				    "CC " + proc.macroParams.macro2cc->getUserValueText());
 				clear2.setVisible(true);
-			}
-			else
-			{
+			} else {
 				midiLearnButton2.setCCString("Learn");
 				midiLearnButton2.setLearning(false);
 				clear2.setVisible(false);
 			}
 		}
-		if (p == proc.macroParams.macro3cc)
-		{
+		if (p == proc.macroParams.macro3cc) {
 			auto ccValue = proc.macroParams.macro3cc->getUserValueInt();
-			if (ccValue >= 0)
-			{
-				midiLearnButton3.setCCString("CC " + proc.macroParams.macro3cc->getUserValueText());
+			if (ccValue >= 0) {
+				midiLearnButton3.setCCString(
+				    "CC " + proc.macroParams.macro3cc->getUserValueText());
 				clear3.setVisible(true);
-			}
-			else
-			{
+			} else {
 				midiLearnButton3.setCCString("Learn");
 				midiLearnButton3.setLearning(false);
 				clear3.setVisible(false);
@@ -555,8 +544,7 @@ public:
 		clear3.setBounds(112, 128, 56, 35);
 	}
 
-	class MIDILearnButton : public juce::Label
-	{
+	class MIDILearnButton : public juce::Label {
 	public:
 		MIDILearnButton(APAudioProcessor &p) : proc(p)
 		{
@@ -566,51 +554,37 @@ public:
 			setLookAndFeel(&midilearnLNF);
 		}
 
-		~MIDILearnButton() override
-		{
-			setLookAndFeel(nullptr);
-		}
+		~MIDILearnButton() override { setLookAndFeel(nullptr); }
 
 		void mouseDown(const juce::MouseEvent & /*ev*/) override
 		{
-			if (thisMacroNumber == 1)
-			{
-				if (proc.macroParams.macro1cc->getUserValue() > 0.f)
-				{
+			if (thisMacroNumber == 1) {
+				if (proc.macroParams.macro1cc->getUserValue() > 0.f) {
 					return;
 				}
 			}
-			if (thisMacroNumber == 2)
-			{
-				if (proc.macroParams.macro2cc->getUserValue() > 0.f)
-				{
+			if (thisMacroNumber == 2) {
+				if (proc.macroParams.macro2cc->getUserValue() > 0.f) {
 					return;
 				}
 			}
-			if (thisMacroNumber == 3)
-			{
-				if (proc.macroParams.macro3cc->getUserValue() > 0.f)
-				{
+			if (thisMacroNumber == 3) {
+				if (proc.macroParams.macro3cc->getUserValue() > 0.f) {
 					return;
 				}
 			}
 			learning = !learning;
-			if (learning)
-			{
-				proc.macroParams.learning->setUserValue(static_cast<float>(thisMacroNumber));
+			if (learning) {
+				proc.macroParams.learning->setUserValue(
+				    static_cast<float>(thisMacroNumber));
 				setText("Learning", juce::dontSendNotification);
-			}
-			else
-			{
+			} else {
 				proc.macroParams.learning->setValue(0.0f);
 				setText("Learn", juce::dontSendNotification);
 			}
 		}
 
-		void setMacroNumber(int n)
-		{
-			thisMacroNumber = n;
-		}
+		void setMacroNumber(int n) { thisMacroNumber = n; }
 
 		void setCCString(const juce::String &s)
 		{
@@ -618,17 +592,11 @@ public:
 			setText(s, juce::dontSendNotification);
 		}
 
-		void setLearning(bool shouldLearn)
-		{
-			learning = shouldLearn;
-		}
+		void setLearning(bool shouldLearn) { learning = shouldLearn; }
 
-		class MIDILearnLNF : public APLNF
-		{
+		class MIDILearnLNF : public APLNF {
 		public:
-			MIDILearnLNF()
-			{
-			}
+			MIDILearnLNF() {}
 
 			void drawLabel(juce::Graphics &g, juce::Label &label) override
 			{
@@ -644,28 +612,28 @@ public:
 		APAudioProcessor &proc;
 		bool learning{false};
 		int mididCC{-1}, thisMacroNumber{0};
-	}; // MIDILearnButton
+	};  // MIDILearnButton
 
 	APAudioProcessor &proc;
-	MIDILearnButton midiLearnButton1{proc}, midiLearnButton2{proc}, midiLearnButton3{proc};
-	juce::TextButton clear1{"Clear", "Clear"}, clear2{"Clear", "Clear"}, clear3{"Clear", "Clear"};
-}; // MacrosBox
+	MIDILearnButton midiLearnButton1{proc}, midiLearnButton2{proc},
+	    midiLearnButton3{proc};
+	juce::TextButton clear1{"Clear", "Clear"}, clear2{"Clear", "Clear"},
+	    clear3{"Clear", "Clear"};
+};  // MacrosBox
 
 //==============================================================================
 
-class VolumeBox : public gin::ParamBox
-{
+class VolumeBox : public gin::ParamBox {
 public:
-	VolumeBox(APAudioProcessor &proc_)
-		: gin::ParamBox("  vol"), proc(proc_)
+	VolumeBox(APAudioProcessor &proc_) : gin::ParamBox("  vol"), proc(proc_)
 	{
 		setName("  vol");
-		level = new gin::PluginSlider(proc.globalParams.level, 
-			juce::Slider::LinearBarVertical, juce::Slider::NoTextBox);
+		level = new gin::PluginSlider(proc.globalParams.level,
+		    juce::Slider::LinearBarVertical, juce::Slider::NoTextBox);
 		addAndMakeVisible(level);
 	}
 
-    ~VolumeBox() override { delete level; }
+	~VolumeBox() override { delete level; }
 
 	void resized() override
 	{
@@ -673,8 +641,6 @@ public:
 		level->setBounds(0, 23, 56, 140);
 	}
 
-
 	APAudioProcessor &proc;
-	gin::PluginSlider* level;
+	gin::PluginSlider *level;
 };
-

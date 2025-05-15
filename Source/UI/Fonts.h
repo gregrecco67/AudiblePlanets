@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include "BinaryData.h"
 #include <gin_plugin/gin_plugin.h>
+#include "BinaryData.h"
 
 #include <numbers>
 
@@ -24,23 +24,28 @@ using std::numbers::pi;
 class APLNF : public gin::CopperLookAndFeel {
 public:
 	APLNF();
-	juce::Font getLabelFont(juce::Label& label) override;
-	void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-		const float rotaryStartAngleIn, const float rotaryEndAngle, juce::Slider& slider) override;
-	void drawLinearSlider(juce::Graphics& g,
-		int 	x,
-		int 	y,
-		int 	width,
-		int 	height,
-		float 	sliderPos,
-		float 	minSliderPos,
-		float 	maxSliderPos,
-		juce::Slider::SliderStyle style,
-		juce::Slider& slider) override;
+	juce::Font getLabelFont(juce::Label &label) override;
+	void drawRotarySlider(juce::Graphics &g,
+	    int x,
+	    int y,
+	    int width,
+	    int height,
+	    float sliderPos,
+	    const float rotaryStartAngleIn,
+	    const float rotaryEndAngle,
+	    juce::Slider &slider) override;
+	void drawLinearSlider(juce::Graphics &g,
+	    int x,
+	    int y,
+	    int width,
+	    int height,
+	    float sliderPos,
+	    float minSliderPos,
+	    float maxSliderPos,
+	    juce::Slider::SliderStyle style,
+	    juce::Slider &slider) override;
 
 	juce::Font getPopupMenuFont() override;
 
-	juce::Font getSliderPopupFont(juce::Slider& slider) override;
-
-
+	juce::Font getSliderPopupFont(juce::Slider &slider) override;
 };

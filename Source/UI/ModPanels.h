@@ -1,44 +1,46 @@
 #pragma once
 
 #include <gin_plugin/gin_plugin.h>
-#include "DSP/PluginProcessor.h"
 #include "APColors.h"
 #include "APModAdditions.h"
-
-
+#include "DSP/PluginProcessor.h"
 
 //==============================================================================
-class LFOBox : public gin::ParamBox
-{
+class LFOBox : public gin::ParamBox {
 public:
-	LFOBox(APAudioProcessor &proc_, APAudioProcessor::LFOParams& lfoParams_, int num_)
-		: ParamBox(juce::String("  LFO ") += juce::String(num_)), proc(proc_), lfoParams(lfoParams_), num(num_)
+	LFOBox(APAudioProcessor &proc_,
+	    APAudioProcessor::LFOParams &lfoParams_,
+	    int num_)
+	    : ParamBox(juce::String("  LFO ") += juce::String(num_)), proc(proc_),
+	      lfoParams(lfoParams_), num(num_)
 	{
 		setName("lfo");
 
-        gin::ModSrcId src;
-        gin::ModSrcId monoSrc;
-        switch(num) {
-            case 1:
-                src = proc.modSrcLFO1;
-                monoSrc = proc.modSrcMonoLFO1;
-                break;
-            case 2:
-                src = proc.modSrcLFO2;
-                monoSrc = proc.modSrcMonoLFO2;
-                break;
-            case 3:
-                src = proc.modSrcLFO3;
-                monoSrc = proc.modSrcMonoLFO3;
-                break;
-            case 4:
-                src = proc.modSrcLFO4;
-                monoSrc = proc.modSrcMonoLFO4;
-                break;
-        }
-		addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, src, true));
-		addModSource(mono1 = new gin::ModulationSourceButton(proc.modMatrix, monoSrc, false));
-        poly1->getProperties().set("polysrc", true);
+		gin::ModSrcId src;
+		gin::ModSrcId monoSrc;
+		switch (num) {
+			case 1:
+				src = proc.modSrcLFO1;
+				monoSrc = proc.modSrcMonoLFO1;
+				break;
+			case 2:
+				src = proc.modSrcLFO2;
+				monoSrc = proc.modSrcMonoLFO2;
+				break;
+			case 3:
+				src = proc.modSrcLFO3;
+				monoSrc = proc.modSrcMonoLFO3;
+				break;
+			case 4:
+				src = proc.modSrcLFO4;
+				monoSrc = proc.modSrcMonoLFO4;
+				break;
+		}
+		addModSource(
+		    poly1 = new gin::ModulationSourceButton(proc.modMatrix, src, true));
+		addModSource(mono1 = new gin::ModulationSourceButton(
+		                 proc.modMatrix, monoSrc, false));
+		poly1->getProperties().set("polysrc", true);
 
 		addControl(r1 = new APKnob(lfoParams.rate), 0, 0);
 		addControl(b1 = new gin::Select(lfoParams.beat), 0, 0);
@@ -58,16 +60,15 @@ public:
 		addControl(f1 = new APKnob(lfoParams.fade, true), 1, 5);
 
 		l1 = new gin::LFOComponent();
-		l1->phaseCallback = [this]
-		{
+		l1->phaseCallback = [this] {
 			std::vector<float> res;
-			res.push_back(proc.monoLFOs[num-1]->getCurrentPhase());
+			res.push_back(proc.monoLFOs[num - 1]->getCurrentPhase());
 			return res;
 		};
-		l1->setParams(lfoParams.wave, lfoParams.sync, lfoParams.rate, lfoParams.beat, lfoParams.depth,
-					  lfoParams.offset, lfoParams.phase, lfoParams.enable);
+		l1->setParams(lfoParams.wave, lfoParams.sync, lfoParams.rate,
+		    lfoParams.beat, lfoParams.depth, lfoParams.offset, lfoParams.phase,
+		    lfoParams.enable);
 		addControl(l1, 1, 0, 4, 1);
-
 
 		watchParam(lfoParams.sync);
 	}
@@ -75,8 +76,8 @@ public:
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-        r1->setVisible(!lfoParams.sync->isOn());
-        b1->setVisible(lfoParams.sync->isOn());
+		r1->setVisible(!lfoParams.sync->isOn());
+		b1->setVisible(lfoParams.sync->isOn());
 	}
 
 	void resized() override
@@ -90,7 +91,6 @@ public:
 		dl1->setBounds(200, 108, 42, 57);
 	}
 
-
 	APAudioProcessor &proc;
 
 	gin::ParamComponent::Ptr s1, w1, r1, b1, dp1, p1, o1, f1, dl1;
@@ -98,53 +98,58 @@ public:
 	juce::Button *poly1, *mono1;
 
 	int currentLFO{1};
-    APAudioProcessor::LFOParams& lfoParams;
-    int num;
+	APAudioProcessor::LFOParams &lfoParams;
+	int num;
 	gin::LFOComponent *l1;
 };
 
-
 //=============================================================================
 
-
-class MsegBox : public gin::ParamBox
-{
+class MsegBox : public gin::ParamBox {
 public:
-	MsegBox(APAudioProcessor &proc_, APAudioProcessor::MSEGParams& m1_, APAudioProcessor::MSEGParams& m2_,
-        gin::MSEG::Data& m1Data, gin::MSEG::Data& m2Data, int num_)
-		: gin::ParamBox(juce::String("  MSEG ")), 
-        proc(proc_), msegComponent1(m1Data), msegComponent2(m2Data), m1(m1_), m2(m2_), num(num_)
+	MsegBox(APAudioProcessor &proc_,
+	    APAudioProcessor::MSEGParams &m1_,
+	    APAudioProcessor::MSEGParams &m2_,
+	    gin::MSEG::Data &m1Data,
+	    gin::MSEG::Data &m2Data,
+	    int num_)
+	    : gin::ParamBox(juce::String("  MSEG ")), proc(proc_),
+	      msegComponent1(m1Data), msegComponent2(m2Data), m1(m1_), m2(m2_),
+	      num(num_)
 	{
 		setName("MSEG");
 
-        if (num != 1)
-        {
-            select1.setButtonText("3");
-            select2.setButtonText("4");
-        }
+		if (num != 1) {
+			select1.setButtonText("3");
+			select2.setButtonText("4");
+		}
 
-		msegComponent1.setParams(m1.sync, m1.rate, m1.beat,
-								 m1.depth, m1.offset, m1.phase, m1.enable,
-								 m1.xgrid, m1.ygrid, m1.loop);
+		msegComponent1.setParams(m1.sync, m1.rate, m1.beat, m1.depth, m1.offset,
+		    m1.phase, m1.enable, m1.xgrid, m1.ygrid, m1.loop);
 		msegComponent1.setEditable(true);
-		msegComponent1.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(m1.drawmode->getUserValue()));
+		msegComponent1.setDrawMode(
+		    true, static_cast<gin::MSEGComponent::DrawMode>(
+		              m1.drawmode->getUserValue()));
 
-		msegComponent2.setParams(m2.sync, m2.rate, m2.beat,
-								 m2.depth, m2.offset, m2.phase, m2.enable,
-								 m2.xgrid, m2.ygrid, m2.loop);
+		msegComponent2.setParams(m2.sync, m2.rate, m2.beat, m2.depth, m2.offset,
+		    m2.phase, m2.enable, m2.xgrid, m2.ygrid, m2.loop);
 		msegComponent2.setEditable(true);
-		msegComponent2.setDrawMode(true, static_cast<gin::MSEGComponent::DrawMode>(m2.drawmode->getUserValue()));
+		msegComponent2.setDrawMode(
+		    true, static_cast<gin::MSEGComponent::DrawMode>(
+		              m2.drawmode->getUserValue()));
 
+		if (num == 1) {
+			addModSource(poly2 = new gin::ModulationSourceButton(
+			                 proc.modMatrix, proc.modSrcMSEG2, true));
+			addModSource(poly1 = new gin::ModulationSourceButton(
+			                 proc.modMatrix, proc.modSrcMSEG1, true));
+		} else {
+			addModSource(poly2 = new gin::ModulationSourceButton(
+			                 proc.modMatrix, proc.modSrcMSEG4, true));
+			addModSource(poly1 = new gin::ModulationSourceButton(
+			                 proc.modMatrix, proc.modSrcMSEG3, true));
+		}
 
-        if (num == 1) {
-            addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG2, true));
-            addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG1, true));
-        }
-        else {
-            addModSource(poly2 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG4, true));
-            addModSource(poly1 = new gin::ModulationSourceButton(proc.modMatrix, proc.modSrcMSEG3, true));
-        }
-            
 		addControl(r1 = new APKnob(m1.rate), 0, 0);
 		addControl(r2 = new APKnob(m2.rate), 0, 0);
 
@@ -183,98 +188,87 @@ public:
 		watchParam(m2.drawmode);
 		addAndMakeVisible(msegComponent1);
 		addAndMakeVisible(msegComponent2);
-        addAndMakeVisible(select1);
-        addAndMakeVisible(select2);
+		addAndMakeVisible(select1);
+		addAndMakeVisible(select2);
 
-		msegComponent1.phaseCallback = [this]()
-		{
-            std::vector<float> auxVals, synthVals;
-            if (num == 1) {
-                auxVals = proc.auxSynth.getMSEG1Phases();
-                synthVals = proc.synth.getMSEG1Phases();
-            }
-            else {
-                auxVals = proc.auxSynth.getMSEG3Phases();
-                synthVals = proc.synth.getMSEG3Phases();
-            }
+		msegComponent1.phaseCallback = [this]() {
+			std::vector<float> auxVals, synthVals;
+			if (num == 1) {
+				auxVals = proc.auxSynth.getMSEG1Phases();
+				synthVals = proc.synth.getMSEG1Phases();
+			} else {
+				auxVals = proc.auxSynth.getMSEG3Phases();
+				synthVals = proc.synth.getMSEG3Phases();
+			}
 			synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
 			return synthVals;
 		};
-		msegComponent2.phaseCallback = [this]()
-		{
-            std::vector<float> auxVals, synthVals;
-            if (num == 1) {
-                auxVals = proc.auxSynth.getMSEG2Phases();
-                synthVals = proc.synth.getMSEG2Phases();
-            }
-            else {
-                auxVals = proc.auxSynth.getMSEG4Phases();
-                synthVals = proc.synth.getMSEG4Phases();
-            }
-            synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
+		msegComponent2.phaseCallback = [this]() {
+			std::vector<float> auxVals, synthVals;
+			if (num == 1) {
+				auxVals = proc.auxSynth.getMSEG2Phases();
+				synthVals = proc.synth.getMSEG2Phases();
+			} else {
+				auxVals = proc.auxSynth.getMSEG4Phases();
+				synthVals = proc.synth.getMSEG4Phases();
+			}
+			synthVals.insert(synthVals.end(), auxVals.begin(), auxVals.end());
 			return synthVals;
 		};
-        
-        select1.onClick = [this]()
-        { show(1); };
-        select2.onClick = [this]()
-        { show(2); };
-        
+
+		select1.onClick = [this]() { show(1); };
+		select2.onClick = [this]() { show(2); };
+
 		show(1);
 	}
 
 	void show(int selected)
 	{
-		for (gin::ParamComponent::Ptr c : {
-				 r1, b1, s1, l1, dp1, o1, dr1, ms1, x1, y1,
-				 r2, b2, s2, l2, dp2, o2, dr2, ms2, x2, y2})
-		{
+		for (gin::ParamComponent::Ptr c : {r1, b1, s1, l1, dp1, o1, dr1, ms1,
+		         x1, y1, r2, b2, s2, l2, dp2, o2, dr2, ms2, x2, y2}) {
 			c->setVisible(false);
 		}
-		for (juce::Button *c : {poly1, poly2}) 
-		{
+		for (juce::Button *c : {poly1, poly2}) {
 			c->setVisible(false);
 		}
-		for (auto &viz : {&msegComponent1, &msegComponent2})
-		{
+		for (auto &viz : {&msegComponent1, &msegComponent2}) {
 			viz->setVisible(false);
 		}
 		select1.setToggleState(false, juce::dontSendNotification);
 		select2.setToggleState(false, juce::dontSendNotification);
-		switch (selected)
-		{
-		case 1:
-			currentMSEG = 1;
-			r1->setVisible(!m1.sync->isOn());
-			b1->setVisible(m1.sync->isOn());
-			s1->setVisible(true);
-			l1->setVisible(true);
-			dp1->setVisible(true);
-			o1->setVisible(true);
-			dr1->setVisible(true);
-			ms1->setVisible(true);
-			x1->setVisible(true);
-			y1->setVisible(true);
-			poly1->setVisible(true);
-			msegComponent1.setVisible(true);
-			select1.setToggleState(true, juce::dontSendNotification);
-			break;
-		case 2:
-			currentMSEG = 2;
-			r2->setVisible(!m2.sync->isOn());
-			b2->setVisible(m2.sync->isOn());
-			s2->setVisible(true);
-			l2->setVisible(true);
-			dp2->setVisible(true);
-			o2->setVisible(true);
-			dr2->setVisible(true);
-			ms2->setVisible(true);
-			x2->setVisible(true);
-			y2->setVisible(true);
-			poly2->setVisible(true);
-			msegComponent2.setVisible(true);
-			select2.setToggleState(true, juce::dontSendNotification);
-			break;
+		switch (selected) {
+			case 1:
+				currentMSEG = 1;
+				r1->setVisible(!m1.sync->isOn());
+				b1->setVisible(m1.sync->isOn());
+				s1->setVisible(true);
+				l1->setVisible(true);
+				dp1->setVisible(true);
+				o1->setVisible(true);
+				dr1->setVisible(true);
+				ms1->setVisible(true);
+				x1->setVisible(true);
+				y1->setVisible(true);
+				poly1->setVisible(true);
+				msegComponent1.setVisible(true);
+				select1.setToggleState(true, juce::dontSendNotification);
+				break;
+			case 2:
+				currentMSEG = 2;
+				r2->setVisible(!m2.sync->isOn());
+				b2->setVisible(m2.sync->isOn());
+				s2->setVisible(true);
+				l2->setVisible(true);
+				dp2->setVisible(true);
+				o2->setVisible(true);
+				dr2->setVisible(true);
+				ms2->setVisible(true);
+				x2->setVisible(true);
+				y2->setVisible(true);
+				poly2->setVisible(true);
+				msegComponent2.setVisible(true);
+				select2.setToggleState(true, juce::dontSendNotification);
+				break;
 		}
 		paramChanged();
 	}
@@ -282,39 +276,34 @@ public:
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-		if (currentMSEG == 1)
-		{
+		if (currentMSEG == 1) {
 			bool sync1 = m1.sync->getUserValueBool();
 			r1->setVisible(!sync1);
 			b1->setVisible(sync1);
 		}
-		if (currentMSEG == 2)
-		{
+		if (currentMSEG == 2) {
 			bool sync2 = m2.sync->getUserValueBool();
 			r2->setVisible(!sync2);
 			b2->setVisible(sync2);
 		}
 
-		if (m1.draw->getUserValueBool())
-		{
-			msegComponent1.setDrawMode(true,
-									   static_cast<gin::MSEGComponent::DrawMode>(m1.drawmode->getUserValue()));
-		}
-		else
-		{
-			msegComponent1.setDrawMode(false, gin::MSEGComponent::DrawMode::step);
-		}
-
-		if (m2.draw->getUserValueBool())
-		{
-			msegComponent2.setDrawMode(true,
-									   static_cast<gin::MSEGComponent::DrawMode>(m2.drawmode->getUserValue()));
-		}
-		else
-		{
-			msegComponent2.setDrawMode(false, gin::MSEGComponent::DrawMode::step);
+		if (m1.draw->getUserValueBool()) {
+			msegComponent1.setDrawMode(
+			    true, static_cast<gin::MSEGComponent::DrawMode>(
+			              m1.drawmode->getUserValue()));
+		} else {
+			msegComponent1.setDrawMode(
+			    false, gin::MSEGComponent::DrawMode::step);
 		}
 
+		if (m2.draw->getUserValueBool()) {
+			msegComponent2.setDrawMode(
+			    true, static_cast<gin::MSEGComponent::DrawMode>(
+			              m2.drawmode->getUserValue()));
+		} else {
+			msegComponent2.setDrawMode(
+			    false, gin::MSEGComponent::DrawMode::step);
+		}
 	}
 
 	void resized() override
@@ -331,20 +320,15 @@ public:
 	}
 
 	APAudioProcessor &proc;
-	gin::ParamComponent::Ptr r1, b1, s1, l1, dp1, o1, dr1, ms1, x1, y1,
-		r2, b2, s2, l2, dp2, o2, dr2, ms2, x2, y2;
+	gin::ParamComponent::Ptr r1, b1, s1, l1, dp1, o1, dr1, ms1, x1, y1, r2, b2,
+	    s2, l2, dp2, o2, dr2, ms2, x2, y2;
 	juce::Button *poly1, *poly2;
 
 	gin::MSEGComponent msegComponent1, msegComponent2;
 	int currentMSEG{1};
 	juce::TextButton select1{"1"}, select2{"2"};
 
-    APAudioProcessor::MSEGParams& m1;
-    APAudioProcessor::MSEGParams& m2;
-    int num;
-
-
+	APAudioProcessor::MSEGParams &m1;
+	APAudioProcessor::MSEGParams &m2;
+	int num;
 };
-
-
-

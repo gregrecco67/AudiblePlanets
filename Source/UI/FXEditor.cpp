@@ -14,8 +14,7 @@
 
 #include "FXEditor.h"
 
-FXEditor::FXEditor(APAudioProcessor& proc_)
-	: proc(proc_)
+FXEditor::FXEditor(APAudioProcessor &proc_) : proc(proc_)
 {
 	addAndMakeVisible(fxa1Box);
 	addAndMakeVisible(fxa2Box);
@@ -26,15 +25,14 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	addAndMakeVisible(fxb3Box);
 	addAndMakeVisible(fxb4Box);
 	fxa1Box.setOutline(false);
-    fxa2Box.setOutline(false);
-    fxa3Box.setOutline(false);
-    fxa4Box.setOutline(false);
-    fxb1Box.setOutline(false);
-    fxb2Box.setOutline(false);
-    fxb3Box.setOutline(false);
-    fxb4Box.setOutline(false);
-    
-    
+	fxa2Box.setOutline(false);
+	fxa3Box.setOutline(false);
+	fxa4Box.setOutline(false);
+	fxb1Box.setOutline(false);
+	fxb2Box.setOutline(false);
+	fxb3Box.setOutline(false);
+	fxb4Box.setOutline(false);
+
 	fxa1Selector.setShowName(false);
 	fxa2Selector.setShowName(false);
 	fxa3Selector.setShowName(false);
@@ -45,20 +43,19 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	fxb4Selector.setShowName(false);
 
 	addAndMakeVisible(chainSetting);
-    addAndMakeVisible(mod);
+	addAndMakeVisible(mod);
 	addAndMakeVisible(matrix);
 
 	proc.fxOrderParams.chainAtoB->addListener(this);
-    proc.fxOrderParams.fxa1->addListener(this);
-    proc.fxOrderParams.fxa2->addListener(this);
-    proc.fxOrderParams.fxa3->addListener(this);
-    proc.fxOrderParams.fxa4->addListener(this);
-    proc.fxOrderParams.fxb1->addListener(this);
-    proc.fxOrderParams.fxb2->addListener(this);
-    proc.fxOrderParams.fxb3->addListener(this);
-    proc.fxOrderParams.fxb4->addListener(this);
-	
-    
+	proc.fxOrderParams.fxa1->addListener(this);
+	proc.fxOrderParams.fxa2->addListener(this);
+	proc.fxOrderParams.fxa3->addListener(this);
+	proc.fxOrderParams.fxa4->addListener(this);
+	proc.fxOrderParams.fxb1->addListener(this);
+	proc.fxOrderParams.fxb2->addListener(this);
+	proc.fxOrderParams.fxb3->addListener(this);
+	proc.fxOrderParams.fxb4->addListener(this);
+
 	addAndMakeVisible(fxa1Selector);
 	addAndMakeVisible(fxa2Selector);
 	addAndMakeVisible(fxa3Selector);
@@ -76,9 +73,9 @@ FXEditor::FXEditor(APAudioProcessor& proc_)
 	valueUpdated(proc.fxOrderParams.fxb2);
 	valueUpdated(proc.fxOrderParams.fxb3);
 	valueUpdated(proc.fxOrderParams.fxb4);
-    
+
 	addAndMakeVisible(laneALabel);
-	
+
 	addAndMakeVisible(laneAGain);
 	addAndMakeVisible(laneBGain);
 	addAndMakeVisible(laneAFreq);
@@ -110,17 +107,20 @@ FXEditor::~FXEditor()
 	proc.fxOrderParams.fxb4->removeListener(this);
 }
 
-void FXEditor::setGrid(gin::ParamBox* box, float x, float y, float heds, float w, float h) {
-	box->setBounds((int)(x * 56.f), (int)(y * 70.f + 23.f * heds), (int)(w * 56.f), (int)(h * 70.f + 23.f));
+void FXEditor::setGrid(
+    gin::ParamBox *box, float x, float y, float heds, float w, float h)
+{
+	box->setBounds((int)(x * 56.f), (int)(y * 70.f + 23.f * heds),
+	    (int)(w * 56.f), (int)(h * 70.f + 23.f));
 }
 
 void FXEditor::resized()
 {
-	setGrid(&mod,  16,  0, 0, 5, 4.328571f);
+	setGrid(&mod, 16, 0, 0, 5, 4.328571f);
 
 	matrix.setBounds(16 * 56, 326, 5 * 56, 326);
 
-	fxa1Selector.setBounds(188, 7, 168, 15); 
+	fxa1Selector.setBounds(188, 7, 168, 15);
 	fxa2Selector.setBounds(366, 7, 168, 15);
 	fxa3Selector.setBounds(544, 7, 168, 15);
 	fxa4Selector.setBounds(722, 7, 168, 15);
@@ -142,20 +142,20 @@ void FXEditor::resized()
 
 	laneALabel.setBounds(20, 23, 168, 30);
 
-	laneAFreq.setBounds   (20, 60, 56, 70);
-	laneARes.setBounds    (90, 60, 56, 70);
-	laneAGain.setBounds   (20, 130, 56, 70);
-	laneAPan.setBounds    (90, 130, 56, 70);
-	laneAType.setBounds   (20, 200, 56, 70);
+	laneAFreq.setBounds(20, 60, 56, 70);
+	laneARes.setBounds(90, 60, 56, 70);
+	laneAGain.setBounds(20, 130, 56, 70);
+	laneAPan.setBounds(90, 130, 56, 70);
+	laneAType.setBounds(20, 200, 56, 70);
 	laneAPrePost.setBounds(90, 200, 56, 70);
 
 	chainSetting.setBounds(10, 289, 168, 35);
 
-	laneBFreq.setBounds   (20, 343, 56, 70);
-	laneBRes.setBounds    (90, 343, 56, 70);
-	laneBGain.setBounds   (20, 413, 56, 70);
-	laneBPan.setBounds    (90, 413, 56, 70);
-	laneBType.setBounds   (20, 487, 56, 70);
+	laneBFreq.setBounds(20, 343, 56, 70);
+	laneBRes.setBounds(90, 343, 56, 70);
+	laneBGain.setBounds(20, 413, 56, 70);
+	laneBPan.setBounds(90, 413, 56, 70);
+	laneBType.setBounds(20, 487, 56, 70);
 	laneBPrePost.setBounds(90, 487, 56, 70);
 
 	laneBLabel.setBounds(20, 564, 168, 30);
@@ -163,7 +163,8 @@ void FXEditor::resized()
 	setAllControls();
 }
 
-void FXEditor::setAllControls() {
+void FXEditor::setAllControls()
+{
 	fxa1Box.setControls(proc.fxOrderParams.fxa1->getUserValueInt());
 	fxa2Box.setControls(proc.fxOrderParams.fxa2->getUserValueInt());
 	fxa3Box.setControls(proc.fxOrderParams.fxa3->getUserValueInt());
@@ -174,44 +175,39 @@ void FXEditor::setAllControls() {
 	fxb4Box.setControls(proc.fxOrderParams.fxb4->getUserValueInt());
 }
 
-void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any other box with the same effect selected to "None"
+void FXEditor::valueUpdated(
+    gin::Parameter *param)  // we'll use this to set any other box with the same
+                            // effect selected to "None"
 {
-    if (param == proc.fxOrderParams.fxa1) {
-        auto fxa1Choice = param->getUserValueInt();
-        fxa1Box.setControls(fxa1Choice);
+	if (param == proc.fxOrderParams.fxa1) {
+		auto fxa1Choice = param->getUserValueInt();
+		fxa1Box.setControls(fxa1Choice);
 		removeDuplicates(fxa1Choice, 1);
-    }
-	else if (param == proc.fxOrderParams.fxa2) {
+	} else if (param == proc.fxOrderParams.fxa2) {
 		auto fxa2Choice = param->getUserValueInt();
 		fxa2Box.setControls(fxa2Choice);
 		removeDuplicates(fxa2Choice, 2);
-    }
-	else if (param == proc.fxOrderParams.fxa3) {
+	} else if (param == proc.fxOrderParams.fxa3) {
 		auto fxa3Choice = param->getUserValueInt();
 		fxa3Box.setControls(fxa3Choice);
 		removeDuplicates(fxa3Choice, 3);
-    }
-	else if (param == proc.fxOrderParams.fxa4) {
+	} else if (param == proc.fxOrderParams.fxa4) {
 		auto fxa4Choice = param->getUserValueInt();
 		fxa4Box.setControls(fxa4Choice);
 		removeDuplicates(fxa4Choice, 4);
-	}
-	else if (param == proc.fxOrderParams.fxb1) {
+	} else if (param == proc.fxOrderParams.fxb1) {
 		auto fxb1Choice = param->getUserValueInt();
 		fxb1Box.setControls(fxb1Choice);
 		removeDuplicates(fxb1Choice, 5);
-	}
-	else if (param == proc.fxOrderParams.fxb2) {
+	} else if (param == proc.fxOrderParams.fxb2) {
 		auto fxb2Choice = param->getUserValueInt();
 		fxb2Box.setControls(fxb2Choice);
 		removeDuplicates(fxb2Choice, 6);
-	}
-	else if (param == proc.fxOrderParams.fxb3) {
+	} else if (param == proc.fxOrderParams.fxb3) {
 		auto fxb3Choice = param->getUserValueInt();
 		fxb3Box.setControls(fxb3Choice);
 		removeDuplicates(fxb3Choice, 7);
-	}
-	else if (param == proc.fxOrderParams.fxb4) {
+	} else if (param == proc.fxOrderParams.fxb4) {
 		auto fxb4Choice = param->getUserValueInt();
 		fxb4Box.setControls(fxb4Choice);
 		removeDuplicates(fxb4Choice, 8);
@@ -221,53 +217,60 @@ void FXEditor::valueUpdated(gin::Parameter* param) // we'll use this to set any 
 
 void FXEditor::removeDuplicates(int effect, int componentToSkip)
 {
-	if (proc.fxOrderParams.fxa1->getUserValueInt() == effect) { // abstract this...
+	if (proc.fxOrderParams.fxa1->getUserValueInt() ==
+	    effect) {  // abstract this...
 		if (componentToSkip != 1) {
 			fxa1Box.setControls(0);
 			proc.fxOrderParams.fxa1->setValue(0);
 		}
 	}
-	if (proc.fxOrderParams.fxa2->getUserValueInt() == effect) { // abstract this...
+	if (proc.fxOrderParams.fxa2->getUserValueInt() ==
+	    effect) {  // abstract this...
 		if (componentToSkip != 2) {
 			fxa2Box.setControls(0);
 			proc.fxOrderParams.fxa2->setValue(0);
 		}
 	}
-	if (proc.fxOrderParams.fxa3->getUserValueInt() == effect) { // abstract this...
+	if (proc.fxOrderParams.fxa3->getUserValueInt() ==
+	    effect) {  // abstract this...
 		if (componentToSkip != 3) {
 			fxa3Box.setControls(0);
 			proc.fxOrderParams.fxa3->setValue(0);
 		}
 	}
-	if (proc.fxOrderParams.fxa4->getUserValueInt() == effect) { // abstract this...
+	if (proc.fxOrderParams.fxa4->getUserValueInt() ==
+	    effect) {  // abstract this...
 		if (componentToSkip != 4) {
 			fxa4Box.setControls(0);
 			proc.fxOrderParams.fxa4->setValue(0);
 		}
 	}
-	if (proc.fxOrderParams.fxb1->getUserValueInt() == effect) { // abstract this...
+	if (proc.fxOrderParams.fxb1->getUserValueInt() ==
+	    effect) {  // abstract this...
 		if (componentToSkip != 5) {
 			fxb1Box.setControls(0);
 			proc.fxOrderParams.fxb1->setValue(0);
 		}
 	}
-	if (proc.fxOrderParams.fxb2->getUserValueInt() == effect) { // abstract this...
+	if (proc.fxOrderParams.fxb2->getUserValueInt() ==
+	    effect) {  // abstract this...
 		if (componentToSkip != 6) {
 			fxb2Box.setControls(0);
 			proc.fxOrderParams.fxb2->setValue(0);
 		}
 	}
-	if (proc.fxOrderParams.fxb3->getUserValueInt() == effect) { // abstract this...
+	if (proc.fxOrderParams.fxb3->getUserValueInt() ==
+	    effect) {  // abstract this...
 		if (componentToSkip != 7) {
 			fxb3Box.setControls(0);
 			proc.fxOrderParams.fxb3->setValue(0);
 		}
 	}
-	if (proc.fxOrderParams.fxb4->getUserValueInt() == effect) { // abstract this...
+	if (proc.fxOrderParams.fxb4->getUserValueInt() ==
+	    effect) {  // abstract this...
 		if (componentToSkip != 8) {
 			fxb4Box.setControls(0);
 			proc.fxOrderParams.fxb4->setValue(0);
 		}
 	}
 }
-

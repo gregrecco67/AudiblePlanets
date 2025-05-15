@@ -19,39 +19,56 @@
 class OrbitViz : public juce::Component {
 public:
 	OrbitViz() { addMouseListener(this, true); }
-	struct OPosition { float x; float y; };
-	OPosition epicycleCenter{ 1,0 };
-	void setScale(float input) { 
+	struct OPosition {
+		float x;
+		float y;
+	};
+	OPosition epicycleCenter{1, 0};
+	void setScale(float input)
+	{
 		scale = input;
 		mouseScale = std::clamp(mouseScale + scale, 0.1f, 10.f) - scale;
 	}
 
-	void mouseWheelMove(const juce::MouseEvent& /*event*/, const juce::MouseWheelDetails& wheel) override {
+	void mouseWheelMove(const juce::MouseEvent & /*event*/,
+	    const juce::MouseWheelDetails &wheel) override
+	{
 		if (wheel.deltaY > 0) {
-			if (!wheel.isReversed) { mouseScale += 0.02f; }
-			else { mouseScale -= 0.02f; }
-		}
-		else {
-			if (!wheel.isReversed) { mouseScale -= 0.02f; }
-			else { mouseScale += 0.02f; }
+			if (!wheel.isReversed) {
+				mouseScale += 0.02f;
+			} else {
+				mouseScale -= 0.02f;
+			}
+		} else {
+			if (!wheel.isReversed) {
+				mouseScale -= 0.02f;
+			} else {
+				mouseScale += 0.02f;
+			}
 		}
 		mouseScale = std::clamp(mouseScale + scale, 0.1f, 10.f) - scale;
 		repaint();
 	}
 
-	void addCircle(juce::Path& path, juce::Point<float>& center, float size) {
-		path.addEllipse(center.getX() - size*0.5f, center.getY() -size*0.5f, size, size);
+	void addCircle(juce::Path &path, juce::Point<float> &center, float size)
+	{
+		path.addEllipse(center.getX() - size * 0.5f,
+		    center.getY() - size * 0.5f, size, size);
 	}
 
-	juce::Rectangle<float> getBody(juce::Point<float>& center, float size) {
-		return juce::Rectangle<float>(center.getX() - size * 0.5f, center.getY() - size * 0.5f, size, size);
+	juce::Rectangle<float> getBody(juce::Point<float> &center, float size)
+	{
+		return juce::Rectangle<float>(center.getX() - size * 0.5f,
+		    center.getY() - size * 0.5f, size, size);
 	}
 
-	void paint(juce::Graphics& g) override {
+	void paint(juce::Graphics &g) override
+	{
 		juce::Rectangle<float> bounds = getLocalBounds().toFloat();
 		auto width = bounds.getWidth() * (scale + mouseScale);
-		auto equantPos = juce::Point<float>(bounds.getCentreX(), bounds.getCentreY() + equant * 0.5f * (width / 2.95f) );
-		auto r1 = defRad *  (width / 6.f);
+		auto equantPos = juce::Point<float>(bounds.getCentreX(),
+		    bounds.getCentreY() + equant * 0.5f * (width / 2.95f));
+		auto r1 = defRad * (width / 6.f);
 		auto r2 = epi1Rad * (width / 6.f);
 		auto r3 = epi2Rad * (width / 6.f);
 		auto r4 = epi3Rad * (width / 6.f);
@@ -60,61 +77,71 @@ public:
 		auto p3 = epi2Phase;
 		auto p4 = epi3Phase;
 		auto center = bounds.getCentre();
-		juce::Colour orbitColor = juce::Colours::white.darker(0.2f); // for deferent and epicycles
-		auto stroketype = juce::PathStrokeType(1.0f, juce::PathStrokeType::JointStyle::mitered, juce::PathStrokeType::EndCapStyle::butt);
-		
+		juce::Colour orbitColor =
+		    juce::Colours::white.darker(0.2f);  // for deferent and epicycles
+		auto stroketype = juce::PathStrokeType(1.0f,
+		    juce::PathStrokeType::JointStyle::mitered,
+		    juce::PathStrokeType::EndCapStyle::butt);
+
 		// osc 1 -------------------------
 		juce::Point<float> osc1;
-		osc1 = juce::Point<float>(center.getX() + r1 * std::cos(p1), center.getY() + r1 * std::sin(p1));
+		osc1 = juce::Point<float>(center.getX() + r1 * std::cos(p1),
+		    center.getY() + r1 * std::sin(p1));
 		juce::Path circ1;
-		addCircle(circ1, center, r1*2.f);
+		addCircle(circ1, center, r1 * 2.f);
 		g.setColour(orbitColor);
-		g.strokePath(circ1, stroketype, {}); // osc1 orbit
+		g.strokePath(circ1, stroketype, {});  // osc1 orbit
 
 		// osc 2 -------------------------
 		juce::Point<float> osc2;
-		osc2 = juce::Point<float>(osc1.x + r2 * std::cos(p2), osc1.y + r2 * std::sin(p2));
+		osc2 = juce::Point<float>(
+		    osc1.x + r2 * std::cos(p2), osc1.y + r2 * std::sin(p2));
 		juce::Path circ2;
 		addCircle(circ2, osc1, r2 * 2.f);
 		g.setColour(orbitColor);
-		g.strokePath(circ2, stroketype, {}); // osc2 orbit
+		g.strokePath(circ2, stroketype, {});  // osc2 orbit
 
 		// osc 3 -------------------------
 		juce::Point<float> osc3;
-		juce::Path circ3;		
+		juce::Path circ3;
 		if (algo == 0 || algo == 1) {
-			osc3 = juce::Point<float>(osc2.x + r3 * std::cos(p3), osc2.y + r3 * std::sin(p3));
+			osc3 = juce::Point<float>(
+			    osc2.x + r3 * std::cos(p3), osc2.y + r3 * std::sin(p3));
 			addCircle(circ3, osc2, r3 * 2.f);
 		}
 
 		if (algo == 2 || algo == 3) {
-			osc3 = juce::Point<float>(osc1.x + r3 * std::cos(p3), osc1.y + r3 * std::sin(p3));
+			osc3 = juce::Point<float>(
+			    osc1.x + r3 * std::cos(p3), osc1.y + r3 * std::sin(p3));
 			addCircle(circ3, osc1, r3 * 2.f);
 		}
-		
+
 		g.setColour(orbitColor);
-		g.strokePath(circ3, stroketype, {}); // osc3 orbit
+		g.strokePath(circ3, stroketype, {});  // osc3 orbit
 
 		// osc 4 -------------------------
 		juce::Point<float> osc4;
 		juce::Path circ4;
 		if (algo == 0 || algo == 2) {
-			osc4 = juce::Point<float>(osc3.x + r4 * std::cos(p4), osc3.y + r4 * std::sin(p4));
-			addCircle(circ4, osc3, r4 * 2.f); 
+			osc4 = juce::Point<float>(
+			    osc3.x + r4 * std::cos(p4), osc3.y + r4 * std::sin(p4));
+			addCircle(circ4, osc3, r4 * 2.f);
 		}
 
 		if (algo == 1) {
-			osc4 = juce::Point<float>(osc2.x + r4 * std::cos(p4), osc2.y + r4 * std::sin(p4));
+			osc4 = juce::Point<float>(
+			    osc2.x + r4 * std::cos(p4), osc2.y + r4 * std::sin(p4));
 			addCircle(circ4, osc2, r4 * 2.f);
 		}
 
 		if (algo == 3) {
-			osc4 = juce::Point<float>(osc1.x + r4 * std::cos(p4), osc1.y + r4 * std::sin(p4));
+			osc4 = juce::Point<float>(
+			    osc1.x + r4 * std::cos(p4), osc1.y + r4 * std::sin(p4));
 			addCircle(circ4, osc1, r4 * 2.f);
 		}
 
 		g.setColour(orbitColor);
-		g.strokePath(circ4, stroketype, {}); // osc4 orbit
+		g.strokePath(circ4, stroketype, {});  // osc4 orbit
 
 		// body positions / rects
 		auto equantBody = getBody(equantPos, 9.f);
@@ -126,12 +153,17 @@ public:
 
 		// lines to audible planets
 		g.setColour(juce::Colours::grey);
-		g.drawLine(equantBody.getCentreX(), equantBody.getCentreY(), body4.getCentreX(), body4.getCentreY(), 2.0f);
-		if (algo == 2 || algo == 3)
-		{ g.drawLine(equantBody.getCentreX(), equantBody.getCentreY(), body2.getCentreX(), body2.getCentreY(), 2.0f); }
+		g.drawLine(equantBody.getCentreX(), equantBody.getCentreY(),
+		    body4.getCentreX(), body4.getCentreY(), 2.0f);
+		if (algo == 2 || algo == 3) {
+			g.drawLine(equantBody.getCentreX(), equantBody.getCentreY(),
+			    body2.getCentreX(), body2.getCentreY(), 2.0f);
+		}
 
-		if (algo == 1 || algo == 3)
-		{ g.drawLine(equantBody.getCentreX(), equantBody.getCentreY(), body3.getCentreX(), body3.getCentreY(), 2.0f); }
+		if (algo == 1 || algo == 3) {
+			g.drawLine(equantBody.getCentreX(), equantBody.getCentreY(),
+			    body3.getCentreX(), body3.getCentreY(), 2.0f);
+		}
 
 		// drawing bodies in reverse order
 		g.setColour(juce::Colours::blue);
@@ -162,14 +194,25 @@ public:
 		equantBodyOutline.addEllipse(equantShadow);
 
 		g.fillEllipse(equantBody);
-
 	}
 
 	void setEquant(float input) { equant = std::clamp(input, -.5f, .5f); }
-	void setDefPhase(float phase) { defPhase =   std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi); }
-	void setEpi1Phase(float phase) { epi1Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi); }
-	void setEpi2Phase(float phase) { epi2Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi); }
-	void setEpi3Phase(float phase) { epi3Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi); }
+	void setDefPhase(float phase)
+	{
+		defPhase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi);
+	}
+	void setEpi1Phase(float phase)
+	{
+		epi1Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi);
+	}
+	void setEpi2Phase(float phase)
+	{
+		epi2Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi);
+	}
+	void setEpi3Phase(float phase)
+	{
+		epi3Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi);
+	}
 	void setDefRad(float input) { defRad = validate(input); }
 	void setEpi1Rad(float input) { epi1Rad = validate(input); }
 	void setEpi2Rad(float input) { epi2Rad = validate(input); }
@@ -177,9 +220,9 @@ public:
 	void setAlgo(int input) { algo = std::clamp(input, 0, 4); }
 	float validate(float x) { return std::clamp(x, 0.f, 1.f); }
 
-	float equant{ 0.f }, defPhase{ 0.f }, epi1Phase{ 0.f }, epi2Phase{ 0.f }, epi3Phase{ 0.f }, defRad{ 1.f }, 
-		epi1Rad{ 0.5f }, epi2Rad{ 0.25f }, epi3Rad{ 0.2f };
-	int algo{ 0 };
-	float scale{ 1.f }, mouseScale{ 0.f }; 
-
+	float equant{0.f}, defPhase{0.f}, epi1Phase{0.f}, epi2Phase{0.f},
+	    epi3Phase{0.f}, defRad{1.f}, epi1Rad{0.5f}, epi2Rad{0.25f},
+	    epi3Rad{0.2f};
+	int algo{0};
+	float scale{1.f}, mouseScale{0.f};
 };

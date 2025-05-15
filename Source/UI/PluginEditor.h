@@ -16,44 +16,46 @@
 
 #include <gin_plugin/gin_plugin.h>
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "APColors.h"
+#include "APLevelMeter.h"
 #include "DSP/PluginProcessor.h"
 #include "Editor.h"
 #include "FXEditor.h"
 #include "ModEditor.h"
-#include "APColors.h"
-#include "APLevelMeter.h"
 
 //==============================================================================
 class APAudioProcessorEditor : public gin::ProcessorEditor,
-	public juce::DragAndDropContainer, public juce::KeyListener, public juce::Timer
-{
+                               public juce::DragAndDropContainer,
+                               public juce::KeyListener,
+                               public juce::Timer {
 public:
-	APAudioProcessorEditor(APAudioProcessor&);
+	APAudioProcessorEditor(APAudioProcessor &);
 	~APAudioProcessorEditor() override;
 
 	//==============================================================================
-	void paint(juce::Graphics&) override;
+	void paint(juce::Graphics &) override;
 	void resized() override;
-	void addMenuItems(juce::PopupMenu& m) override;
-	bool keyPressed(const juce::KeyPress& key, Component* originatingComponent) override;
-	using juce::Component::keyPressed; // above is overloaded
+	void addMenuItems(juce::PopupMenu &m) override;
+	bool keyPressed(
+	    const juce::KeyPress &key, Component *originatingComponent) override;
+	using juce::Component::keyPressed;  // above is overloaded
 	void timerCallback() override;
 	void showAboutInfo() override;
 
 private:
-	APAudioProcessor& proc;
+	APAudioProcessor &proc;
 
-	gin::SynthesiserUsage usage{ proc.synth };
+	gin::SynthesiserUsage usage{proc.synth};
 
-	juce::TabbedComponent tabbed{ juce::TabbedButtonBar::TabsAtBottom };
+	juce::TabbedComponent tabbed{juce::TabbedButtonBar::TabsAtBottom};
 	juce::Component tab1, tab2, tab3;
 
-	Editor editor{ proc };
-	FXEditor fxEditor{ proc };
-	ModEditor modEditor{ proc };
-	APLevelMeter levelMeter{ proc.levelTracker };
+	Editor editor{proc};
+	FXEditor fxEditor{proc};
+	ModEditor modEditor{proc};
+	APLevelMeter levelMeter{proc.levelTracker};
 
 	juce::Label scaleName, learningLabel;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessorEditor)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessorEditor)
 };
