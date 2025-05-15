@@ -13,8 +13,6 @@
  * https://github.com/gregrecco67/AudiblePlanets
  */
 
-
-
 #pragma once
 #include <juce_gui_basics/juce_gui_basics.h>
 
@@ -71,12 +69,6 @@ public:
 		juce::Path circ1;
 		addCircle(circ1, center, r1*2.f);
 		g.setColour(orbitColor);
-		
-		//melatonin::DropShadow shadow; // = { juce::Colours::black, 8 };
-		//shadow.setColor(juce::Colours::white);
-		//shadow.setRadius(8);
-		//shadow.setOffset(juce::Point<int>(0, 0));
-		//shadow.render(g, circ1, stroketype);
 		g.strokePath(circ1, stroketype, {}); // osc1 orbit
 
 		// osc 2 -------------------------
@@ -84,68 +76,44 @@ public:
 		osc2 = juce::Point<float>(osc1.x + r2 * std::cos(p2), osc1.y + r2 * std::sin(p2));
 		juce::Path circ2;
 		addCircle(circ2, osc1, r2 * 2.f);
-		auto vector = juce::Point<float>(osc1.x - equantPos.x, osc1.y - equantPos.y);
-		auto angle = std::atan2(vector.y, vector.x);
-		auto squash2 = juce::AffineTransform::rotation(-angle, osc1.x, osc1.y).scaled(1.f - squash, 1.f, osc1.x, osc1.y).rotated(angle, osc1.x, osc1.y);
-		osc2.applyTransform(squash2);
-		circ2.applyTransform(squash2);
 		g.setColour(orbitColor);
-		//shadow.render(g, circ2, stroketype);
 		g.strokePath(circ2, stroketype, {}); // osc2 orbit
 
 		// osc 3 -------------------------
 		juce::Point<float> osc3;
 		juce::Path circ3;		
-		vector = juce::Point<float>(osc2.x - equantPos.x, osc2.y - equantPos.y);
-		angle = std::atan2(vector.y, vector.x);
-		auto squash3 = juce::AffineTransform::rotation(-angle, osc2.x, osc2.y).scaled(1.f - squash, 1.f, osc2.x, osc2.y).rotated(angle, osc2.x, osc2.y);
 		if (algo == 0 || algo == 1) {
 			osc3 = juce::Point<float>(osc2.x + r3 * std::cos(p3), osc2.y + r3 * std::sin(p3));
-			osc3.applyTransform(squash3);
 			addCircle(circ3, osc2, r3 * 2.f);
-			circ3.applyTransform(squash3);
 		}
 
 		if (algo == 2 || algo == 3) {
 			osc3 = juce::Point<float>(osc1.x + r3 * std::cos(p3), osc1.y + r3 * std::sin(p3));
-			osc3.applyTransform(squash2);
 			addCircle(circ3, osc1, r3 * 2.f);
-			circ3.applyTransform(squash2);
 		}
 		
 		g.setColour(orbitColor);
-		// shadow.render(g, circ3, stroketype);
 		g.strokePath(circ3, stroketype, {}); // osc3 orbit
 
 		// osc 4 -------------------------
 		juce::Point<float> osc4;
 		juce::Path circ4;
-		vector = juce::Point<float>(osc3.x - equantPos.x, osc3.y - equantPos.y);
-		angle = std::atan2(vector.y, vector.x);
-		auto squash4 = juce::AffineTransform::rotation(-angle, osc3.x, osc3.y).scaled(1.f - squash, 1.f, osc3.x, osc3.y).rotated(angle, osc3.x, osc3.y);
 		if (algo == 0 || algo == 2) {
 			osc4 = juce::Point<float>(osc3.x + r4 * std::cos(p4), osc3.y + r4 * std::sin(p4));
-			osc4.applyTransform(squash4);
 			addCircle(circ4, osc3, r4 * 2.f); 
-			circ4.applyTransform(squash4);
 		}
 
 		if (algo == 1) {
 			osc4 = juce::Point<float>(osc2.x + r4 * std::cos(p4), osc2.y + r4 * std::sin(p4));
-			osc4.applyTransform(squash3);
 			addCircle(circ4, osc2, r4 * 2.f);
-			circ4.applyTransform(squash3);
 		}
 
 		if (algo == 3) {
 			osc4 = juce::Point<float>(osc1.x + r4 * std::cos(p4), osc1.y + r4 * std::sin(p4));
-			osc4.applyTransform(squash2);
 			addCircle(circ4, osc1, r4 * 2.f);
-			circ4.applyTransform(squash2);
 		}
 
 		g.setColour(orbitColor);
-		//shadow.render(g, circ4, stroketype);
 		g.strokePath(circ4, stroketype, {}); // osc4 orbit
 
 		// body positions / rects
@@ -170,37 +138,28 @@ public:
 		juce::Path body4Outline;
 		auto body4Center = body4.getCentre();
 		addCircle(body4Outline, body4Center, 7.0f);
-		// shadow.setColor(juce::Colours::white); // blue.brighter(0.4f));
-		// shadow.setRadius(6);
-		// shadow.render(g, body4Outline, stroketype);
 		g.fillEllipse(body4);
 
 		g.setColour(juce::Colours::green);
 		juce::Path body3Outline;
 		auto body3Center = body3.getCentre();
 		addCircle(body3Outline, body3Center, 7.0f);
-		//shadow.render(g, body3Outline, stroketype);
 		g.fillEllipse(body3);
 
 		g.setColour(juce::Colours::yellow);
 		juce::Path body2Outline;
 		auto body2Center = body2.getCentre();
 		addCircle(body2Outline, body2Center, 7.0f);
-		// shadow.render(g, body2Outline, stroketype);
 		g.fillEllipse(body2);
 		g.setColour(juce::Colours::red);
 		juce::Path body1Outline;
 		auto body1Center = body1.getCentre();
 		addCircle(body1Outline, body1Center, 7.0f);
-		// shadow.render(g, body1Outline, stroketype);
 		g.fillEllipse(body1);
 
 		g.setColour(juce::Colours::black);
 		juce::Path equantBodyOutline;
 		equantBodyOutline.addEllipse(equantShadow);
-		// shadow.setColor(juce::Colours::red);
-		// shadow.setRadius(10);
-		// shadow.render(g, equantBodyOutline, stroketype);
 
 		g.fillEllipse(equantBody);
 
@@ -217,10 +176,10 @@ public:
 	void setEpi3Rad(float input) { epi3Rad = validate(input); }
 	void setAlgo(int input) { algo = std::clamp(input, 0, 4); }
 	float validate(float x) { return std::clamp(x, 0.f, 1.f); }
-	void setSquash(float input) { squash = std::clamp(input, 0.f, 1.f); }
 
-	float equant{ 0.f }, defPhase{ 0.f }, epi1Phase{ 0.f }, epi2Phase{ 0.f }, epi3Phase{ 0.f }, defRad{ 1.f }, epi1Rad{ 0.5f }, epi2Rad{ 0.25f }, epi3Rad{ 0.2f };
+	float equant{ 0.f }, defPhase{ 0.f }, epi1Phase{ 0.f }, epi2Phase{ 0.f }, epi3Phase{ 0.f }, defRad{ 1.f }, 
+		epi1Rad{ 0.5f }, epi2Rad{ 0.25f }, epi3Rad{ 0.2f };
 	int algo{ 0 };
-	float scale{ 1.f }, mouseScale{ 0.f }, squash{ 0.f };
+	float scale{ 1.f }, mouseScale{ 0.f }; 
 
 };
