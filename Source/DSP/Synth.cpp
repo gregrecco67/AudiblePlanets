@@ -78,6 +78,52 @@ std::vector<float> APSynth::getMSEG4Phases()
 	return values;
 }
 
+std::vector<float> APSynth::getLFO1Phases() {
+	std::vector<float> values;
+
+	for (auto v : voices) {
+		if (v->isActive()) {
+			auto vav = dynamic_cast<SynthVoice3 *>(v);
+			values.push_back(vav->getLFO1Phase());
+		}
+	}
+	return values;
+}
+std::vector<float> APSynth::getLFO2Phases() {
+	std::vector<float> values;
+
+	for (auto v : voices) {
+		if (v->isActive()) {
+			auto vav = dynamic_cast<SynthVoice3 *>(v);
+			values.push_back(vav->getLFO2Phase());
+		}
+	}
+	return values;
+}
+std::vector<float> APSynth::getLFO3Phases() {
+	std::vector<float> values;
+
+	for (auto v : voices) {
+		if (v->isActive()) {
+			auto vav = dynamic_cast<SynthVoice3 *>(v);
+			values.push_back(vav->getLFO3Phase());
+		}
+	}
+	return values;
+}
+std::vector<float> APSynth::getLFO4Phases() {
+	std::vector<float> values;
+
+	for (auto v : voices) {
+		if (v->isActive()) {
+			auto vav = dynamic_cast<SynthVoice3 *>(v);
+			values.push_back(vav->getLFO4Phase());
+		}
+	}
+	return values;
+}
+
+
 void APSynth::setCurrentPlaybackSampleRate(double newRate)
 {
 	// juce::MPESynthesiser::setCurrentPlaybackSampleRate(newRate * 2);

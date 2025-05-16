@@ -58,6 +58,10 @@ public:
 	float getMSEG2Phase();
 	float getMSEG3Phase();
 	float getMSEG4Phase();
+	float getLFO1Phase();
+	float getLFO2Phase();
+	float getLFO3Phase();
+	float getLFO4Phase();
 	gin::Wave waveForChoice(int choice);
 
 private:

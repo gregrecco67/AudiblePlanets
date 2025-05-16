@@ -68,6 +68,22 @@ public:
 		l1->phaseCallback = [this] {
 			std::vector<float> res;
 			res.push_back(proc.monoLFOs[num - 1]->getCurrentPhase());
+			std::vector<float> phases;
+			switch (num+1) {
+				case 1:
+					phases = proc.synth.getLFO1Phases();
+					break;
+				case 2:
+					phases = proc.synth.getLFO2Phases();
+					break;
+				case 3:
+					phases = proc.synth.getLFO3Phases();
+					break;
+				case 4:
+					phases = proc.synth.getLFO4Phases();
+					break;
+			}
+			res.insert(res.end(), phases.begin(), phases.end());
 			return res;
 		};
 		l1->setParams(lfoParams.wave, lfoParams.sync, lfoParams.rate,

@@ -789,12 +789,15 @@ float SynthVoice3::getFilterCutoffNormalized()
 }
 
 float SynthVoice3::getMSEG1Phase() { return mseg1.getCurrentPhase(); }
-
 float SynthVoice3::getMSEG2Phase() { return mseg2.getCurrentPhase(); }
-
 float SynthVoice3::getMSEG3Phase() { return mseg3.getCurrentPhase(); }
-
 float SynthVoice3::getMSEG4Phase() { return mseg4.getCurrentPhase(); }
+
+float SynthVoice3::getLFO1Phase() { return lfo1.getCurrentPhase(); }
+float SynthVoice3::getLFO2Phase() { return lfo2.getCurrentPhase(); }
+float SynthVoice3::getLFO3Phase() { return lfo3.getCurrentPhase(); }
+float SynthVoice3::getLFO4Phase() { return lfo4.getCurrentPhase(); }
+
 
 gin::Wave SynthVoice3::waveForChoice(int choice)
 {

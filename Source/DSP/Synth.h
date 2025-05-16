@@ -18,6 +18,10 @@ public:
 	std::vector<float> getMSEG2Phases();
 	std::vector<float> getMSEG3Phases();
 	std::vector<float> getMSEG4Phases();
+	std::vector<float> getLFO1Phases();
+	std::vector<float> getLFO2Phases();
+	std::vector<float> getLFO3Phases();
+	std::vector<float> getLFO4Phases();
 
 	void setCurrentPlaybackSampleRate(double newRate) override;
 
