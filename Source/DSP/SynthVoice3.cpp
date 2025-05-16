@@ -535,7 +535,7 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// lfo 1
 	if (proc.lfo1Params.sync->getUserValue() > 0.0f)
-		freq = 0.5f /
+		freq = 1.f /
 		       gin::NoteDuration::getNoteDurations()
 		           [static_cast<size_t>(proc.lfo1Params.beat->getUserValue())]
 		               .toSeconds(proc.playhead);
@@ -555,7 +555,7 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// lfo 2
 	if (proc.lfo2Params.sync->getUserValue() > 0.0f)
-		freq = 0.5f /
+		freq = 1.f /
 		       gin::NoteDuration::getNoteDurations()
 		           [static_cast<size_t>(proc.lfo2Params.beat->getUserValue())]
 		               .toSeconds(proc.playhead);
@@ -575,7 +575,7 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// lfo 3
 	if (proc.lfo3Params.sync->getUserValue() > 0.0f)
-		freq = 0.5f /
+		freq = 1.f /
 		       gin::NoteDuration::getNoteDurations()
 		           [static_cast<size_t>(proc.lfo3Params.beat->getUserValue())]
 		               .toSeconds(proc.playhead);
@@ -595,7 +595,7 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// lfo 4
 	if (proc.lfo4Params.sync->getUserValue() > 0.0f)
-		freq = 0.5f /
+		freq = 1.f /
 		       gin::NoteDuration::getNoteDurations()
 		           [static_cast<size_t>(proc.lfo4Params.beat->getUserValue())]
 		               .toSeconds(proc.playhead);
@@ -626,7 +626,7 @@ void SynthVoice3::updateParams(int blockSize)
 	if (mode == 1) {
 		p.sync = true;
 		p.syncduration =
-		    2.0f * gin::NoteDuration::getNoteDurations()
+		    1.f * gin::NoteDuration::getNoteDurations()
 		               [size_t(proc.env1Params.duration->getUserValue())]
 		                   .toSeconds(proc.playhead);
 	}
@@ -648,7 +648,7 @@ void SynthVoice3::updateParams(int blockSize)
 	if (mode == 1) {
 		p.sync = true;
 		p.syncduration =
-		    2.0f * gin::NoteDuration::getNoteDurations()
+		    1.f * gin::NoteDuration::getNoteDurations()
 		               [size_t(proc.env2Params.duration->getUserValue())]
 		                   .toSeconds(proc.playhead);
 	}
@@ -670,7 +670,7 @@ void SynthVoice3::updateParams(int blockSize)
 	if (mode == 1) {
 		p.sync = true;
 		p.syncduration =
-		    2.0f * gin::NoteDuration::getNoteDurations()
+		    1.f * gin::NoteDuration::getNoteDurations()
 		               [size_t(proc.env3Params.duration->getUserValue())]
 		                   .toSeconds(proc.playhead);
 	}
@@ -692,7 +692,7 @@ void SynthVoice3::updateParams(int blockSize)
 	if (mode == 1) {
 		p.sync = true;
 		p.syncduration =
-		    2.0f * gin::NoteDuration::getNoteDurations()
+		    1.f * gin::NoteDuration::getNoteDurations()
 		               [size_t(proc.env4Params.duration->getUserValue())]
 		                   .toSeconds(proc.playhead);
 	}
@@ -710,7 +710,7 @@ void SynthVoice3::updateParams(int blockSize)
 	// MSEGs
 	if (proc.mseg1Params.sync->isOn()) {
 		mseg1Params.frequency =
-		    0.5f /
+		    1.f /
 		    gin::NoteDuration::getNoteDurations()[size_t(getValue(
 		                                              proc.mseg1Params.beat))]
 		        .toSeconds(proc.playhead);
@@ -724,7 +724,7 @@ void SynthVoice3::updateParams(int blockSize)
 
 	if (proc.mseg2Params.sync->isOn()) {
 		mseg2Params.frequency =
-		    0.5f /
+		    1.f /
 		    gin::NoteDuration::getNoteDurations()[size_t(getValue(
 		                                              proc.mseg2Params.beat))]
 		        .toSeconds(proc.playhead);
@@ -737,7 +737,7 @@ void SynthVoice3::updateParams(int blockSize)
 
 	if (proc.mseg3Params.sync->isOn()) {
 		mseg3Params.frequency =
-		    0.5f /
+		    1.f /
 		    gin::NoteDuration::getNoteDurations()[size_t(getValue(
 		                                              proc.mseg3Params.beat))]
 		        .toSeconds(proc.playhead);
@@ -751,7 +751,7 @@ void SynthVoice3::updateParams(int blockSize)
 
 	if (proc.mseg4Params.sync->isOn()) {
 		mseg4Params.frequency =
-		    0.5f /
+		    1.f /
 		    gin::NoteDuration::getNoteDurations()[size_t(getValue(
 		                                              proc.mseg4Params.beat))]
 		        .toSeconds(proc.playhead);
