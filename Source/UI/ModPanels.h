@@ -12,9 +12,14 @@ public:
 	    APAudioProcessor::LFOParams &lfoParams_,
 	    int num_)
 	    : ParamBox(juce::String("  LFO ") += juce::String(num_)), proc(proc_),
-	      lfoParams(lfoParams_), num(num_)
+	      lfoParams(lfoParams_), num(num_), monoSelect(proc, *(proc.monoLfoIds[num - 1])),
+		  polySelect(proc, *(proc.polyLfoIds[num - 1]))
 	{
 		setName("lfo");
+		addAndMakeVisible(monoSelect);
+		addAndMakeVisible(polySelect);
+		monoSelect.setText("M", juce::dontSendNotification);
+		polySelect.setText("P", juce::dontSendNotification);
 
 		gin::ModSrcId src;
 		gin::ModSrcId monoSrc;
@@ -89,6 +94,8 @@ public:
 		p1->setBounds(158, 108, 42, 57);
 		f1->setBounds(242, 108, 42, 57);
 		dl1->setBounds(200, 108, 42, 57);
+		monoSelect.setBounds(112, 3, 23, 16);
+		polySelect.setBounds(135, 3, 23, 16);
 	}
 
 	APAudioProcessor &proc;
@@ -101,6 +108,8 @@ public:
 	APAudioProcessor::LFOParams &lfoParams;
 	int num;
 	gin::LFOComponent *l1;
+    ParameterSelector monoSelect, polySelect;
+	
 };
 
 //=============================================================================
@@ -115,15 +124,23 @@ public:
 	    int num_)
 	    : gin::ParamBox(juce::String("  MSEG ")), proc(proc_),
 	      msegComponent1(m1Data), msegComponent2(m2Data), m1(m1_), m2(m2_),
-	      num(num_)
+	      num(num_), pSelect1(proc, (num == 1) ? gin::ModSrcId(proc.modSrcMSEG1) : gin::ModSrcId(proc.modSrcMSEG3)),
+		pSelect2(proc, (num == 1) ? gin::ModSrcId(proc.modSrcMSEG2) : gin::ModSrcId(proc.modSrcMSEG4))
 	{
 		setName("MSEG");
 
 		if (num != 1) {
 			select1.setButtonText("3");
 			select2.setButtonText("4");
+			
 		}
 
+		
+		addChildComponent(pSelect1);
+		addChildComponent(pSelect2);
+        addAndMakeVisible(arrow);
+
+		
 		msegComponent1.setParams(m1.sync, m1.rate, m1.beat, m1.depth, m1.offset,
 		    m1.phase, m1.enable, m1.xgrid, m1.ygrid, m1.loop);
 		msegComponent1.setEditable(true);
@@ -234,6 +251,8 @@ public:
 		for (auto &viz : {&msegComponent1, &msegComponent2}) {
 			viz->setVisible(false);
 		}
+		pSelect1.setVisible(false);
+		pSelect2.setVisible(false);
 		select1.setToggleState(false, juce::dontSendNotification);
 		select2.setToggleState(false, juce::dontSendNotification);
 		switch (selected) {
@@ -252,6 +271,7 @@ public:
 				poly1->setVisible(true);
 				msegComponent1.setVisible(true);
 				select1.setToggleState(true, juce::dontSendNotification);
+				pSelect1.setVisible(true);
 				break;
 			case 2:
 				currentMSEG = 2;
@@ -268,11 +288,18 @@ public:
 				poly2->setVisible(true);
 				msegComponent2.setVisible(true);
 				select2.setToggleState(true, juce::dontSendNotification);
+				pSelect2.setVisible(true);
 				break;
 		}
 		paramChanged();
 	}
 
+    void mouseDown(const juce::MouseEvent& ev) override {
+		pSelect1.mouseDown(ev);
+		pSelect2.mouseDown(ev);
+    }
+    
+    
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
@@ -315,8 +342,13 @@ public:
 		x2->setBounds(7 * 56, 23, 56, 35);
 		y1->setBounds(7 * 56, 58, 56, 35);
 		y2->setBounds(7 * 56, 58, 56, 35);
+        l1->setBounds(2 * 56, 58, 56, 35);
+        l2->setBounds(2 * 56, 58, 56, 35);
 		select1.setBounds(100, 0, 20, 23);
 		select2.setBounds(120, 0, 20, 23);
+        arrow.setBounds(140, 0, 40, 23);
+		pSelect1.setBounds(180, 5, 56, 16);
+		pSelect2.setBounds(180, 5, 56, 16);
 	}
 
 	APAudioProcessor &proc;
@@ -324,11 +356,14 @@ public:
 	    s2, l2, dp2, o2, dr2, ms2, x2, y2;
 	juce::Button *poly1, *poly2;
 
+	
 	gin::MSEGComponent msegComponent1, msegComponent2;
 	int currentMSEG{1};
 	juce::TextButton select1{"1"}, select2{"2"};
-
+    juce::Label arrow{L"→",L"→"};
+	
 	APAudioProcessor::MSEGParams &m1;
 	APAudioProcessor::MSEGParams &m2;
 	int num;
+	ParameterSelector pSelect1, pSelect2;
 };

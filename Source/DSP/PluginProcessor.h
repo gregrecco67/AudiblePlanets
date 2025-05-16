@@ -330,8 +330,12 @@ public:
 	gin::LFO lfo1, lfo2, lfo3, lfo4;
 	gin::MSEG::Data mseg1Data, mseg2Data, mseg3Data, mseg4Data;
 	std::array<gin::LFO *, 4> monoLFOs{&lfo1, &lfo2, &lfo3, &lfo4};
-	std::array<gin::ModSrcId *, 4> lfoIds{
+	std::array<gin::ModSrcId*, 4> monoLfoIds{
 	    &modSrcMonoLFO1, &modSrcMonoLFO2, &modSrcMonoLFO3, &modSrcMonoLFO4};
+	std::array<gin::ModSrcId*, 4> polyLfoIds{
+	    &modSrcLFO1, &modSrcLFO2, &modSrcLFO3, &modSrcLFO4};
+
+	
 	juce::AudioPlayHead *playhead = nullptr;
 	bool presetLoaded = false;
 	gin::Filter laneAFilter, laneBFilter;

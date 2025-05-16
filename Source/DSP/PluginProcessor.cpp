@@ -1778,7 +1778,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
 		lfo->process(newBlockSize);
 
 		modMatrix.setMonoValue(
-		    *(this->lfoIds[lfoparams->num - 1]), lfo->getOutput());
+		    *(this->monoLfoIds[lfoparams->num - 1]), lfo->getOutput());
 	}
 
 	modMatrix.setMonoValue(macroSrc1, modMatrix.getValue(macroParams.macro1));

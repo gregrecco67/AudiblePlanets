@@ -10,5 +10,3 @@ clean up Envelope (in what sense?)
 
 bring back mod assign menus? at least for mods page
 related: hack Row to allow switching source or destination IN the MM?
-
-volume slider!
