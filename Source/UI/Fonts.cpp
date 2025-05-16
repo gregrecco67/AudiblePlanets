@@ -177,9 +177,14 @@ void APLNF::drawLinearSlider(juce::Graphics &g,
 		    sliderPos, minSliderPos, maxSliderPos, style, slider);
 		return;
 	}
-	g.setColour(slider.findColour(juce::Slider::trackColourId));
-	g.fillRect(float(x), y + height - 2.0f, float(width), 4.0f);
-	g.setColour(slider.findColour(juce::Slider::thumbColourId));
-	g.fillRect(juce::Rectangle<float>((float)x + 7.5f, sliderPos,
-	    (float)width - 15.0f, (float)y + ((float)height - sliderPos)));
+	
+    g.setColour(slider.findColour(juce::Slider::thumbColourId));
+    g.fillRect(juce::Rectangle<float>((float)x + 15.f, sliderPos,
+        (float)width - 30.0f, (float)y + ((float)height - sliderPos)));
+    
+    g.setColour(juce::Colours::black);
+	g.fillRect(float(x), sliderPos - 10.0f, float(width), 20.0f);
+    g.setColour(juce::Colours::darkgrey);
+    g.fillRect( x + 2.5f, sliderPos, float(width - 5.f), 2.f);
+	
 }
