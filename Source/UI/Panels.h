@@ -160,7 +160,7 @@ public:
 	ENVBox(
 	    APAudioProcessor &proc_, APAudioProcessor::ENVParams &params_, int num_)
 	    : gin::ParamBox(juce::String("  ENV ") += (num_ + 1)), proc(proc_),
-	      num(num_), envparams(params_)
+	      num(num_), envparams(params_), pSelect(proc, *(proc.envSrcIds[num]))
 	{
 		// in reverse order
 		switch (num) {
@@ -196,6 +196,8 @@ public:
 
 		watchParam(envparams.syncrepeat);
 		addAndMakeVisible(envViz);
+		addAndMakeVisible(pSelect);
+		pSelect.setText("+Dest", juce::dontSendNotification);
 	}
 
 	void paramChanged() override
@@ -222,6 +224,7 @@ public:
 	{
 		gin::ParamBox::resized();
 		envViz.setBounds(0, 23 + 70, 56 * 4, 70);
+		pSelect.setBounds(getWidth() - 75, 4, 56, 16);
 	}
 
 	APAudioProcessor &proc;
@@ -230,6 +233,7 @@ public:
 	int num;
 	EnvelopeComponent envViz{proc, num + 1};
 	APAudioProcessor::ENVParams &envparams;
+	ParameterSelector pSelect;
 };
 
 //==============================================================================

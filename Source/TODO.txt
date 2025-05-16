@@ -3,12 +3,7 @@
 
 //======================
 
-calculate latency from dnspl1+2
-
 clean up Envelope:
-
-bring back mod assign menus for envs on main page
-related: hack Row to allow switching source or destination IN the MM?
 
 box colors? headers?
 

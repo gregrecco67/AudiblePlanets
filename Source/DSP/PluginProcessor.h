@@ -334,6 +334,8 @@ public:
 	    &modSrcMonoLFO1, &modSrcMonoLFO2, &modSrcMonoLFO3, &modSrcMonoLFO4};
 	std::array<gin::ModSrcId*, 4> polyLfoIds{
 	    &modSrcLFO1, &modSrcLFO2, &modSrcLFO3, &modSrcLFO4};
+	std::array<gin::ModSrcId*, 4> envSrcIds{
+	    &modSrcEnv1, &modSrcEnv2, &modSrcEnv3, &modSrcEnv4};
 
 	
 	juce::AudioPlayHead *playhead = nullptr;

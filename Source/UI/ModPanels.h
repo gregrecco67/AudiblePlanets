@@ -94,8 +94,8 @@ public:
 		p1->setBounds(158, 108, 42, 57);
 		f1->setBounds(242, 108, 42, 57);
 		dl1->setBounds(200, 108, 42, 57);
-		monoSelect.setBounds(102, 3, 32, 16);
-		polySelect.setBounds(134, 3, 32, 16);
+		monoSelect.setBounds(5 * 56 - 85, 3, 32, 16);
+		polySelect.setBounds(5 * 56 - 61, 3, 32, 16);
 	}
 
 	APAudioProcessor &proc;
@@ -132,7 +132,6 @@ public:
 		if (num != 1) {
 			select1.setButtonText("3");
 			select2.setButtonText("4");
-			
 		}
 
 		addChildComponent(pSelect1);
@@ -244,9 +243,6 @@ public:
 		         x1, y1, r2, b2, s2, l2, dp2, o2, dr2, ms2, x2, y2}) {
 			c->setVisible(false);
 		}
-		for (juce::Button *c : {poly1, poly2}) {
-			c->setVisible(false);
-		}
 		for (auto &viz : {&msegComponent1, &msegComponent2}) {
 			viz->setVisible(false);
 		}
@@ -267,7 +263,6 @@ public:
 				ms1->setVisible(true);
 				x1->setVisible(true);
 				y1->setVisible(true);
-				poly1->setVisible(true);
 				msegComponent1.setVisible(true);
 				select1.setToggleState(true, juce::dontSendNotification);
 				pSelect1.setVisible(true);
@@ -284,7 +279,6 @@ public:
 				ms2->setVisible(true);
 				x2->setVisible(true);
 				y2->setVisible(true);
-				poly2->setVisible(true);
 				msegComponent2.setVisible(true);
 				select2.setToggleState(true, juce::dontSendNotification);
 				pSelect2.setVisible(true);
@@ -293,12 +287,6 @@ public:
 		paramChanged();
 	}
 
-    // void mouseDown(const juce::MouseEvent& ev) override {
-	// 	pSelect1.mouseDown(ev);
-	// 	pSelect2.mouseDown(ev);
-    // }
-    
-    
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
@@ -341,12 +329,12 @@ public:
 		x2->setBounds(7 * 56, 23, 56, 35);
 		y1->setBounds(7 * 56, 58, 56, 35);
 		y2->setBounds(7 * 56, 58, 56, 35);
-        l1->setBounds(2 * 56, 58, 56, 35);
-        l2->setBounds(2 * 56, 58, 56, 35);
-		select1.setBounds(100, 0, 20, 23);
-		select2.setBounds(120, 0, 20, 23);
-        pSelect1.setBounds(180, 3, 68, 16);
-		pSelect2.setBounds(180, 3, 68, 16);
+        l1->setBounds(2 * 56, 23, 56, 70);
+        l2->setBounds(2 * 56, 23, 56, 70);
+		select1.setBounds(50, 0, 20, 23);
+		select2.setBounds(70, 0, 20, 23);
+		pSelect1.setBounds(6 * 56 + 20, 3, 45, 16);
+		pSelect2.setBounds(6 * 56 + 20, 3, 45, 16);
 	}
 
 	APAudioProcessor &proc;
