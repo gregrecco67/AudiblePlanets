@@ -244,7 +244,7 @@ static juce::String fxListTextFunction(const gin::Parameter &, float v)
 		case 3:
 			return juce::String("Delay");
 		case 4:
-			return juce::String("Chorus");
+			return juce::String("Stereo Chorus");
 		case 5:
 			return juce::String("Multiband Filter");
 		case 6:
@@ -654,13 +654,15 @@ void APAudioProcessor::GlobalParams::setup(APAudioProcessor &p)
 	legato = p.addIntParam("legato", "Legato", "", "", {0.0, 1.0, 0.0, 1.0},
 	    0.0, 0.0f, enableTextFunction);
 	level = p.addExtParam(
-	    "level", "Main Vol.", "", " dB", {-100.0, 12.0, 0.0, 1.0f}, 0.0, 0.0f);
+	    "level", "Main Vol.", "", " dB", {-40.0, 12.0, 0.0, 1.0f}, 0.0, 0.0f);
 	mpe = p.addIntParam("mpe", "MPE", "", "", {0.0, 1.0, 1.0, 1.0}, 0.0f, 0.0f,
 	    enableTextFunction);
 	pitchbendRange = p.addIntParam(
 	    "pbrange", "PB Range", "", "", {0.0, 96.0, 1.0, 1.0}, 2.0, 0.0f);
 
 	level->conversionFunction = [](float in) {
+		if (in < -39.5f)
+			return 0.0f;
 		return juce::Decibels::decibelsToGain(in);
 	};
 	velSens->conversionFunction = [](float in) { return in / 100.0f; };

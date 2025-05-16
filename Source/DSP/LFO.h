@@ -72,9 +72,9 @@ public:
 		auto index1 = static_cast<int>(phase * 1024);
 		auto index2 = static_cast<int>(phase120 * 1024);
 		auto index3 = static_cast<int>(phase240 * 1024);
-		auto frac1 = phase * 1024 - index1;
-		auto frac2 = phase120 * 1024 - index2;
-		auto frac3 = phase240 * 1024 - index3;
+		double frac1 = phase * 1024 - index1;
+		double frac2 = phase120 * 1024 - index2;
+		double frac3 = phase240 * 1024 - index3;
 		values.deg0Value =   lerp(sineTable[std::clamp(index1, 0, 1023)], sineTable[std::clamp(index1+1, 0, 1023)], frac1);
 		values.deg120Value = lerp(sineTable[std::clamp(index2, 0, 1023)], sineTable[std::clamp(index2+1, 0, 1023)], frac2);
 		values.deg240Value = lerp(sineTable[std::clamp(index3, 0, 1023)], sineTable[std::clamp(index3+1, 0, 1023)], frac3);
