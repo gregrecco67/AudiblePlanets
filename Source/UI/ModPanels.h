@@ -65,11 +65,12 @@ public:
 		addControl(f1 = new APKnob(lfoParams.fade, true), 1, 5);
 
 		l1 = new gin::LFOComponent();
+		l1->monoCallback = [this] {
+			return proc.monoLFOs[num - 1]->getCurrentPhase();
+		};
 		l1->phaseCallback = [this] {
-			std::vector<float> res;
-			res.push_back(proc.monoLFOs[num - 1]->getCurrentPhase());
 			std::vector<float> phases;
-			switch (num+1) {
+			switch (num) {
 				case 1:
 					phases = proc.synth.getLFO1Phases();
 					break;
@@ -83,8 +84,7 @@ public:
 					phases = proc.synth.getLFO4Phases();
 					break;
 			}
-			res.insert(res.end(), phases.begin(), phases.end());
-			return res;
+			return phases;
 		};
 		l1->setParams(lfoParams.wave, lfoParams.sync, lfoParams.rate,
 		    lfoParams.beat, lfoParams.depth, lfoParams.offset, lfoParams.phase,
