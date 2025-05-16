@@ -34,7 +34,7 @@ juce::Font APLNF::getPopupMenuFont()
 	    juce::FontOptions{}.withName("Lato").withHeight(20.f * 0.89f)};
 }
 
-juce::Font APLNF::getSliderPopupFont(juce::Slider &slider)
+juce::Font APLNF::getSliderPopupFont(juce::Slider& /*slider*/)
 {
 	return juce::Font{
 	    juce::FontOptions{}.withName("Lato").withHeight(20.f * 0.89f)};

@@ -32,14 +32,17 @@ public:
 public:
 	void prepare(juce::dsp::ProcessSpec spec)
 	{
-		currentSampleRate = (float)spec.sampleRate;
+		currentSampleRate = static_cast<float>(spec.sampleRate);
 		centerDelayBuffer.setSize(1, 1.0, currentSampleRate);
 		leftDelayBuffer.setSize(1, 1.0, currentSampleRate);
 		rightDelayBuffer.setSize(1, 1.0, currentSampleRate);
 		lfo.setSampleRate(currentSampleRate);
 		lfo.setFrequency(15.0f);
-		lfo.setWaveShape(LFO::WaveShapes::Sine);
 		lfo.initialize();
+		delayTime_ms.reset(currentSampleRate, 0.035f);
+		delayTime_ms.setCurrentAndTargetValue(15.0f);
+		depth.reset(currentSampleRate, 0.035f);
+		depth.setCurrentAndTargetValue(0.5f);
 	}
 
 	void process(juce::dsp::ProcessContextReplacing<float> context)
@@ -55,11 +58,11 @@ public:
 		for (int i = 0; i < static_cast<int>(numSamples); i++) {
 			auto lfoValues = lfo.getNextValues();
 			auto leftDelayTime_ms = std::clamp(
-			    (lfoValues.mainPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
+			    (lfoValues.deg0Value * 10.0f * depth.getNextValue()) + delayTime_ms.getNextValue(), 5.f, 40.f);
 			auto centerDelayTime_ms = std::clamp(
-			    (lfoValues.quarterPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
+			    (lfoValues.deg120Value * 10.0f * depth.getNextValue()) + delayTime_ms.getNextValue(), 5.f, 40.f);
 			auto rightDelayTime_ms = std::clamp(
-			    (lfoValues.halfPhaseValue * 10.0f) + delayTime, 5.f, 30.f);
+			    (lfoValues.deg240Value * 10.0f * depth.getNextValue()) + delayTime_ms.getNextValue(), 5.f, 40.f);
 
 			auto leftIn = samplesL[i];
 			auto rightIn = samplesR[i];
@@ -87,7 +90,7 @@ public:
 
 	void setRate(float rate) { lfoRate = rate; }
 
-	void setDepth(float _depth) { depth = _depth; }
+	void setDepth(float _depth) { depth.setTargetValue(_depth); }
 
 	void setFeedback(float _feedback) { feedback = _feedback; }
 
@@ -95,13 +98,13 @@ public:
 
 	void setWet(float _wet) { wet = _wet; }
 
-	void setCentreDelay(float _delayTime) { delayTime = _delayTime; }
+	void setCentreDelay(float _delayTime) { delayTime_ms.setTargetValue(_delayTime); }
 
 private:
-	float lfoRate{0.05f}, depth{0.5f}, feedback{0.0f}, dry{0.5f}, wet{0.5f},
-	    delayTime{15.f};
-	LFO lfo;                            ///< the modulator
-	float currentSampleRate = 44100.f;  ///< current sample rate
+	float lfoRate{0.05f}, feedback{0.0f}, dry{0.5f}, wet{0.5f};
+	juce::LinearSmoothedValue<float> delayTime_ms, depth;
+	LFO lfo;                            
+	float currentSampleRate = 44100.f;
 	gin::DelayLine centerDelayBuffer{1}, leftDelayBuffer{1},
 	    rightDelayBuffer{1};
 };

@@ -751,17 +751,17 @@ void APAudioProcessor::ChorusParams::setup(APAudioProcessor &p)
 	juce::String name = "Chorus ";
 	juce::String pfx = "ch";
 	rate = p.addExtParam(pfx + "rate", name + "Rate", "Rate", " Hz",
-	    {0.005f, 20.0f, 0.0f, 0.3f}, 0.05f, 0.0f);
+	    {0.005f, 20.0f, 0.0f, 0.3f}, 0.04f, 0.0f);
 	depth = p.addExtParam(pfx + "depth", name + "Depth", "Depth", "",
 	    {0.0, 1.0, 0.0, 1.0}, 0.5f, 0.0f, percentTextFunction);
 	delay = p.addExtParam(pfx + "delay", name + "Delay", "Delay", " ms",
-	    {10.0f, 40.0f, 0.0, 1.0}, 20.0f, 0.0f);
+	    {10.0f, 40.0f, 0.0, 1.0}, 25.0f, 0.0f);
 	feedback = p.addExtParam(pfx + "feedback", name + "Feedback", "Feedback",
-	    "", {0.0, 1.0, 0.0, 1.0}, 0.25f, 0.0f, percentTextFunction);
+	    "", {0.0, 1.0, 0.0, 1.0}, 0.5f, 0.0f, percentTextFunction);
 	dry = p.addExtParam(pfx + "dry", name + "Dry", "Dry", "",
 	    {0.0, 1.0, 0.0, 1.0}, 1.0f, 0.0f, percentTextFunction);
 	wet = p.addExtParam(pfx + "wet", name + "Wet", "Wet", "",
-	    {0.0, 1.0, 0.0, 1.0}, 0.25f, 0.0f, percentTextFunction);
+	    {0.0, 1.0, 0.0, 1.0}, 0.5f, 0.0f, percentTextFunction);
 }
 
 //==============================================================================

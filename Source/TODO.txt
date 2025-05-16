@@ -14,5 +14,3 @@ related: hack Row to allow switching source or destination IN the MM?
 volume slider!
 
 switch back to original flavor JUCE, unless there's a reason not to
-
-popup look and feel for controls: should match UI accent colour and font, and rounded corners
