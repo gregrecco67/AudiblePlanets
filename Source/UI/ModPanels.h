@@ -18,8 +18,8 @@ public:
 		setName("lfo");
 		addAndMakeVisible(monoSelect);
 		addAndMakeVisible(polySelect);
-		monoSelect.setText("M", juce::dontSendNotification);
-		polySelect.setText("P", juce::dontSendNotification);
+		monoSelect.setText("+M", juce::dontSendNotification);
+		polySelect.setText("+P", juce::dontSendNotification);
 
 		gin::ModSrcId src;
 		gin::ModSrcId monoSrc;
@@ -94,8 +94,8 @@ public:
 		p1->setBounds(158, 108, 42, 57);
 		f1->setBounds(242, 108, 42, 57);
 		dl1->setBounds(200, 108, 42, 57);
-		monoSelect.setBounds(112, 3, 23, 16);
-		polySelect.setBounds(135, 3, 23, 16);
+		monoSelect.setBounds(102, 3, 32, 16);
+		polySelect.setBounds(134, 3, 32, 16);
 	}
 
 	APAudioProcessor &proc;
@@ -135,11 +135,10 @@ public:
 			
 		}
 
-		
 		addChildComponent(pSelect1);
 		addChildComponent(pSelect2);
-        addAndMakeVisible(arrow);
-
+		pSelect1.setText("+Dest", juce::dontSendNotification);
+		pSelect2.setText("+Dest", juce::dontSendNotification);
 		
 		msegComponent1.setParams(m1.sync, m1.rate, m1.beat, m1.depth, m1.offset,
 		    m1.phase, m1.enable, m1.xgrid, m1.ygrid, m1.loop);
@@ -294,10 +293,10 @@ public:
 		paramChanged();
 	}
 
-    void mouseDown(const juce::MouseEvent& ev) override {
-		pSelect1.mouseDown(ev);
-		pSelect2.mouseDown(ev);
-    }
+    // void mouseDown(const juce::MouseEvent& ev) override {
+	// 	pSelect1.mouseDown(ev);
+	// 	pSelect2.mouseDown(ev);
+    // }
     
     
 	void paramChanged() override
@@ -346,9 +345,8 @@ public:
         l2->setBounds(2 * 56, 58, 56, 35);
 		select1.setBounds(100, 0, 20, 23);
 		select2.setBounds(120, 0, 20, 23);
-        arrow.setBounds(140, 0, 40, 23);
-		pSelect1.setBounds(180, 5, 56, 16);
-		pSelect2.setBounds(180, 5, 56, 16);
+        pSelect1.setBounds(180, 3, 68, 16);
+		pSelect2.setBounds(180, 3, 68, 16);
 	}
 
 	APAudioProcessor &proc;
@@ -360,7 +358,6 @@ public:
 	gin::MSEGComponent msegComponent1, msegComponent2;
 	int currentMSEG{1};
 	juce::TextButton select1{"1"}, select2{"2"};
-    juce::Label arrow{L"→",L"→"};
 	
 	APAudioProcessor::MSEGParams &m1;
 	APAudioProcessor::MSEGParams &m2;

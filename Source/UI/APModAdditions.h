@@ -46,8 +46,7 @@ public:
 private:
 	void paint(juce::Graphics &g) override
 	{
-		auto c =
-		    findColour(gin::PluginLookAndFeel::title1ColourId).brighter(0.15f);
+		auto c = juce::Colour(0xff444444);
 		g.setColour(c);
 
 		auto rc = getLocalBounds().toFloat().reduced(1.5f);
@@ -400,10 +399,10 @@ public:
 					juce::Colour(0xff66AACC));
 				setColour(juce::PopupMenu::headerTextColourId,
 				    juce::Colour(0xff9B9EA5));
-				setColour(juce::PopupMenu::highlightedBackgroundColourId,
-				    juce::Colour(0xffCC8866));
 				setColour(juce::PopupMenu::highlightedTextColourId,
 				    juce::Colours::white);
+				setColour(juce::PopupMenu::highlightedBackgroundColourId,
+				    juce::Colours::darkgrey);
 			}
 		};
 
@@ -1031,21 +1030,18 @@ public:
 		oscsMenu.addSubMenu("OSC4", osc4Menu);
 
 		lfo1Menu.addItem("LFO1 Rate", [this]() { setDest(proc.lfo1Params.rate); });
-		lfo1Menu.addItem("LFO1 Beats", [this]() { setDest(proc.lfo1Params.beat); });
 		lfo1Menu.addItem("LFO1 Depth", [this]() { setDest(proc.lfo1Params.depth); });
 		lfo1Menu.addItem("LFO1 Offset", [this]() { setDest(proc.lfo1Params.offset); });
+
 		lfo2Menu.addItem("LFO2 Rate", [this]() { setDest(proc.lfo2Params.rate); });
-		lfo2Menu.addItem("LFO2 Beats", [this]() { setDest(proc.lfo2Params.beat); });
 		lfo2Menu.addItem("LFO2 Depth", [this]() { setDest(proc.lfo2Params.depth); });
 		lfo2Menu.addItem("LFO2 Offset", [this]() { setDest(proc.lfo2Params.offset); });
 
 		lfo3Menu.addItem("LFO3 Rate", [this]() { setDest(proc.lfo3Params.rate); });
-		lfo3Menu.addItem("LFO3 Beats", [this]() { setDest(proc.lfo3Params.beat); });
 		lfo3Menu.addItem("LFO3 Depth", [this]() { setDest(proc.lfo3Params.depth); });
 		lfo3Menu.addItem("LFO3 Offset", [this]() { setDest(proc.lfo3Params.offset); });
 
 		lfo4Menu.addItem("LFO4 Rate", [this]() { setDest(proc.lfo4Params.rate); });
-		lfo4Menu.addItem("LFO4 Beats", [this]() { setDest(proc.lfo4Params.beat); });
 		lfo4Menu.addItem("LFO4 Depth", [this]() { setDest(proc.lfo4Params.depth); });
 		lfo4Menu.addItem("LFO4 Offset", [this]() { setDest(proc.lfo4Params.offset); });
 
@@ -1059,7 +1055,6 @@ public:
 		env1Menu.addItem("ENV1 Sustain", [this]() { setDest(proc.env1Params.sustain); });
 		env1Menu.addItem("ENV1 Release", [this]() { setDest(proc.env1Params.release); });
 		env1Menu.addItem("ENV1 Time", [this]() { setDest(proc.env1Params.time); });
-		env1Menu.addItem("ENV1 Beats", [this]() { setDest(proc.env1Params.duration); });
 		env1Menu.addItem("ENV1 Atk Curve", [this]() { setDest(proc.env1Params.acurve); });
 		env1Menu.addItem("ENV1 D/R Curve", [this]() { setDest(proc.env1Params.drcurve); });
 
@@ -1068,7 +1063,6 @@ public:
 		env2Menu.addItem("ENV2 Sustain", [this]() { setDest(proc.env2Params.sustain); });
 		env2Menu.addItem("ENV2 Release", [this]() { setDest(proc.env2Params.release); });
 		env2Menu.addItem("ENV2 Time", [this]() { setDest(proc.env2Params.time); });
-		env2Menu.addItem("ENV2 Beats", [this]() { setDest(proc.env2Params.duration); });
 		env2Menu.addItem("ENV2 Atk Curve", [this]() { setDest(proc.env2Params.acurve); });
 		env2Menu.addItem("ENV2 D/R Curve", [this]() { setDest(proc.env2Params.drcurve); });
 
@@ -1077,7 +1071,6 @@ public:
 		env3Menu.addItem("ENV3 Sustain", [this]() { setDest(proc.env3Params.sustain); });
 		env3Menu.addItem("ENV3 Release", [this]() { setDest(proc.env3Params.release); });
 		env3Menu.addItem("ENV3 Time", [this]() { setDest(proc.env3Params.time); });
-		env3Menu.addItem("ENV3 Beats", [this]() { setDest(proc.env3Params.duration); });
 		env3Menu.addItem("ENV3 Atk Curve", [this]() { setDest(proc.env3Params.acurve); });
 		env3Menu.addItem("ENV3 D/R Curve", [this]() { setDest(proc.env3Params.drcurve); });
 
@@ -1086,7 +1079,6 @@ public:
 		env4Menu.addItem("ENV4 Sustain", [this]() { setDest(proc.env4Params.sustain); });
 		env4Menu.addItem("ENV4 Release", [this]() { setDest(proc.env4Params.release); });
 		env4Menu.addItem("ENV4 Time", [this]() { setDest(proc.env4Params.time); });
-		env4Menu.addItem("ENV4 Beats", [this]() { setDest(proc.env4Params.duration); });
 		env4Menu.addItem("ENV4 Atk Curve", [this]() { setDest(proc.env4Params.acurve); });
 		env4Menu.addItem("ENV4 D/R Curve", [this]() { setDest(proc.env4Params.drcurve); });
 
@@ -1125,9 +1117,7 @@ public:
 		compressorMenu.addItem("Output", [this]() { setDest(proc.compressorParams.output); });
 
 		delayMenu.addItem("Time Left", [this]() { setDest(proc.stereoDelayParams.timeleft); });
-		delayMenu.addItem("Beats Left", [this]() { setDest(proc.stereoDelayParams.beatsleft); });
 		delayMenu.addItem("Time Right", [this]() { setDest(proc.stereoDelayParams.timeright); });
-		delayMenu.addItem("Beats Right", [this]() { setDest(proc.stereoDelayParams.beatsright); });
 		delayMenu.addItem("Feedback", [this]() { setDest(proc.stereoDelayParams.feedback); });
 		delayMenu.addItem("LP Cutoff", [this]() { setDest(proc.stereoDelayParams.cutoff); });
 		delayMenu.addItem("Dry", [this]() { setDest(proc.stereoDelayParams.dry); });

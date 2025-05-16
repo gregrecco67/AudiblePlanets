@@ -11,9 +11,9 @@ APLNF::APLNF()
 	setColour(juce::PopupMenu::backgroundColourId, juce::Colour(0xff16171A));
 	setColour(juce::PopupMenu::textColourId, juce::Colour(0xff66AACC));
 	setColour(juce::PopupMenu::headerTextColourId, juce::Colour(0xff9B9EA5));
-	setColour(juce::PopupMenu::highlightedBackgroundColourId,
-	    juce::Colour(0xffCC8866));
 	setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
+	setColour(juce::PopupMenu::highlightedBackgroundColourId,
+	    juce::Colours::darkgrey);
 	setColour(juce::TooltipWindow::textColourId, findColour(accentColourId));
 	// setColour(juce::TextButton::buttonOnColourId, juce::Colours::grey);
 }

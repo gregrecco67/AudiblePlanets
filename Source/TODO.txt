@@ -3,10 +3,14 @@
 
 //======================
 
-consider a generic destination box on the mods page, with a popup for mod dests
-better than a fourth page that's just sources and destinations?
+calculate latency from dnspl1+2
 
-clean up Envelope (in what sense?) 
+clean up Envelope:
 
-bring back mod assign menus? at least for mods page
+bring back mod assign menus for envs on main page
 related: hack Row to allow switching source or destination IN the MM?
+
+box colors? headers?
+
+lfo per-voice phase callbacks
+lfo rand and S+H: recalc when safe?
