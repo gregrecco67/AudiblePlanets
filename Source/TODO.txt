@@ -5,9 +5,4 @@
 
 clean up Envelope:
 
-box colors? headers?
-
-lfo per-voice phase callbacks
 lfo rand and S+H: recalc when safe?
-
-env header <- osc choice colored squares

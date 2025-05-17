@@ -203,6 +203,7 @@ public:
 
 	void resetBuffers()
 	{
+		inBuffer.clear();
 		delayBuffer_L.clear();
 		delayBuffer_R.clear();
 	}
