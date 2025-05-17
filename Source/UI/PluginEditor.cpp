@@ -44,7 +44,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor &p)
 	    juce::Label::backgroundColourId, juce::Colours::transparentBlack);
 	scaleName.setJustificationType(juce::Justification::centredLeft);
 	learningLabel.setJustificationType(juce::Justification::centred);
-	setSize(1186, 725);
+	setSize(1181, 725);
 	startTimerHz(4);
 	addKeyListener(this);
 	this->setWantsKeyboardFocus(true);
