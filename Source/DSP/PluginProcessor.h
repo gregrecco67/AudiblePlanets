@@ -394,6 +394,9 @@ public:
 	hiir::Downsampler2xSse<nbr_coefs2> dspl2L, dspl2R;
 #endif
 
+	bool env1osc1, env1osc2, env1osc3, env1osc4, env2osc1, env2osc2, env2osc3,
+	    env2osc4, env3osc1, env3osc2, env3osc3, env3osc4, env4osc1, env4osc2,
+	    env4osc3, env4osc4;
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(APAudioProcessor)
 };

@@ -37,9 +37,9 @@ inline void gradientRect(juce::Graphics &g,
 class OSCBox : public gin::ParamBox {
 public:
 	OSCBox(
-	    APAudioProcessor &proc_, APAudioProcessor::OSCParams &params_, int num)
-	    : gin::ParamBox(juce::String("  OSC ") += (num + 1)), proc(proc_),
-	      oscparams(params_)
+	    APAudioProcessor &proc_, APAudioProcessor::OSCParams &params_, int num_)
+	    : gin::ParamBox(juce::String("  OSC ") += (num_ + 1)), proc(proc_),
+	      oscparams(params_), num(num_)
 	{
 		addControl(c1 = new APKnob(oscparams.coarse), 0, 0);  // coarse
 		addControl(f1 = new APKnob(oscparams.fine), 1, 0);    // fine
@@ -54,7 +54,7 @@ public:
 		addControl(env1 = new gin::Select(oscparams.env));      // env select
 		addControl(fixed1 = new gin::Select(oscparams.fixed));  // fixed
 		watchParam(oscparams.fixed);
-		watchParam(oscparams.wave);
+		watchParam(oscparams.env);
 		watchParam(oscparams.coarse);
 		watchParam(oscparams.fine);
 		addAndMakeVisible(fixedHz1);
@@ -62,7 +62,6 @@ public:
 
 		addAndMakeVisible(coarseLabel);
 		coarseLabel.setJustificationType(juce::Justification::centredBottom);
-		// coarseLabel.setFont(juce::Font(14.0f));
 		fixedHz1.setJustificationType(juce::Justification::centred);
 	}
 
@@ -128,6 +127,33 @@ public:
 		else
 			coarseString += "x";
 		coarseLabel.setText(coarseString, juce::dontSendNotification);
+		int choice = oscparams.env->getUserValueInt();
+		switch (num) {
+			case 0:
+				proc.env1osc1 = (choice == 0);
+				proc.env2osc1 = (choice == 1);
+				proc.env3osc1 = (choice == 2);
+				proc.env4osc1 = (choice == 3);
+				break;
+			case 1:
+				proc.env1osc2 = (choice == 0);
+				proc.env2osc2 = (choice == 1);
+				proc.env3osc2 = (choice == 2);
+				proc.env4osc2 = (choice == 3);
+				break;
+			case 2:
+				proc.env1osc3 = (choice == 0);
+				proc.env2osc3 = (choice == 1);
+				proc.env3osc3 = (choice == 2);
+				proc.env4osc3 = (choice == 3);
+				break;
+			case 3:
+				proc.env1osc4 = (choice == 0);
+				proc.env2osc4 = (choice == 1);
+				proc.env3osc4 = (choice == 2);
+				proc.env4osc4 = (choice == 3);
+				break;
+		}
 	}
 
 	void resized() override
@@ -150,12 +176,23 @@ public:
 	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr c1, f1, v1, p1, wave1, env1, fixed1;
 	APAudioProcessor::OSCParams &oscparams;
-
+	int num{0};
 	juce::Label fixedHz1, coarseLabel;
 };
 
+class HeaderRect : public juce::Component {
+public:
+	HeaderRect() { setInterceptsMouseClicks(false, false); }
+	void paint(juce::Graphics &g) override
+	{
+		g.setColour(color);
+		g.fillRect(getLocalBounds());
+	}
+	juce::Colour color{juce::Colours::black};
+};
+
 //==============================================================================
-class ENVBox : public gin::ParamBox {
+class ENVBox : public gin::ParamBox, public juce::Timer {
 public:
 	ENVBox(
 	    APAudioProcessor &proc_, APAudioProcessor::ENVParams &params_, int num_)
@@ -163,7 +200,7 @@ public:
 	      num(num_), envparams(params_), pSelect(proc, *(proc.envSrcIds[num]))
 	{
 		// in reverse order
-		switch (num) {
+		switch (num_) {
 			case 3:
 				addModSource(new gin::ModulationSourceButton(
 				    proc.modMatrix, proc.modSrcEnv4, true));
@@ -195,9 +232,54 @@ public:
 		rate1->setVisible(false);
 
 		watchParam(envparams.syncrepeat);
+		
 		addAndMakeVisible(envViz);
 		addAndMakeVisible(pSelect);
 		pSelect.setText("+Dest", juce::dontSendNotification);
+
+		addAndMakeVisible(o1);
+		addAndMakeVisible(o2);
+		addAndMakeVisible(o3);
+		addAndMakeVisible(o4);
+		o1.color = APColors::redMuted;
+		o2.color = APColors::yellowMuted;
+		o3.color = APColors::greenMuted;
+		o4.color = APColors::blueMuted;
+		startTimerHz(3);
+	}
+
+	void timerCallback() override { 
+		switch (num) {
+			case 0:
+				osc1 = proc.env1osc1;
+				osc2 = proc.env1osc2;
+				osc3 = proc.env1osc3;
+				osc4 = proc.env1osc4;
+				break;
+			case 1:
+				osc1 = proc.env2osc1;
+				osc2 = proc.env2osc2;
+				osc3 = proc.env2osc3;
+				osc4 = proc.env2osc4;
+				break;
+			case 2:
+				osc1 = proc.env3osc1;
+				osc2 = proc.env3osc2;
+				osc3 = proc.env3osc3;
+				osc4 = proc.env3osc4;
+				break;
+			case 3:
+				osc1 = proc.env4osc1;
+				osc2 = proc.env4osc2;
+				osc3 = proc.env4osc3;
+				osc4 = proc.env4osc4;
+				break;
+		}
+		o1.setVisible(osc1);
+		o2.setVisible(osc2);
+		o3.setVisible(osc3);
+		o4.setVisible(osc4);
+		repaint(); 
 	}
 
 	void paramChanged() override
@@ -218,6 +300,7 @@ public:
 				rate1->setVisible(true);
 				break;
 		}
+		repaint();
 	}
 
 	void resized() override
@@ -225,10 +308,16 @@ public:
 		gin::ParamBox::resized();
 		envViz.setBounds(0, 23 + 70, 56 * 4, 70);
 		pSelect.setBounds(getWidth() - 75, 4, 56, 16);
+		o1.setBounds(50, 4, 16, 16);
+		o2.setBounds(68, 4, 16, 16);
+		o3.setBounds(86, 4, 16, 16);
+		o4.setBounds(104, 4, 16, 16);
 	}
 
 	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr a1, d1, s1, r1, ac1, dc1, rpt1, beats1, rate1;
+	bool osc1{false}, osc2{false}, osc3{false}, osc4{false};
+	HeaderRect o1, o2, o3, o4;
 
 	int num;
 	EnvelopeComponent envViz{proc, num + 1};
