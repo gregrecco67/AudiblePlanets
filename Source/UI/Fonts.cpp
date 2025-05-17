@@ -2,7 +2,7 @@
 
 APLNF::APLNF()
 {
-	setColour(juce::Slider::thumbColourId, juce::Colour(0xffa09189));
+	setColour(juce::Slider::thumbColourId, juce::Colour(0xff888888));
 	setColour(juce::Slider::rotarySliderFillColourId,
 	    juce::Colour(0xffa09189).darker(0.3f));
 	setColour(juce::Slider::trackColourId, juce::Colour(0xff000000));
@@ -178,13 +178,24 @@ void APLNF::drawLinearSlider(juce::Graphics &g,
 		return;
 	}
 	
-    g.setColour(slider.findColour(juce::Slider::thumbColourId));
-    g.fillRect(juce::Rectangle<float>((float)x + 15.f, sliderPos,
-        (float)width - 30.0f, (float)y + ((float)height - sliderPos)));
-    
-    g.setColour(juce::Colours::black);
-	g.fillRect(float(x), sliderPos - 10.0f, float(width), 20.0f);
-    g.setColour(juce::Colours::darkgrey);
-    g.fillRect( x + 2.5f, sliderPos, float(width - 5.f), 2.f);
+    g.setColour(juce::Colours::black); // empty track
+    g.fillRoundedRectangle(juce::Rectangle<float>((float)x + 22.f, 5,
+        7, (float)y + ((float)height - 10)), 3.f);
+
+    auto constrained = juce::jlimit(y+5, y + height - 5, static_cast<int>(sliderPos));
+	g.setColour(slider.findColour(juce::Slider::thumbColourId));
+	g.fillRoundedRectangle(juce::Rectangle<float>((float)x + 22.f, constrained, 7,
+	                           (float)y + ((float)height - 5 - constrained)),
+	    3.f); // filled track
+
+
+	g.setColour(juce::Colours::black);
+	g.fillRoundedRectangle(float(x), constrained - 10.0f, float(width), 20.0f, 5.f); // handle
+	g.setColour(slider.findColour(juce::Slider::thumbColourId).darker(0.7f));
+	g.drawRoundedRectangle(
+	    float(x), constrained - 10.0f, float(width), 20.0f, 5.f, 1.f); // handle outline
+	g.setColour(slider.findColour(juce::Slider::thumbColourId));
+	g.fillRect(
+	    x + 5.f, static_cast<float>(constrained) - 1, float(width - 10.f), 3.f); // handle indicator
 	
 }
