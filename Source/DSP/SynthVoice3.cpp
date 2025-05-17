@@ -77,13 +77,15 @@ void SynthVoice3::noteStarted()
 	lfo3.reset();
 	lfo4.reset();
 
+    updateParams(0);
+    snapParams();
+    updateParams(0);
+    snapParams();
+
 	lfo1.noteOn();
 	lfo2.noteOn();
 	lfo3.noteOn();
 	lfo4.noteOn();
-
-	updateParams(0);
-	snapParams();
 
 	osc1.noteOn(lastp1 = proc.osc1Params.phase->getUserValue());
 	osc2.noteOn(lastp2 = proc.osc2Params.phase->getUserValue());
