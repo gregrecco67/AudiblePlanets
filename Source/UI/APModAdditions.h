@@ -1003,6 +1003,12 @@ public:
 		PopupMenu mbfilterMenu;
 		PopupMenu chorusMenu;
 		PopupMenu ringmodMenu;
+		PopupMenu ladderMenu;
+
+		ladderMenu.addItem("Cutoff", [this]() { setDest(proc.ladderParams.cutoff); });
+		ladderMenu.addItem("Resonance", [this]() { setDest(proc.ladderParams.reso); });
+		ladderMenu.addItem("Drive", [this]() { setDest(proc.ladderParams.drive); });
+		ladderMenu.addItem("Level", [this]() { setDest(proc.ladderParams.gain); });
 
 		osc1Menu.addItem("OSC1 Coarse", [this]() { setDest(proc.osc1Params.coarse); });
 		osc1Menu.addItem("OSC1 Fine", [this]() { setDest(proc.osc1Params.fine); });
@@ -1165,6 +1171,7 @@ public:
 		fxModulesMenu.addSubMenu("Reverb", reverbMenu);
 		fxModulesMenu.addSubMenu("MB Filter", mbfilterMenu);
 		fxModulesMenu.addSubMenu("Ring Mod", ringmodMenu);
+		fxModulesMenu.addSubMenu("Ladder Filter", ladderMenu);
 		fxModulesMenu.addItem("Gain", [this]() { setDest(proc.gainParams.gain); });
 
 		m.addSubMenu("Oscillators", oscsMenu);

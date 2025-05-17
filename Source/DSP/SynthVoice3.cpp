@@ -132,6 +132,21 @@ void SynthVoice3::noteRetriggered()
 	env2.noteOn();
 	env3.noteOn();
 	env4.noteOn();
+    
+    lfo1.reset();
+    lfo2.reset();
+    lfo3.reset();
+    lfo4.reset();
+
+    lfo1.noteOn();
+    lfo2.noteOn();
+    lfo3.noteOn();
+    lfo4.noteOn();
+    
+    mseg1.noteOn();
+    mseg2.noteOn();
+    mseg3.noteOn();
+    mseg4.noteOn();
 }
 
 void SynthVoice3::noteStopped(bool allowTailOff)
