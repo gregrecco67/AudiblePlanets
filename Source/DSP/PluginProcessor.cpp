@@ -921,8 +921,6 @@ void APAudioProcessor::MacroParams::setup(APAudioProcessor &p)
 	    {-1.0, 127.0, 1.0, 1.0}, -1.0f, 0.0f);
 }
 
-void APAudioProcessor::updatePitchbend() {}
-
 bool APAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const
 {
 	if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo() ||
@@ -933,13 +931,11 @@ bool APAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const
 
 //==============================================================================
 APAudioProcessor::APAudioProcessor()
-    : gin::Processor(BusesProperties().withOutput(
-                         "Output", juce::AudioChannelSet::stereo(), true),
-          false,
-          getOptions()),
-      synth(APSynth(*this)), auxSynth(AuxSynth(*this))
+    : gin::Processor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true),
+		false, getOptions()),
+		synth(APSynth(*this)), auxSynth(AuxSynth(*this))
 {
-	{
+	{ // get presets
 		auto sz = 0;
 		for (auto i = 0; i < BinaryData::namedResourceListSize; i++)
 			if (juce::String(BinaryData::originalFilenames[i]).endsWith(".xml"))
@@ -948,10 +944,8 @@ APAudioProcessor::APAudioProcessor()
 					extractProgram(BinaryData::originalFilenames[i], data, sz);
 	}
 
-	hiir::PolyphaseIir2Designer::compute_coefs_spec_order_tbw(
-	    coefs1, nbr_coefs1, .28);
-	hiir::PolyphaseIir2Designer::compute_coefs_spec_order_tbw(
-	    coefs2, nbr_coefs2, .03);
+	hiir::PolyphaseIir2Designer::compute_coefs_spec_order_tbw(coefs1, nbr_coefs1, .28);
+	hiir::PolyphaseIir2Designer::compute_coefs_spec_order_tbw(coefs2, nbr_coefs2, .03);
 
 	dspl1L.set_coefs(coefs1);  // 2x down with wide tb
 	dspl1R.set_coefs(coefs1);  // 2x down with wide tb
@@ -1147,10 +1141,10 @@ void APAudioProcessor::prepareToPlay(
     double newSampleRate, int newSamplesPerBlock)
 {
 	Processor::prepareToPlay(newSampleRate, newSamplesPerBlock);
-	juce::dsp::ProcessSpec spec{
-	    newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
+	juce::dsp::ProcessSpec spec{newSampleRate, (juce::uint32)newSamplesPerBlock, 2};
 
 	upsampledTables.setSampleRate(newSampleRate * 4);
+	analogTables.setSampleRate(newSampleRate);
 
 	synth.setCurrentPlaybackSampleRate(newSampleRate * 4);
 	auxSynth.setCurrentPlaybackSampleRate(newSampleRate);
@@ -1184,7 +1178,6 @@ void APAudioProcessor::prepareToPlay(
 	    newSampleRate, 40.0f);
 	dcFilter.prepare(spec);
 
-	analogTables.setSampleRate(newSampleRate);
 }
 
 void APAudioProcessor::releaseResources() {}

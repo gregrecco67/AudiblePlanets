@@ -75,9 +75,9 @@ public:
 		double frac1 = phase * 1024 - index1;
 		double frac2 = phase120 * 1024 - index2;
 		double frac3 = phase240 * 1024 - index3;
-		values.deg0Value =   lerp(sineTable[std::clamp(index1, 0, 1023)], sineTable[std::clamp(index1+1, 0, 1023)], frac1);
-		values.deg120Value = lerp(sineTable[std::clamp(index2, 0, 1023)], sineTable[std::clamp(index2+1, 0, 1023)], frac2);
-		values.deg240Value = lerp(sineTable[std::clamp(index3, 0, 1023)], sineTable[std::clamp(index3+1, 0, 1023)], frac3);
+		values.deg0Value =   static_cast<float>(lerp(sineTable[std::clamp(index1, 0, 1023)], sineTable[std::clamp(index1+1, 0, 1023)], frac1));
+		values.deg120Value = static_cast<float>(lerp(sineTable[std::clamp(index2, 0, 1023)], sineTable[std::clamp(index2+1, 0, 1023)], frac2));
+		values.deg240Value = static_cast<float>(lerp(sineTable[std::clamp(index3, 0, 1023)], sineTable[std::clamp(index3+1, 0, 1023)], frac3));
 		return values;
 	}
 

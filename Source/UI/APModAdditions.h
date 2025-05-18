@@ -490,9 +490,9 @@ public:
 				} else {
 					g.setColour(juce::Colours::darkgrey.withAlpha(0.5f));
 				}
-				float t = rc.getY();
-				float h = rc.getHeight();
-				auto c = rc.getCentreX();
+				float t = static_cast<float>(rc.getY());
+				float h = static_cast<float>(rc.getHeight());
+				auto c =  static_cast<float>(rc.getCentreX());
 				if (sliderPos < c)
 					g.fillRect(
 					    juce::Rectangle<float>(sliderPos, t, c - sliderPos, h));

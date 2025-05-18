@@ -795,8 +795,6 @@ void SynthVoice3::updateParams(int blockSize)
 	proc.modMatrix.setPolyValue(*this, proc.modSrcMSEG4, mseg4.getOutput());
 }
 
-bool SynthVoice3::isVoiceActive() { return isActive(); }
-
 float SynthVoice3::getFilterCutoffNormalized()
 {
 	float freq = filter.getFrequency();

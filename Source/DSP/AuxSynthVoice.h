@@ -47,14 +47,14 @@ public:
 		return noteSmoother.getCurrentValue() * 127.0f;
 	}
 
-	bool isVoiceActive() override;
+	bool isVoiceActive() override { return isActive(); }
 
 	float getFilterCutoffNormalized();
-	// new
-	float getMSEG1Phase();
-	float getMSEG2Phase();
-	float getMSEG3Phase();
-	float getMSEG4Phase();
+
+	inline float getMSEG1Phase() const { return mseg1.getCurrentPhase(); }
+	inline float getMSEG2Phase() const { return mseg2.getCurrentPhase(); }
+	inline float getMSEG3Phase() const { return mseg3.getCurrentPhase(); }
+	inline float getMSEG4Phase() const { return mseg4.getCurrentPhase(); }
 
 private:
 	void updateParams(int blockSize);

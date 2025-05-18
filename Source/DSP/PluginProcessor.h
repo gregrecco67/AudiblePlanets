@@ -60,8 +60,6 @@ public:
 	void stateUpdated() override;
 	void updateState() override;
 
-	void updatePitchbend();
-
 	void downsampleStage1(const juce::dsp::AudioBlock<float> &inputBlock,
 	    juce::dsp::AudioBlock<float> &outputBlock);
 	void downsampleStage2(const juce::dsp::AudioBlock<float> &inputBlock,
@@ -388,8 +386,6 @@ public:
 	double coefs2[nbr_coefs2];
 
 #if USE_NEON
-	// hiir::Downsampler2x4Neon <nbr_coefs1> dspl1L, dspl1R;
-	// hiir::Downsampler2x4Neon <nbr_coefs2> dspl2L, dspl2R;
 	hiir::Downsampler2xNeon<nbr_coefs1> dspl1L, dspl1R;
 	hiir::Downsampler2xNeon<nbr_coefs2> dspl2L, dspl2R;
 #endif

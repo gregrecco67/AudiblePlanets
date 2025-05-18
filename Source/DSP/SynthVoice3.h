@@ -51,7 +51,7 @@ public:
 		return noteSmoother.getCurrentValue() * 127.0f;
 	}
 
-	bool isVoiceActive() override;
+	bool isVoiceActive() override { return isActive(); };
 	
 	float getFilterCutoffNormalized();
 	inline float getMSEG1Phase() { return mseg1.getCurrentPhase(); }

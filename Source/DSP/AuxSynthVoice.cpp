@@ -607,8 +607,6 @@ void AuxSynthVoice::updateParams(int blockSize)
 	proc.modMatrix.setPolyValue(*this, proc.modSrcMSEG4, mseg4.getOutput());
 }
 
-bool AuxSynthVoice::isVoiceActive() { return isActive(); }
-
 float AuxSynthVoice::getFilterCutoffNormalized()
 {
 	float freq = filter.getFrequency();
@@ -616,11 +614,3 @@ float AuxSynthVoice::getFilterCutoffNormalized()
 	return range.convertTo0to1(
 	    juce::jlimit(range.start, range.end, gin::getMidiNoteFromHertz(freq)));
 }
-
-float AuxSynthVoice::getMSEG1Phase() { return mseg1.getCurrentPhase(); }
-
-float AuxSynthVoice::getMSEG2Phase() { return mseg2.getCurrentPhase(); }
-
-float AuxSynthVoice::getMSEG3Phase() { return mseg3.getCurrentPhase(); }
-
-float AuxSynthVoice::getMSEG4Phase() { return mseg4.getCurrentPhase(); }
