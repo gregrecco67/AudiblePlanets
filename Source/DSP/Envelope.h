@@ -66,24 +66,18 @@ public:
 
 	inline void setParameters(const Params &newParameters)
 	{
-		// jassert(sampleRate > 0.0);
 		parameters = newParameters;
 		recalculateRates();
 	}
 
-	const Params &getParameters() const noexcept { return parameters; }
-
 	bool isActive() const noexcept { return state != State::idle; }
-
-	float getValue() const { return (float)finalOut; }
-	float getOutput() const { return (float)finalOut; }
-	State getState() const { return state; }
+	float getValue() const { return  static_cast<float>(finalOut); }
+	float getOutput() const { return static_cast<float>(finalOut); }
+	
 
 	inline void setSampleRate(double newSampleRate) noexcept
 	{
-		if (newSampleRate > 0.0) {
-			sampleRate = newSampleRate;
-		}
+		if (newSampleRate > 0.0) { sampleRate = newSampleRate; }
 		recalculateRates();
 	}
 
@@ -98,19 +92,7 @@ public:
 			getNextSample();
 		}
 	}
-	void processMultiplying(juce::AudioSampleBuffer &buffer);
-	void processMultiplying(float *buffer,
-	                        const int numSamples,
-	                        const float volume)
-	{
-		for (int i = 0; i < numSamples; ++i)
-			buffer[i] *= ((float)getNextSample() * volume);
-	}
-	void dumpValues(float *buffer, const int numSamples)
-	{
-		for (int i = 0; i < numSamples; ++i)
-			buffer[i] = (float)getNextSample();
-	}
+
 	static double convex[2000], concave[2000];
 	static bool isInitialized;
 
