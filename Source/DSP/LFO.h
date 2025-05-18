@@ -51,7 +51,7 @@ public:
 	}
 	inline void setSampleRate(float newRate)
 	{
-		sampleRate = (newRate != 0) ? newRate : sampleRate;
+		sampleRate = (newRate > 0) ? newRate : sampleRate;
 		phaseIncrement = frequency / sampleRate;
 	}
 

@@ -190,12 +190,13 @@ void APLNF::drawLinearSlider(juce::Graphics &g,
 
 
 	g.setColour(juce::Colours::black);
-	g.fillRoundedRectangle(float(x), constrained - 10.0f, float(width), 20.0f, 5.f); // handle
+    float gap{4.f};
+	g.fillRoundedRectangle(float(x) + gap, constrained - 10.0f, float(width) - 2.f * gap, 20.0f, 5.f); // handle
 	g.setColour(slider.findColour(juce::Slider::thumbColourId).darker(0.7f));
 	g.drawRoundedRectangle(
-	    float(x), constrained - 10.0f, float(width), 20.0f, 5.f, 1.f); // handle outline
+	    float(x) + gap, constrained - 10.0f, float(width) - 2.f * gap, 20.0f, 5.f, 1.f); // handle outline
 	g.setColour(slider.findColour(juce::Slider::thumbColourId));
 	g.fillRect(
-	    x + 5.f, static_cast<float>(constrained) - 1, float(width - 10.f), 3.f); // handle indicator
+	    x + gap + 5.f, static_cast<float>(constrained) - 1, float(width - 2.f * gap - 10.f), 3.f); // handle indicator
 	
 }

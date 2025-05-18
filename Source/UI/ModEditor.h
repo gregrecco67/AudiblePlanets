@@ -28,7 +28,7 @@ public:
 	~ModEditor() override;
 
 	void resized() override;
-	void valueUpdated(gin::Parameter *param) override {}
+	void valueUpdated(gin::Parameter*) override {}
 	void setGrid(
 	    gin::ParamBox *box, float x, float y, float heds, float w, float h);
 	// void timerCallback() override;

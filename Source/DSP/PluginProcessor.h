@@ -280,7 +280,7 @@ public:
 	{
 		modMatrix.setMonoValue(randSrc1Mono, dist(gen));
 		modMatrix.setMonoValue(randSrc2Mono, dist(gen));
-	};
+	}
 
 	gin::ProcessorOptions getOptions() const;
 
