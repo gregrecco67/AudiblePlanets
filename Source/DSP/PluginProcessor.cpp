@@ -1711,12 +1711,6 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 	limiter.process(AContext);
 }
 
-void APAudioProcessor::newRand()
-{
-	modMatrix.setMonoValue(randSrc1Mono, static_cast<float>(dist(gen)));
-	modMatrix.setMonoValue(randSrc2Mono, static_cast<float>(dist(gen)));
-}
-
 gin::ProcessorOptions APAudioProcessor::getOptions() const
 {
 	gin::ProcessorOptions options;

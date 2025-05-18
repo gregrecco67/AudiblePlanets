@@ -49,15 +49,6 @@ ModEditor::~ModEditor()
 	proc.globalParams.mpe->removeListener(this);
 }
 
-void ModEditor::valueUpdated(gin::Parameter *param)
-{
-	if (param == proc.globalParams.pitchbendRange ||
-	    param == proc.globalParams.mpe) {
-		proc.updatePitchbend();
-		return;
-	}
-}
-
 void ModEditor::setGrid(
     gin::ParamBox *box, float x, float y, float heds, float w, float h)
 {

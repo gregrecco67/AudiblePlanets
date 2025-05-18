@@ -31,8 +31,6 @@ public:
 	    int startSample,
 	    int numSamples)
 	{
-		// detach samplerate of this from that of parent class
-		// create infrastructure to manage downsampling
 		gin::Synthesiser::renderNextBlock(
 		    outputAudio, inputMidi, startSample, numSamples);
 	}

@@ -70,15 +70,6 @@ Editor::~Editor()
 	liveViz.setLookAndFeel(nullptr);
 }
 
-void Editor::valueUpdated(gin::Parameter *param)
-{
-	if (param == proc.globalParams.pitchbendRange ||
-	    param == proc.globalParams.mpe) {
-		proc.updatePitchbend();
-		return;
-	}
-}
-
 void Editor::setGrid(
     gin::ParamBox *box, float x, float y, float heds, float w, float h)
 {

@@ -88,17 +88,20 @@ public:
 		}
 	}
 
-	void setRate(float rate) { lfoRate = rate; }
+	inline void setRate(float rate) { lfoRate = rate; }
 
-	void setDepth(float _depth) { depth.setTargetValue(_depth); }
+	inline void setDepth(float _depth) { depth.setTargetValue(_depth); }
 
-	void setFeedback(float _feedback) { feedback = _feedback; }
+	inline void setFeedback(float _feedback) { feedback = _feedback; }
 
-	void setDry(float _dry) { dry = _dry; }
+	inline void setDry(float _dry) { dry = _dry; }
 
-	void setWet(float _wet) { wet = _wet; }
+	inline void setWet(float _wet) { wet = _wet; }
 
-	void setCentreDelay(float _delayTime) { delayTime_ms.setTargetValue(_delayTime); }
+	inline void setCentreDelay(float _delayTime)
+	{
+		delayTime_ms.setTargetValue(_delayTime);
+	}
 
 private:
 	float lfoRate{0.05f}, feedback{0.0f}, dry{0.5f}, wet{0.5f};
@@ -185,21 +188,21 @@ public:
 			}
 		}
 	}
-	void setDry(float dry) { delayDry = dry; }
+	inline void setDry(float dry) { delayDry = dry; }
 
-	void setWet(float wet) { delayWet = wet; }
+	inline void setWet(float wet) { delayWet = wet; }
 
-	void setFB(float fb) { delayFB = fb; }
+	inline void setFB(float fb) { delayFB = fb; }
 
-	void setTimeL(float time) { delayTimeL.setTargetValue(time); }
+	inline void setTimeL(float time) { delayTimeL.setTargetValue(time); }
 
-	void setTimeR(float time) { delayTimeR.setTargetValue(time); }
+	inline void setTimeR(float time) { delayTimeR.setTargetValue(time); }
 
-	void setFreeze(bool _freeze) { freeze = _freeze; }
+	inline void setFreeze(bool _freeze) { freeze = _freeze; }
 
-	void setPing(bool _ping) { ping = _ping; }
+	inline void setPing(bool _ping) { ping = _ping; }
 
-	void setCutoff(float _cutoff) { cutoff.setTargetValue(_cutoff); }
+	inline void setCutoff(float _cutoff) { cutoff.setTargetValue(_cutoff); }
 
 	void resetBuffers()
 	{
@@ -801,7 +804,7 @@ public:
 		gain.process(context);
 	}
 
-	void setGainLevel(float gainLevel)
+	inline void setGainLevel(float gainLevel)
 	{
 		gainLevelSmoothed.setTargetValue(gainLevel);
 		gain.setGainDecibels(gainLevelSmoothed.getCurrentValue());
@@ -951,11 +954,14 @@ public:
 		postGain.process(context);      // gain
 	}
 
-	void setDry(float _dry) { dry = _dry; }
+	inline void setDry(float _dry) { dry = _dry; }
 
-	void setWet(float _wet) { wet = _wet; }
+	inline void setWet(float _wet) { wet = _wet; }
 
-	void setLPCutoff(float freq) { lowPassPostWetCutoff.setTargetValue(freq); }
+	inline void setLPCutoff(float freq)
+	{
+		lowPassPostWetCutoff.setTargetValue(freq);
+	}
 
 	void reset()
 	{
@@ -971,7 +977,7 @@ public:
 		    sampleRate, freq, q, 0.04f);
 	}
 
-	void setFunctionToUse(int function) { currentFunction = function; }
+	inline void setFunctionToUse(int function) { currentFunction = function; }
 
 	float useFunction(float x)
 	{
@@ -1170,7 +1176,7 @@ public:
 		    mix1{0.f}, mix2{0.f}, spread{0.f}, highcut{20000.f}, lowcut{20.f};
 	};
 
-	void setParams(RingModParams &params_) { params = params_; }
+	inline void setParams(RingModParams &params_) { params = params_; }
 
 	void prepare(juce::dsp::ProcessSpec spec)
 	{
@@ -1412,21 +1418,16 @@ public:
 		oversampler->processSamplesDown(context.getOutputBlock());
 	}
 
-	float minimaxSin(float x1) const
+	inline float minimaxSin(float x1) const
 	{
 		float x2 = x1 * x1;
-
-		return x1 *
-		       (0.99999999997884898600402426033768998f +
-		        x2 *
-		            (-0.166666666088260696413164261885310067f +
-		             x2 *
-		                 (0.00833333072055773645376566203656709979f +
-		                  x2 *
-		                      (-0.000198408328232619552901560108010257242f +
-		                       x2 * (2.75239710746326498401791551303359689e-6f -
-		                             2.3868346521031027639830001794722295e-8f *
-		                                 x2)))));
+		
+		return x1 * (0.99999999997884898600402426033768998f +
+		        x2 * (-0.166666666088260696413164261885310067f +
+		        x2 * (0.00833333072055773645376566203656709979f +
+		        x2 * (-0.000198408328232619552901560108010257242f +
+		        x2 * (2.75239710746326498401791551303359689e-6f -
+		              2.3868346521031027639830001794722295e-8f * x2)))));
 	}
 
 private:
@@ -1434,14 +1435,12 @@ private:
 	double sampleRate{44100.0};
 
 	// utility functions
-	juce::dsp::SIMDRegister<float> simdSaw(
-	    juce::dsp::SIMDRegister<float> phases) const
+	juce::dsp::SIMDRegister<float> simdSaw(juce::dsp::SIMDRegister<float> phases) const
 	{
 		return (phases * (float)M_1_PI) * 2.0f - 1.0f;
 	}
 
-	juce::dsp::SIMDRegister<float> simdSquare(
-	    juce::dsp::SIMDRegister<float> phases)
+	juce::dsp::SIMDRegister<float> simdSquare(juce::dsp::SIMDRegister<float> phases)
 	{
 		juce::dsp::SIMDRegister<float> square;
 		square[0] = phases[0] > 0.f ? 1.f : -1.f;
@@ -1497,7 +1496,7 @@ public:
 		gain.process(context);
 	}
 
-	void setParams(float cutoff, float res, float dri)
+	inline void setParams(float cutoff, float res, float dri)
 	{
 		filter.setCutoffFrequencyHz(cutoff);
 		filter.setResonance(res);

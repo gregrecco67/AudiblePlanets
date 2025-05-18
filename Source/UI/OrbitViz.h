@@ -196,29 +196,32 @@ public:
 		g.fillEllipse(equantBody);
 	}
 
-	void setEquant(float input) { equant = std::clamp(input, -.5f, .5f); }
-	void setDefPhase(float phase)
+	inline void setEquant(float input)
+	{
+		equant = std::clamp(input, -.5f, .5f);
+	}
+	inline void setDefPhase(float phase)
 	{
 		defPhase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi);
 	}
-	void setEpi1Phase(float phase)
+	inline void setEpi1Phase(float phase)
 	{
 		epi1Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi);
 	}
-	void setEpi2Phase(float phase)
+	inline void setEpi2Phase(float phase)
 	{
 		epi2Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi);
 	}
-	void setEpi3Phase(float phase)
+	inline void setEpi3Phase(float phase)
 	{
 		epi3Phase = std::clamp(phase, 0.f, juce::MathConstants<float>::twoPi);
 	}
-	void setDefRad(float input) { defRad = validate(input); }
-	void setEpi1Rad(float input) { epi1Rad = validate(input); }
-	void setEpi2Rad(float input) { epi2Rad = validate(input); }
-	void setEpi3Rad(float input) { epi3Rad = validate(input); }
-	void setAlgo(int input) { algo = std::clamp(input, 0, 4); }
-	float validate(float x) const { return std::clamp(x, 0.f, 1.f); }
+	inline void setDefRad(float input) { defRad = validate(input); }
+	inline void setEpi1Rad(float input) { epi1Rad = validate(input); }
+	inline void setEpi2Rad(float input) { epi2Rad = validate(input); }
+	inline void setEpi3Rad(float input) { epi3Rad = validate(input); }
+	inline void setAlgo(int input) { algo = std::clamp(input, 0, 4); }
+	inline float validate(float x) const { return std::clamp(x, 0.f, 1.f); }
 
 	float equant{0.f}, defPhase{0.f}, epi1Phase{0.f}, epi2Phase{0.f},
 	    epi3Phase{0.f}, defRad{1.f}, epi1Rad{0.5f}, epi2Rad{0.25f},

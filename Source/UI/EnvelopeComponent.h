@@ -129,37 +129,37 @@ public:
 	float attack{1.f}, decay{1.f}, sustain{0.5f}, release{1.f},
 	    attackCurve{1.0f}, decayCurve{-1.0f};
 
-	void setAttack(float attackValue)
+	inline void setAttack(float attackValue)
 	{
 		attack = attackValue;
 		repaint();
 	}
 
-	void setDecay(float decayValue)
+	inline void setDecay(float decayValue)
 	{
 		decay = decayValue;
 		repaint();
 	}
 
-	void setSustain(float sustainValue)
+	inline void setSustain(float sustainValue)
 	{
 		sustain = sustainValue;
 		repaint();
 	}
 
-	void setRelease(float releaseValue)
+	inline void setRelease(float releaseValue)
 	{
 		release = releaseValue;
 		repaint();
 	}
 
-	void setAttackCurve(float attackCurveValue)
+	inline void setAttackCurve(float attackCurveValue)
 	{
 		attackCurve = attackCurveValue;
 		repaint();
 	}
 
-	void setDecayCurve(float decayCurveValue)
+	inline void setDecayCurve(float decayCurveValue)
 	{
 		decayCurve = decayCurveValue;
 		repaint();

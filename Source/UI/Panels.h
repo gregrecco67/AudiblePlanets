@@ -677,15 +677,15 @@ public:
 			}
 		}
 
-		void setMacroNumber(int n) { thisMacroNumber = n; }
+		inline void setMacroNumber(int n) { thisMacroNumber = n; }
 
-		void setCCString(const juce::String &s)
+		inline void setCCString(const juce::String &s)
 		{
 			currentAssignment = s;
 			setText(s, juce::dontSendNotification);
 		}
 
-		void setLearning(bool shouldLearn) { learning = shouldLearn; }
+		inline void setLearning(bool shouldLearn) { learning = shouldLearn; }
 
 		class MIDILearnLNF : public APLNF {
 		public:

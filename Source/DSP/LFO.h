@@ -44,18 +44,18 @@ public:
 	~LFO() = default;
 
 	// params
-	void setFrequency(float freq)
+	inline void setFrequency(float freq)
 	{
 		frequency = freq;
 		phaseIncrement = frequency / sampleRate;
 	}
-	void setSampleRate(float newRate)
+	inline void setSampleRate(float newRate)
 	{
-		sampleRate = newRate;
+		sampleRate = (newRate != 0) ? newRate : sampleRate;
 		phaseIncrement = frequency / sampleRate;
 	}
 
-	double lerp(double a, double b, double t) const
+	inline double lerp(double a, double b, double t) const
 	{
 		return a + (b - a) * t;
 	}
@@ -81,7 +81,7 @@ public:
 		return values;
 	}
 
-	void initialize()
+	inline void initialize()
 	{
 		phaseIncrement = frequency / sampleRate;
 		phase = 0.f;

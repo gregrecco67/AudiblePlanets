@@ -1,6 +1,7 @@
 #pragma once
 #include <gin_dsp/gin_dsp.h>
 #include <gin_plugin/gin_plugin.h>
+#include <cmath>
 
 struct Position;
 class APOscillator  // : public gin::StereoOscillator
@@ -9,7 +10,7 @@ public:
 	APOscillator(gin::BandLimitedLookupTables &bllt_);
 	~APOscillator() = default;
 
-	float qrtPhase(const float phase_) const
+	inline float qrtPhase(const float phase_) const
 	{
 		float p2 = phase_ + 0.25f;
 		if (p2 >= 1.0f) {
@@ -18,7 +19,7 @@ public:
 		return p2;
 	}
 
-	void noteOn(float p = -1)
+	inline void noteOn(float p = -1)
 	{
 		if (p >= 0.0f)
 			phase = p;
@@ -26,21 +27,17 @@ public:
 			phase = 0.0f;
 	}
 
-	void setSampleRate(double sr)
+	inline void setSampleRate(double sr)
 	{
 		sampleRate = sr;
 		invSampleRate = 1.0f / sampleRate;
 	}
 
-	void bumpPhase(float bump)
+	inline void bumpPhase(float bump)
 	{
 		phase += bump;
-		if (phase >= 1.0f) {
-			phase -= std::trunc(phase);
-		}
-		while (phase < 0.0f) {
-			phase += 1.0f;
-		}
+		while (phase < 0.0f) { phase += 1.0f; }
+		phase -= std::trunc(phase);
 	}
 
 	struct Settings {

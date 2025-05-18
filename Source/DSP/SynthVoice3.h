@@ -52,16 +52,16 @@ public:
 	}
 
 	bool isVoiceActive() override;
-
+	
 	float getFilterCutoffNormalized();
-	float getMSEG1Phase();
-	float getMSEG2Phase();
-	float getMSEG3Phase();
-	float getMSEG4Phase();
-	float getLFO1Phase();
-	float getLFO2Phase();
-	float getLFO3Phase();
-	float getLFO4Phase();
+	inline float getMSEG1Phase() { return mseg1.getCurrentPhase(); };
+	inline float getMSEG2Phase() { return mseg2.getCurrentPhase(); };
+	inline float getMSEG3Phase() { return mseg3.getCurrentPhase(); };
+	inline float getMSEG4Phase() { return mseg4.getCurrentPhase(); };
+	inline float getLFO1Phase() { return lfo1.getCurrentPhase(); };
+	inline float getLFO2Phase() { return lfo2.getCurrentPhase(); };
+	inline float getLFO3Phase() { return lfo3.getCurrentPhase(); };
+	inline float getLFO4Phase() { return lfo4.getCurrentPhase(); };
 	gin::Wave waveForChoice(int choice);
 
 private:

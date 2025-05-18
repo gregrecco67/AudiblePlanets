@@ -16,10 +16,8 @@ void APOscillator::renderFloats(float freq,
 	float delta = freq * invSampleRate;
 	for (int i = 0; i < numSamples; i++) {
 		xs[i] = bllt.process(settings.wave, freq, phase) * settings.vol;
-		ys[i] =
-		    bllt.process(settings.wave, freq, qrtPhase(phase)) * settings.vol;
+		ys[i] = bllt.process(settings.wave, freq, qrtPhase(phase)) * settings.vol;
 		phase += delta;
-		if (phase >= 1.0f)
-			phase -= 1.0f;
+		phase -= std::trunc(phase);
 	}
 }

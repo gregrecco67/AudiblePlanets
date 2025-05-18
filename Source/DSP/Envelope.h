@@ -64,10 +64,9 @@ public:
 		float syncduration{1.0};
 	};
 
-	void setParameters(const Params &newParameters)
+	inline void setParameters(const Params &newParameters)
 	{
-		// need to call setSampleRate() first!
-		jassert(sampleRate > 0.0);
+		// jassert(sampleRate > 0.0);
 		parameters = newParameters;
 		recalculateRates();
 	}
@@ -80,7 +79,7 @@ public:
 	float getOutput() const { return (float)finalOut; }
 	State getState() const { return state; }
 
-	void setSampleRate(double newSampleRate) noexcept
+	inline void setSampleRate(double newSampleRate) noexcept
 	{
 		if (newSampleRate > 0.0) {
 			sampleRate = newSampleRate;

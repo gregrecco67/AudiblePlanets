@@ -276,7 +276,12 @@ public:
 		JUCE_DECLARE_NON_COPYABLE(AuxParams)
 	};
 
-	void newRand();
+	inline void newRand()
+	{
+		modMatrix.setMonoValue(randSrc1Mono, dist(gen));
+		modMatrix.setMonoValue(randSrc2Mono, dist(gen));
+	};
+
 	gin::ProcessorOptions getOptions() const;
 
 	//==============================================================================
@@ -374,7 +379,7 @@ public:
 
 	std::random_device rd;
 	std::mt19937 gen{rd()};
-	std::uniform_real_distribution<> dist{-1.f, 1.f};
+	std::uniform_real_distribution<float> dist{-1.f, 1.f};
 
 	// antialiasing downsampling filter stuff
 	static constexpr int nbr_coefs1 = 3;
