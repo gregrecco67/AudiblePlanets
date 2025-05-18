@@ -26,7 +26,7 @@
 #include "FXProcessors.h"
 #include "Synth.h"
 #include "hiir/PolyphaseIir2Designer.h"
-#if APPLE
+#if USE_NEON
 #include "hiir/Downsampler2x4Neon.h"
 #include "hiir/Downsampler2xNeon.h"
 #endif
@@ -62,9 +62,9 @@ public:
 
 	void updatePitchbend();
 
-	void dnsplStage1(const juce::dsp::AudioBlock<float> &inputBlock,
+	void downsampleStage1(const juce::dsp::AudioBlock<float> &inputBlock,
 	    juce::dsp::AudioBlock<float> &outputBlock);
-	void dnsplStage2(const juce::dsp::AudioBlock<float> &inputBlock,
+	void downsampleStage2(const juce::dsp::AudioBlock<float> &inputBlock,
 	    juce::dsp::AudioBlock<float> &outputBlock);
 
 	//==============================================================================
@@ -387,7 +387,7 @@ public:
 	double coefs1[nbr_coefs1];
 	double coefs2[nbr_coefs2];
 
-#if APPLE
+#if USE_NEON
 	// hiir::Downsampler2x4Neon <nbr_coefs1> dspl1L, dspl1R;
 	// hiir::Downsampler2x4Neon <nbr_coefs2> dspl2L, dspl2R;
 	hiir::Downsampler2xNeon<nbr_coefs1> dspl1L, dspl1R;

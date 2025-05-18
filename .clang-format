@@ -3,7 +3,7 @@ BasedOnStyle: Chromium
 AccessModifierOffset: '-4'
 AlignAfterOpenBracket: DontAlign
 AlignEscapedNewlines: Left
-AllowAllArgumentsOnNextLine: 'true'
+AllowAllArgumentsOnNextLine: 'false'
 AllowAllConstructorInitializersOnNextLine: 'true'
 AllowAllParametersOfDeclarationOnNextLine: 'true'
 AllowShortBlocksOnASingleLine: 'true'

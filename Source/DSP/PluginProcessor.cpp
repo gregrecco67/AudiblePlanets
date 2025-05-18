@@ -1189,7 +1189,7 @@ void APAudioProcessor::prepareToPlay(
 
 void APAudioProcessor::releaseResources() {}
 
-void APAudioProcessor::dnsplStage1(
+void APAudioProcessor::downsampleStage1(
     const juce::dsp::AudioBlock<float> &inputBlock,
     juce::dsp::AudioBlock<float> &outputBlock)
 {
@@ -1202,7 +1202,7 @@ void APAudioProcessor::dnsplStage1(
 	dspl1L.process_block(outSamplesL, inSamplesL, samples);
 	dspl1R.process_block(outSamplesR, inSamplesR, samples);
 }
-void APAudioProcessor::dnsplStage2(
+void APAudioProcessor::downsampleStage2(
     const juce::dsp::AudioBlock<float> &inputBlock,
     juce::dsp::AudioBlock<float> &outputBlock)
 {
@@ -1330,8 +1330,8 @@ void APAudioProcessor::processBlock(
 		auto bufferSlice = gin::sliceBuffer(buffer, pos, thisBlock);
 		auto bufferSliceBlock = juce::dsp::AudioBlock<float>(bufferSlice);
 
-		dnsplStage1(preSynthBufferSliceBlock, synthBufferSliceBlock);
-		dnsplStage2(synthBufferSliceBlock, bufferSliceBlock);
+		downsampleStage1(preSynthBufferSliceBlock, synthBufferSliceBlock);
+		downsampleStage2(synthBufferSliceBlock, bufferSliceBlock);
 
 		auxSlice = gin::sliceBuffer(auxBuffer, pos, thisBlock);
 

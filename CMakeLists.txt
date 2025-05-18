@@ -4,7 +4,7 @@ if (APPLE)
 	set (CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum OS X deployment version" FORCE)
 	set (CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 	set (CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
-    add_definitions( -DAPPLE )
+    add_definitions( -DUSE_NEON )
 endif()
 
 

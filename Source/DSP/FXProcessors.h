@@ -992,7 +992,7 @@ public:
 				break;
 			case 1:  // atan 2
 				if (std::abs(x) <= 1.f)
-					return std::atan(2.f * x) / 1.10714871779409f;
+					return std::atan(2.f * x) * 0.90322102525f;
 				else if (x > 1.f)
 					return 1.f;
 				else  // if (x < -1.f)
@@ -1000,7 +1000,7 @@ public:
 				break;
 			case 2:  // atan 4
 				if (std::abs(x) <= 1.f)
-					return std::atan(4.f * x) / 1.32581766366803f;
+					return std::atan(4.f * x) * 0.754251529f;
 				else if (x > 1.f)
 					return 1.f;
 				else  // if (x < -1.f)
@@ -1008,7 +1008,7 @@ public:
 				break;
 			case 3:  // atan 6
 				if (std::abs(x) <= 1.f)
-					return std::atan(6.f * x) / 1.40564764938027f;
+					return std::atan(6.f * x) * 0.7114158377f;
 				else if (x > 1.f)
 					return 1.f;
 				else  // if (x < -1.f)
@@ -1016,7 +1016,7 @@ public:
 				break;
 			case 4:  // tanh 2
 				if (std::abs(x) <= 1.f)
-					return std::tanh(2.f * x) / 0.964027580075817f;
+					return std::tanh(2.f * x) * 1.03731472073f;
 				else if (x > 1.f)
 					return 1.f;
 				else  // if (x < -1.f)
@@ -1024,7 +1024,7 @@ public:
 				break;
 			case 5:  // tanh 4
 				if (std::abs(x) <= 1.f)
-					return std::tanh(4.f * x) / 0.999329299739067f;
+					return std::tanh(4.f * x) * 1.0006711504f;
 				else if (x > 1.f)
 					return 1.f;
 				else  // if (x < -1.f)
@@ -1032,7 +1032,7 @@ public:
 				break;
 			case 6:  // tanh 6
 				if (std::abs(x) <= 1.f)
-					return std::tanh(6.f * x) / 0.999987711650796f;
+					return std::tanh(6.f * x) * 1.0000122885f;
 				else if (x > 1.f)
 					return 1.f;
 				else  // if (x < -1.f)
@@ -1076,7 +1076,7 @@ public:
 			case 11:  // "halfwave"
 				if (x > 0.f && x < 1.f)
 					return std::tanh(1.5f * x) *
-					       1.10479139298f;  // 1.104 term is 1/tanh(1.5)
+					       1.10479139298f;
 				else if (x > 1.f)
 					return 1.f;
 				else  // if (x < -1.f)
@@ -1092,9 +1092,8 @@ public:
 				break;
 			case 13:  // "bitcrush"
 				if (std::abs(x) < 0.01f)
-					return 0.f;
+					return x;
 				else {
-					// std::atan(2.f * x) * 0.903221025259f
 					float steps = 16.f - 15.f * (drive / 60.f);
 					return std::clamp(std::floor(steps * std::atan(2.f * x) *
 					                             0.903221025259f) /
@@ -1114,12 +1113,7 @@ public:
 					return juce::jlimit(-1.f, 1.f, x);
 				break;
 			case 15:  // "fullwave"
-				if (x < 0.f) {
-					return -std::tanh(3.f * x) *
-					       0.99505475368f;  // tanh(3x)/tanh(3)
-				} else {
-					return std::tanh(3.f * x) * 0.99505475368f;
-				}
+				return std::abs(std::tanh(3.f * x) * 0.99505475368f);
 				break;
 			case 16:  // "wavefolder"
 				return 4 * (std::abs(0.5f * x + 0.25f -
