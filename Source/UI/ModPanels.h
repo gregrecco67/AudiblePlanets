@@ -9,7 +9,7 @@
 class LFOBox : public gin::ParamBox {
 public:
 	LFOBox(APAudioProcessor &proc_,
-	    APAudioProcessor::LFOParams &lfoParams_,
+	    const APAudioProcessor::LFOParams &lfoParams_,
 	    int num_)
 	    : ParamBox(juce::String("  LFO ") += juce::String(num_)), proc(proc_),
 	      lfoParams(lfoParams_), num(num_), monoSelect(proc, *(proc.monoLfoIds[num - 1])),
@@ -121,7 +121,7 @@ public:
 	juce::Button *poly1, *mono1;
 
 	int currentLFO{1};
-	APAudioProcessor::LFOParams &lfoParams;
+	const APAudioProcessor::LFOParams &lfoParams;
 	int num;
 	gin::LFOComponent *l1;
     ParameterSelector monoSelect, polySelect;

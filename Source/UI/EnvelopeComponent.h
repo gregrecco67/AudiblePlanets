@@ -23,7 +23,7 @@
 class EnvelopeComponent : public juce::Component,
                           public gin::Parameter::ParameterListener {
 public:
-	EnvelopeComponent(APAudioProcessor &proc_, int number)
+	EnvelopeComponent(const APAudioProcessor &proc_, const int number)
 	    : proc(proc_), envelopeNumber(number)
 	{
 		setOpaque(true);
@@ -331,7 +331,7 @@ public:
 	}
 
 private:
-	APAudioProcessor &proc;
+	const APAudioProcessor &proc;
 	int envelopeNumber;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EnvelopeComponent)
 };

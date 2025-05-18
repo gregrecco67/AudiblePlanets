@@ -13,7 +13,7 @@ APSynth::APSynth(APAudioProcessor &proc_) : proc(proc_)
 	}
 }
 
-juce::Array<float> APSynth::getLiveFilterCutoff()
+juce::Array<float> APSynth::getLiveFilterCutoff() const
 {
 	juce::Array<float> values;
 
@@ -26,7 +26,7 @@ juce::Array<float> APSynth::getLiveFilterCutoff()
 	return values;
 }
 
-std::vector<float> APSynth::getMSEG1Phases()
+std::vector<float> APSynth::getMSEG1Phases() const
 {
 	std::vector<float> values;
 
@@ -39,7 +39,7 @@ std::vector<float> APSynth::getMSEG1Phases()
 	return values;
 }
 
-std::vector<float> APSynth::getMSEG2Phases()
+std::vector<float> APSynth::getMSEG2Phases() const
 {
 	std::vector<float> values;
 
@@ -52,7 +52,7 @@ std::vector<float> APSynth::getMSEG2Phases()
 	return values;
 }
 
-std::vector<float> APSynth::getMSEG3Phases()
+std::vector<float> APSynth::getMSEG3Phases() const
 {
 	std::vector<float> values;
 
@@ -65,7 +65,7 @@ std::vector<float> APSynth::getMSEG3Phases()
 	return values;
 }
 
-std::vector<float> APSynth::getMSEG4Phases()
+std::vector<float> APSynth::getMSEG4Phases() const
 {
 	std::vector<float> values;
 
@@ -78,7 +78,8 @@ std::vector<float> APSynth::getMSEG4Phases()
 	return values;
 }
 
-std::vector<float> APSynth::getLFO1Phases() {
+std::vector<float> APSynth::getLFO1Phases() const
+{
 	std::vector<float> values;
 
 	for (auto v : voices) {
@@ -89,7 +90,8 @@ std::vector<float> APSynth::getLFO1Phases() {
 	}
 	return values;
 }
-std::vector<float> APSynth::getLFO2Phases() {
+std::vector<float> APSynth::getLFO2Phases() const
+{
 	std::vector<float> values;
 
 	for (auto v : voices) {
@@ -100,7 +102,8 @@ std::vector<float> APSynth::getLFO2Phases() {
 	}
 	return values;
 }
-std::vector<float> APSynth::getLFO3Phases() {
+std::vector<float> APSynth::getLFO3Phases() const
+{
 	std::vector<float> values;
 
 	for (auto v : voices) {
@@ -111,7 +114,8 @@ std::vector<float> APSynth::getLFO3Phases() {
 	}
 	return values;
 }
-std::vector<float> APSynth::getLFO4Phases() {
+std::vector<float> APSynth::getLFO4Phases() const
+{
 	std::vector<float> values;
 
 	for (auto v : voices) {

@@ -76,9 +76,9 @@ public:
 
 	bool isActive() const noexcept { return state != State::idle; }
 
-	float getValue() { return (float)finalOut; }
-	float getOutput() { return (float)finalOut; }
-	State getState() { return state; }
+	float getValue() const { return (float)finalOut; }
+	float getOutput() const { return (float)finalOut; }
+	State getState() const { return state; }
 
 	void setSampleRate(double newSampleRate) noexcept
 	{

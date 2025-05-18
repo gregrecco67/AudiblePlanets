@@ -21,9 +21,9 @@
 #include "EnvelopeComponent.h"
 
 inline void gradientRect(juce::Graphics &g,
-    juce::Rectangle<int> rc,
-    juce::Colour c1,
-    juce::Colour c2)
+    const juce::Rectangle<int> rc,
+    const juce::Colour c1,
+    const juce::Colour c2)
 {
 	juce::ColourGradient gradient(c1, (float)rc.getX(), (float)rc.getY(), c2,
 	    (float)rc.getRight(), (float)rc.getBottom(), false);
@@ -37,7 +37,7 @@ inline void gradientRect(juce::Graphics &g,
 class OSCBox : public gin::ParamBox {
 public:
 	OSCBox(
-	    APAudioProcessor &proc_, APAudioProcessor::OSCParams &params_, int num_)
+	    APAudioProcessor &proc_, const APAudioProcessor::OSCParams &params_, const int num_)
 	    : gin::ParamBox(juce::String("  OSC ") += (num_ + 1)), proc(proc_),
 	      oscparams(params_), num(num_)
 	{
@@ -175,7 +175,7 @@ public:
 	std::array<APLNF *, 4> lnfs{&lnf1, &lnf2, &lnf3, &lnf4};
 	APAudioProcessor &proc;
 	gin::ParamComponent::Ptr c1, f1, v1, p1, wave1, env1, fixed1;
-	APAudioProcessor::OSCParams &oscparams;
+	const APAudioProcessor::OSCParams &oscparams;
 	int num{0};
 	juce::Label fixedHz1, coarseLabel;
 };
@@ -195,7 +195,7 @@ public:
 class ENVBox : public gin::ParamBox, public juce::Timer {
 public:
 	ENVBox(
-	    APAudioProcessor &proc_, APAudioProcessor::ENVParams &params_, int num_)
+	    APAudioProcessor &proc_, const APAudioProcessor::ENVParams &params_, int num_)
 	    : gin::ParamBox(juce::String("  ENV ") += (num_ + 1)), proc(proc_),
 	      num(num_), envparams(params_), pSelect(proc, *(proc.envSrcIds[num]))
 	{
@@ -321,14 +321,14 @@ public:
 
 	int num;
 	EnvelopeComponent envViz{proc, num + 1};
-	APAudioProcessor::ENVParams &envparams;
+	const APAudioProcessor::ENVParams &envparams;
 	ParameterSelector pSelect;
 };
 
 //==============================================================================
 class TimbreBox : public gin::ParamBox {
 public:
-	TimbreBox(const juce::String &name, APAudioProcessor &proc)
+	TimbreBox(const juce::String &name, const APAudioProcessor &proc)
 	    : gin::ParamBox(name)
 	{
 		setName(name);

@@ -1361,7 +1361,7 @@ void APAudioProcessor::processBlock(
 	auxSynth.endBlock(numSamples);
 }
 
-juce::Array<float> APAudioProcessor::getLiveFilterCutoff()
+juce::Array<float> APAudioProcessor::getLiveFilterCutoff() const
 {
 	return synth.getLiveFilterCutoff();
 }
@@ -1717,7 +1717,7 @@ void APAudioProcessor::newRand()
 	modMatrix.setMonoValue(randSrc2Mono, static_cast<float>(dist(gen)));
 }
 
-gin::ProcessorOptions APAudioProcessor::getOptions()
+gin::ProcessorOptions APAudioProcessor::getOptions() const
 {
 	gin::ProcessorOptions options;
 	options.pluginName = "Audible Planets";

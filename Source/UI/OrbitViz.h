@@ -218,7 +218,7 @@ public:
 	void setEpi2Rad(float input) { epi2Rad = validate(input); }
 	void setEpi3Rad(float input) { epi3Rad = validate(input); }
 	void setAlgo(int input) { algo = std::clamp(input, 0, 4); }
-	float validate(float x) { return std::clamp(x, 0.f, 1.f); }
+	float validate(float x) const { return std::clamp(x, 0.f, 1.f); }
 
 	float equant{0.f}, defPhase{0.f}, epi1Phase{0.f}, epi2Phase{0.f},
 	    epi3Phase{0.f}, defRad{1.f}, epi1Rad{0.5f}, epi2Rad{0.25f},

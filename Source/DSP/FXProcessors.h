@@ -967,14 +967,8 @@ public:
 	{
 		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
 		    sampleRate, freq, q, 25.0f);
-		//*preBoostR.coefficients =
-		//*juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq,
-		//q, 63.0f);
 		*postCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
 		    sampleRate, freq, q, 0.04f);
-		//*postCutR.coefficients =
-		//*juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, freq,
-		//q, 0.015849f);
 	}
 
 	void setFunctionToUse(int function) { currentFunction = function; }
@@ -1094,10 +1088,11 @@ public:
 				if (std::abs(x) < 0.01f)
 					return 0.f;
 				else {
-					float steps = 8.f - 7.f * (drive / 60.f);
-					return std::floor(steps * std::atan(2.f * x) *
-					                  0.903221025259f) /
-					       steps;
+					// std::atan(2.f * x) * 0.903221025259f
+					float steps = 16.f - 15.f * (drive / 60.f);
+					return std::clamp(std::floor(steps * std::atan(2.f * x) *
+					                             0.903221025259f) /
+					       steps, -1.f, 1.f);
 				}
 				break;
 			case 14:  // "noise"
@@ -1417,7 +1412,7 @@ public:
 		oversampler->processSamplesDown(context.getOutputBlock());
 	}
 
-	float minimaxSin(float x1)
+	float minimaxSin(float x1) const
 	{
 		float x2 = x1 * x1;
 
@@ -1440,7 +1435,7 @@ private:
 
 	// utility functions
 	juce::dsp::SIMDRegister<float> simdSaw(
-	    juce::dsp::SIMDRegister<float> phases)
+	    juce::dsp::SIMDRegister<float> phases) const
 	{
 		return (phases * (float)M_1_PI) * 2.0f - 1.0f;
 	}
@@ -1508,8 +1503,6 @@ public:
 		filter.setResonance(res);
 		filter.setDrive(dri);
 	}
-
-	// gain.setGainDecibels(float)
 
 	juce::dsp::LadderFilter<float> filter;
 	juce::dsp::Gain<float> gain;

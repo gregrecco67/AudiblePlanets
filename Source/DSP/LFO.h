@@ -55,7 +55,7 @@ public:
 		phaseIncrement = frequency / sampleRate;
 	}
 
-	double lerp(double a, double b, double t)
+	double lerp(double a, double b, double t) const
 	{
 		return a + (b - a) * t;
 	}

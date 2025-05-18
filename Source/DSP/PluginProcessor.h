@@ -70,7 +70,7 @@ public:
 	//==============================================================================
 
 	//==============================================================================
-	juce::Array<float> getLiveFilterCutoff();
+	juce::Array<float> getLiveFilterCutoff() const;
 
 	void applyEffects(juce::AudioSampleBuffer &buffer);
 
@@ -277,7 +277,7 @@ public:
 	};
 
 	void newRand();
-	gin::ProcessorOptions getOptions();
+	gin::ProcessorOptions getOptions() const;
 
 	//==============================================================================
 	gin::ModSrcId modSrcPressure, modSrcTimbre, modSrcMonoPitchbend, modSrcNote,

@@ -12,16 +12,16 @@ public:
 	~APSynth() override = default;
 
 	void handleMidiEvent(const juce::MidiMessage &m) override;
-	juce::Array<float> getLiveFilterCutoff();
+	juce::Array<float> getLiveFilterCutoff() const;
 
-	std::vector<float> getMSEG1Phases();
-	std::vector<float> getMSEG2Phases();
-	std::vector<float> getMSEG3Phases();
-	std::vector<float> getMSEG4Phases();
-	std::vector<float> getLFO1Phases();
-	std::vector<float> getLFO2Phases();
-	std::vector<float> getLFO3Phases();
-	std::vector<float> getLFO4Phases();
+	std::vector<float> getMSEG1Phases() const;
+	std::vector<float> getMSEG2Phases() const;
+	std::vector<float> getMSEG3Phases() const;
+	std::vector<float> getMSEG4Phases() const;
+	std::vector<float> getLFO1Phases() const;
+	std::vector<float> getLFO2Phases() const;
+	std::vector<float> getLFO3Phases() const;
+	std::vector<float> getLFO4Phases() const;
 
 	void setCurrentPlaybackSampleRate(double newRate) override;
 

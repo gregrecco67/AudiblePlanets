@@ -9,7 +9,7 @@ public:
 	APOscillator(gin::BandLimitedLookupTables &bllt_);
 	~APOscillator() = default;
 
-	float qrtPhase(const float phase_)
+	float qrtPhase(const float phase_) const
 	{
 		float p2 = phase_ + 0.25f;
 		if (p2 >= 1.0f) {
