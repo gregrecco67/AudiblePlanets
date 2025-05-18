@@ -10,18 +10,19 @@ Envelope::Envelope()
 		// generate lookup tables for MMA curves
 		for (int i = 1; i < 1999; i++) {
 			// MMA curve transforms
-			if (((double)i / 2000.0) >
-			    0.996)  // tail ends blow up, so we go linear for last stretch
-				concave[i] = (double)i / 2000.0;
-			else
-				concave[i] = std::min(
-				    -(5.0 / 12.0) * std::log10(1.0 - (double)i / 2000.0), 1.0);
+			if (((double)i / 2000.0) > 0.99) {
+				// linear segment avoids blow-up
+				concave[i] = 16.6666666666667 * (i / 2000. - 0.99) + 0.8333333333333;
+			} else {
+				concave[i] = std::min(-(5.0 / 12.0) * std::log10(1.0 - (i / 2000.0)), 1.0);
+			}
 
-			if (((double)i / 2000.0) < 0.004)  // negative blow-up
-				convex[i] = (double)i / 2000.0;
-			else
-				convex[i] = std::max(
-				    1 + (5.0 / 12.0) * std::log10((double)i / 2000.0), 0.0);
+			if (((double)i / 2000.0) < 0.01) {
+				// here it comes to save the day
+				convex[i] = 16.666666666667 * (i/2000.0);
+			} else {
+				convex[i] = std::max(1 + (5.0 / 12.0) * std::log10(i / 2000.0), 0.0);
+			}
 		}
 		concave[0] = 0.0;
 		convex[0] = 0.0;
