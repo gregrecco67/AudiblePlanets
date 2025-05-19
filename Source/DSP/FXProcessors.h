@@ -11,6 +11,7 @@
  * All source for Audible Planets is available at
  * https://github.com/gregrecco67/AudiblePlanets
  */
+#pragma once
 
 #define _USE_MATH_DEFINES
 #include <gin_dsp/gin_dsp.h>
@@ -21,8 +22,16 @@
 #include <memory>
 #include "FastMath.hpp"
 #include "LFO.h"
+#if USE_NEON
+#include "hiir/Downsampler2xNeon.h"
+#include "hiir/Upsampler2xNeon.h"
+#endif
 
-#pragma once
+#if USE_SSE
+#include "hiir/Upsampler2xNeon.h"
+#include "hiir/Downsampler2xSse.h"
+#endif
+
 
 class ChorusProcessor {
 public:
@@ -900,12 +909,17 @@ public:
 	void prepare(juce::dsp::ProcessSpec spec)
 	{
 		sampleRate = spec.sampleRate;
+		auto upsampledSpec = spec;
+		upsampledSpec.sampleRate = sampleRate * 2.0;
+
+		usL.set_coefs(coefs1);
+		usR.set_coefs(coefs1);
 
 		// see https://signalsmith-audio.co.uk/writing/2022/warm-distortion/
 		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
 		    sampleRate, 6500.f, 1.0f, 25.f);
 		*postCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
-		    sampleRate, 6500.f, 1.0f, 0.04f);
+		    upsampledRate, 6500.f, 1.0f, 0.04f);
 		lowPassPostWet.setCutoffFrequency(2000.0f);
 
 		preGain.prepare(spec);
@@ -1150,14 +1164,34 @@ private:
 	juce::SmoothedValue<float> lowPassPostWetCutoff;
 
 	double sampleRate{44100.0};
-	int currentFunction =
-	    -1;  // to trigger a change on first setFunctionToUse call
-	// juce::dsp::WaveShaper<float> waveShaper;
+	double upsampledRate{88200.0};
+	int currentFunction = -1;  // to trigger a change on first setFunctionToUse call
 	float dry{0.5f}, wet{0.5f};
 	juce::dsp::Gain<float> preGain;
 	juce::dsp::Gain<float> postGain;
 	float drive{1.f};
 	gin::PinkNoise pinkNoise;
+		static constexpr int nbr_coefs1 = 8;
+	double coefs1[nbr_coefs1]{        
+		0.044076093956155402,
+        0.16209555156378622,
+        0.32057678606990592,
+        0.48526821501990786,
+        0.63402005787429128,
+        0.75902855561016014,
+        0.86299283427175177,
+        0.9547836337311687
+	};
+
+#if USE_NEON
+	hiir::Downsampler2xNeon<nbr_coefs1> dsL, dsR;
+    hiir::Upsampler2xNeon<nbr_coefs1> usL, usR;
+#endif
+
+#if USE_SSE
+	hiir::Upsampler2xSse<nbr_coefs1> usL, usR;
+	hiir::Downsampler2xSse<nbr_coefs1> dsL, dsR;
+#endif
 };
 
 class RingModulator {
