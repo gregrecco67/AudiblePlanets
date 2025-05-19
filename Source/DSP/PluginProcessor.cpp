@@ -500,7 +500,7 @@ void APAudioProcessor::LFOParams::setup(
 	wave = p.addIntParam(id + "wave", nm + " Wave", "Wave", "",
 	    {1.0, 17.0, 1.0, 1.0}, 1.0, 0.0f, lfoTextFunction);
 	rate = p.addExtParam(id + "rate", nm + " Rate", "Rate", " Hz",
-	    {0.0, 50.0, 0.0, 0.3f}, 10.0, 0.0f);
+	    {0.0, 50.0, 0.0, 0.3f}, 1.0, 0.0f);
 	beat = p.addIntParam(id + "beat", nm + " Beat", "Beat", "",
 	    {0.0, float(notes.size() - 1), 1.0, 1.0}, 23.0, 0.0f,
 	    durationTextFunction);
