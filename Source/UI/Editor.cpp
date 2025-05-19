@@ -103,7 +103,8 @@ void Editor::resized()
 	    static_cast<int>(4 * 70.f + 2 * 23.f), 75, 25);
 	speedSlider.setBounds(14 * 56, 4 * 70 + 2 * 23, 112, 25);
 
-	setGrid(&modsrc, 16, 0, 0, 5, 4.328571f);
+	//setGrid(&modsrc, 16, 0, 0, 5, 4.328571f);
+    modsrc.setBounds(16 * 56, 0, 5 * 56, 326);
 	// setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
 	matrix.setBounds(16 * 56, 326, 5 * 56, 326);
 }

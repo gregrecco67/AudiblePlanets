@@ -72,5 +72,6 @@ void ModEditor::resized()
 	setGrid(&timbre, 13, 4, 2, 3, 2);
 	setGrid(&macros, 13, 6, 3, 3, 2);
 	modsrc.setBounds(16 * 56, 0, 5 * 56, 326);
-	matrix.setBounds(16 * 56, 326, 5 * 56, 4.328571f * 70 + 23.f);
+	//matrix.setBounds(16 * 56, 326, 5 * 56, 4.328571f * 70 + 23.f);
+    matrix.setBounds(16 * 56, 326, 5 * 56, 326);
 }

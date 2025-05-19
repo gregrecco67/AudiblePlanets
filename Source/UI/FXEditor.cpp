@@ -116,8 +116,8 @@ void FXEditor::setGrid(
 
 void FXEditor::resized()
 {
-	setGrid(&mod, 16, 0, 0, 5, 4.328571f);
-
+	//setGrid(&mod, 16, 0, 0, 5, 4.328571f);
+    mod.setBounds(16 * 56, 0, 5 * 56, 326);
 	matrix.setBounds(16 * 56, 326, 5 * 56, 326);
 
 	fxa1Selector.setBounds(188, 7, 168, 15);
