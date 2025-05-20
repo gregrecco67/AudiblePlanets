@@ -988,7 +988,7 @@ public:
     inline void setGain(float pre, float post)
     {
         drive.setTargetValue(pre);
-        preGain.setGainDecibels(drive.currentValue());
+        preGain.setGainDecibels(drive.getNextValue());
         postGain.setGainDecibels(post);
     }
     
@@ -1031,7 +1031,7 @@ public:
 			case 3:  // fullwave
                 return std::abs(std::tanh(x));
 			case 4:  // folder
-                return std::sin((1.f + juce::Decibels::decibelsToGain(drive*.16f)) * x);
+                return std::sin((1.f + juce::Decibels::decibelsToGain(drive.getNextValue() * .16f)) * x);
 			default:
 				return x;
 				break;
