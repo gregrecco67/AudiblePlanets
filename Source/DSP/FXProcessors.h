@@ -33,7 +33,7 @@
 #endif
 
 #if USE_SSE
-#include "hiir/Upsampler2xNeon.h"
+#include "hiir/Upsampler2xSse.h"
 #include "hiir/Downsampler2xSse.h"
 #endif
 
@@ -915,79 +915,76 @@ public:
 	{
 		sampleRate = spec.sampleRate;
 		auto upsampledSpec = spec;
-		upsampledSpec.sampleRate = sampleRate * 2.0;
+		upsampledRate = sampleRate * 2.0;
+		upsampledSpec.sampleRate = upsampledRate;
 
 		usL.set_coefs(coefs1);
 		usR.set_coefs(coefs1);
         dsL.set_coefs(coefs1);
         dsR.set_coefs(coefs1);
 
-		// see https://signalsmith-audio.co.uk/writing/2022/warm-distortion/
-		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
-		    sampleRate, 6500.f, 1.0f, 25.f);
-		postCutL.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
-		    upsampledRate, 6500.f, 1.0f, 0.04f);
-        postCutR.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
-            upsampledRate, 6500.f, 1.0f, 0.04f);
-		lowPassPostWet.setCutoffFrequency(2000.0f);
-
 		preGain.prepare(spec);
 		postGain.prepare(spec);
 		preGain.setRampDurationSeconds(0.05);
 		postGain.setRampDurationSeconds(0.05);
-		lowPassPostWetCutoff.reset(sampleRate, 0.02f);
+		lowPassPostWet.prepare(upsampledSpec);
+		lowPassPostWetCutoff.reset(upsampledRate, 0.02f);
 		lowPassPostWetCutoff.setTargetValue(2000.0f);
-		preBoost.prepare(spec);
+		lowPassPostWet.setCutoffFrequency(2000.0f);
+		preBoost.prepare(upsampledSpec);
+		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+		    upsampledRate, 6500.f, 1.0f, 25.f);
 		postCutL.prepare(upsampledSpec);
         postCutR.prepare(upsampledSpec);
-		lowPassPostWet.prepare(upsampledSpec);
-		*highPassPost.state =
-		    *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate,
-		                                                       40.0f);
+		postCutL.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+		    upsampledRate, 6500.f, 1.0f, 0.04f);
+        postCutR.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+            upsampledRate, 6500.f, 1.0f, 0.04f);
 		highPassPost.prepare(spec);
+		*highPassPost.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 40.0f);
 	}
 
 	void process(juce::dsp::ProcessContextReplacing<float> context)
 	{
 		int numSamples =
 		    static_cast<int>(context.getOutputBlock().getNumSamples());
+		auto num2 = numSamples * 2;
 
-		preBoost.process(context);  // high shelf
 
-		lowPassPostWetCutoff.skip(numSamples);
-		float cutoff = lowPassPostWetCutoff.getCurrentValue();
-		lowPassPostWet.setCutoffFrequency(cutoff);
+		preGain.process(context);
 
 		auto *dataL = context.getOutputBlock().getChannelPointer(0);
 		auto *dataR = context.getOutputBlock().getChannelPointer(1);
         
         usL.process_block(us1L, dataL, numSamples);
         usR.process_block(us1R, dataR, numSamples);
+		float *channels[2]{us2L, us2R};
+		auto upblock = juce::dsp::AudioBlock<float>(channels, static_cast<size_t>(2), static_cast<size_t>(num2));
+		auto upcontext = juce::dsp::ProcessContextReplacing<float>(upblock);
         
-        auto num2 = numSamples * 2;
-        
+		preBoost.process(upcontext);
+		lowPassPostWetCutoff.skip(numSamples);
+		lowPassPostWet.setCutoffFrequency(lowPassPostWetCutoff.getCurrentValue());
+		
 		for (int i = 0; i < num2; i++) {
 			float left = us1L[i];
 			float right = us1R[i];
-			us2L[i] = postCutL.processSample(
-                        lowPassPostWet.processSample(0,
-                        useFunction(preGain.processSample(left)))) * wet
+			us2L[i] = lowPassPostWet.processSample(0,
+                        postCutL.processSample(useFunction(left))) * wet
                         + left * dry;
-			us2R[i] = postCutR.processSample(
-                        lowPassPostWet.processSample(1,
-                        useFunction(preGain.processSample(right)))) * wet
+			us2R[i] = lowPassPostWet.processSample(1,
+						postCutR.processSample(useFunction(right))) * wet
                         + right * dry;
 		}
         
         dsL.process_block(dataL, us2L, numSamples);
         dsR.process_block(dataR, us2R, numSamples);
         
-        highPassPost.process(context);  // high pass = > 40 Hz
-		postGain.process(context);      // gain
+        highPassPost.process(context);
+		postGain.process(context);
 	}
 
 	inline void setDry(float _dry) { dry = _dry; }
-
 	inline void setWet(float _wet) { wet = _wet; }
 
 	inline void setLPCutoff(float freq)
@@ -1005,8 +1002,10 @@ public:
 	{
 		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
 		    sampleRate, freq, q, 25.0f);
-		*postCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
-		    sampleRate, freq, q, 0.04f);
+		postCutL.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+		    upsampledRate, freq, q, 0.04f);
+		postCutR.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+			upsampledRate, freq, q, 0.04f);
 	}
 
 	inline void setFunctionToUse(int function) { currentFunction = function; }
@@ -1061,7 +1060,7 @@ public:
                 if (std::abs(x) <= 1.f) { return -(4.f * x * x * x - 3.f * x); }
 				else if (x > 1.f)
 					return -1.f;  // flipped for continuity with above
-				else              // if (x < -1.f)
+				else // if (x < -1.f)
 					return 1.f;
 				break;
 			case 10:  // cheb5
@@ -1130,9 +1129,7 @@ public:
 	{
 		drive = pre;
 		preGain.setGainDecibels(pre);
-		postGain.setGainDecibels(
-		    juce::jmin(post - (pre * 0.33f),
-		               -6.f));  // compensate for preGain but only partly
+		postGain.setGainDecibels(post); // - juce::jmin(pre * 0.25f, 6.f));
 	}
 
 private:
@@ -1143,12 +1140,11 @@ private:
     float us2R[MINI_BLOCK_SIZE*2]{0.f};
 
 	using Filter = juce::dsp::IIR::Filter<float>;
-	Filter preBoostL, preBoostR, postCutL, postCutR, highPassPostL,
-	    highPassPostR;
+	Filter postCutL, postCutR;
 
 	juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>,
 	                               juce::dsp::IIR::Coefficients<float>>
-	    preBoost, postCut, highPassPost;
+	    preBoost, highPassPost; //  postCut
 
 	juce::dsp::StateVariableTPTFilter<float> lowPassPostWet;
 	juce::SmoothedValue<float> lowPassPostWetCutoff;
