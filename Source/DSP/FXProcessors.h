@@ -22,6 +22,11 @@
 #include <memory>
 #include "FastMath.hpp"
 #include "LFO.h"
+#define MINI_BLOCK_SIZE 32
+#define C5_95 -0.017005f
+#define C5_m95 0.017005f
+
+
 #if USE_NEON
 #include "hiir/Downsampler2xNeon.h"
 #include "hiir/Upsampler2xNeon.h"
@@ -914,12 +919,16 @@ public:
 
 		usL.set_coefs(coefs1);
 		usR.set_coefs(coefs1);
+        dsL.set_coefs(coefs1);
+        dsR.set_coefs(coefs1);
 
 		// see https://signalsmith-audio.co.uk/writing/2022/warm-distortion/
 		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
 		    sampleRate, 6500.f, 1.0f, 25.f);
-		*postCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+		postCutL.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
 		    upsampledRate, 6500.f, 1.0f, 0.04f);
+        postCutR.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+            upsampledRate, 6500.f, 1.0f, 0.04f);
 		lowPassPostWet.setCutoffFrequency(2000.0f);
 
 		preGain.prepare(spec);
@@ -929,8 +938,9 @@ public:
 		lowPassPostWetCutoff.reset(sampleRate, 0.02f);
 		lowPassPostWetCutoff.setTargetValue(2000.0f);
 		preBoost.prepare(spec);
-		postCut.prepare(spec);
-		lowPassPostWet.prepare(spec);
+		postCutL.prepare(upsampledSpec);
+        postCutR.prepare(upsampledSpec);
+		lowPassPostWet.prepare(upsampledSpec);
 		*highPassPost.state =
 		    *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate,
 		                                                       40.0f);
@@ -950,21 +960,29 @@ public:
 
 		auto *dataL = context.getOutputBlock().getChannelPointer(0);
 		auto *dataR = context.getOutputBlock().getChannelPointer(1);
-		for (int i = 0; i < numSamples; i++) {
-			float left = dataL[i];
-			float right = dataR[i];
-			dataL[i] = lowPassPostWet.processSample(
-			               0, useFunction(preGain.processSample(left))) *
-			               wet +
-			           left * dry;
-			dataR[i] = lowPassPostWet.processSample(
-			               1, useFunction(preGain.processSample(right))) *
-			               wet +
-			           right * dry;
+        
+        usL.process_block(us1L, dataL, numSamples);
+        usR.process_block(us1R, dataR, numSamples);
+        
+        auto num2 = numSamples * 2;
+        
+		for (int i = 0; i < num2; i++) {
+			float left = us1L[i];
+			float right = us1R[i];
+			us2L[i] = postCutL.processSample(
+                        lowPassPostWet.processSample(0,
+                        useFunction(preGain.processSample(left)))) * wet
+                        + left * dry;
+			us2R[i] = postCutR.processSample(
+                        lowPassPostWet.processSample(1,
+                        useFunction(preGain.processSample(right)))) * wet
+                        + right * dry;
 		}
-
-		postCut.process(context);       // high shelf
-		highPassPost.process(context);  // high pass
+        
+        dsL.process_block(dataL, us2L, numSamples);
+        dsR.process_block(dataR, us2R, numSamples);
+        
+        highPassPost.process(context);  // high pass = > 40 Hz
 		postGain.process(context);      // gain
 	}
 
@@ -1005,52 +1023,22 @@ public:
 					return -1.f;
 				break;
 			case 1:  // atan 2
-				if (std::abs(x) <= 1.f)
-					return std::atan(2.f * x) * 0.90322102525f;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
+                return std::atan(2.f * x) * 0.90322102525f;
 				break;
 			case 2:  // atan 4
-				if (std::abs(x) <= 1.f)
-					return std::atan(4.f * x) * 0.754251529f;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
+				return std::atan(4.f * x) * 0.754251529f;
 				break;
 			case 3:  // atan 6
-				if (std::abs(x) <= 1.f)
-					return std::atan(6.f * x) * 0.7114158377f;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
+                return std::atan(6.f * x) * 0.7114158377f;
 				break;
 			case 4:  // tanh 2
-				if (std::abs(x) <= 1.f)
-					return std::tanh(2.f * x) * 1.03731472073f;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
+                return std::tanh(2.f * x) * 1.03731472073f;
 				break;
 			case 5:  // tanh 4
-				if (std::abs(x) <= 1.f)
-					return std::tanh(4.f * x) * 1.0006711504f;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
+				return std::tanh(4.f * x) * 1.0006711504f;
 				break;
 			case 6:  // tanh 6
-				if (std::abs(x) <= 1.f)
-					return std::tanh(6.f * x) * 1.0000122885f;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
+				return std::tanh(6.f * x) * 1.0000122885f;
 				break;
 			case 7:  // cubic mid
 				if (std::abs(x) <= 1.f)
@@ -1069,24 +1057,22 @@ public:
 					return -1.f;
 				break;
 			case 9:  // cheb3
-				if (std::abs(x) <= 1.f)
-					return -(
-					    4.f * x * x * x -
-					    3.f * x);  // negative, so dry and wet don't interfere
+                // negative so dry and wet don't interfere
+                if (std::abs(x) <= 1.f) { return -(4.f * x * x * x - 3.f * x); }
 				else if (x > 1.f)
 					return -1.f;  // flipped for continuity with above
 				else              // if (x < -1.f)
 					return 1.f;
 				break;
 			case 10:  // cheb5
-				if (std::abs(x) <= 1.f)
-					return 16.f * x * x * x * x * x - 20.f * x * x * x +
-					       5.f * x;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
-				break;
+                if (std::abs(x) <= 1.f) { return 16.f * x * x * x * x * x - 20.f * x * x * x + 5.f * x; }
+                else if ((x > 1.f)) {
+                    return 1.f;
+                }
+                else if (x < -1.f) {
+                    return -1.f;
+                }
+
 			case 11:  // "halfwave"
 				if (x > 0.f && x < 1.f)
 					return std::tanh(1.5f * x) *
@@ -1151,6 +1137,10 @@ public:
 
 private:
 	juce::AudioBuffer<float> inBuffer;
+    float us1L[MINI_BLOCK_SIZE*2]{0.f};
+    float us2L[MINI_BLOCK_SIZE*2]{0.f};
+    float us1R[MINI_BLOCK_SIZE*2]{0.f};
+    float us2R[MINI_BLOCK_SIZE*2]{0.f};
 
 	using Filter = juce::dsp::IIR::Filter<float>;
 	Filter preBoostL, preBoostR, postCutL, postCutR, highPassPostL,

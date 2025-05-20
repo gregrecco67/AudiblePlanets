@@ -1302,7 +1302,7 @@ void APAudioProcessor::processBlock(
 	auxBuffer.clear();
 
 	while (todo > 0) {
-		int thisBlock = std::min(todo, 32);
+		int thisBlock = std::min(todo, MINI_BLOCK_SIZE);
 		updateParams(thisBlock);
 
 		if (auxParams.enable->isOn()) {
