@@ -120,7 +120,7 @@ public:
 private:
 	float lfoRate{0.05f}, feedback{0.0f}, dry{0.5f}, wet{0.5f};
 	juce::LinearSmoothedValue<float> delayTime_ms, depth;
-	LFO lfo;                            
+	LFO lfo;
 	float currentSampleRate = 44100.f;
 	gin::DelayLine centerDelayBuffer{1}, leftDelayBuffer{1},
 	    rightDelayBuffer{1};
@@ -905,10 +905,9 @@ private:
 	float currentSampleRate{44100.0f};
 };
 
-// began process of adding a high boost/cut pair around the waveshaper
 class WaveShaperProcessor {
 public:
-	WaveShaperProcessor() { setFunctionToUse(0); }
+    WaveShaperProcessor() = default;
 	~WaveShaperProcessor() = default;
 
 	void prepare(juce::dsp::ProcessSpec spec)
@@ -923,62 +922,59 @@ public:
         dsL.set_coefs(coefs1);
         dsR.set_coefs(coefs1);
 
-		preGain.prepare(spec);
-		postGain.prepare(spec);
+        drive.reset(upsampledRate, 0.02f);
+        preGain.prepare(upsampledSpec);
 		preGain.setRampDurationSeconds(0.05);
-		postGain.setRampDurationSeconds(0.05);
-		lowPassPostWet.prepare(upsampledSpec);
-		lowPassPostWetCutoff.reset(upsampledRate, 0.02f);
-		lowPassPostWetCutoff.setTargetValue(2000.0f);
-		lowPassPostWet.setCutoffFrequency(2000.0f);
-		preBoost.prepare(upsampledSpec);
-		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+		lpf.prepare(upsampledSpec);
+		lpfCutoff.reset(upsampledRate, 0.02f);
+		lpf.setCutoffFrequency(2000.0f);
+		hsUp.prepare(upsampledSpec);
+		*hsUp.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
 		    upsampledRate, 6500.f, 1.0f, 25.f);
-		postCutL.prepare(upsampledSpec);
-        postCutR.prepare(upsampledSpec);
-		postCutL.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
-		    upsampledRate, 6500.f, 1.0f, 0.04f);
-        postCutR.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+        hsDown.prepare(upsampledSpec);
+        *hsDown.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
             upsampledRate, 6500.f, 1.0f, 0.04f);
 		highPassPost.prepare(spec);
 		*highPassPost.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 40.0f);
+        postGain.setRampDurationSeconds(0.05);
+        postGain.prepare(spec);
 	}
 
 	void process(juce::dsp::ProcessContextReplacing<float> context)
 	{
-		int numSamples =
-		    static_cast<int>(context.getOutputBlock().getNumSamples());
-		auto num2 = numSamples * 2;
-
-
-		preGain.process(context);
+		int numSamples = static_cast<int>(context.getOutputBlock().getNumSamples());
+		auto numSamples2 = numSamples * 2;
 
 		auto *dataL = context.getOutputBlock().getChannelPointer(0);
 		auto *dataR = context.getOutputBlock().getChannelPointer(1);
-        
         usL.process_block(us1L, dataL, numSamples);
         usR.process_block(us1R, dataR, numSamples);
-		float *channels[2]{us2L, us2R};
-		auto upblock = juce::dsp::AudioBlock<float>(channels, static_cast<size_t>(2), static_cast<size_t>(num2));
+		float *channels[2]{us1L, us1R};
+		auto upblock = juce::dsp::AudioBlock<float>(channels, static_cast<size_t>(2), static_cast<size_t>(numSamples2));
 		auto upcontext = juce::dsp::ProcessContextReplacing<float>(upblock);
         
-		preBoost.process(upcontext);
-		lowPassPostWetCutoff.skip(numSamples);
-		lowPassPostWet.setCutoffFrequency(lowPassPostWetCutoff.getCurrentValue());
-		
-		for (int i = 0; i < num2; i++) {
-			float left = us1L[i];
-			float right = us1R[i];
-			us2L[i] = lowPassPostWet.processSample(0,
-                        postCutL.processSample(useFunction(left))) * wet
-                        + left * dry;
-			us2R[i] = lowPassPostWet.processSample(1,
-						postCutR.processSample(useFunction(right))) * wet
-                        + right * dry;
+        for (int i = 0; i < MINI_BLOCK_SIZE * 2; ++i) {
+            us2L[i] = us1L[i]; // copy for dry signal
+            us2R[i] = us1R[i];
+        }
+
+        drive.skip(numSamples2);
+        preGain.setGainDecibels(drive.getCurrentValue());
+        preGain.process(upcontext);
+		hsUp.process(upcontext);
+        applyWSFunction(upcontext);
+        hsDown.process(upcontext);
+        lpfCutoff.skip(numSamples2);
+        lpf.setCutoffFrequency(lpfCutoff.getCurrentValue());
+        lpf.process(upcontext);
+        
+		for (int i = 0; i < numSamples2; i++) {
+            us1L[i] = us1L[i] * wet + us2L[i] * dry;
+            us1R[i] = us1R[i] * wet + us2R[i] * dry;
 		}
         
-        dsL.process_block(dataL, us2L, numSamples);
-        dsR.process_block(dataR, us2R, numSamples);
+        dsL.process_block(dataL, us1L, numSamples);
+        dsR.process_block(dataR, us1R, numSamples);
         
         highPassPost.process(context);
 		postGain.process(context);
@@ -986,12 +982,16 @@ public:
 
 	inline void setDry(float _dry) { dry = _dry; }
 	inline void setWet(float _wet) { wet = _wet; }
+	inline void setLPCutoff(float freq) { lpfCutoff.setTargetValue(freq); }
+    inline void setFunctionToUse(int function) { currentFunction = function; }
 
-	inline void setLPCutoff(float freq)
-	{
-		lowPassPostWetCutoff.setTargetValue(freq);
-	}
-
+    inline void setGain(float pre, float post)
+    {
+        drive.setTargetValue(pre);
+        preGain.setGainDecibels(drive.currentValue());
+        postGain.setGainDecibels(post);
+    }
+    
 	void reset()
 	{
 		preGain.reset();
@@ -1000,165 +1000,66 @@ public:
 
 	void setHighShelfFreqAndQ(float freq, float q)
 	{
-		*preBoost.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
-		    sampleRate, freq, q, 25.0f);
-		postCutL.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
-		    upsampledRate, freq, q, 0.04f);
-		postCutR.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(
-			upsampledRate, freq, q, 0.04f);
+		*hsUp.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+		    upsampledRate, freq * 2.f, q, 25.0f);
+        *hsDown.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
+            upsampledRate, freq * 2.f, q, 0.04f);
 	}
 
-	inline void setFunctionToUse(int function) { currentFunction = function; }
-
+    void applyWSFunction(juce::dsp::ProcessContextReplacing<float>& context) {
+        auto numS = context.getOutputBlock().getNumSamples();
+        for (size_t ch = 0; ch < 2; ++ch) {
+            auto source = context.getOutputBlock().getChannelPointer(ch);
+            for (size_t s = 0; s < numS; ++s) {
+                source[s] = useFunction(source[s]);
+            }
+        }
+    }
+    
 	float useFunction(float x)
 	{
 		switch (currentFunction) {
-			case 0:  // sine
-				if (std::abs(x) <= 1.f)
-					return std::sin(juce::MathConstants<float>::halfPi * x);
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
-				break;
-			case 1:  // atan 2
-                return std::atan(2.f * x) * 0.90322102525f;
-				break;
-			case 2:  // atan 4
-				return std::atan(4.f * x) * 0.754251529f;
-				break;
-			case 3:  // atan 6
-                return std::atan(6.f * x) * 0.7114158377f;
-				break;
-			case 4:  // tanh 2
-                return std::tanh(2.f * x) * 1.03731472073f;
-				break;
-			case 5:  // tanh 4
-				return std::tanh(4.f * x) * 1.0006711504f;
-				break;
-			case 6:  // tanh 6
-				return std::tanh(6.f * x) * 1.0000122885f;
-				break;
-			case 7:  // cubic mid
-				if (std::abs(x) <= 1.f)
-					return (x + x * x * x) * 0.5f;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
-				break;
-			case 8:  // cubic
-				if (std::abs(x) <= 1.f)
-					return x * x * x;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return -1.f;
-				break;
-			case 9:  // cheb3
-                // negative so dry and wet don't interfere
-                if (std::abs(x) <= 1.f) { return -(4.f * x * x * x - 3.f * x); }
-				else if (x > 1.f)
-					return -1.f;  // flipped for continuity with above
-				else // if (x < -1.f)
-					return 1.f;
-				break;
-			case 10:  // cheb5
-                if (std::abs(x) <= 1.f) { return 16.f * x * x * x * x * x - 20.f * x * x * x + 5.f * x; }
-                else if ((x > 1.f)) {
-                    return 1.f;
-                }
-                else if (x < -1.f) {
-                    return -1.f;
-                }
-
-			case 11:  // "halfwave"
-				if (x > 0.f && x < 1.f)
-					return std::tanh(1.5f * x) *
-					       1.10479139298f;
-				else if (x > 1.f)
-					return 1.f;
-				else  // if (x < -1.f)
-					return 0.f;
-				break;
-			case 12:  // "clipping"
-				if (x < -0.7f)
-					return -1.f;
-				else if (x > 0.7f)
-					return 1.f;
-				else
-					return x * 1.42857142857f;
-				break;
-			case 13:  // "bitcrush"
-				if (std::abs(x) < 0.01f)
-					return x;
-				else {
-					float steps = 16.f - 15.f * (drive / 60.f);
-					return std::clamp(std::floor(steps * std::atan(2.f * x) *
-					                             0.903221025259f) /
-					       steps, -1.f, 1.f);
-				}
-				break;
-			case 14:  // "noise"
-				if (std::abs(x) <= 1.f) {
-					float p = pinkNoise.nextSample();
-					float factor = 1.f - (drive / 80.f);
-					if (p >= 0.f)
-						return juce::jlimit(-1.f, 1.f, x * std::pow(p, factor));
-					else
-						return juce::jlimit(-1.f, 1.f,
-						                    x * -std::pow(-p, factor));
-				} else
-					return juce::jlimit(-1.f, 1.f, x);
-				break;
-			case 15:  // "fullwave"
-				return std::abs(std::tanh(3.f * x) * 0.99505475368f);
-				break;
-			case 16:  // "wavefolder"
-				return 4 * (std::abs(0.5f * x + 0.25f -
-				                     std::round(0.5f * x + 0.25f)) -
-				            0.25f);
-				break;
+			case 0:  // soft clip
+                if (std::abs(x) <= 1.f) { return std::sin(juce::MathConstants<float>::halfPi * x); }
+                else { return std::signbit(x) ? 1.f : -1.f; }
+			case 1:  // hard clip
+                if (std::abs(x) <= 0.7f) { return x * 1.42857142857f; }
+                else { return std::signbit(x) ? 1.f : -1.f; }
+			case 2:  // halfwave
+                if (x > 0.f) { return std::tanh(1.5f * x) * 1.10479139298f; }
+                else { return 0.f; }
+			case 3:  // fullwave
+                return std::abs(std::tanh(x));
+			case 4:  // folder
+                return std::sin((1.f + juce::Decibels::decibelsToGain(drive*.16f)) * x);
 			default:
 				return x;
 				break;
 		}
 	}
 
-	void setGain(float pre, float post)
-	{
-		drive = pre;
-		preGain.setGainDecibels(pre);
-		postGain.setGainDecibels(post); // - juce::jmin(pre * 0.25f, 6.f));
-	}
-
 private:
 	juce::AudioBuffer<float> inBuffer;
-    float us1L[MINI_BLOCK_SIZE*2]{0.f};
-    float us2L[MINI_BLOCK_SIZE*2]{0.f};
+    float us1L[MINI_BLOCK_SIZE*2]{0.f}; // upsampled buffer to be processed
     float us1R[MINI_BLOCK_SIZE*2]{0.f};
+    float us2L[MINI_BLOCK_SIZE*2]{0.f}; // copy to be mixed wet/dry
     float us2R[MINI_BLOCK_SIZE*2]{0.f};
 
-	using Filter = juce::dsp::IIR::Filter<float>;
-	Filter postCutL, postCutR;
-
-	juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>,
-	                               juce::dsp::IIR::Coefficients<float>>
-	    preBoost, highPassPost; //  postCut
-
-	juce::dsp::StateVariableTPTFilter<float> lowPassPostWet;
-	juce::SmoothedValue<float> lowPassPostWetCutoff;
-
+    using Filter = juce::dsp::IIR::Filter<float>;
+    using Coefficients = juce::dsp::IIR::Coefficients<float>;
+    
+	juce::dsp::ProcessorDuplicator<Filter, Coefficients> hsUp, hsDown, highPassPost;
+    juce::dsp::StateVariableTPTFilter<float> lpf;
+	juce::SmoothedValue<float> lpfCutoff, drive;
+    juce::dsp::Gain<float> preGain, postGain;
+    
 	double sampleRate{44100.0};
 	double upsampledRate{88200.0};
-	int currentFunction = -1;  // to trigger a change on first setFunctionToUse call
+	int currentFunction = 0;  // to trigger a change on first setFunctionToUse call
 	float dry{0.5f}, wet{0.5f};
-	juce::dsp::Gain<float> preGain;
-	juce::dsp::Gain<float> postGain;
-	float drive{1.f};
-	gin::PinkNoise pinkNoise;
-		static constexpr int nbr_coefs1 = 8;
-	double coefs1[nbr_coefs1]{        
+    
+    static constexpr int nbr_coefs1 = 8; // up/down-sampler coefs
+	double coefs1[nbr_coefs1]{
 		0.044076093956155402,
         0.16209555156378622,
         0.32057678606990592,

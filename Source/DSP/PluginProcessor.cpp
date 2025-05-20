@@ -40,39 +40,15 @@ static juce::String waveshaperTypeTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
 		case 0:
-			return "Sine";
+			return "Soft Clip";
 		case 1:
-			return "Atan 2";
+			return "Hard Clip";
 		case 2:
-			return "Atan 4";
-		case 3:
-			return "Atan 6";
-		case 4:
-			return "Tanh 2";
-		case 5:
-			return "Tanh 4";
-		case 6:
-			return "Tanh 6";
-		case 7:
-			return "Cubic mid";
-		case 8:
-			return "Cubic";
-		case 9:
-			return "Cheb 3";
-		case 10:
-			return "Cheb 5";
-		case 11:
 			return "Halfwave";
-		case 12:
-			return "Clipping";
-		case 13:
-			return "Bitcrush";
-		case 14:
-			return "Noise";
-		case 15:
+		case 3:
 			return "Fullwave";
-		case 16:
-			return "Wavefolder";
+		case 4:
+			return "Folder";
 		default:
 			jassertfalse;
 			return {};
@@ -675,19 +651,19 @@ void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor &p)
 	juce::String name = "WS ";
 	drive = p.addExtParam(pfx + "drive", name + "Drive", "Drive", "",
 	    {0.0, 60.0, 0.0, 1.0}, 0.0, 0.0f);
-	gain = p.addExtParam(pfx + "gain", name + "Gain", "Gain", "",
+	gain = p.addExtParam(pfx + "gain", name + "Gain", "Gain (Out)", "",
 	    {-12.0f, 12.0f, 0.0f, 1.0}, 0.0, 0.0f);
 	dry = p.addExtParam(pfx + "dry", name + "Dry", "Dry", "",
 	    {0.0, 1.0, 0.0, 1.0}, 1.0, 0.0f, percentTextFunction);
 	wet = p.addExtParam(pfx + "wet", name + "Wet", "Wet", "",
 	    {0.0, 1.0, 0.0, 1.0}, 0.25, 0.0f, percentTextFunction);
 	type = p.addIntParam(pfx + "func", name + "Function", "Function", "",
-	    {0.0, 16.0, 1.0, 1.0}, 0.0f, 0.0f, waveshaperTypeTextFunction);
+	    {0.0, 4.0, 1.0, 1.0}, 0.0f, 0.0f, waveshaperTypeTextFunction);
 	highshelf = p.addExtParam(pfx + "highshelf", name + "High Shelf",
-	    "High Shelf", " Hz", {3000.0f, 12000.0f, 0.0, 1.3f}, 6500.0f, 0.0f);
-	hsq = p.addExtParam(pfx + "hsq", name + "HShelf Q", "High Shelf Q", "",
+	    "High Shelf", " Hz", {4500.0f, 12000.0f, 0.0, 1.3f}, 6500.0f, 0.0f);
+	hsq = p.addExtParam(pfx + "hsq", name + "HShelf Q", "Shelf Q", "",
 	    {0.5f, 5.0f, 0.0, 1.0}, 1.0f, 0.0f);
-	lp = p.addExtParam(pfx + "lp", name + "Low Pass", "Low Pass", "",
+	lp = p.addExtParam(pfx + "lp", name + "Low Pass", "Lowpass", "",
 	    {20.0f, 20000.0f, 0.0, 0.3f}, 20000.0f, 0.0f);
 }
 
