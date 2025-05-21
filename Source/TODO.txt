@@ -3,7 +3,7 @@
 
 //======================
 
-just implement it urself
+write new adaa's
 
 clean up Envelope:
 

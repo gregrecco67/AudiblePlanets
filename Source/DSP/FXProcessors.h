@@ -901,7 +901,10 @@ private:
 
 class WaveShaperProcessor {
 public:
-    WaveShaperProcessor() = default;
+    WaveShaperProcessor() {
+		tanhprocs[0] = std::make_unique<TanhNL<ADAA1LUT<(1 << 12)>>>();
+		tanhprocs[1] = std::make_unique<TanhNL<ADAA1LUT<(1 << 12)>>>();
+	}
 	~WaveShaperProcessor() = default;
 
 	void prepare(juce::dsp::ProcessSpec spec)
