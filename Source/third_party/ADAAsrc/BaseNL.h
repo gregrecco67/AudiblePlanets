@@ -1,5 +1,9 @@
 #pragma once
 
+#include <numbers>
+
+using std::numbers::pi;
+
 class BaseNL
 {
 public:

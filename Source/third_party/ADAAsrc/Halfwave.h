@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseNL.h"
-//#include "polylogarithm/Li2.hpp"
+#include "polylogarithm/Li2.hpp"
 
 template <class Type>
 class HalfwaveNL : public BaseNL,
@@ -33,17 +33,22 @@ protected:
         else { return 0.0; }
     }
 
-    /** First antiderivative of hard clipper */
     inline double func_AD1 (double x) const noexcept override
     {
         if (x > 0.0) { return std::log (std::cosh (x)); }
         else { return 0.0; }
     }
 
-    /** Second antiderivative of hard clipper */
     inline double func_AD2 (double x) const noexcept override
     {
-        return 0.0;
+		if (x < 0.0) { return 0.0; } 
+		else {
+			const auto expVal = std::exp(-2 * x);
+			return 0.5 * ((double)polylogarithm::Li2(-expVal) -
+				x * (x + 2.0 * std::log(expVal + 1.) - 2.0 * 
+				std::log(std::cosh(x)))) + 
+				(std::pow(juce::MathConstants<double>::pi, 2) / 24.0);
+		}
     }
 
 private:

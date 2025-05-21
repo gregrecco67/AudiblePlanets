@@ -42,12 +42,14 @@ static juce::String waveshaperTypeTextFunction(const gin::Parameter &, float v)
 		case 0:
 			return "Soft Clip";
 		case 1:
-			return "Hard Clip";
+			return "Tanh";
 		case 2:
-			return "Halfwave";
+			return "Hard Clip";
 		case 3:
-			return "Fullwave";
+			return "Halfwave";
 		case 4:
+			return "Fullwave";
+		case 5:
 			return "Folder";
 		default:
 			jassertfalse;
@@ -658,7 +660,7 @@ void APAudioProcessor::WaveshaperParams::setup(APAudioProcessor &p)
 	wet = p.addExtParam(pfx + "wet", name + "Wet", "Wet", "",
 	    {0.0, 1.0, 0.0, 1.0}, 0.25, 0.0f, percentTextFunction);
 	type = p.addIntParam(pfx + "func", name + "Function", "Function", "",
-	    {0.0, 4.0, 1.0, 1.0}, 0.0f, 0.0f, waveshaperTypeTextFunction);
+	    {0.0, 5.0, 1.0, 1.0}, 0.0f, 0.0f, waveshaperTypeTextFunction);
 	highshelf = p.addExtParam(pfx + "highshelf", name + "High Shelf",
 	    "High Shelf", " Hz", {4500.0f, 12000.0f, 0.0, 1.3f}, 6500.0f, 0.0f);
 	hsq = p.addExtParam(pfx + "hsq", name + "HShelf Q", "Shelf Q", "",

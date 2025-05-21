@@ -160,26 +160,30 @@ public:
 
 		if (currentEffect == 1) {
 			switch (proc.waveshaperParams.type->getUserValueInt()) {
-				case 0:  // sine
+				case 0:  // "Soft Clip"
 					funcImage.setImage(juce::ImageCache::getFromMemory(
 					    BinaryData::sine_png, BinaryData::sine_pngSize));
 					break;
-				case 1:
+				case 1: // "Tanh"
+					funcImage.setImage(juce::ImageCache::getFromMemory(
+						BinaryData::tanh4_png, BinaryData::tanh4_pngSize));
+					break;
+				case 2: // "Hard Clip"
                     funcImage.setImage(juce::ImageCache::getFromMemory(
                         BinaryData::clipping_png,
                         BinaryData::clipping_pngSize));
 					break;
-				case 2:
+				case 3: // "Halfwave"
                     funcImage.setImage(juce::ImageCache::getFromMemory(
                         BinaryData::halfwave_png,
                         BinaryData::halfwave_pngSize));
 					break;
-				case 3:
+				case 4: // "Fullwave"
                     funcImage.setImage(juce::ImageCache::getFromMemory(
                         BinaryData::fullwave_png,
                         BinaryData::fullwave_pngSize));
 					break;
-				case 4:
+				case 5: // "Folder"
                     funcImage.setImage(juce::ImageCache::getFromMemory(
                         BinaryData::cheb5_png, BinaryData::cheb5_pngSize));
 					break;

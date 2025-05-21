@@ -24,7 +24,13 @@
 #include "LFO.h"
 #include "ADAAsrc/TanhNL.h"
 #include "ADAAsrc/Halfwave.h"
+#include "ADAAsrc/HardClip.h"
 #include "ADAAsrc/ADAA/ADAA1LUT.h"
+#include "ADAAsrc/ADAA/ADAA2LUT.h"
+#include "ADAAsrc/SoftClip.h"
+#include "ADAAsrc/Fullwave.h"
+#include "ADAAsrc/Folder.h"
+
 #define MINI_BLOCK_SIZE 32
 #define C5_95 -0.017005f
 #define C5_m95 0.017005f
@@ -903,10 +909,14 @@ private:
 class WaveShaperProcessor {
 public:
     WaveShaperProcessor() {
-		tanhprocs[0] = std::make_unique<TanhNL<ADAA1LUT<(1 << 12)>>>();
-		tanhprocs[1] = std::make_unique<TanhNL<ADAA1LUT<(1 << 12)>>>();
-        halfwaveprocs[0] = std::make_unique<HalfwaveNL<ADAA1LUT<(1 << 12)>>>();
-        halfwaveprocs[1] = std::make_unique<HalfwaveNL<ADAA1LUT<(1 << 12)>>>();
+		for (int ch = 0; ch < 2; ++ch) {
+			tanhprocs[ch] = std::make_unique<TanhNL<ADAA2LUT<(1 << 18)>>>();
+			halfwaveprocs[ch] = std::make_unique<HalfwaveNL<ADAA2LUT<(1 << 18)>>>();
+			hardclipprocs[ch] = std::make_unique<HardClip<ADAA2LUT<(1 << 18)>>>();
+			softclipprocs[ch] = std::make_unique<SoftClip<ADAA2LUT<(1 << 18)>>>();
+			fullwaveprocs[ch] = std::make_unique<Fullwave<ADAA1LUT<(1 << 12)>>>();
+			folderprocs[ch] = std::make_unique<Folder<ADAA2LUT<(1 << 18)>>>();
+		}
 	}
 	~WaveShaperProcessor() = default;
 
@@ -942,6 +952,12 @@ public:
         tanhprocs[1].get()->prepare(upsampledRate, spec.maximumBlockSize);
         halfwaveprocs[0].get()->prepare(upsampledRate, spec.maximumBlockSize);
         halfwaveprocs[1].get()->prepare(upsampledRate, spec.maximumBlockSize);
+		hardclipprocs[0].get()->prepare(upsampledRate, spec.maximumBlockSize);
+		hardclipprocs[1].get()->prepare(upsampledRate, spec.maximumBlockSize);
+		softclipprocs[0].get()->prepare(upsampledRate, spec.maximumBlockSize);
+		softclipprocs[1].get()->prepare(upsampledRate, spec.maximumBlockSize);
+		fullwaveprocs[0].get()->prepare(upsampledRate, spec.maximumBlockSize);
+		fullwaveprocs[1].get()->prepare(upsampledRate, spec.maximumBlockSize);
 	}
 
 	void process(juce::dsp::ProcessContextReplacing<float> context)
@@ -1010,21 +1026,41 @@ public:
             upsampledRate, freq * 2.f, q, 0.04f);
 	}
 
+	// 0: "Soft Clip";
+	// 1: "Tanh";
+	// 2: "Hard Clip";
+	// 3: "Halfwave";
+	// 4: "Fullwave";
+	// 5: "Folder";
+
     void applyWSFunction(juce::dsp::ProcessContextReplacing<float>& context) {
         auto numS = context.getOutputBlock().getNumSamples();
         for (size_t ch = 0; ch < 2; ++ch) {
             auto source = context.getOutputBlock().getChannelPointer(ch);
-            if (currentFunction == 3) {
-                tanhprocs[ch].get()->processBlock(source, numS);
-            }
-            else if (currentFunction == 2) {
-				halfwaveprocs[ch].get()->processBlock(source, numS);
+			if (currentFunction == 0) {
+				softclipprocs[ch].get()->processBlock(source, numS);
 			}
-			else {
-                for (size_t s = 0; s < numS; ++s) {
-                    source[s] = useFunction(source[s]);
-                }
-            }
+            if (currentFunction == 1) {
+                tanhprocs[ch].get()->processBlock(source, numS);
+			} 
+			else if (currentFunction == 2) {
+				hardclipprocs[ch].get()->processBlock(source, numS);
+			}
+            else if (currentFunction == 3) {
+				halfwaveprocs[ch].get()->processBlock(source, numS);
+			} 
+			else if (currentFunction == 4) {
+				fullwaveprocs[ch].get()->processBlock(source, numS);
+			} 
+			else if (currentFunction == 5) {
+				folderprocs[ch].get()->m = juce::Decibels::decibelsToGain(drive.getNextValue() * .0667f);
+				folderprocs[ch].get()->processBlock(source, numS);
+			} 
+			else  {
+				for (size_t s = 0; s < numS; ++s) {
+					source[s] = useFunction(source[s]);
+				}
+			}
         }
     }
     
@@ -1043,9 +1079,9 @@ public:
             else { return 0.f; }
         case 3:  // fullwave --- rn it's tanh, add an option
                 return std::tanh(x); // std::abs(std::tanh(x));
-        case 4:  // folder
+        case 5:  // folder
             return std::sin((1.f + juce::Decibels::decibelsToGain(drive.getNextValue() * .0667f)) * x);
-        default:
+		default:
             return x;
         }
 	}
@@ -1059,8 +1095,12 @@ private:
     float us2L[MINI_BLOCK_SIZE*2]{0.f}; // copy to be mixed wet/dry
     float us2R[MINI_BLOCK_SIZE*2]{0.f};
 
-	std::array<std::unique_ptr<TanhNL<ADAA1LUT<(1 << 12)>>>, 2> tanhprocs;
-	std::array<std::unique_ptr<HalfwaveNL<ADAA1LUT<(1 << 12)>>>, 2> halfwaveprocs;
+	std::array<std::unique_ptr<TanhNL<ADAA2LUT<(1 << 18)>>>, 2> tanhprocs;
+	std::array<std::unique_ptr<HalfwaveNL<ADAA2LUT<(1 << 18)>>>, 2> halfwaveprocs;
+	std::array<std::unique_ptr<HardClip<ADAA2LUT<(1 << 18)>>>, 2> hardclipprocs;
+	std::array<std::unique_ptr<SoftClip<ADAA2LUT<(1 << 18)>>>, 2> softclipprocs;
+	std::array<std::unique_ptr<Fullwave<ADAA1LUT<(1 << 12)>>>, 2> fullwaveprocs;
+	std::array<std::unique_ptr<Folder<ADAA2LUT<(1 << 18)>>>, 2> folderprocs;
 
     using Filter = juce::dsp::IIR::Filter<float>;
     using Coefficients = juce::dsp::IIR::Coefficients<float>;
