@@ -1,0 +1,51 @@
+#pragma once
+
+#include "BaseNL.h"
+//#include "polylogarithm/Li2.hpp"
+
+template <class Type>
+class HalfwaveNL : public BaseNL,
+               public Type
+{
+public:
+    HalfwaveNL()
+    {
+        Type::initialise();
+    }
+
+    virtual ~HalfwaveNL() {}
+
+    void prepare (double, int) override
+    {
+        Type::prepare();
+    }
+
+    void processBlock (float* x, const int nSamples) override
+    {
+        for (int n = 0; n < nSamples; ++n)
+            x[n] = (float) Type::process ((double) x[n]);
+    }
+
+protected:
+    inline double func (double x) const noexcept override
+    {
+        if (x > 0.0) { return std::tanh (x); }
+        else { return 0.0; }
+    }
+
+    /** First antiderivative of hard clipper */
+    inline double func_AD1 (double x) const noexcept override
+    {
+        if (x > 0.0) { return std::log (std::cosh (x)); }
+        else { return 0.0; }
+    }
+
+    /** Second antiderivative of hard clipper */
+    inline double func_AD2 (double x) const noexcept override
+    {
+        return 0.0;
+    }
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HalfwaveNL)
+};

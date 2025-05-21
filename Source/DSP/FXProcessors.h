@@ -23,6 +23,7 @@
 #include "FastMath.hpp"
 #include "LFO.h"
 #include "ADAAsrc/TanhNL.h"
+#include "ADAAsrc/Halfwave.h"
 #include "ADAAsrc/ADAA/ADAA1LUT.h"
 #define MINI_BLOCK_SIZE 32
 #define C5_95 -0.017005f
@@ -904,6 +905,8 @@ public:
     WaveShaperProcessor() {
 		tanhprocs[0] = std::make_unique<TanhNL<ADAA1LUT<(1 << 12)>>>();
 		tanhprocs[1] = std::make_unique<TanhNL<ADAA1LUT<(1 << 12)>>>();
+        halfwaveprocs[0] = std::make_unique<HalfwaveNL<ADAA1LUT<(1 << 12)>>>();
+        halfwaveprocs[1] = std::make_unique<HalfwaveNL<ADAA1LUT<(1 << 12)>>>();
 	}
 	~WaveShaperProcessor() = default;
 
@@ -937,6 +940,8 @@ public:
         postGain.prepare(spec);
 		tanhprocs[0].get()->prepare(upsampledRate, spec.maximumBlockSize);
         tanhprocs[1].get()->prepare(upsampledRate, spec.maximumBlockSize);
+        halfwaveprocs[0].get()->prepare(upsampledRate, spec.maximumBlockSize);
+        halfwaveprocs[1].get()->prepare(upsampledRate, spec.maximumBlockSize);
 	}
 
 	void process(juce::dsp::ProcessContextReplacing<float> context)
@@ -1012,7 +1017,10 @@ public:
             if (currentFunction == 3) {
                 tanhprocs[ch].get()->processBlock(source, numS);
             }
-            else {
+            else if (currentFunction == 2) {
+				halfwaveprocs[ch].get()->processBlock(source, numS);
+			}
+			else {
                 for (size_t s = 0; s < numS; ++s) {
                     source[s] = useFunction(source[s]);
                 }
@@ -1050,6 +1058,7 @@ private:
     float us2R[MINI_BLOCK_SIZE*2]{0.f};
 
 	std::array<std::unique_ptr<TanhNL<ADAA1LUT<(1 << 12)>>>, 2> tanhprocs;
+	std::array<std::unique_ptr<HalfwaveNL<ADAA1LUT<(1 << 12)>>>, 2> halfwaveprocs;
 
     using Filter = juce::dsp::IIR::Filter<float>;
     using Coefficients = juce::dsp::IIR::Coefficients<float>;
