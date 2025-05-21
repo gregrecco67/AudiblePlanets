@@ -3,6 +3,8 @@
 
 //======================
 
+just implement it urself
+
 clean up Envelope:
 
 lfo rand and S+H: recalc when safe?

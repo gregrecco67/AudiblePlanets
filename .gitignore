@@ -5,7 +5,7 @@ out/
 build/
 ninja-build/
 xcode-build/
-
+xcb/
 # Prerequisites
 *.d
 

@@ -75,6 +75,8 @@ file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/hiir/*.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/ADAAsrc/*.cpp
+ 
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.cpp

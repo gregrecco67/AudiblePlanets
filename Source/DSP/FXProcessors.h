@@ -22,6 +22,8 @@
 #include <memory>
 #include "FastMath.hpp"
 #include "LFO.h"
+#include "ADAAsrc/TanhNL.h"
+#include "ADAAsrc/ADAA/ADAA1LUT.h"
 #define MINI_BLOCK_SIZE 32
 #define C5_95 -0.017005f
 #define C5_m95 0.017005f
@@ -887,19 +889,11 @@ public:
 	}
 
 private:
-	juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>,
-	                               juce::dsp::IIR::Coefficients<float>>
-	    iirLS;
+    using PDup = juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>>;
+    
+	PDup iirLS, iirHS, iirPeak;
 	float iirLSFrequency{40.0f}, iirLSGain{1.0f}, iirLSQ{1.0f};
-
-	juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>,
-	                               juce::dsp::IIR::Coefficients<float>>
-	    iirHS;
 	float iirHSFrequency{8000.0f}, iirHSGain{1.0f}, iirHSQ{1.f};
-
-	juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>,
-	                               juce::dsp::IIR::Coefficients<float>>
-	    iirPeak;
 	float iirPeakFrequency{2000.0f}, iirPeakGain{1.0f}, iirPeakQ{1.0};
 
 	float currentSampleRate{44100.0f};
@@ -938,6 +932,8 @@ public:
 		*highPassPost.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 40.0f);
         postGain.setRampDurationSeconds(0.05);
         postGain.prepare(spec);
+		tanhprocs[0].get()->prepare(upsampledRate, spec.maximumBlockSize);
+        tanhprocs[1].get()->prepare(upsampledRate, spec.maximumBlockSize);
 	}
 
 	void process(juce::dsp::ProcessContextReplacing<float> context)
@@ -1010,32 +1006,37 @@ public:
         auto numS = context.getOutputBlock().getNumSamples();
         for (size_t ch = 0; ch < 2; ++ch) {
             auto source = context.getOutputBlock().getChannelPointer(ch);
-            for (size_t s = 0; s < numS; ++s) {
-                source[s] = useFunction(source[s]);
+            if (currentFunction == 3) {
+                tanhprocs[ch].get()->processBlock(source, numS);
+            }
+            else {
+                for (size_t s = 0; s < numS; ++s) {
+                    source[s] = useFunction(source[s]);
+                }
             }
         }
     }
     
 	float useFunction(float x)
-	{
-		switch (currentFunction) {
-			case 0:  // soft clip
-                if (std::abs(x) <= 1.f) { return std::sin(juce::MathConstants<float>::halfPi * x); }
-                else { return std::signbit(x) ? 1.f : -1.f; }
-			case 1:  // hard clip
-                if (std::abs(x) <= 0.7f) { return x * 1.42857142857f; }
-                else { return std::signbit(x) ? 1.f : -1.f; }
-			case 2:  // halfwave
-                if (x > 0.f) { return std::tanh(1.5f * x) * 1.10479139298f; }
-                else { return 0.f; }
-			case 3:  // fullwave
-                return std::abs(std::tanh(x));
-			case 4:  // folder
-                return std::sin((1.f + juce::Decibels::decibelsToGain(drive.getNextValue() * .16f)) * x);
-			default:
-				return x;
-				break;
-		}
+    {
+		switch (currentFunction) 
+        {
+        case 0:  // soft clip
+            if (std::abs(x) <= 1.f) { return std::sin(juce::MathConstants<float>::halfPi * x); }
+            else { return signbit(x) ? -1.f : 1.f; }
+        case 1:  // hard clip
+            if (std::abs(x) <= 1.f) { return x; }
+            else { return signbit(x) ? -1.f : 1.f; }
+        case 2:  // halfwave
+            if (x > 0.f) { return std::tanh(x); }
+            else { return 0.f; }
+        case 3:  // fullwave
+                return std::tanh(x); // std::abs(std::tanh(x));
+        case 4:  // folder
+            return std::sin((1.f + juce::Decibels::decibelsToGain(drive.getNextValue() * .0667f)) * x);
+        default:
+            return x;
+        }
 	}
 
 private:
@@ -1044,6 +1045,8 @@ private:
     float us1R[MINI_BLOCK_SIZE*2]{0.f};
     float us2L[MINI_BLOCK_SIZE*2]{0.f}; // copy to be mixed wet/dry
     float us2R[MINI_BLOCK_SIZE*2]{0.f};
+
+	std::array<std::unique_ptr<TanhNL<ADAA1LUT<(1 << 12)>>>, 2> tanhprocs;
 
     using Filter = juce::dsp::IIR::Filter<float>;
     using Coefficients = juce::dsp::IIR::Coefficients<float>;
