@@ -1034,14 +1034,14 @@ public:
         {
         case 0:  // soft clip
             if (std::abs(x) <= 1.f) { return std::sin(juce::MathConstants<float>::halfPi * x); }
-            else { return signbit(x) ? -1.f : 1.f; }
+            else { return theSign(x); }
         case 1:  // hard clip
             if (std::abs(x) <= 1.f) { return x; }
-            else { return signbit(x) ? -1.f : 1.f; }
+            else { return theSign(x); }
         case 2:  // halfwave
             if (x > 0.f) { return std::tanh(x); }
             else { return 0.f; }
-        case 3:  // fullwave
+        case 3:  // fullwave --- rn it's tanh, add an option
                 return std::tanh(x); // std::abs(std::tanh(x));
         case 4:  // folder
             return std::sin((1.f + juce::Decibels::decibelsToGain(drive.getNextValue() * .0667f)) * x);
@@ -1049,6 +1049,8 @@ public:
             return x;
         }
 	}
+
+	float theSign(float x) { return (x > 0.f) ? 1.f : -1.f; }
 
 private:
 	juce::AudioBuffer<float> inBuffer;
