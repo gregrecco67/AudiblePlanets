@@ -1,10 +1,7 @@
 -- add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
--- waveshaper OS and ADAA?
-
+-- replace limiter with something smoother! new ws is bound to produce some peaks
 //======================
-
-write new adaa's
 
 clean up Envelope:
 
-lfo rand and S+H: recalc when safe?
+lfo rand and S+H: recalc when safe? create with random seed?
