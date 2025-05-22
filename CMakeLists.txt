@@ -22,11 +22,6 @@ foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_sim
 	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
 endforeach()
 
-add_subdirectory(modules/melatonin_perfetto)
-
-
-
-
 set(VersionString 1.2.0)
 add_definitions( -DVERSION_STRING="${VersionString}" )
 # also set this in PluginEditor.cpp -> showAboutInfo()
@@ -138,8 +133,6 @@ target_link_libraries (${PROJECT_NAME}
 						juce::juce_gui_extra
 						juce::juce_core
 						juce::juce_audio_basics
-						Melatonin::Perfetto
-
 						$<$<PLATFORM_ID:Linux>:curl>
 					PUBLIC
 						Assets

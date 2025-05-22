@@ -1189,6 +1189,8 @@ void APAudioProcessor::downsampleStage2(
 void APAudioProcessor::processBlock(
     juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midi)
 {
+	TRACE_DSP();
+
 	juce::ScopedNoDenormals noDenormals;
 
 	auto numSamples = buffer.getNumSamples();
