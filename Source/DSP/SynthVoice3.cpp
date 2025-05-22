@@ -212,6 +212,8 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 	mseg2.setSampleRate(quarter);
 	mseg3.setSampleRate(quarter);
 	mseg4.setSampleRate(quarter);
+
+
 }
 
 void SynthVoice3::renderNextBlock(
@@ -502,15 +504,13 @@ void SynthVoice3::updateParams(int blockSize)
 	           getValue(proc.filterParams.keyTracking);
 
 	float f = gin::getMidiNoteInHertz(noteNum);
-	float maxFreq =
-	    std::min(20000.0f, static_cast<float>(getSampleRate() / 2.0));
 	f = juce::jlimit(4.0f, maxFreq, f);
 
-	float q = gin::Q /
-	          (1.0f - (getValue(proc.filterParams.resonance) / 100.0f) * 0.99f);
+	float q = gin::Q / (1.0f - (getValue(proc.filterParams.resonance) / 100.0f) * 0.99f);
 
-	filterType = proc.filterParams.type->getUserValueInt();
-	switch (filterType) {
+	
+	switch (proc.filterParams.type->getUserValueInt())
+	{
 		case 0:
 			filter.setType(gin::Filter::lowpass);
 			filter.setSlope(gin::Filter::db12);

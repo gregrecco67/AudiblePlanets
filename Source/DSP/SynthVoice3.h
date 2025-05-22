@@ -138,4 +138,5 @@ private:
 	std::random_device rd;
 	std::mt19937 gen{rd()};
 	std::uniform_real_distribution<> dist{-1.f, 1.f};
+	const float maxFreq{20000.f};
 };

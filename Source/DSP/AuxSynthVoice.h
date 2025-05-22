@@ -84,4 +84,5 @@ private:
 
 	friend class AuxSynth;
 	juce::MPENote curNote;
+	const float maxFreq{20000.f};
 };

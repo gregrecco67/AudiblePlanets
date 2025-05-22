@@ -13,7 +13,7 @@ AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: 'Yes'
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: WebKit
-ColumnLimit: '100'
+ColumnLimit: '0'
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'false'
 ContinuationIndentWidth: '0'
 Cpp11BracedListStyle: 'true'

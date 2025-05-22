@@ -616,6 +616,8 @@ void APAudioProcessor::AuxParams::setup(APAudioProcessor &p)
 	    "%", {0.0, 100.0, 0.0f, 1.0}, 0.0, 0.0f);
 	ignorepb = p.addIntParam("auxignorepb", "Aux Ignore PB", "Ignore PB", "",
 	    {0.0, 1.0, 1.0, 1.0}, 0.0f, 0.0f, enableTextFunction);
+
+	filterkeytrack->conversionFunction = [](float in) { return in * 0.01f; };
 }
 
 //==============================================================================
@@ -1180,7 +1182,6 @@ void APAudioProcessor::downsampleStage2(
 	auto inSamplesR = inputBlock.getChannelPointer(1);
 	auto outSamplesL = outputBlock.getChannelPointer(0);
 	auto outSamplesR = outputBlock.getChannelPointer(1);
-
 	int samples = static_cast<int>(outputBlock.getNumSamples());
 	dspl2L.process_block(outSamplesL, inSamplesL, samples);
 	dspl2R.process_block(outSamplesR, inSamplesR, samples);
@@ -1189,8 +1190,6 @@ void APAudioProcessor::downsampleStage2(
 void APAudioProcessor::processBlock(
     juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midi)
 {
-	TRACE_DSP();
-
 	juce::ScopedNoDenormals noDenormals;
 
 	auto numSamples = buffer.getNumSamples();
