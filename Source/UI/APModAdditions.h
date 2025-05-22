@@ -1092,6 +1092,29 @@ public:
 		envsMenu.addSubMenu("ENV2", env2Menu);
 		envsMenu.addSubMenu("ENV3", env3Menu);
 		envsMenu.addSubMenu("ENV4", env4Menu);
+		
+		// gin::Parameter::Ptr rate, depth, offset, phase, 
+
+		mseg1Menu.addItem("MSEG1 Rate", [this]() { setDest(proc.mseg1Params.rate); });
+		mseg1Menu.addItem("MSEG1 Depth", [this]() { setDest(proc.mseg1Params.depth); });
+		mseg1Menu.addItem("MSEG1 Offset", [this]() { setDest(proc.mseg1Params.offset); });
+
+		mseg2Menu.addItem("MSEG2 Rate", [this]() { setDest(proc.mseg2Params.rate); });
+		mseg2Menu.addItem("MSEG2 Depth", [this]() { setDest(proc.mseg2Params.depth); });
+		mseg2Menu.addItem("MSEG2 Offset", [this]() { setDest(proc.mseg2Params.offset); });
+
+		mseg3Menu.addItem("MSEG3 Rate", [this]() { setDest(proc.mseg3Params.rate); });
+		mseg3Menu.addItem("MSEG3 Depth", [this]() { setDest(proc.mseg3Params.depth); });
+		mseg3Menu.addItem("MSEG3 Offset", [this]() { setDest(proc.mseg3Params.offset); });
+
+		mseg4Menu.addItem("MSEG4 Rate", [this]() { setDest(proc.mseg4Params.rate); });
+		mseg4Menu.addItem("MSEG4 Depth", [this]() { setDest(proc.mseg4Params.depth); });
+		mseg4Menu.addItem("MSEG4 Offset", [this]() { setDest(proc.mseg4Params.offset); });
+
+		msegsMenu.addSubMenu("MSEG1", mseg1Menu);
+		msegsMenu.addSubMenu("MSEG2", mseg2Menu);
+		msegsMenu.addSubMenu("MSEG3", mseg3Menu);
+		msegsMenu.addSubMenu("MSEG4", mseg4Menu);
 
 		timbreMenu.addItem("Equant", [this]() { setDest(proc.timbreParams.equant); });
 		timbreMenu.addItem("Pitch", [this]() { setDest(proc.timbreParams.pitch); });
@@ -1177,6 +1200,7 @@ public:
 		m.addSubMenu("Oscillators", oscsMenu);
 		m.addSubMenu("Envelopes", envsMenu);
 		m.addSubMenu("LFOs", lfosMenu);
+		m.addSubMenu("MSEGs", msegsMenu);
 		m.addSubMenu("Timbre", timbreMenu);
 		m.addSubMenu("Filter", filterMenu);
 		m.addSubMenu("FX Modules", fxModulesMenu);
