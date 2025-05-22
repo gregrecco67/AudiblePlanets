@@ -1034,7 +1034,7 @@ public:
 	// 5: "Folder";
 
     void applyWSFunction(juce::dsp::ProcessContextReplacing<float>& context) {
-        auto numS = context.getOutputBlock().getNumSamples();
+        auto numS = static_cast<size_t>(context.getOutputBlock().getNumSamples());
         for (size_t ch = 0; ch < 2; ++ch) {
             auto source = context.getOutputBlock().getChannelPointer(ch);
 			if (currentFunction == 0) {
@@ -1388,18 +1388,6 @@ public:
 
 		// processed that buffer: downsample it, and SHIP IT OUT!
 		oversampler->processSamplesDown(context.getOutputBlock());
-	}
-
-	inline float minimaxSin(float x1) const
-	{
-		float x2 = x1 * x1;
-		
-		return x1 * (0.99999999997884898600402426033768998f +
-		        x2 * (-0.166666666088260696413164261885310067f +
-		        x2 * (0.00833333072055773645376566203656709979f +
-		        x2 * (-0.000198408328232619552901560108010257242f +
-		        x2 * (2.75239710746326498401791551303359689e-6f -
-		              2.3868346521031027639830001794722295e-8f * x2)))));
 	}
 
 private:

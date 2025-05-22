@@ -1,7 +1,2 @@
--- add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
--- replace limiter with something smoother! new ws is bound to produce some peaks
-//======================
+add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
 
-clean up Envelope:
-
-lfo rand and S+H: recalc when safe? create with random seed?

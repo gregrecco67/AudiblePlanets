@@ -206,7 +206,7 @@ static juce::String syncrepeatTextFunction(const gin::Parameter &, float v)
 			return "Free";
 		default:
 			jassertfalse;
-			return {};
+ 			return {};
 	}
 }
 

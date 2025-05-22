@@ -14,11 +14,15 @@ AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: 'Yes'
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: WebKit
+ColumnLimit: '100'
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'false'
-ContinuationIndentWidth: '4'
+ContinuationIndentWidth: '0'
 Cpp11BracedListStyle: 'true'
 FixNamespaceComments: 'true'
 IndentWidth: '4'
+IndentAccessModifiers: 'false'
+AccessModifierOffset: '-4'
+IndentCaseLabels: 'false'
 KeepEmptyLinesAtTheStartOfBlocks: 'false'
 Language: Cpp
 MaxEmptyLinesToKeep: '1'
