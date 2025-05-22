@@ -1,6 +1,5 @@
 ﻿---
 BasedOnStyle: Chromium
-AccessModifierOffset: '-4'
 AlignAfterOpenBracket: DontAlign
 AlignEscapedNewlines: Left
 AllowAllArgumentsOnNextLine: 'false'

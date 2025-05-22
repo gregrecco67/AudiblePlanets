@@ -69,7 +69,7 @@ private:
 	gin::Filter filter;
 
 	Envelope env1, env2, env3, env4;
-	int currentEnv;
+	int currentEnv{0};
 	float currentFreq{440.f};
 
 	float currentMidiNote = -1;
