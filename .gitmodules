@@ -4,7 +4,3 @@
 [submodule "Gin"]
 	path = modules/Gin
 	url = https://github.com/gregrecco67/Gin.git
-[submodule "modules/melatonin_perfetto"]
-	path = modules/melatonin_perfetto
-		url = https://github.com/sudara/melatonin_perfetto.git
-		branch = main
