@@ -1139,9 +1139,8 @@ void APAudioProcessor::prepareToPlay(
 	ringmod.prepare(spec);
 	ladder.prepare(spec);
 	limiter.prepare(spec);
-	limiter.setThreshold(-0.3f);
-	limiter.setRelease(0.05f);
-
+	limiter.setRelease(0.1f);
+	limiter.setThreshold(0.f);
 	lfo1.setSampleRate(newSampleRate);
 	lfo2.setSampleRate(newSampleRate);
 	lfo3.setSampleRate(newSampleRate);
