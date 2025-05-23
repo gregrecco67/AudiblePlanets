@@ -24,7 +24,7 @@
 #include "Oscillator.h"
 class APAudioProcessor;
 
-using namespace std::numbers;
+using std::numbers::pi_v;
 
 //==============================================================================
 class SynthVoice3 : public gin::SynthesiserVoice, public gin::ModVoice {

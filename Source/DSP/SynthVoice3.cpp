@@ -232,16 +232,16 @@ void SynthVoice3::renderNextBlock(
 	osc4.renderFloats(osc4Freq, osc4Params, osc4xs, osc4ys, numSamples);
 
 	// the whole enchilada
-	for (int i = 0; i < std::ceil((static_cast<float>(numSamples)) / 4.f);
-	    i++) {
+	for (int i = 0; i < std::ceil((static_cast<float>(numSamples)) / 4.f);i++) 
+	{
 		env1.advance(1);
 		env2.advance(1);
 		env3.advance(1);
 		env4.advance(1);
-		float a = envs[0]->getOutput();  // assigned in updateParams
-		float b = envs[1]->getOutput();  // envs[0] ~= env1!, etc.
-		float c = envs[2]->getOutput();
-		float d = envs[3]->getOutput();
+		mipp::Reg<float> a = envs[0]->getOutput();  // assigned in updateParams
+		mipp::Reg<float> b = envs[1]->getOutput();  // envs[0] ~= env1!, etc.
+		mipp::Reg<float> c = envs[2]->getOutput();
+		mipp::Reg<float> d = envs[3]->getOutput();
 
 		osc1x.load(&osc1xs[i * 4]);  // vectors of samples
 		osc1y.load(&osc1ys[i * 4]);
@@ -255,50 +255,50 @@ void SynthVoice3::renderNextBlock(
 		epi1xs[i] = osc1x * a;  // apply env
 		epi1ys[i] = osc1y * a;
 
-		epi2xs[i] = osc2x * b + epi1xs[i];  // 2 always based on 1
-		epi2ys[i] = osc2y * b + epi1ys[i];
+		epi2xs[i] = mipp::fmadd(osc2x, b, epi1xs[i]);  // 2 always based on 1
+		epi2ys[i] = mipp::fmadd(osc2y, b, epi1ys[i]);
 
 		// save distance/inverse for modulated sample, where we only care about
 		// angle
-		dist2sq = (epi2ys[i] - equant) * (epi2ys[i] - equant) +
-		          (epi2xs[i] * epi2xs[i]);
+		dist2sq = mipp::fmadd((epi2ys[i] - equant), (epi2ys[i] - equant),
+		          (epi2xs[i] * epi2xs[i]));
 		dist2 = mipp::sqrt(dist2sq);
 		invDist2 = mipp::Reg<float>(1.0f) / (dist2 + .000001f);
 
 		// get position of bodies 3 & 4 by algorithm
 		switch (algo) {
 			case 0:
-				epi3xs[i] = (osc3x * c) + epi2xs[i];
-				epi3ys[i] = (osc3y * c) + epi2ys[i];
-				epi4xs[i] = (osc4x * d) + epi3xs[i];
-				epi4ys[i] = (osc4y * d) + epi3ys[i];
+				epi3xs[i] = mipp::fmadd(osc3x, c, epi2xs[i]);
+				epi3ys[i] = mipp::fmadd(osc3y, c, epi2ys[i]);
+				epi4xs[i] = mipp::fmadd(osc4x, d, epi3xs[i]);
+				epi4ys[i] = mipp::fmadd(osc4y, d, epi3ys[i]);
 				break;
 			case 1:
-				epi3xs[i] = (osc3x * c) + epi2xs[i];
-				epi3ys[i] = (osc3y * c) + epi2ys[i];
-				epi4xs[i] = (osc4x * d) + epi2xs[i];
-				epi4ys[i] = (osc4y * d) + epi2ys[i];
+				epi3xs[i] = mipp::fmadd(osc3x, c, epi2xs[i]);
+				epi3ys[i] = mipp::fmadd(osc3y, c, epi2ys[i]);
+				epi4xs[i] = mipp::fmadd(osc4x, d, epi2xs[i]);
+				epi4ys[i] = mipp::fmadd(osc4y, d, epi2ys[i]);
 				break;
 			case 2:
-				epi3xs[i] = (osc3x * c) + epi1xs[i];
-				epi3ys[i] = (osc3y * c) + epi1ys[i];
-				epi4xs[i] = (osc4x * d) + epi3xs[i];
-				epi4ys[i] = (osc4y * d) + epi3ys[i];
+				epi3xs[i] = mipp::fmadd(osc3x, c, epi1xs[i]);
+				epi3ys[i] = mipp::fmadd(osc3y, c, epi1ys[i]);
+				epi4xs[i] = mipp::fmadd(osc4x, d, epi3xs[i]);
+				epi4ys[i] = mipp::fmadd(osc4y, d, epi3ys[i]);
 				break;
 			case 3:
-				epi3xs[i] = (osc3x * c) + epi1xs[i];
-				epi3ys[i] = (osc3y * c) + epi1ys[i];
-				epi4xs[i] = (osc4x * d) + epi1xs[i];
-				epi4ys[i] = (osc4y * d) + epi1ys[i];
+				epi3xs[i] = mipp::fmadd(osc3x, c, epi1xs[i]);
+				epi3ys[i] = mipp::fmadd(osc3y, c, epi1ys[i]);
+				epi4xs[i] = mipp::fmadd(osc4x, d, epi1xs[i]);
+				epi4ys[i] = mipp::fmadd(osc4y, d, epi1ys[i]);
 				break;
 		}
 
-		dist3sq = (epi3ys[i] - equant) * (epi3ys[i] - equant) +
-		          (epi3xs[i] * epi3xs[i]);
+		dist3sq = mipp::fmadd((epi3ys[i] - equant), (epi3ys[i] - equant),
+		          (epi3xs[i] * epi3xs[i]));
 		dist3 = mipp::sqrt(dist3sq);
 		invDist3 = mipp::Reg<float>(1.0f) / (dist3 + .000001f);
-		dist4sq = (epi4ys[i] - equant) * (epi4ys[i] - equant) +
-		          (epi4xs[i] * epi4xs[i]);
+		dist4sq = mipp::fmadd((epi4ys[i] - equant), (epi4ys[i] - equant),
+		          (epi4xs[i] * epi4xs[i]));
 		dist4 = mipp::sqrt(dist4sq);
 		invDist4 = mipp::Reg<float>(1.0f) / (dist4 + .000001f);
 
@@ -387,9 +387,9 @@ void SynthVoice3::renderNextBlock(
 }
 
 mipp::Reg<float> SynthVoice3::mix(mipp::Reg<float> a, mipp::Reg<float> b, float mix) {
-	mipp::Reg<float> mixa = mipp::Reg<float>(std::sin(mix * pi * 0.5f));
-	mipp::Reg<float> mixb = mipp::Reg<float>(std::sin((mix - 1.0f)) * pi * 0.5f);
-	return (a * mixa) + (b * mixb);
+	mipp::Reg<float> mixa = FastMath<float>::minimaxSin(mix * pi_v<float> * 0.5f);
+	mipp::Reg<float> mixb = FastMath<float>::minimaxSin((mix - 1.0f) * pi_v<float> * 0.5f);
+	return mipp::fmadd(a, mixa, (b * mixb));
 }
 
 void SynthVoice3::updateParams(int blockSize)

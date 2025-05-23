@@ -1680,7 +1680,7 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 	outputGain.process(fxALaneBuffer);
 	auto ABlock = juce::dsp::AudioBlock<float>(fxALaneBuffer);
 	auto AContext = juce::dsp::ProcessContextReplacing<float>(ABlock);
-	// dcFilter.process(AContext);
+	dcFilter.process(AContext);
 	limiter.process(AContext);
 }
 
