@@ -336,6 +336,8 @@ public:
 		addControl(new APKnob(proc.timbreParams.pitch), 0, 1);
 		addControl(algo = new APKnob(proc.timbreParams.algo), 1, 0);
 		addControl(new APKnob(proc.globalParams.velSens), 1, 1);
+		addControl(new APKnob(proc.timbreParams.demodmix), 2, 0);
+		addControl(new APKnob(proc.timbreParams.demodvol), 2, 1);
 	}
 
 	APKnob *equant, *algo;

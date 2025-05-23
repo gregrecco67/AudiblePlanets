@@ -46,6 +46,8 @@ public:
 	    int startSample,
 	    int numSamples) override;
 
+	mipp::Reg<float> mix(mipp::Reg<float> a, mipp::Reg<float> b, mipp::Reg<float> mix);
+
 	float getCurrentNote() override
 	{
 		return noteSmoother.getCurrentValue() * 127.0f;
@@ -127,10 +129,16 @@ private:
 	mipp::Reg<float> sine2{0.f, 0.f, 0.f, 0.f}, cos2{0.f, 0.f, 0.f, 0.f},
 	    sine3{0.f, 0.f, 0.f, 0.f}, cos3{0.f, 0.f, 0.f, 0.f},
 	    sine4{0.f, 0.f, 0.f, 0.f}, cos4{0.f, 0.f, 0.f, 0.f};
+
+	mipp::Reg<float> dmSine2{0.f, 0.f, 0.f, 0.f}, dmSine3{0.f, 0.f, 0.f, 0.f},
+        dmSine4{0.f,0.f, 0.f, 0.f};
+    mipp::Reg<float> dmCos2{0.f, 0.f, 0.f, 0.f}, dmCos3{0.f, 0.f, 0.f, 0.f}, dmCos4{0.f, 0.f, 0.f, 0.f};
 	// redundant??
 	mipp::Reg<float> sample2L, sample2R, sample3L, sample3R, sample4L, sample4R;
 
 	mipp::Reg<float> sampleL{0.f, 0.f, 0.f, 0.f}, sampleR{0.f, 0.f, 0.f, 0.f};
+
+	float demodMix{0.f}, demodVol{0.f};
 
 	friend class APSynth;
 	juce::MPENote curNote;

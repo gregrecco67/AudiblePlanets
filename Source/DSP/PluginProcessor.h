@@ -118,7 +118,7 @@ public:
 	struct TimbreParams {
 		TimbreParams() = default;
 
-		gin::Parameter::Ptr equant, pitch, algo;
+		gin::Parameter::Ptr equant, pitch, algo, demodmix, demodvol;
 
 		void setup(APAudioProcessor &p);
 

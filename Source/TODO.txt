@@ -1,3 +1,7 @@
 add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
 
 add MSEG params to dest popups
+
+rewrite README, yeesh
+
+pan law!

@@ -585,6 +585,8 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor &p)
 	    "pitch", "Pitch", "", "", {0.01f, 4.0, 0.0f, 1.0}, 1.0, 0.02f);
 	algo = p.addExtParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0,
 	    0.f, algoTextFunction);
+	demodmix = p.addExtParam("demodmix", "Demod Mix", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, percentTextFunction);
+    demodvol = p.addExtParam("demodVol", "Demod Vol", "", "", { 0.0f, 4.0f, 0.0f, 1.0f }, 2.0f, 0.0f);
 }
 
 void APAudioProcessor::AuxParams::setup(APAudioProcessor &p)

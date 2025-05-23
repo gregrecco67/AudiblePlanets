@@ -127,18 +127,19 @@ target_link_libraries (${PROJECT_NAME}
 						gin_dsp
 						gin_plugin
 						gin_simd
+						juce::juce_core
+						juce::juce_dsp
 						juce::juce_events
 						juce::juce_graphics
 						juce::juce_gui_basics
 						juce::juce_gui_extra
-						juce::juce_core
 						juce::juce_audio_basics
 						$<$<PLATFORM_ID:Linux>:curl>
 					PUBLIC
 						Assets
 						juce::juce_recommended_config_flags
 						#juce::juce_recommended_lto_flags
-						#juce::juce_recommended_warning_flags
+						juce::juce_recommended_warning_flags
 					)
 
 if (APPLE)

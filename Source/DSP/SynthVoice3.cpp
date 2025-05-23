@@ -310,23 +310,31 @@ void SynthVoice3::renderNextBlock(
 		sine2 = (epi2ys[i] - equant) * invDist2 * b;
 		cos2 = epi2xs[i] * invDist2 * b;
 
+		dmSine4 = (epi4ys[i] - equant) * dist4;
+		dmCos4 = epi4xs[i] * dist4;
+		dmSine3 = (epi3ys[i] - equant) * dist3;
+		dmCos3 = epi3xs[i] * dist3;
+		dmSine2 = (epi2ys[i] - equant) * dist2;
+		dmCos2 = epi2xs[i] * dist2;
+
+
 		// mix by algorithm
 		switch (algo) {
 			case 0:
-				sampleL = sine4;
-				sampleR = cos4;
+				sampleL = mix(sine4, dmSine4 * demodVol, demodMix);
+				sampleR = mix(cos4, dmCos4 * demodVol, demodMix);
 				break;
 			case 1:
-				sampleL = (sine3 + sine4) * 0.5f;
-				sampleR = (cos3 + cos4) * 0.5f;
+				sampleL = mix((sine3 + sine4) * 0.5f, (dmSine3 + dmSine4) * 0.5f * demodVol, demodMix);
+				sampleR = mix((cos3 + cos4) * 0.5f, (dmCos3 + dmCos4) * 0.5f * demodVol, demodMix);
 				break;
 			case 2:
-				sampleL = (sine2 + sine4) * 0.5f;
-				sampleR = (cos2 + cos4) * 0.5f;
+				sampleL = mix((sine2 + sine4) * 0.5f, (dmSine2 + dmSine4) * 0.5f * demodVol, demodMix);
+				sampleR = mix((cos2 + cos4) * 0.5f, (dmCos2 + dmCos4) * 0.5f * demodVol, demodMix);
 				break;
 			case 3:
-				sampleL = (sine2 + sine3 + sine4) * 0.333f;
-				sampleR = (cos2 + cos3 + cos4) * 0.333f;
+				sampleL = mix((sine2 + sine3 + sine4) * 0.333f, (dmSine2 + dmSine3 + dmSine4) * 0.333f * demodVol, demodMix);
+				sampleR = mix((cos2 + cos3 + cos4) * 0.333f, (dmCos2 + dmCos3 + dmCos4) * 0.333f * demodVol, demodMix);
 				break;
 		}
 		sampleL = mipp::sat(sampleL, -1.0f, 1.0f);
@@ -378,6 +386,10 @@ void SynthVoice3::renderNextBlock(
 	finishBlock(numSamples);
 }
 
+mipp::Reg<float> SynthVoice3::mix(mipp::Reg<float> a, mipp::Reg<float> b, mipp::Reg<float> mix) {
+	return (a * (mix + -1.f)) + (b * mix);
+}
+
 void SynthVoice3::updateParams(int blockSize)
 {
 	if (tilUpdate != 0) {
@@ -389,6 +401,8 @@ void SynthVoice3::updateParams(int blockSize)
 	}  // every 4th to match envelope/lfo/mseg
 	algo = static_cast<int>(getValue(proc.timbreParams.algo));
 	equant = getValue(proc.timbreParams.equant);
+	demodVol = getValue(proc.timbreParams.demodvol);
+	demodMix = getValue(proc.timbreParams.demodmix);
 
 	auto note = getCurrentlyPlayingNote();
 	proc.modMatrix.setPolyValue(
