@@ -3,7 +3,7 @@
 
 An expressive, quasi-Ptolemaic semi-modular synthesizer.
 
-<img width="1567" alt="MAIN" src="https://github.com/user-attachments/assets/bf92c48f-cb9d-4854-b553-9b7e84420649" />
+<img width="1567" alt="MAIN2" src="https://github.com/user-attachments/assets/41d9b29c-af6c-43e7-a824-7929ab098066" />
 <img width="1567" alt="MODS" src="https://github.com/user-attachments/assets/89e6b202-0c6f-4872-8f99-7a93c2e88de7" />
 <img width="1520" alt="FX" src="https://github.com/user-attachments/assets/5289b9d4-b950-4b0f-91b6-54d4de7fc6a7" />
 
