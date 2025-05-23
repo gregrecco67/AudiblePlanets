@@ -1119,6 +1119,8 @@ public:
 		timbreMenu.addItem("Equant", [this]() { setDest(proc.timbreParams.equant); });
 		timbreMenu.addItem("Pitch", [this]() { setDest(proc.timbreParams.pitch); });
 		timbreMenu.addItem("Algorithm", [this]() { setDest(proc.timbreParams.algo); });
+		timbreMenu.addItem("Demod Mix", [this]() { setDest(proc.timbreParams.demodmix); });
+		timbreMenu.addItem("Demod Vol", [this]() { setDest(proc.timbreParams.demodvol); });
 
 		filterMenu.addItem("Cutoff", [this]() { setDest(proc.filterParams.frequency); });
 		filterMenu.addItem("Resonance", [this]() { setDest(proc.filterParams.resonance); });
