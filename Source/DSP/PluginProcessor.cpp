@@ -12,93 +12,93 @@
  * https://github.com/gregrecco67/AudiblePlanets
  */
 
-#include "PluginEditor.h"
 #include "PluginProcessor.h"
+#include "PluginEditor.h"
 
 static juce::String ladderTypeTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return "LPF12";
-		case 1:
-			return "HPF12";
-		case 2:
-			return "BPF12";
-		case 3:
-			return "LPF24";
-		case 4:
-			return "HPF24";
-		case 5:
-			return "BPF24";
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return "LPF12";
+	case 1:
+		return "HPF12";
+	case 2:
+		return "BPF12";
+	case 3:
+		return "LPF24";
+	case 4:
+		return "HPF24";
+	case 5:
+		return "BPF24";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
 static juce::String waveshaperTypeTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return "Soft Clip";
-		case 1:
-			return "Tanh";
-		case 2:
-			return "Hard Clip";
-		case 3:
-			return "Halfwave";
-		case 4:
-			return "Fullwave";
-		case 5:
-			return "Folder";
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return "Soft Clip";
+	case 1:
+		return "Tanh";
+	case 2:
+		return "Hard Clip";
+	case 3:
+		return "Halfwave";
+	case 4:
+		return "Fullwave";
+	case 5:
+		return "Folder";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
 static juce::String lfoTextFunction(const gin::Parameter &, float v)
 {
 	switch ((gin::LFO::WaveShape) static_cast<int>(v)) {
-		case gin::LFO::WaveShape::none:
-			return "None";
-		case gin::LFO::WaveShape::sine:
-			return "Sine";
-		case gin::LFO::WaveShape::triangle:
-			return "Triangle";
-		case gin::LFO::WaveShape::sawUp:
-			return "Saw Up";
-		case gin::LFO::WaveShape::sawDown:
-			return "Saw Down";
-		case gin::LFO::WaveShape::square:
-			return "Square";
-		case gin::LFO::WaveShape::squarePos:
-			return "Square+";
-		case gin::LFO::WaveShape::sampleAndHold:
-			return "S&H";
-		case gin::LFO::WaveShape::noise:
-			return "Noise";
-		case gin::LFO::WaveShape::stepUp3:
-			return "Step Up 3";
-		case gin::LFO::WaveShape::stepUp4:
-			return "Step Up 4";
-		case gin::LFO::WaveShape::stepup8:
-			return "Step Up 8";
-		case gin::LFO::WaveShape::stepDown3:
-			return "Step Down 3";
-		case gin::LFO::WaveShape::stepDown4:
-			return "Step Down 4";
-		case gin::LFO::WaveShape::stepDown8:
-			return "Step Down 8";
-		case gin::LFO::WaveShape::pyramid3:
-			return "Pyramid 3";
-		case gin::LFO::WaveShape::pyramid5:
-			return "Pyramid 5";
-		case gin::LFO::WaveShape::pyramid9:
-			return "Pyramid 9";
-		default:
-			jassertfalse;
-			return {};
+	case gin::LFO::WaveShape::none:
+		return "None";
+	case gin::LFO::WaveShape::sine:
+		return "Sine";
+	case gin::LFO::WaveShape::triangle:
+		return "Triangle";
+	case gin::LFO::WaveShape::sawUp:
+		return "Saw Up";
+	case gin::LFO::WaveShape::sawDown:
+		return "Saw Down";
+	case gin::LFO::WaveShape::square:
+		return "Square";
+	case gin::LFO::WaveShape::squarePos:
+		return "Square+";
+	case gin::LFO::WaveShape::sampleAndHold:
+		return "S&H";
+	case gin::LFO::WaveShape::noise:
+		return "Noise";
+	case gin::LFO::WaveShape::stepUp3:
+		return "Step Up 3";
+	case gin::LFO::WaveShape::stepUp4:
+		return "Step Up 4";
+	case gin::LFO::WaveShape::stepup8:
+		return "Step Up 8";
+	case gin::LFO::WaveShape::stepDown3:
+		return "Step Down 3";
+	case gin::LFO::WaveShape::stepDown4:
+		return "Step Down 4";
+	case gin::LFO::WaveShape::stepDown8:
+		return "Step Down 8";
+	case gin::LFO::WaveShape::pyramid3:
+		return "Pyramid 3";
+	case gin::LFO::WaveShape::pyramid5:
+		return "Pyramid 5";
+	case gin::LFO::WaveShape::pyramid9:
+		return "Pyramid 9";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
@@ -120,42 +120,42 @@ static juce::String percentTextFunction(const gin::Parameter &, float v)
 static juce::String compressorTypeTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return "Compressor";
-		case 1:
-			return "Limiter";
-		case 2:
-			return "Expander";
-		case 3:
-			return "Gate";
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return "Compressor";
+	case 1:
+		return "Limiter";
+	case 2:
+		return "Expander";
+	case 3:
+		return "Gate";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
 static juce::String filterTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return "LP 12";
-		case 1:
-			return "LP 24";
-		case 2:
-			return "HP 12";
-		case 3:
-			return "HP 24";
-		case 4:
-			return "BP 12";
-		case 5:
-			return "BP 24";
-		case 6:
-			return "NT 12";
-		case 7:
-			return "NT 24";
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return "LP 12";
+	case 1:
+		return "LP 24";
+	case 2:
+		return "HP 12";
+	case 3:
+		return "HP 24";
+	case 4:
+		return "BP 12";
+	case 5:
+		return "BP 24";
+	case 6:
+		return "NT 12";
+	case 7:
+		return "NT 24";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
@@ -181,78 +181,78 @@ static juce::String secondsTextFunction(const gin::Parameter &, float v)
 static juce::String envSelectTextFunction(const gin::Parameter &, float v)
 {
 	switch (int(v)) {
-		case 0:
-			return "Env 1";
-		case 1:
-			return "Env 2";
-		case 2:
-			return "Env 3";
-		case 3:
-			return "Env 4";
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return "Env 1";
+	case 1:
+		return "Env 2";
+	case 2:
+		return "Env 3";
+	case 3:
+		return "Env 4";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
 static juce::String syncrepeatTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return "Off";
-		case 1:
-			return "Sync";
-		case 2:
-			return "Free";
-		default:
-			jassertfalse;
- 			return {};
+	case 0:
+		return "Off";
+	case 1:
+		return "Sync";
+	case 2:
+		return "Free";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
 static juce::String fxListTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return juce::String("--");
-		case 1:
-			return juce::String("Waveshaper");
-		case 2:
-			return juce::String("Dynamics");
-		case 3:
-			return juce::String("Delay");
-		case 4:
-			return juce::String("Stereo Chorus");
-		case 5:
-			return juce::String("Multiband Filter");
-		case 6:
-			return juce::String("Reverb");
-		case 7:
-			return juce::String("Ring Modulator");
-		case 8:
-			return juce::String("Gain");
-		case 9:
-			return juce::String("Ladder Filter");
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return juce::String("--");
+	case 1:
+		return juce::String("Waveshaper");
+	case 2:
+		return juce::String("Dynamics");
+	case 3:
+		return juce::String("Delay");
+	case 4:
+		return juce::String("Stereo Chorus");
+	case 5:
+		return juce::String("Multiband Filter");
+	case 6:
+		return juce::String("Reverb");
+	case 7:
+		return juce::String("Ring Modulator");
+	case 8:
+		return juce::String("Gain");
+	case 9:
+		return juce::String("Ladder Filter");
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
 static juce::String algoTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return juce::String("1-2-3-4");
-		case 1:
-			return juce::String("1-2-3 / 2-4");
-		case 2:
-			return juce::String("1-2 / 1-3-4");
-		case 3:
-			return juce::String("1-2 / 1-3 / 1-4");
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return juce::String("1-2-3-4");
+	case 1:
+		return juce::String("1-2-3 / 2-4");
+	case 2:
+		return juce::String("1-2 / 1-3-4");
+	case 3:
+		return juce::String("1-2 / 1-3 / 1-4");
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
@@ -264,34 +264,34 @@ static juce::String freqTextFunction(const gin::Parameter &, float v)
 static juce::String glideModeTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return "Off";
-		case 1:
-			return "Glissando";
-		case 2:
-			return "Portamento";
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return "Off";
+	case 1:
+		return "Glissando";
+	case 2:
+		return "Portamento";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
 static juce::String msegDrawModeTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return "Step";
-		case 1:
-			return "Half";
-		case 2:
-			return "Down";
-		case 3:
-			return "Up";
-		case 4:
-			return "Tri";
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return "Step";
+	case 1:
+		return "Half";
+	case 2:
+		return "Down";
+	case 3:
+		return "Up";
+	case 4:
+		return "Tri";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
@@ -303,21 +303,21 @@ static juce::String gridTextFunction(const gin::Parameter &, float v)
 static juce::String auxWaveTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return "Sine";
-		case 1:
-			return "Triangle";
-		case 2:
-			return "Square";
-		case 3:
-			return "Saw";
-		case 4:
-			return "Pink Noise";
-		case 5:
-			return "White Noise";
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return "Sine";
+	case 1:
+		return "Triangle";
+	case 2:
+		return "Square";
+	case 3:
+		return "Saw";
+	case 4:
+		return "Pink Noise";
+	case 5:
+		return "White Noise";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
@@ -342,13 +342,13 @@ static juce::String decibelsTextFunction(const gin::Parameter &, float v)
 static juce::String auxPreFxTextFunction(const gin::Parameter &, float v)
 {
 	switch (static_cast<int>(v)) {
-		case 0:
-			return "Post FX";
-		case 1:
-			return "Pre FX";
-		default:
-			jassertfalse;
-			return {};
+	case 0:
+		return "Post FX";
+	case 1:
+		return "Pre FX";
+	default:
+		jassertfalse;
+		return {};
 	}
 }
 
@@ -363,46 +363,46 @@ void APAudioProcessor::OSCParams::setup(
 	juce::NormalisableRange<float> defaultFineRange{-2.0, 2.0, 0.0, 1.0};
 
 	switch (numStr.getIntValue()) {
-		case 1:
-			coarse = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "",
-			    {1.0, 24.0, 1.0, 1.0}, 1.0, 0.0f);
-			fine = p.addExtParam(id + "fine", nm + " Fine", "Fine", "",
-			    osc1FineRange, 0.0, 0.0f);
-			volume = p.addExtParam(id + "volume", nm + " Volume", "Volume",
-			    " dB", {-40.0, 0.0, 0.0f, 1.0}, -6.f, 0.02f);
-			phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "",
-			    {0.0, 1.0, 0.0, 1.0}, 0.15f, 0.0f);
-			break;
-		case 2:
-			coarse = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "",
-			    {1.0, 24.0, 1.0, 1.0}, 2.0, 0.0f);
-			fine = p.addExtParam(id + "fine", nm + " Fine", "Fine", "",
-			    defaultFineRange, 0.0, 0.0f);
-			volume = p.addExtParam(id + "volume", nm + " Volume", "Volume",
-			    " dB", {-40.0, 0.0, 0.0f, 1.0}, -6.f, 0.02f);
-			phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "",
-			    {0.0, 1.0, 0.0, 1.0}, 0.3f, 0.0f);
-			break;
-		case 3:
-			coarse = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "",
-			    {1.0, 24.0, 1.0, 1.0}, 3.0, 0.0f);
-			fine = p.addExtParam(id + "fine", nm + " Fine", "Fine", "",
-			    defaultFineRange, 0.0, 0.0f);
-			volume = p.addExtParam(id + "volume", nm + " Volume", "Volume",
-			    " dB", {-40.0, 0.0, 0.0f, 1.0}, -9.f, 0.02f);
-			phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "",
-			    {0.0, 1.0, 0.0, 1.0}, 0.65f, 0.0f);
-			break;
-		case 4:
-			coarse = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "",
-			    {1.0, 24.0, 1.0, 1.0}, 4.0, 0.0f);
-			fine = p.addExtParam(id + "fine", nm + " Fine", "Fine", "",
-			    defaultFineRange, 0.0, 0.0f);
-			volume = p.addExtParam(id + "volume", nm + " Volume", "Volume",
-			    " dB", {-40.0, 0.0, 0.0f, 1.0}, -14.f, 0.02f);
-			phase = p.addExtParam(id + "phase", nm + " Phase", " Phase", "",
-			    {0.0, 1.0, 0.0, 1.0}, 0.85f, 0.0f);
-			break;
+	case 1:
+		coarse = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "",
+		    {1.0, 24.0, 1.0, 1.0}, 1.0, 0.0f);
+		fine = p.addExtParam(id + "fine", nm + " Fine", "Fine", "",
+		    osc1FineRange, 0.0, 0.0f);
+		volume = p.addExtParam(id + "volume", nm + " Volume", "Volume",
+		    " dB", {-40.0, 0.0, 0.0f, 1.0}, -6.f, 0.02f);
+		phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "",
+		    {0.0, 1.0, 0.0, 1.0}, 0.15f, 0.0f);
+		break;
+	case 2:
+		coarse = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "",
+		    {1.0, 24.0, 1.0, 1.0}, 2.0, 0.0f);
+		fine = p.addExtParam(id + "fine", nm + " Fine", "Fine", "",
+		    defaultFineRange, 0.0, 0.0f);
+		volume = p.addExtParam(id + "volume", nm + " Volume", "Volume",
+		    " dB", {-40.0, 0.0, 0.0f, 1.0}, -6.f, 0.02f);
+		phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "",
+		    {0.0, 1.0, 0.0, 1.0}, 0.3f, 0.0f);
+		break;
+	case 3:
+		coarse = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "",
+		    {1.0, 24.0, 1.0, 1.0}, 3.0, 0.0f);
+		fine = p.addExtParam(id + "fine", nm + " Fine", "Fine", "",
+		    defaultFineRange, 0.0, 0.0f);
+		volume = p.addExtParam(id + "volume", nm + " Volume", "Volume",
+		    " dB", {-40.0, 0.0, 0.0f, 1.0}, -9.f, 0.02f);
+		phase = p.addExtParam(id + "phase", nm + " Phase", "Phase", "",
+		    {0.0, 1.0, 0.0, 1.0}, 0.65f, 0.0f);
+		break;
+	case 4:
+		coarse = p.addExtParam(id + "coarse", nm + " Coarse", "Coarse", "",
+		    {1.0, 24.0, 1.0, 1.0}, 4.0, 0.0f);
+		fine = p.addExtParam(id + "fine", nm + " Fine", "Fine", "",
+		    defaultFineRange, 0.0, 0.0f);
+		volume = p.addExtParam(id + "volume", nm + " Volume", "Volume",
+		    " dB", {-40.0, 0.0, 0.0f, 1.0}, -14.f, 0.02f);
+		phase = p.addExtParam(id + "phase", nm + " Phase", " Phase", "",
+		    {0.0, 1.0, 0.0, 1.0}, 0.85f, 0.0f);
+		break;
 	}
 	wave = p.addExtParam(id + "wave", nm + " Wave", "Wave", "",
 	    {0.0, 5.0, 1.0f, 1.0}, 0.0, 0.0f, auxWaveTextFunction);
@@ -585,8 +585,8 @@ void APAudioProcessor::TimbreParams::setup(APAudioProcessor &p)
 	    "pitch", "Pitch", "", "", {0.01f, 4.0, 0.0f, 1.0}, 1.0, 0.02f);
 	algo = p.addExtParam("algo", "Algorithm", "", "", {0.0, 3.0, 1.0, 1.0}, 0.0,
 	    0.f, algoTextFunction);
-	demodmix = p.addExtParam("demodmix", "Demod Mix", "", "", { 0.0, 1.0, 0.0, 1.0 }, 0.0, 0.0f, percentTextFunction);
-    demodvol = p.addExtParam("demodVol", "Demod Vol", "", "", { 0.0f, 4.0f, 0.0f, 1.0f }, 2.0f, 0.0f);
+	demodmix = p.addExtParam("demodmix", "Demod Mix", "", "", {0.0, 1.0, 0.0, 1.0}, 0.5f, 0.0f, percentTextFunction);
+	demodvol = p.addExtParam("demodVol", "Demod Vol", "", "", {0.0f, 4.0f, 0.0f, 1.0f}, 2.0f, 0.0f);
 }
 
 void APAudioProcessor::AuxParams::setup(APAudioProcessor &p)
@@ -914,10 +914,11 @@ bool APAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const
 //==============================================================================
 APAudioProcessor::APAudioProcessor()
     : gin::Processor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true),
-		false, getOptions()),
-		synth(APSynth(*this)), auxSynth(AuxSynth(*this))
+          false,
+          getOptions()),
+      synth(APSynth(*this)), auxSynth(AuxSynth(*this))
 {
-	{ // get presets
+	{  // get presets
 		auto sz = 0;
 		for (auto i = 0; i < BinaryData::namedResourceListSize; i++)
 			if (juce::String(BinaryData::originalFilenames[i]).endsWith(".xml"))
@@ -1158,7 +1159,6 @@ void APAudioProcessor::prepareToPlay(
 	*dcFilter.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(
 	    newSampleRate, 40.0f);
 	dcFilter.prepare(spec);
-
 }
 
 void APAudioProcessor::releaseResources() {}
@@ -1356,38 +1356,38 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 	float laneBPan = modMatrix.getValue(fxOrderParams.laneBPan);
 
 	switch (int(fxOrderParams.laneAType->getUserValue())) {
-		case 0:
-			laneAFilter.setType(gin::Filter::lowpass);
-			laneAFilter.setSlope(gin::Filter::db12);
-			break;
-		case 1:
-			laneAFilter.setType(gin::Filter::lowpass);
-			laneAFilter.setSlope(gin::Filter::db24);
-			break;
-		case 2:
-			laneAFilter.setType(gin::Filter::highpass);
-			laneAFilter.setSlope(gin::Filter::db12);
-			break;
-		case 3:
-			laneAFilter.setType(gin::Filter::highpass);
-			laneAFilter.setSlope(gin::Filter::db24);
-			break;
-		case 4:
-			laneAFilter.setType(gin::Filter::bandpass);
-			laneAFilter.setSlope(gin::Filter::db12);
-			break;
-		case 5:
-			laneAFilter.setType(gin::Filter::bandpass);
-			laneAFilter.setSlope(gin::Filter::db24);
-			break;
-		case 6:
-			laneAFilter.setType(gin::Filter::notch);
-			laneAFilter.setSlope(gin::Filter::db12);
-			break;
-		case 7:
-			laneAFilter.setType(gin::Filter::notch);
-			laneAFilter.setSlope(gin::Filter::db24);
-			break;
+	case 0:
+		laneAFilter.setType(gin::Filter::lowpass);
+		laneAFilter.setSlope(gin::Filter::db12);
+		break;
+	case 1:
+		laneAFilter.setType(gin::Filter::lowpass);
+		laneAFilter.setSlope(gin::Filter::db24);
+		break;
+	case 2:
+		laneAFilter.setType(gin::Filter::highpass);
+		laneAFilter.setSlope(gin::Filter::db12);
+		break;
+	case 3:
+		laneAFilter.setType(gin::Filter::highpass);
+		laneAFilter.setSlope(gin::Filter::db24);
+		break;
+	case 4:
+		laneAFilter.setType(gin::Filter::bandpass);
+		laneAFilter.setSlope(gin::Filter::db12);
+		break;
+	case 5:
+		laneAFilter.setType(gin::Filter::bandpass);
+		laneAFilter.setSlope(gin::Filter::db24);
+		break;
+	case 6:
+		laneAFilter.setType(gin::Filter::notch);
+		laneAFilter.setSlope(gin::Filter::db12);
+		break;
+	case 7:
+		laneAFilter.setType(gin::Filter::notch);
+		laneAFilter.setSlope(gin::Filter::db24);
+		break;
 	}
 
 	float f =
@@ -1397,38 +1397,38 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 	laneAFilterCutoff.skip(numSamples);
 
 	switch (int(fxOrderParams.laneBType->getUserValue())) {
-		case 0:
-			laneBFilter.setType(gin::Filter::lowpass);
-			laneBFilter.setSlope(gin::Filter::db12);
-			break;
-		case 1:
-			laneBFilter.setType(gin::Filter::lowpass);
-			laneBFilter.setSlope(gin::Filter::db24);
-			break;
-		case 2:
-			laneBFilter.setType(gin::Filter::highpass);
-			laneBFilter.setSlope(gin::Filter::db12);
-			break;
-		case 3:
-			laneBFilter.setType(gin::Filter::highpass);
-			laneBFilter.setSlope(gin::Filter::db24);
-			break;
-		case 4:
-			laneBFilter.setType(gin::Filter::bandpass);
-			laneBFilter.setSlope(gin::Filter::db12);
-			break;
-		case 5:
-			laneBFilter.setType(gin::Filter::bandpass);
-			laneBFilter.setSlope(gin::Filter::db24);
-			break;
-		case 6:
-			laneBFilter.setType(gin::Filter::notch);
-			laneBFilter.setSlope(gin::Filter::db12);
-			break;
-		case 7:
-			laneBFilter.setType(gin::Filter::notch);
-			laneBFilter.setSlope(gin::Filter::db24);
-			break;
+	case 0:
+		laneBFilter.setType(gin::Filter::lowpass);
+		laneBFilter.setSlope(gin::Filter::db12);
+		break;
+	case 1:
+		laneBFilter.setType(gin::Filter::lowpass);
+		laneBFilter.setSlope(gin::Filter::db24);
+		break;
+	case 2:
+		laneBFilter.setType(gin::Filter::highpass);
+		laneBFilter.setSlope(gin::Filter::db12);
+		break;
+	case 3:
+		laneBFilter.setType(gin::Filter::highpass);
+		laneBFilter.setSlope(gin::Filter::db24);
+		break;
+	case 4:
+		laneBFilter.setType(gin::Filter::bandpass);
+		laneBFilter.setSlope(gin::Filter::db12);
+		break;
+	case 5:
+		laneBFilter.setType(gin::Filter::bandpass);
+		laneBFilter.setSlope(gin::Filter::db24);
+		break;
+	case 6:
+		laneBFilter.setType(gin::Filter::notch);
+		laneBFilter.setSlope(gin::Filter::db12);
+		break;
+	case 7:
+		laneBFilter.setType(gin::Filter::notch);
+		laneBFilter.setSlope(gin::Filter::db24);
+		break;
 	}
 
 	f = gin::getMidiNoteInHertz(modMatrix.getValue(fxOrderParams.laneBFreq));
@@ -1453,37 +1453,37 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 
 		for (int fx : {fxa1, fxa2, fxa3, fxa4}) {
 			switch (fx) {
-				case 0:
-					break;
-				case 1:
-					waveshaper.process(outContext);
-					break;
-				case 2:
-					compressor.process(fxALaneBuffer);
-					break;
-				case 3:
-					stereoDelay.process(outContext);
-					break;
-				case 4:
-					chorus.process(outContext);
-					break;
-				case 5:
-					mbfilter.process(outContext);
-					break;
-				case 6:
-					reverb.process(outContext);
-					break;
-				case 7:
-					ringmod.process(outContext);
-					break;
-				case 8:
-					effectGain.process(outContext);
-					break;
-				case 9:
-					ladder.process(outContext);
-					break;
-				default:
-					break;
+			case 0:
+				break;
+			case 1:
+				waveshaper.process(outContext);
+				break;
+			case 2:
+				compressor.process(fxALaneBuffer);
+				break;
+			case 3:
+				stereoDelay.process(outContext);
+				break;
+			case 4:
+				chorus.process(outContext);
+				break;
+			case 5:
+				mbfilter.process(outContext);
+				break;
+			case 6:
+				reverb.process(outContext);
+				break;
+			case 7:
+				ringmod.process(outContext);
+				break;
+			case 8:
+				effectGain.process(outContext);
+				break;
+			case 9:
+				ladder.process(outContext);
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -1509,37 +1509,37 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 
 		for (int fx : {fxb1, fxb2, fxb3, fxb4}) {
 			switch (fx) {
-				case 0:
-					break;
-				case 1:
-					waveshaper.process(outContext);
-					break;
-				case 2:
-					compressor.process(fxALaneBuffer);
-					break;
-				case 3:
-					stereoDelay.process(outContext);
-					break;
-				case 4:
-					chorus.process(outContext);
-					break;
-				case 5:
-					mbfilter.process(outContext);
-					break;
-				case 6:
-					reverb.process(outContext);
-					break;
-				case 7:
-					ringmod.process(outContext);
-					break;
-				case 8:
-					effectGain.process(outContext);
-					break;
-				case 9:
-					ladder.process(outContext);
-					break;
-				default:
-					break;
+			case 0:
+				break;
+			case 1:
+				waveshaper.process(outContext);
+				break;
+			case 2:
+				compressor.process(fxALaneBuffer);
+				break;
+			case 3:
+				stereoDelay.process(outContext);
+				break;
+			case 4:
+				chorus.process(outContext);
+				break;
+			case 5:
+				mbfilter.process(outContext);
+				break;
+			case 6:
+				reverb.process(outContext);
+				break;
+			case 7:
+				ringmod.process(outContext);
+				break;
+			case 8:
+				effectGain.process(outContext);
+				break;
+			case 9:
+				ladder.process(outContext);
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -1584,72 +1584,72 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 		auto BContext = juce::dsp::ProcessContextReplacing<float>(BBlock);
 		for (int fx : {fxa1, fxa2, fxa3, fxa4}) {
 			switch (fx) {
-				case 0:
-					break;
-				case 1:
-					waveshaper.process(AContext);
-					break;
-				case 2:
-					compressor.process(fxALaneBuffer);
-					break;
-				case 3:
-					stereoDelay.process(AContext);
-					break;
-				case 4:
-					chorus.process(AContext);
-					break;
-				case 5:
-					mbfilter.process(AContext);
-					break;
-				case 6:
-					reverb.process(AContext);
-					break;
-				case 7:
-					ringmod.process(AContext);
-					break;
-				case 8:
-					effectGain.process(AContext);
-					break;
-				case 9:
-					ladder.process(AContext);
-					break;
-				default:
-					break;
+			case 0:
+				break;
+			case 1:
+				waveshaper.process(AContext);
+				break;
+			case 2:
+				compressor.process(fxALaneBuffer);
+				break;
+			case 3:
+				stereoDelay.process(AContext);
+				break;
+			case 4:
+				chorus.process(AContext);
+				break;
+			case 5:
+				mbfilter.process(AContext);
+				break;
+			case 6:
+				reverb.process(AContext);
+				break;
+			case 7:
+				ringmod.process(AContext);
+				break;
+			case 8:
+				effectGain.process(AContext);
+				break;
+			case 9:
+				ladder.process(AContext);
+				break;
+			default:
+				break;
 			}
 		}
 		for (int fx : {fxb1, fxb2, fxb3, fxb4}) {
 			switch (fx) {
-				case 0:
-					break;
-				case 1:
-					waveshaper.process(BContext);
-					break;
-				case 2:
-					compressor.process(fxBLaneBuffer);
-					break;
-				case 3:
-					stereoDelay.process(BContext);
-					break;
-				case 4:
-					chorus.process(BContext);
-					break;
-				case 5:
-					mbfilter.process(BContext);
-					break;
-				case 6:
-					reverb.process(BContext);
-					break;
-				case 7:
-					ringmod.process(BContext);
-					break;
-				case 8:
-					effectGain.process(BContext);
-					break;
-				case 9:
-					ladder.process(BContext);
-					break;
-				default:
-					break;
+			case 0:
+				break;
+			case 1:
+				waveshaper.process(BContext);
+				break;
+			case 2:
+				compressor.process(fxBLaneBuffer);
+				break;
+			case 3:
+				stereoDelay.process(BContext);
+				break;
+			case 4:
+				chorus.process(BContext);
+				break;
+			case 5:
+				mbfilter.process(BContext);
+				break;
+			case 6:
+				reverb.process(BContext);
+				break;
+			case 7:
+				ringmod.process(BContext);
+				break;
+			case 8:
+				effectGain.process(BContext);
+				break;
+			case 9:
+				ladder.process(BContext);
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -1858,27 +1858,27 @@ void APAudioProcessor::updateParams(int newBlockSize)
 		ladder.filter.setDrive(modMatrix.getValue(ladderParams.drive));
 		juce::dsp::LadderFilter<float>::Mode mode;
 		switch (ladderParams.type->getUserValueInt()) {
-			case 0:
-				mode = LMode::LPF12;
-				break;
-			case 1:
-				mode = LMode::HPF12;
-				break;
-			case 2:
-				mode = LMode::BPF12;
-				break;
-			case 3:
-				mode = LMode::LPF24;
-				break;
-			case 4:
-				mode = LMode::HPF24;
-				break;
-			case 5:
-				mode = LMode::BPF24;
-				break;
-			default:
-				mode = LMode::LPF12;
-				break;
+		case 0:
+			mode = LMode::LPF12;
+			break;
+		case 1:
+			mode = LMode::HPF12;
+			break;
+		case 2:
+			mode = LMode::BPF12;
+			break;
+		case 3:
+			mode = LMode::LPF24;
+			break;
+		case 4:
+			mode = LMode::HPF24;
+			break;
+		case 5:
+			mode = LMode::BPF24;
+			break;
+		default:
+			mode = LMode::LPF12;
+			break;
 		}
 		ladder.filter.setMode(mode);
 		ladder.filter.setResonance(modMatrix.getValue(ladderParams.reso));

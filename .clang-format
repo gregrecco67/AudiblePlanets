@@ -15,7 +15,7 @@ BreakBeforeBinaryOperators: None
 BreakBeforeBraces: WebKit
 ColumnLimit: '0'
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'false'
-ContinuationIndentWidth: '0'
+ContinuationIndentWidth: '4'
 Cpp11BracedListStyle: 'true'
 FixNamespaceComments: 'true'
 IndentWidth: '4'
@@ -43,5 +43,3 @@ SpacesInParentheses: 'false'
 SpacesInSquareBrackets: 'false'
 TabWidth: '4'
 UseTab: ForIndentation
-
-...
