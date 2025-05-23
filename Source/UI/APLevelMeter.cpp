@@ -1,11 +1,10 @@
 #include "APLevelMeter.h"
 
 APLevelMeter::APLevelMeter(
-    const gin::LevelTracker &l, juce::NormalisableRange<float> r)
-    : tracker(l), range(r)
+    const gin::LevelTracker &l, juce::NormalisableRange<float> r, bool vertical_)
+    : tracker(l), range(r), vertical(vertical_)
 {
-	startTimerHz(30);
-
+    startTimerHz(30);
 	setColour(lineColourId, juce::Colours::white);
 	setColour(meterColourId, juce::Colours::white.withAlpha(0.5f));
 	setColour(backgroundColourId, juce::Colours::white.withAlpha(0.1f));
@@ -23,7 +22,10 @@ void APLevelMeter::paint(juce::Graphics &g)
 	auto level = juce::jlimit(range.start, range.end, tracker.getLevel());
 	auto rc = getLocalBounds().toFloat();
 	g.setColour(findColour(meterColourId));
-	g.fillRect(rc.removeFromLeft(range.convertTo0to1(level) * rc.getWidth()));
+	if (vertical)
+	{	g.fillRect(rc.removeFromBottom(range.convertTo0to1(level) * rc.getWidth())); }
+	else 
+	{	g.fillRect(rc.removeFromLeft(range.convertTo0to1(level) * rc.getWidth())); }
 	g.setColour(findColour(backgroundColourId));
 	g.fillRect(rc);
 	if (tracker.getClip()) {

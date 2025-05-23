@@ -55,6 +55,7 @@ private:
 	MainMatrixBox matrix{"  Mod Matrix", proc};
 	OrbitViz orbitViz;
 	VolumeBox volumeBox{proc};
+	LevelBox levelBox{proc.levelTracker};
 	int frameRate{24};
 	float vizDefPhase{0.f}, vizEpi1Phase{0.f}, vizEpi2Phase{0.f},
 	    vizEpi3Phase{0.f};

@@ -40,6 +40,7 @@ Editor::Editor(APAudioProcessor &proc_) : proc(proc_)
 	addAndMakeVisible(aux);
 	addAndMakeVisible(matrix);
 	addAndMakeVisible(volumeBox);
+	addAndMakeVisible(levelBox);
 	addAndMakeVisible(speedSlider);
 	speedSlider.setRange(0.0, 2.0);
 	speedSlider.setSkewFactor(0.5);
@@ -58,7 +59,9 @@ Editor::Editor(APAudioProcessor &proc_) : proc(proc_)
 	timbre.setRight(true);
 	aux.setRight(true);
 	global.setRight(true);
+
 	volumeBox.setRight(true);
+	levelBox.setRight(true);
 
 	startTimerHz(frameRate);
 }
@@ -94,10 +97,11 @@ void Editor::resized()
 	setGrid(&env3, 4, 4, 2, 6, 2);
 	setGrid(&env4, 4, 6, 3, 6, 2);
 	setGrid(&filter, 10, 0, 0, 2, 2);
-	setGrid(&timbre, 12, 0, 0, 2, 2);
+	setGrid(&timbre, 12, 0, 0, 3, 2);
 	setGrid(&aux, 10, 2, 1, 5, 2);
-	setGrid(&global, 14, 0, 0, 2, 2);
-	volumeBox.setBounds(15 * 56, 163, 56, 163);
+	// setGrid(&global, 14, 0, 0, 2, 2);
+	volumeBox.setBounds(15 * 56, 0, 56, 163);
+	levelBox.setBounds(15 * 56, 163, 56, 163);
 	orbitViz.setBounds(10 * 56 + 5, 4 * 70 + 2 * 23, 6 * 56, 5 * 70);
 	liveViz.setBounds(static_cast<int>(10 * 56.f),
 	    static_cast<int>(4 * 70.f + 2 * 23.f), 75, 25);

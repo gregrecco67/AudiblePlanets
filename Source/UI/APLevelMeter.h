@@ -14,10 +14,11 @@ Copyright (c) 2019 - Roland Rabien.
 
 /** Draws a simple level meter
  */
-class APLevelMeter : public juce::Component, public juce::Timer {
+class APLevelMeter : public juce::Component, juce::Timer {
 public:
 	APLevelMeter(
-	    const gin::LevelTracker &, juce::NormalisableRange<float> r = {-60, 0});
+	    const gin::LevelTracker &, juce::NormalisableRange<float> r = {-60, 0},
+	    bool vertical = false);
 	~APLevelMeter() override;
 
 	enum ColourIds {
@@ -26,12 +27,13 @@ public:
 		meterColourId = 0x1291e12,
 		clipColourId = 0x1291e13
 	};
+	void paint(juce::Graphics &g) override;
 
 private:
 	//==============================================================================
-	void paint(juce::Graphics &g) override;
 	void timerCallback() override;
 
+	bool vertical = false;
 	const gin::LevelTracker &tracker;
 	juce::NormalisableRange<float> range{-60, 6};
 

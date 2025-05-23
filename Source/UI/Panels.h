@@ -19,6 +19,7 @@
 #include "APModAdditions.h"
 #include "DSP/PluginProcessor.h"
 #include "EnvelopeComponent.h"
+#include "APLevelMeter.h"
 
 inline void gradientRect(juce::Graphics &g,
     const juce::Rectangle<int> rc,
@@ -388,6 +389,37 @@ public:
 
 	gin::ModSrcListBox *modlist;
 	APAudioProcessor &proc;
+};
+
+class LevelBox : public gin::ParamBox, public juce::Timer {
+public:
+	LevelBox(gin::LevelTracker &level_)
+	    : gin::ParamBox("level"), levelMeter(level_, juce::NormalisableRange<float>{-60, 0}, true)
+	{
+		startTimerHz(30);
+	}
+	void timerCallback() override
+	{
+		repaint();
+	}
+	void paint(juce::Graphics &g) override
+	{
+		gin::ParamBox::paint(g);
+		levelMeter.setBounds(getLocalBounds().withTrimmedTop(23).reduced(10));
+		levelMeter.paint(g);
+		g.setColour(juce::Colours::black);
+		g.fillRect(getLocalBounds());
+		g.setColour(juce::Colours::white);
+		g.drawText("Level", 0, 0, getWidth(), 20,
+		    juce::Justification::centred, true);
+	}
+
+	void resized() override
+	{
+		gin::ParamBox::resized();
+		levelMeter.setBounds(getLocalBounds().withTrimmedTop(23).reduced(10));
+	}
+	APLevelMeter levelMeter;
 };
 
 //==============================================================================
