@@ -152,4 +152,5 @@ void Editor::timerCallback()
 	orbitViz.setEpi3Phase(vizEpi3Phase);
 	orbitViz.setScale(1.0f);
 	orbitViz.repaint();
+	levelBox.repaint();
 }

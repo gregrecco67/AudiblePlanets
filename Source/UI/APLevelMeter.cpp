@@ -23,7 +23,7 @@ void APLevelMeter::paint(juce::Graphics &g)
 	auto rc = getLocalBounds().toFloat();
 	g.setColour(findColour(meterColourId));
 	if (vertical)
-	{	g.fillRect(rc.removeFromBottom(range.convertTo0to1(level) * rc.getWidth())); }
+	{	g.fillRect(rc.removeFromBottom(range.convertTo0to1(level) * rc.getHeight())); }
 	else 
 	{	g.fillRect(rc.removeFromLeft(range.convertTo0to1(level) * rc.getWidth())); }
 	g.setColour(findColour(backgroundColourId));

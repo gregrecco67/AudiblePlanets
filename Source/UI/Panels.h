@@ -396,11 +396,12 @@ public:
 	LevelBox(gin::LevelTracker &level_)
 	    : gin::ParamBox("level"), levelMeter(level_, juce::NormalisableRange<float>{-60, 0}, true)
 	{
-		startTimerHz(30);
+		//startTimerHz(30);
+		addAndMakeVisible(levelMeter);
 	}
 	void timerCallback() override
 	{
-		repaint();
+		//repaint();
 	}
 	void paint(juce::Graphics &g) override
 	{
