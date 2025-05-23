@@ -1,5 +1,5 @@
 
-# Audible Planets (v1.2)
+# Audible Planets (v1.2!)
 
 An expressive, quasi-Ptolemaic semi-modular synthesizer.
 
@@ -7,7 +7,7 @@ An expressive, quasi-Ptolemaic semi-modular synthesizer.
 <img width="1567" alt="MODS" src="https://github.com/user-attachments/assets/89e6b202-0c6f-4872-8f99-7a93c2e88de7" />
 <img width="1520" alt="FX" src="https://github.com/user-attachments/assets/5289b9d4-b950-4b0f-91b6-54d4de7fc6a7" />
 
-The synth produces sound based on the position of "planets" in a sort of orbital simulation. Each of the planets revolves around either one of the other planets or a common center. To make sound, the engine views the planets from a point that is either at that common center of revolution or nearby, at a point called the "equant," and interprets their positions in one of two ways: either as an angle (left channel) and its perpendicular (right channel) or as a position (with each coordinate in one of the channels). Because of the likeness with FM synthesis, the first is called "modulated," and the second "demod," for short.
+The synth produces sound based on the position of "planets" in a sort of orbital simulation. Each of the planets revolves around either one of the other planets or a common center. To make sound, the engine views the planets from a point that is either at that common center of revolution or nearby, at a point called the "equant," and interprets their positions in one of two ways: either as an angle (left channel) and its perpendicular (right channel) or as a position (with each coordinate in one of the channels). Because of the likeness with FM synthesis, the first is called "modulated," and the second "demod," for short. The picture below shows one channel of both sources, with the other channel on the horizontal:
 
 ![orbital model](https://github.com/user-attachments/assets/ca2d5da8-9e2d-4d1b-b7c5-1708f5f7479a)
 
