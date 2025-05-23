@@ -394,7 +394,7 @@ public:
 class LevelBox : public gin::ParamBox, public juce::Timer {
 public:
 	LevelBox(gin::LevelTracker &level_)
-	    : gin::ParamBox("level"), levelMeter(level_, juce::NormalisableRange<float>{-60, 0}, true)
+	    : gin::ParamBox("  level"), levelMeter(level_, juce::NormalisableRange<float>{-60, 0}, true)
 	{
 		//startTimerHz(30);
 		addAndMakeVisible(levelMeter);
@@ -762,6 +762,13 @@ public:
 	}
 
 	~VolumeBox() override { delete level; }
+
+	void paint(juce::Graphics &g) override
+	{
+		gin::ParamBox::paint(g);
+		g.setColour(juce::Colours::white.darker(0.2f));
+		g.fillRect(2, 54, getWidth()-4, 2);
+	}
 
 	void resized() override
 	{

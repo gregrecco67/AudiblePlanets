@@ -49,7 +49,6 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor &p)
 	addKeyListener(this);
 	this->setWantsKeyboardFocus(true);
 	titleBar.setShowBrowser(true);
-	addAndMakeVisible(levelMeter);
 }
 
 bool APAudioProcessorEditor::keyPressed(
@@ -149,8 +148,7 @@ void APAudioProcessorEditor::resized()
 	patchBrowser.setBounds(rc);
 	usage.setBounds(45, 12, 95, 20);
 	scaleName.setBounds(165, 12, 200, 16);
-	learningLabel.setBounds(834, 12, 184, 16);  // move to mod src panel?
-	levelMeter.setBounds(1050, 12, 90, 22);
+	learningLabel.setBounds(834, 12, 184, 16); 
 	fxEditor.setBounds(editorArea);
 	modEditor.setBounds(editorArea);
 }
