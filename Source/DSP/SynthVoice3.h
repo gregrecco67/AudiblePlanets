@@ -46,7 +46,7 @@ public:
 	    int startSample,
 	    int numSamples) override;
 
-	mipp::Reg<float> mix(mipp::Reg<float> a, mipp::Reg<float> b, mipp::Reg<float> mix);
+	mipp::Reg<float> mix(mipp::Reg<float> a, mipp::Reg<float> b, float mix);
 
 	float getCurrentNote() override
 	{

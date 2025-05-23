@@ -310,12 +310,12 @@ void SynthVoice3::renderNextBlock(
 		sine2 = (epi2ys[i] - equant) * invDist2 * b;
 		cos2 = epi2xs[i] * invDist2 * b;
 
-		dmSine4 = (epi4ys[i] - equant) * dist4;
-		dmCos4 = epi4xs[i] * dist4;
-		dmSine3 = (epi3ys[i] - equant) * dist3;
-		dmCos3 = epi3xs[i] * dist3;
-		dmSine2 = (epi2ys[i] - equant) * dist2;
-		dmCos2 = epi2xs[i] * dist2;
+		dmCos4 = (epi4ys[i] - equant) * dist4;
+		dmSine4 = epi4xs[i] * dist4;
+		dmCos3 = (epi3ys[i] - equant) * dist3;
+		dmSine3 = epi3xs[i] * dist3;
+		dmCos2 = (epi2ys[i] - equant) * dist2;
+		dmSine2 = epi2xs[i] * dist2;
 
 
 		// mix by algorithm
@@ -386,8 +386,10 @@ void SynthVoice3::renderNextBlock(
 	finishBlock(numSamples);
 }
 
-mipp::Reg<float> SynthVoice3::mix(mipp::Reg<float> a, mipp::Reg<float> b, mipp::Reg<float> mix) {
-	return (a * (mix + -1.f)) + (b * mix);
+mipp::Reg<float> SynthVoice3::mix(mipp::Reg<float> a, mipp::Reg<float> b, float mix) {
+	mipp::Reg<float> mixa = mipp::Reg<float>(std::sin(mix * pi * 0.5f));
+	mipp::Reg<float> mixb = mipp::Reg<float>(std::sin((mix - 1.0f)) * pi * 0.5f);
+	return (a * mixa) + (b * mixb);
 }
 
 void SynthVoice3::updateParams(int blockSize)
