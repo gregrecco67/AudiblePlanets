@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<state name="Mentat Holiday" author="builtin" tags="horns pad">
+  <state sample="">
+    <instance selectedAuthors="" selectedTags=""/>
+    <MODMATRIX/>
+    <mseg1 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg1>
+    <mseg2 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg2>
+    <mseg3 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg3>
+    <mseg4 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg4>
+    <sample sampleName=""/>
+  </state>
+  <param uid="osc1volume" val="-5.999999046325684"/>
+  <param uid="osc2volume" val="-5.999999046325684"/>
+  <param uid="osc3coarse" val="4.0"/>
+  <param uid="osc4coarse" val="8.0"/>
+  <param uid="osc4volume" val="-6.935749053955078"/>
+  <param uid="env1attack" val="0.09225817024707794"/>
+  <param uid="env1sustain" val="-5.999999046325684"/>
+  <param uid="env1release" val="0.04507883638143539"/>
+  <param uid="env1time" val="0.09999998658895493"/>
+  <param uid="env2attack" val="0.09072862565517426"/>
+  <param uid="env2decay" val="0.684641420841217"/>
+  <param uid="env2sustain" val="0.0"/>
+  <param uid="env2release" val="0.0435655452311039"/>
+  <param uid="env2time" val="0.09999998658895493"/>
+  <param uid="env3attack" val="0.9297484159469604"/>
+  <param uid="env3decay" val="0.6260579824447632"/>
+  <param uid="env3sustain" val="0.0"/>
+  <param uid="env3release" val="3.336178779602051"/>
+  <param uid="env3acurve" val="0.5734062790870667"/>
+  <param uid="env3time" val="0.09999998658895493"/>
+  <param uid="env4attack" val="8.944696426391602"/>
+  <param uid="env4decay" val="0.6648716926574707"/>
+  <param uid="env4sustain" val="0.0"/>
+  <param uid="env4release" val="2.006741523742676"/>
+  <param uid="env4acurve" val="-0.2556250095367432"/>
+  <param uid="env4time" val="0.09999998658895493"/>
+  <param uid="algo" val="1.0"/>
+  <param uid="flttype" val="1.0"/>
+  <param uid="fltkey" val="42.359375"/>
+  <param uid="fltfreq" val="83.15972137451172"/>
+  <param uid="fltres" val="39.05156326293945"/>
+  <param uid="auxenable" val="1.0"/>
+  <param uid="auxenv" val="2.0"/>
+  <param uid="auxvolume" val="-7.981375694274902"/>
+  <param uid="auxdetune" val="0.2942812442779541"/>
+  <param uid="auxspread" val="100.0"/>
+  <param uid="auxres" val="34.6640625"/>
+  <param uid="legato" val="1.0"/>
+  <param uid="level" val="-5.85586404800415"/>
+  <param uid="fxgain" val="1.000001430511475"/>
+  <param uid="wsdrive" val="9.294252395629883"/>
+  <param uid="wsfunc" val="1.0"/>
+  <param uid="wshighshelf" val="7409.86279296875"/>
+  <param uid="wshsq" val="1.795093774795532"/>
+  <param uid="cpthreshold" val="-32.95969009399414"/>
+  <param uid="cpratio" val="3.365031242370605"/>
+  <param uid="cpattack" val="0.0000199999994947575"/>
+  <param uid="cpknee" val="2.289999961853027"/>
+  <param uid="cpoutput" val="0.7303125262260437"/>
+  <param uid="cptype" val="2.0"/>
+  <param uid="dlbeatsright" val="10.0"/>
+  <param uid="dlfeedback" val="0.6640625"/>
+  <param uid="dlwet" val="0.1792500019073486"/>
+  <param uid="chrate" val="0.1093587055802345"/>
+  <param uid="chdepth" val="0.4941408336162567"/>
+  <param uid="chfeedback" val="0.5391093492507935"/>
+  <param uid="chwet" val="0.7549375295639038"/>
+  <param uid="rvsize" val="1.05956244468689"/>
+  <param uid="rvdecay" val="0.8148437738418579"/>
+  <param uid="rvlowpass" val="9405.0244140625"/>
+  <param uid="rvpredelay" val="0.02881406247615814"/>
+  <param uid="rvwet" val="0.1535156220197678"/>
+  <param uid="rmmodfreq1" val="39.9999885559082"/>
+  <param uid="rmmodfreq2" val="39.9999885559082"/>
+  <param uid="fxa1" val="1.0"/>
+  <param uid="fxa2" val="2.0"/>
+  <param uid="fxa4" val="3.0"/>
+  <param uid="fxb2" val="4.0"/>
+  <param uid="fxb4" val="6.0"/>
+  <param uid="chainAtoB" val="0.0"/>
+  <param uid="laneAGain" val="6.168749809265137"/>
+  <param uid="laneBGain" val="1.000001430511475"/>
+  <param uid="laneAPan" val="0.3968124389648438"/>
+  <param uid="laneBPan" val="-0.4032812416553497"/>
+</state>

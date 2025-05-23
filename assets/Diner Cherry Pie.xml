@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<state name="Swell Keys" author="builtin" tags="keys swell">
+<state name="Diner Cherry Pie" author="built-in" tags="keys swell">
   <state>
-    <instance selectedAuthors="" selectedTags="" browserOpen="0"/>
-    <MODMATRIX/>
+    <instance selectedAuthors="" selectedTags=""/>
+    <MODMATRIX>
+      <MODITEM srcId="mlfo1" depth="0.0992908775806427" enabled="0" dstId="lfo1rate"
+               function="linear" biPolarMapping="1"/>
+      <MODITEM srcId="lfo1" depth="0.09871175140142441" enabled="1" dstId="lfo1rate"
+               function="linear" biPolarMapping="1"/>
+      <MODITEM srcId="mlfo1" depth="0.1631079763174057" enabled="0" dstId="equant"
+               function="linear" biPolarMapping="1"/>
+      <MODITEM srcId="lfo1" depth="0.1622527688741684" enabled="1" dstId="equant"
+               function="linear" biPolarMapping="1"/>
+    </MODMATRIX>
     <mseg1 startIndex="0" endIndex="2">
       <PT t="0.0" v="0.0" c="5.5"/>
       <PT t="0.5" v="1.0" c="5.5"/>
@@ -26,26 +35,18 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="-5.352125"/>
-  <param uid="osc1pan" val="-0.3578328788280487"/>
+  <param uid="osc1volume" val="-5.352127552032471"/>
   <param uid="osc2coarse" val="12.0"/>
   <param uid="osc2fine" val="0.02099990844726562"/>
-  <param uid="osc2volume" val="-21.9382"/>
-  <param uid="osc2detune" val="0.1136381253600121"/>
-  <param uid="osc2spread" val="100.0"/>
-  <param uid="osc2pan" val="-0.3447827100753784"/>
+  <param uid="osc2volume" val="-21.93819999694824"/>
   <param uid="osc3coarse" val="2.0"/>
-  <param uid="osc3volume" val="-21.9382"/>
-  <param uid="osc3detune" val="0.03755273297429085"/>
-  <param uid="osc3pan" val="0.3472526967525482"/>
+  <param uid="osc3volume" val="-21.93819999694824"/>
   <param uid="osc4coarse" val="11.0"/>
   <param uid="osc4fine" val="0.04417967796325684"/>
-  <param uid="osc4volume" val="-16.478175"/>
-  <param uid="osc4detune" val="0.09828124940395355"/>
-  <param uid="osc4pan" val="0.3690703213214874"/>
+  <param uid="osc4volume" val="-16.47817420959473"/>
   <param uid="env1attack" val="0.0"/>
   <param uid="env1decay" val="20.48162078857422"/>
-  <param uid="env1sustain" val="-33.9794"/>
+  <param uid="env1sustain" val="-40.0"/>
   <param uid="env1release" val="0.4183570742607117"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="0.0"/>
@@ -65,12 +66,13 @@
   <param uid="env4time" val="0.09999998658895493"/>
   <param uid="lfo1enable" val="1.0"/>
   <param uid="lfo1sync" val="0.0"/>
-  <param uid="lfo1rate" val="0.02818279340863228"/>
-  <param uid="equant" val="0.1778289079666138"/>
+  <param uid="lfo1rate" val="0.5546612143516541"/>
+  <param uid="equant" val="-0.1781866550445557"/>
   <param uid="algo" val="1.0"/>
-  <param uid="fltfreq" val="99.89612579345703"/>
+  <param uid="fltfreq" val="117.966911315918"/>
   <param uid="fltres" val="23.2788200378418"/>
   <param uid="auxvolume" val="-11.99999809265137"/>
+  <param uid="level" val="7.152557373046875e-7"/>
   <param uid="fxgain" val="1.000001430511475"/>
   <param uid="wsdrive" val="15.5920934677124"/>
   <param uid="wswet" val="0.2561771869659424"/>
@@ -82,6 +84,7 @@
   <param uid="dlpingpong" val="1.0"/>
   <param uid="dlfeedback" val="0.5752535462379456"/>
   <param uid="dlwet" val="0.8457121849060059"/>
+  <param uid="dlcutoff" val="17011.533203125"/>
   <param uid="chrate" val="0.05500001460313797"/>
   <param uid="rvsize" val="1.925134539604187"/>
   <param uid="mblowshelffreq" val="291.0"/>

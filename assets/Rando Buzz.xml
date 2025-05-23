@@ -2,7 +2,7 @@
 
 <state name="Rando Buzz" author="builtin" tags="soundfx">
   <state>
-    <instance selectedAuthors="" selectedTags="" browserOpen="0"/>
+    <instance selectedAuthors="" selectedTags=""/>
     <MODMATRIX>
       <MODITEM srcId="lfo3" depth="1.0" enabled="1" dstId="osc3volume" function="linear"
                biPolarMapping="1"/>
@@ -18,6 +18,8 @@
                function="linear" biPolarMapping="1"/>
       <MODITEM srcId="mlfo2" depth="1.0" enabled="1" dstId="rmmodfreq1" function="linear"
                biPolarMapping="1"/>
+      <MODITEM srcId="mlfo4" depth="0.2744895815849304" enabled="1" dstId="laneAPan"
+               function="linear" biPolarMapping="1"/>
     </MODMATRIX>
     <mseg1 startIndex="0" endIndex="2">
       <PT t="0.0" v="0.0" c="5.5"/>
@@ -43,27 +45,15 @@
   </state>
   <param uid="osc1coarse" val="2.0"/>
   <param uid="osc1fine" val="1.701185464859009"/>
-  <param uid="osc1volume" val="-0.724243"/>
-  <param uid="osc1tones" val="2.531000137329102"/>
-  <param uid="osc1detune" val="0.01144747901707888"/>
-  <param uid="osc1spread" val="34.40076065063477"/>
-  <param uid="osc1pan" val="1.0"/>
+  <param uid="osc1volume" val="-0.7242441177368164"/>
   <param uid="osc2coarse" val="6.0"/>
   <param uid="osc2fine" val="0.3835887908935547"/>
   <param uid="osc2volume" val="0.0"/>
-  <param uid="osc2tones" val="2.251000165939331"/>
-  <param uid="osc2spread" val="63.22692489624023"/>
-  <param uid="osc2pan" val="-0.9579916596412659"/>
   <param uid="osc3coarse" val="5.0"/>
   <param uid="osc3fine" val="-0.02264285087585449"/>
-  <param uid="osc3volume" val="-5.192746"/>
-  <param uid="osc3detune" val="0.08187176287174225"/>
-  <param uid="osc3pan" val="-0.08670735359191895"/>
+  <param uid="osc3volume" val="-5.192744731903076"/>
   <param uid="osc4fine" val="1.383128643035889"/>
-  <param uid="osc4volume" val="-0.630341"/>
-  <param uid="osc4tones" val="2.328000068664551"/>
-  <param uid="osc4detune" val="0.01263757329434156"/>
-  <param uid="osc4pan" val="-0.7509126663208008"/>
+  <param uid="osc4volume" val="-0.630340576171875"/>
   <param uid="env1attack" val="0.0"/>
   <param uid="env1decay" val="0.2837673127651215"/>
   <param uid="env1sustain" val="-40.0"/>
@@ -73,18 +63,18 @@
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="5.871529538126197e-6"/>
   <param uid="env2decay" val="0.3110076487064362"/>
-  <param uid="env2sustain" val="-26.339059"/>
+  <param uid="env2sustain" val="-26.33905982971191"/>
   <param uid="env2release" val="1.414502501487732"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="0.0"/>
   <param uid="env3decay" val="0.2969779074192047"/>
-  <param uid="env3sustain" val="-16.653653"/>
+  <param uid="env3sustain" val="-16.65365219116211"/>
   <param uid="env3release" val="0.0"/>
   <param uid="env3drcurve" val="-0.9112285971641541"/>
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="2.487172196197207e-6"/>
   <param uid="env4decay" val="0.3119107484817505"/>
-  <param uid="env4sustain" val="-15.9176"/>
+  <param uid="env4sustain" val="-15.91759967803955"/>
   <param uid="env4release" val="0.06918182224035263"/>
   <param uid="env4acurve" val="-0.983974814414978"/>
   <param uid="env4drcurve" val="-0.9767037034034729"/>
@@ -107,14 +97,11 @@
   <param uid="lfo3beat" val="32.0"/>
   <param uid="lfo3depth" val="0.2056001424789429"/>
   <param uid="lfo4enable" val="1.0"/>
-  <param uid="lfo4wave" val="15.0"/>
   <param uid="lfo4rate" val="14.91595458984375"/>
-  <param uid="lfo4beat" val="32.0"/>
   <param uid="lfo4offset" val="-0.02926462888717651"/>
   <param uid="lfo4fade" val="2.667696475982666"/>
-  <param uid="blend" val="0.2059973925352097"/>
-  <param uid="demodmix" val="0.6408864259719849"/>
   <param uid="algo" val="2.0"/>
+  <param uid="demodmix" val="0.6408864259719849"/>
   <param uid="fltkey" val="21.32436561584473"/>
   <param uid="fltfreq" val="94.73259735107422"/>
   <param uid="fltres" val="28.18678665161133"/>
@@ -123,6 +110,7 @@
   <param uid="gMode" val="2.0"/>
   <param uid="gRate" val="0.05261588469147682"/>
   <param uid="legato" val="1.0"/>
+  <param uid="level" val="7.152557373046875e-7"/>
   <param uid="fxgain" val="1.000001430511475"/>
   <param uid="wsdrive" val="14.01203346252441"/>
   <param uid="wsdry" val="0.7220539450645447"/>
@@ -131,7 +119,7 @@
   <param uid="dltimeright" val="4.447498798370361"/>
   <param uid="dltemposync" val="0.0"/>
   <param uid="dlpingpong" val="1.0"/>
-  <param uid="dlwet" val="0.4680794179439545"/>
+  <param uid="dlwet" val="0.1992044150829315"/>
   <param uid="chrate" val="0.05500001460313797"/>
   <param uid="rmmodfreq1" val="424.5668334960938"/>
   <param uid="rmshape1" val="0.05889206007122993"/>
@@ -143,4 +131,6 @@
   <param uid="fxb2" val="7.0"/>
   <param uid="laneAGain" val="2.384185791015625e-6"/>
   <param uid="laneBGain" val="2.384185791015625e-6"/>
+  <param uid="laneAPan" val="-0.5105312466621399"/>
+  <param uid="laneAPrePost" val="1.0"/>
 </state>

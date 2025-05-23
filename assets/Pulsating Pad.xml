@@ -2,8 +2,10 @@
 
 <state name="Pulsating Pad" author="builtin" tags="pad">
   <state>
-    <instance selectedAuthors="" selectedTags="" browserOpen="0"/>
+    <instance selectedAuthors="" selectedTags=""/>
     <MODMATRIX>
+      <MODITEM srcId="mlfo2" depth="0.01618880219757557" enabled="1" dstId="osc3fine"
+               function="linear" biPolarMapping="0"/>
       <MODITEM srcId="lfo3" depth="0.01999999955296516" enabled="1" dstId="osc4fine"
                function="linear" biPolarMapping="1"/>
     </MODMATRIX>
@@ -29,28 +31,24 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="-16.478175"/>
-  <param uid="osc1spread" val="100.0"/>
-  <param uid="osc2volume" val="-17.721133"/>
-  <param uid="osc2spread" val="100.0"/>
+  <param uid="osc1volume" val="-16.47817420959473"/>
+  <param uid="osc2volume" val="-17.72113227844238"/>
   <param uid="osc3coarse" val="1.0"/>
-  <param uid="osc3fine" val="-0.9622499942779541"/>
-  <param uid="osc3volume" val="-10.75204"/>
-  <param uid="osc3spread" val="100.0"/>
+  <param uid="osc3fine" val="-0.9674676656723022"/>
+  <param uid="osc3volume" val="-10.75203990936279"/>
   <param uid="osc3fixed" val="1.0"/>
   <param uid="osc4coarse" val="1.0"/>
   <param uid="osc4fine" val="-0.9750000238418579"/>
-  <param uid="osc4volume" val="-9.118639"/>
-  <param uid="osc4spread" val="100.0"/>
+  <param uid="osc4volume" val="-9.11863899230957"/>
   <param uid="osc4fixed" val="1.0"/>
   <param uid="env1attack" val="2.14457893371582"/>
   <param uid="env1decay" val="2.304079532623291"/>
-  <param uid="env1sustain" val="-12.468461"/>
+  <param uid="env1sustain" val="-12.46846103668213"/>
   <param uid="env1release" val="5.909943580627441"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="12.16582775115967"/>
   <param uid="env2decay" val="5.277539730072021"/>
-  <param uid="env2sustain" val="-7.744323"/>
+  <param uid="env2sustain" val="-7.744324207305908"/>
   <param uid="env2release" val="31.37910270690918"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="1.201615452766418"/>
@@ -61,6 +59,8 @@
   <param uid="env4sustain" val="0.0"/>
   <param uid="env4release" val="3.00571346282959"/>
   <param uid="env4time" val="0.09999998658895493"/>
+  <param uid="lfo2sync" val="0.0"/>
+  <param uid="lfo2rate" val="0.07828228920698166"/>
   <param uid="lfo3enable" val="1.0"/>
   <param uid="lfo3sync" val="0.0"/>
   <param uid="lfo3rate" val="0.03373759239912033"/>
@@ -69,6 +69,7 @@
   <param uid="fltfreq" val="89.29725646972656"/>
   <param uid="fltres" val="23.80781173706055"/>
   <param uid="auxvolume" val="-11.99999809265137"/>
+  <param uid="level" val="7.152557373046875e-7"/>
   <param uid="fxgain" val="1.000001430511475"/>
   <param uid="cpattack" val="0.0000199999994947575"/>
   <param uid="chrate" val="0.05000001192092896"/>

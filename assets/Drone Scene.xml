@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<state name="Drone Scene" author="builtin" tags="pad">
+<state name="Drone Scene" author="builtin" tags="drone">
   <state>
-    <instance editorScale="0.9255172610282898" browserOpen="1" selectedAuthors=""
-              selectedTags=""/>
+    <instance selectedAuthors="" selectedTags=""/>
     <MODMATRIX>
       <MODITEM srcId="lfo2" depth="0.5080000162124634" enabled="1" dstId="osc2volume"
                function="linear" biPolarMapping="1"/>
@@ -12,6 +11,8 @@
       <MODITEM srcId="lfo4" depth="0.5040000081062317" enabled="1" dstId="osc4volume"
                function="linear" biPolarMapping="1"/>
       <MODITEM srcId="mlfo1" depth="0.00800000037997961" enabled="1" dstId="pitch"
+               function="linear" biPolarMapping="1"/>
+      <MODITEM srcId="lfo4" depth="0.1432031244039536" enabled="1" dstId="auxfiltercutoff"
                function="linear" biPolarMapping="1"/>
       <MODITEM srcId="lfo1" depth="0.515999972820282" enabled="1" dstId="dlwet"
                function="linear" biPolarMapping="1"/>
@@ -40,24 +41,14 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="-2.270185"/>
-  <param uid="osc1detune" val="0.004000000189989805"/>
-  <param uid="osc1spread" val="100.0"/>
+  <param uid="osc1volume" val="-2.270183563232422"/>
   <param uid="osc2coarse" val="6.0"/>
-  <param uid="osc2tones" val="1.86300003528595"/>
-  <param uid="osc2detune" val="0.00800000037997961"/>
-  <param uid="osc2spread" val="100.0"/>
+  <param uid="osc2volume" val="-5.999999046325684"/>
   <param uid="osc3coarse" val="4.0"/>
-  <param uid="osc3volume" val="-6.0"/>
-  <param uid="osc3tones" val="1.960000038146973"/>
-  <param uid="osc3detune" val="0.009999999776482582"/>
-  <param uid="osc3spread" val="100.0"/>
+  <param uid="osc3volume" val="-5.999999046325684"/>
   <param uid="osc4coarse" val="8.0"/>
-  <param uid="osc4volume" val="-6.0"/>
-  <param uid="osc4tones" val="2.117000102996826"/>
-  <param uid="osc4detune" val="0.1140000000596046"/>
-  <param uid="osc4spread" val="100.0"/>
-  <param uid="env1attack" val="22.72835540771484"/>
+  <param uid="osc4volume" val="-5.999999046325684"/>
+  <param uid="env1attack" val="22.72835731506348"/>
   <param uid="env1sustain" val="0.0"/>
   <param uid="env1release" val="18.48666763305664"/>
   <param uid="env1acurve" val="0.01600003242492676"/>
@@ -94,14 +85,17 @@
   <param uid="lfo4phase" val="-0.2560000121593475"/>
   <param uid="fltfreq" val="99.32244110107422"/>
   <param uid="fltres" val="19.19999885559082"/>
+  <param uid="auxenable" val="1.0"/>
+  <param uid="auxwave" val="1.0"/>
   <param uid="auxvolume" val="-13.03999996185303"/>
-  <param uid="auxdetune" val="0.09800000488758087"/>
+  <param uid="auxdetune" val="0.1901640743017197"/>
   <param uid="auxspread" val="93.19999694824219"/>
+  <param uid="auxfiltercutoff" val="99.99571228027344"/>
+  <param uid="auxres" val="58.43281173706055"/>
   <param uid="velSens" val="0.0"/>
-  <param uid="squash" val="0.6840000152587891"/>
-  <param uid="level" val="-6.0"/>
+  <param uid="level" val="-6.000000476837158"/>
   <param uid="mpe" val="1.0"/>
-  <param uid="fxgain" val="3.814697265625e-6"/>
+  <param uid="fxgain" val="2.384185791015625e-6"/>
   <param uid="dlbeatsleft" val="25.0"/>
   <param uid="dlbeatsright" val="24.0"/>
   <param uid="dlpingpong" val="1.0"/>
@@ -124,6 +118,6 @@
   <param uid="fxa2" val="3.0"/>
   <param uid="fxa3" val="6.0"/>
   <param uid="fxa4" val="7.0"/>
-  <param uid="laneAGain" val="3.814697265625e-6"/>
-  <param uid="laneBGain" val="3.814697265625e-6"/>
+  <param uid="laneAGain" val="2.384185791015625e-6"/>
+  <param uid="laneBGain" val="2.384185791015625e-6"/>
 </state>

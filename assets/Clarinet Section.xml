@@ -2,8 +2,7 @@
 
 <state name="Clarinet Section" author="builtin" tags="woodwind mpe">
   <state sample="">
-    <instance editorScale="0.9255172610282898" browserOpen="1" selectedAuthors=""
-              selectedTags=""/>
+    <instance selectedAuthors="" selectedTags=""/>
     <MODMATRIX>
       <MODITEM srcId="mpep" depth="1.0" enabled="1" dstId="osc2volume" function="linear"
                biPolarMapping="0"/>
@@ -42,7 +41,7 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="-5.036239"/>
+  <param uid="osc1volume" val="-5.036239147186279"/>
   <param uid="osc2volume" val="-40.0"/>
   <param uid="osc3volume" val="-40.0"/>
   <param uid="osc4volume" val="-40.0"/>
@@ -72,9 +71,10 @@
   <param uid="auxres" val="24.81396865844727"/>
   <param uid="velSens" val="22.0552864074707"/>
   <param uid="gRate" val="0.5343131422996521"/>
+  <param uid="level" val="7.152557373046875e-7"/>
   <param uid="mpe" val="1.0"/>
   <param uid="pbrange" val="0.0"/>
-  <param uid="fxgain" val="3.814697265625e-6"/>
+  <param uid="fxgain" val="2.384185791015625e-6"/>
   <param uid="wsdrive" val="6.443730354309082"/>
   <param uid="cpattack" val="0.0000199999994947575"/>
   <param uid="chrate" val="0.05500001460313797"/>
@@ -84,5 +84,5 @@
   <param uid="fxa2" val="1.0"/>
   <param uid="fxa3" val="6.0"/>
   <param uid="laneAGain" val="-13.28627490997314"/>
-  <param uid="laneBGain" val="3.814697265625e-6"/>
+  <param uid="laneBGain" val="2.384185791015625e-6"/>
 </state>

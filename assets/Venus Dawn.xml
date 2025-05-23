@@ -2,9 +2,9 @@
 
 <state name="Venus Dawn" author="builtin" tags="keys repeating">
   <state>
-    <instance browserOpen="0" selectedAuthors="" selectedTags=""/>
+    <instance selectedAuthors="" selectedTags=""/>
     <MODMATRIX>
-      <MODITEM srcId="lfo2" depth="0.7200000286102295" enabled="1" dstId="osc2phase"
+      <MODITEM srcId="lfo2" depth="0.3549999892711639" enabled="1" dstId="osc2phase"
                function="linear" biPolarMapping="1"/>
     </MODMATRIX>
     <mseg1 startIndex="0" endIndex="4">
@@ -31,18 +31,14 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
+  <param uid="osc1volume" val="-5.999999046325684"/>
   <param uid="osc1phase" val="0.399577409029007"/>
-  <param uid="osc1spread" val="100.0"/>
   <param uid="osc2coarse" val="4.0"/>
-  <param uid="osc2volume" val="-5.192746"/>
+  <param uid="osc2volume" val="-5.192744731903076"/>
   <param uid="osc2phase" val="0.2710379362106323"/>
-  <param uid="osc2tones" val="2.383000135421753"/>
-  <param uid="osc2detune" val="0.01290704309940338"/>
-  <param uid="osc2spread" val="100.0"/>
-  <param uid="osc3volume" val="-6.375175"/>
+  <param uid="osc3volume" val="-6.375174999237061"/>
   <param uid="osc3phase" val="0.8698194622993469"/>
-  <param uid="osc3detune" val="0.07440564036369324"/>
-  <param uid="osc4volume" val="-5.352125"/>
+  <param uid="osc4volume" val="-5.352127552032471"/>
   <param uid="env1attack" val="0.01000000350177288"/>
   <param uid="env1decay" val="0.9221537113189697"/>
   <param uid="env1sustain" val="-40.0"/>
@@ -61,22 +57,21 @@
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="0.01000000350177288"/>
   <param uid="env4decay" val="0.8097222447395325"/>
-  <param uid="env4sustain" val="-13.270805"/>
+  <param uid="env4sustain" val="-13.27080535888672"/>
   <param uid="env4release" val="0.09999998658895493"/>
   <param uid="env4time" val="0.09999998658895493"/>
   <param uid="lfo1beat" val="19.0"/>
   <param uid="lfo1phase" val="0.7147122025489807"/>
   <param uid="lfo2enable" val="1.0"/>
   <param uid="lfo2sync" val="0.0"/>
-  <param uid="lfo2rate" val="5.274516582489014"/>
-  <param uid="lfo2beat" val="23.0"/>
+  <param uid="lfo2rate" val="1.00548255443573"/>
   <param uid="lfo2depth" val="0.5117028951644897"/>
   <param uid="demodmix" val="0.261593371629715"/>
-  <param uid="fltkey" val="46.19246292114258"/>
+  <param uid="fltkey" val="56.00183868408203"/>
   <param uid="fltfreq" val="93.83262634277344"/>
   <param uid="fltres" val="21.24177169799805"/>
   <param uid="auxvolume" val="-11.99999809265137"/>
-  <param uid="samplvolume" val="-11.99999809265137"/>
+  <param uid="level" val="7.152557373046875e-7"/>
   <param uid="fxgain" val="2.384185791015625e-6"/>
   <param uid="wsdrive" val="19.14656448364258"/>
   <param uid="wsgain" val="0.4292035102844238"/>

@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<state name="Let Banjo Ring" author="me" tags="keys plucked">
+<state name="Fuzzy Banjoid" author="me" tags="keys">
   <state sample="">
     <instance selectedAuthors="" selectedTags=""/>
     <MODMATRIX>
       <MODITEM srcId="lfo2" depth="1.0" enabled="1" dstId="osc2phase" function="linear"
                biPolarMapping="1"/>
-      <MODITEM srcId="lfo1" depth="0.6875130534172058" enabled="1" dstId="demodmix"
-               function="linear" biPolarMapping="1"/>
-      <MODITEM srcId="lfo1" depth="0.2025625556707382" enabled="1" dstId="demodVol"
-               function="linear" biPolarMapping="1"/>
-      <MODITEM srcId="lfo1" depth="0.7377222776412964" enabled="1" dstId="auxspread"
-               function="linear" biPolarMapping="0"/>
-      <MODITEM srcId="mlfo2" depth="0.1229939237236977" enabled="1" dstId="rmmodfreq2"
-               function="linear" biPolarMapping="1"/>
-      <MODITEM srcId="mlfo2" depth="0.0989999994635582" enabled="1" dstId="rmmix2"
-               function="linear" biPolarMapping="1"/>
     </MODMATRIX>
     <mseg1 startIndex="0" endIndex="2">
       <PT t="0.0" v="0.0" c="5.5"/>
@@ -61,27 +51,18 @@
   <param uid="env4time" val="0.09999998658895493"/>
   <param uid="lfo2enable" val="1.0"/>
   <param uid="lfo2beat" val="27.0"/>
-  <param uid="equant" val="0.1745659112930298"/>
-  <param uid="algo" val="2.0"/>
-  <param uid="demodmix" val="0.286746472120285"/>
+  <param uid="demodmix" val="0.2719531357288361"/>
+  <param uid="demodVol" val="2.604000091552734"/>
   <param uid="flttype" val="1.0"/>
-  <param uid="fltkey" val="51.70172500610352"/>
-  <param uid="fltfreq" val="109.1166458129883"/>
+  <param uid="fltkey" val="32.26874923706055"/>
+  <param uid="fltfreq" val="101.2827377319336"/>
   <param uid="fltres" val="27.9347038269043"/>
-  <param uid="auxwave" val="2.0"/>
   <param uid="auxvolume" val="-11.99999809265137"/>
-  <param uid="auxdetune" val="0.195738285779953"/>
-  <param uid="level" val="-3.640625"/>
-  <param uid="fxgain" val="16.69271278381348"/>
-  <param uid="wsdrive" val="18.15269470214844"/>
-  <param uid="wsfunc" val="1.0"/>
-  <param uid="wshighshelf" val="8321.2353515625"/>
-  <param uid="wshsq" val="2.212625741958618"/>
-  <param uid="wslp" val="11866.119140625"/>
-  <param uid="cpthreshold" val="-23.23220252990723"/>
-  <param uid="cpratio" val="3.212200880050659"/>
+  <param uid="level" val="-6.50351095199585"/>
+  <param uid="fxgain" val="2.384185791015625e-6"/>
+  <param uid="wsdrive" val="24.35625267028809"/>
+  <param uid="wsfunc" val="5.0"/>
   <param uid="cpattack" val="0.0000199999994947575"/>
-  <param uid="cptype" val="2.0"/>
   <param uid="dlbeatsleft" val="19.0"/>
   <param uid="dlbeatsright" val="16.0"/>
   <param uid="dlpingpong" val="1.0"/>
@@ -96,24 +77,11 @@
   <param uid="rvpredelay" val="0.02660937607288361"/>
   <param uid="rvwet" val="0.1151562482118607"/>
   <param uid="rmmodfreq1" val="39.9999885559082"/>
-  <param uid="rmshape1" val="0.179579958319664"/>
-  <param uid="rmmix1" val="0.07824523746967316"/>
-  <param uid="rmmodfreq2" val="594.3119506835938"/>
-  <param uid="rmspread" val="0.3592483401298523"/>
-  <param uid="ldrtype" val="3.0"/>
-  <param uid="ldrcutoff" val="128.3574981689453"/>
-  <param uid="ldrdrive" val="10.82488250732422"/>
-  <param uid="ldrres" val="0.289342850446701"/>
+  <param uid="rmmodfreq2" val="39.9999885559082"/>
   <param uid="fxa1" val="1.0"/>
   <param uid="fxa2" val="4.0"/>
   <param uid="fxa3" val="3.0"/>
   <param uid="fxa4" val="6.0"/>
-  <param uid="fxb1" val="7.0"/>
-  <param uid="fxb2" val="9.0"/>
-  <param uid="fxb3" val="8.0"/>
-  <param uid="fxb4" val="2.0"/>
-  <param uid="chainAtoB" val="0.0"/>
   <param uid="laneAGain" val="2.384185791015625e-6"/>
   <param uid="laneBGain" val="2.384185791015625e-6"/>
-  <param uid="mseg1loop" val="1.0"/>
 </state>
