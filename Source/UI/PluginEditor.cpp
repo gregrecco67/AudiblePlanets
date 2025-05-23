@@ -37,6 +37,7 @@ APAudioProcessorEditor::APAudioProcessorEditor(APAudioProcessor &p)
 	addAndMakeVisible(usage);
 	addAndMakeVisible(scaleName);
 	addAndMakeVisible(learningLabel);
+	addChildComponent(levelMeter);
 
 	scaleName.setFont(juce::FontOptions(12.0f));
 	scaleName.setColour(juce::Label::textColourId, juce::Colour(0xffE6E6E9));
@@ -56,14 +57,17 @@ bool APAudioProcessorEditor::keyPressed(
 {
 	if (key.isKeyCode(49) ||
 	    key.isKeyCode(juce::KeyPress::numberPad1)) {  // 1-5 for tab select
+		levelMeter.setVisible(false);
 		tabbed.setCurrentTabIndex(0);
 		return true;
 	}
 	if (key.isKeyCode(50) || key.isKeyCode(juce::KeyPress::numberPad2)) {
+		levelMeter.setVisible(true);
 		tabbed.setCurrentTabIndex(1);
 		return true;
 	}
 	if (key.isKeyCode(51) || key.isKeyCode(juce::KeyPress::numberPad3)) {
+		levelMeter.setVisible(true);
 		tabbed.setCurrentTabIndex(2);
 		return true;
 	}
@@ -97,6 +101,11 @@ void APAudioProcessorEditor::timerCallback()
 		learningLabel.setText(proc.learning, juce::dontSendNotification);
 		learningLabel.setColour(juce::Label::backgroundColourId,
 		    juce::Colour(0xff16171A).brighter(0.3f));
+	}
+	if (tabbed.getCurrentTabIndex() == 0) {
+		levelMeter.setVisible(false);
+	} else {
+		levelMeter.setVisible(true);
 	}
 }
 
@@ -151,6 +160,7 @@ void APAudioProcessorEditor::resized()
 	learningLabel.setBounds(834, 12, 184, 16); 
 	fxEditor.setBounds(editorArea);
 	modEditor.setBounds(editorArea);
+	levelMeter.setBounds(1050, 12, 90, 22);
 }
 
 void APAudioProcessorEditor::addMenuItems(juce::PopupMenu &m)
