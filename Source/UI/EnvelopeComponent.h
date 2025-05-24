@@ -264,11 +264,16 @@ public:
 		g.setColour(juce::Colours::grey);     // outline color
 		g.drawRect(
 		    getLocalBounds(), 1);  // draw an outline around the component
-		g.setColour(juce::Colours::white);  // envelope color
+		g.setColour(findColour(gin::GinLookAndFeel::accentColourId));  // envelope color
 
 		myPath.startNewSubPath(0.f, 1.f);  // attack segment
 		myPath.cubicTo(attackFirstControlX, attackFirstControlY,
 		    attackSecondControlX, attackSecondControlY, attackLength, height);
+
+		// check for attack phase, 
+		// getPointAlongPath(distance = sqrt(attackLength^2 + height^2) * envState.phase))
+		// draw that point! rinse and repeat!
+
 		myPath.startNewSubPath(attackLength, height);  // decay segment
 		myPath.cubicTo(decayFirstControlX, decayFirstControlY,
 		    decaySecondControlX, decaySecondControlY, decayEndX, decayEndY);
@@ -328,10 +333,13 @@ public:
 		g.fillEllipse(
 		    juce::Rectangle<float>(6.f, 6.f).withCentre(juce::Point<float>(
 		        decayEndX + width / 4.f, height - decayEndY + 5.f)));
+
+		
 	}
 
 private:
 	const APAudioProcessor &proc;
 	int envelopeNumber;
+	std::function<std::vector<Envelope::EnvelopeState>()> phaseCallback;;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EnvelopeComponent)
 };

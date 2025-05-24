@@ -39,6 +39,11 @@ public:
 		ADRSyncIdle
 	};
 
+	struct EnvelopeState {
+		State state;
+		float phase;
+	};
+
 	struct Params {
 		Params() = default;
 
@@ -63,6 +68,11 @@ public:
 		bool repeat{false}, sync{false};
 		float syncduration{1.0};
 	};
+
+	inline EnvelopeState getState() const noexcept
+	{
+		return {state, static_cast<float>(linearIdxVal)};
+	}
 
 	inline void setParameters(const Params &newParameters)
 	{

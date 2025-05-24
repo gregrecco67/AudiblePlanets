@@ -128,6 +128,57 @@ public:
 		return values;
 	}
 
+	inline std::vector<Envelope::EnvelopeState> getENV1States() const
+	{
+		std::vector<Envelope::EnvelopeState> states;
+		for (auto v : voices) {
+			if (v->isActive()) {
+				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				states.push_back(vav->getENV1State());
+			}
+		}
+		return states;
+	}
+
+	inline std::vector<Envelope::EnvelopeState> getENV2States() const
+	{
+		std::vector<Envelope::EnvelopeState> states;
+
+		for (auto v : voices) {
+			if (v->isActive()) {
+				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				states.push_back(vav->getENV2State());
+			}
+		}
+		return states;
+	}
+
+	inline std::vector<Envelope::EnvelopeState> getENV3States() const
+	{
+		std::vector<Envelope::EnvelopeState> states;
+
+		for (auto v : voices) {
+			if (v->isActive()) {
+				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				states.push_back(vav->getENV3State());
+			}
+		}
+		return states;
+	}
+
+	inline std::vector<Envelope::EnvelopeState> getENV4States() const
+	{
+		std::vector<Envelope::EnvelopeState> states;
+
+		for (auto v : voices) {
+			if (v->isActive()) {
+				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				states.push_back(vav->getENV4State());
+			}
+		}
+		return states;
+	}
+
 private:
 	APAudioProcessor &proc;
 };

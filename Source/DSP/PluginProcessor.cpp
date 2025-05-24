@@ -1722,7 +1722,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
 	for (auto lfoparams :
 	    {&lfo1Params, &lfo2Params, &lfo3Params, &lfo4Params}) {
 		gin::LFO::Parameters classparams;
-		auto &lfo = this->monoLFOs[lfoparams->num - 1];
+		auto &lfo = this->monoLFOs[static_cast<size_t>(lfoparams->num - 1)];
 		float freq = 0;
 		if (lfoparams->sync->getUserValue() > 0.0f)
 			freq =
@@ -1746,7 +1746,7 @@ void APAudioProcessor::updateParams(int newBlockSize)
 		lfo->process(newBlockSize);
 
 		modMatrix.setMonoValue(
-		    *(this->monoLfoIds[lfoparams->num - 1]), lfo->getOutput());
+		    *(this->monoLfoIds[static_cast<size_t>(lfoparams->num - 1)]), lfo->getOutput());
 	}
 
 	modMatrix.setMonoValue(macroSrc1, modMatrix.getValue(macroParams.macro1));

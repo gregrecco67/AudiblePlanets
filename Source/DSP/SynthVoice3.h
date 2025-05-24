@@ -64,6 +64,12 @@ public:
 	inline float getLFO2Phase() { return lfo2.getCurrentPhase(); }
 	inline float getLFO3Phase() { return lfo3.getCurrentPhase(); }
 	inline float getLFO4Phase() { return lfo4.getCurrentPhase(); }
+	
+	inline Envelope::EnvelopeState getENV1State() { return env1.getState(); }
+	inline Envelope::EnvelopeState getENV2State() { return env2.getState(); }
+	inline Envelope::EnvelopeState getENV3State() { return env3.getState(); }
+	inline Envelope::EnvelopeState getENV4State() { return env4.getState(); }
+	
 	gin::Wave waveForChoice(int choice);
 
 private:
