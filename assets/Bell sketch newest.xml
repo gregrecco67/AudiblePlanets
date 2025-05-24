@@ -2,7 +2,7 @@
 
 <state name="Bell sketch newest" author="built-in 2" tags="bells keys">
   <state sample="">
-    <instance selectedAuthors="" selectedTags=""/>
+    <instance browserOpen="0" selectedAuthors="built-in 2" selectedTags=""/>
     <MODMATRIX>
       <MODITEM srcId="lfo2" depth="0.0293333325535059" enabled="1" dstId="osc2fine"
                function="linear" biPolarMapping="1"/>
@@ -67,7 +67,9 @@
   <param uid="lfo2beat" val="19.0"/>
   <param uid="algo" val="3.0"/>
   <param uid="demodmix" val="0.1759999990463257"/>
-  <param uid="fltfreq" val="86.86246490478516"/>
+  <param uid="fltkey" val="16.79999923706055"/>
+  <param uid="fltfreq" val="94.967041015625"/>
+  <param uid="auxenable" val="1.0"/>
   <param uid="level" val="10.0"/>
   <param uid="fxgain" val="3.814697265625e-6"/>
   <param uid="cpattack" val="0.0000199999994947575"/>
