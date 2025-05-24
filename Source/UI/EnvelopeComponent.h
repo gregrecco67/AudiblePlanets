@@ -21,7 +21,8 @@
 /*
  */
 class EnvelopeComponent : public juce::Component,
-                          public gin::Parameter::ParameterListener {
+                          public gin::Parameter::ParameterListener,
+						  public juce::Timer {
 public:
 	EnvelopeComponent(const APAudioProcessor &proc_, const int number)
 	    : proc(proc_), envelopeNumber(number)
@@ -86,6 +87,7 @@ public:
 				sustain = proc.env4Params.sustain->getValue();
 				break;
 		}
+		startTimerHz(30);
 	}
 
 	~EnvelopeComponent() override
@@ -264,7 +266,8 @@ public:
 		g.setColour(juce::Colours::grey);     // outline color
 		g.drawRect(
 		    getLocalBounds(), 1);  // draw an outline around the component
-		g.setColour(findColour(gin::GinLookAndFeel::accentColourId));  // envelope color
+		juce::Colour c;
+		g.setColour(c = findColour(gin::GinLookAndFeel::accentColourId));  // envelope color
 
 		myPath.startNewSubPath(0.f, 1.f);  // attack segment
 		myPath.cubicTo(attackFirstControlX, attackFirstControlY,
@@ -273,12 +276,45 @@ public:
 		// check for attack phase, 
 		// getPointAlongPath(distance = sqrt(attackLength^2 + height^2) * envState.phase))
 		// draw that point! rinse and repeat!
+		auto pathLength1 = myPath.getLength();
+		g.setColour(juce::Colours::white);
+		for (auto &state : states) {
+			if (state.state == Envelope::State::attack ||
+			    state.state == Envelope::State::ADRattack) {
+				auto pointAlongPath = myPath.getPointAlongPath(pathLength1 * state.phase);
+				g.fillEllipse(juce::Rectangle<float>(4.f, 4.f).withCentre(
+				    juce::Point<float>(pointAlongPath.x, height - pointAlongPath.y + 5)));
+			}
+		}
+		g.setColour(c);
 
 		myPath.startNewSubPath(attackLength, height);  // decay segment
 		myPath.cubicTo(decayFirstControlX, decayFirstControlY,
 		    decaySecondControlX, decaySecondControlY, decayEndX, decayEndY);
+
+		// check for decay phase,
+		// getPointAlongPath(distance = sqrt(decayLength^2 + (height - decayEndY)^2) * envState.phase))
+		auto pathLength2 = myPath.getLength() - pathLength1;
+		g.setColour(juce::Colours::white);
+		for (auto &state : states) {
+			if (state.state == Envelope::State::decay ||
+			    state.state == Envelope::State::ADRdecay) {
+				auto pointAlongPath = myPath.getPointAlongPath(
+				    pathLength2 * 
+					(1.f - state.phase)
+					// juce::jmap(state.phase, 0.f, 1.f, 1.f, 0.f)
+					+ pathLength1);
+				g.fillEllipse(juce::Rectangle<float>(4.f, 4.f).withCentre(
+				    juce::Point<float>(pointAlongPath.x, height - pointAlongPath.y + 5)));
+			}
+		}
+		g.setColour(c);
+
 		myPath.startNewSubPath(decayEndX, decayEndY);  // sustain segment
 		myPath.lineTo(decayEndX + width / 4.f, decayEndY);
+
+
+
 		myPath.startNewSubPath(
 		    decayEndX + width / 4.f, decayEndY);  // release segment
 
@@ -322,6 +358,22 @@ public:
 		    releaseSecondControlX, releaseSecondControlY, releaseEndX,
 		    releaseEndY);
 
+		// check for release phase,
+		// getPointAlongPath(distance = sqrt(releaseLength^2 + releaseEndY^2) * envState.phase))
+		auto pathLength3 = myPath.getLength() - pathLength1 - pathLength2 - width / 4.f;
+		g.setColour(juce::Colours::white);
+		for (auto &state : states) {
+			if (state.state == Envelope::State::release ||
+			    state.state == Envelope::State::ADRrelease) {
+				auto pointAlongPath = myPath.getPointAlongPath(
+				    pathLength3 * (1 - state.phase) * sustain + pathLength1 + pathLength2
+					+ width / 4.f);
+				g.fillEllipse(juce::Rectangle<float>(4.f, 4.f).withCentre(
+				    juce::Point<float>(pointAlongPath.x, height - pointAlongPath.y + 5)));
+			}
+		}
+		g.setColour(c);
+
 		myPath.applyTransform(juce::AffineTransform::verticalFlip(height)
 		        .juce::AffineTransform::translated(0.0f, 5.0f));
 		g.strokePath(myPath, juce::PathStrokeType(1.0f));
@@ -334,12 +386,30 @@ public:
 		    juce::Rectangle<float>(6.f, 6.f).withCentre(juce::Point<float>(
 		        decayEndX + width / 4.f, height - decayEndY + 5.f)));
 
+		g.setColour(juce::Colours::white);
+		for (auto &state : states) {
+			if (state.state == Envelope::State::sustain) {
+				g.fillEllipse(juce::Rectangle<float>(4.f, 4.f).withCentre(
+				    juce::Point<float>(decayEndX + width / 4.f, height - decayEndY + 5.f)));
+				g.fillEllipse(juce::Rectangle<float>(4.f, 4.f).withCentre(
+				    juce::Point<float>(decayEndX, height - decayEndY + 5.f)));
+			}
+		}
 		
 	}
 
+	void timerCallback() override
+	{
+		if (phaseCallback) {
+			states = phaseCallback();
+		}
+		repaint();
+	}
+
+	std::function<std::vector<Envelope::EnvelopeState>()> phaseCallback;
+	std::vector<Envelope::EnvelopeState> states;
 private:
 	const APAudioProcessor &proc;
 	int envelopeNumber;
-	std::function<std::vector<Envelope::EnvelopeState>()> phaseCallback;;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EnvelopeComponent)
 };

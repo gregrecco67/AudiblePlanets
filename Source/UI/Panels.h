@@ -246,6 +246,19 @@ public:
 		o2.color = APColors::yellowMuted;
 		o3.color = APColors::greenMuted;
 		o4.color = APColors::blueMuted;
+
+		envViz.phaseCallback = [this]() {
+			switch (num) {
+				case 0:
+					return proc.synth.getENV1States();
+				case 1:
+					return proc.synth.getENV2States();
+				case 2:
+					return proc.synth.getENV3States();
+				case 3:
+					return proc.synth.getENV4States();
+			}
+		};
 		startTimerHz(3);
 	}
 
