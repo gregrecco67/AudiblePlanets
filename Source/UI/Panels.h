@@ -35,22 +35,6 @@ inline void gradientRect(juce::Graphics &g,
 
 //===============================================================================
 
-// class APBox : public gin::ParamBox {
-// public:
-// 	APBox(const juce::String &name) : gin::ParamBox(name)
-// 	{
-// 		setName(name);
-// 		setTitle(name);
-// 	}
-// 	void paint(juce::Graphics &g) override
-// 	{
-// 		gin::ParamBox::paint(g);
-// 		g.setColour(juce::Colours::white.darker(0.2f));
-// 		g.fillRect(2, 54, getWidth() - 4, 2);
-// 	}
-// 	bool left, right, top, bottom;
-// };
-
 class OSCBox : public gin::ParamBox {
 public:
 	OSCBox(
