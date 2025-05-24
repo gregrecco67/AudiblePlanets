@@ -264,8 +264,7 @@ public:
 
 		g.fillAll(juce::Colour(33, 31, 33));  // clear the background
 		g.setColour(juce::Colours::grey);     // outline color
-		g.drawRect(
-		    getLocalBounds(), 1);  // draw an outline around the component
+		g.drawRect(getLocalBounds(), 1);  // draw an outline around the component
 		juce::Colour c;
 		g.setColour(c = findColour(gin::GinLookAndFeel::accentColourId));  // envelope color
 
@@ -300,7 +299,6 @@ public:
 				auto pointAlongPath = myPath.getPointAlongPath(
 				    pathLength2 * 
 					(1.f - state.phase)
-					// juce::jmap(state.phase, 0.f, 1.f, 1.f, 0.f)
 					+ pathLength1);
 				g.fillEllipse(juce::Rectangle<float>(4.f, 4.f).withCentre(
 				    juce::Point<float>(pointAlongPath.x, height - pointAlongPath.y + 5)));
@@ -323,7 +321,7 @@ public:
 		float releaseFirstControlX{0.f}, releaseFirstControlY{0.f},
 		    releaseSecondControlX{0.f}, releaseSecondControlY{0.f};
 		float releaseEndX = decayEndX + .25f * width + releaseLength;
-		float releaseEndY = 0.f;
+		float releaseEndY = 1.f; // ......
 		if (decayCurve < 0.f) {
 			releaseFirstControlX =
 			    sustainEndX + 0.25f * releaseLength +
