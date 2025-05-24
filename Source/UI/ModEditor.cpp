@@ -41,6 +41,9 @@ ModEditor::ModEditor(APAudioProcessor &proc_) : proc(proc_)
 	timbre.setRight(true);
 	global.setRight(true);
 	proc.globalParams.pitchbendRange->addListener(this);
+
+	modsrc.setHeaderRight(false);
+	matrix.setHeaderRight(false);
 }
 
 ModEditor::~ModEditor()

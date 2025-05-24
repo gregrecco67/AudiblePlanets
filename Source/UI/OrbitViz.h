@@ -194,6 +194,9 @@ public:
 		equantBodyOutline.addEllipse(equantShadow);
 
 		g.fillEllipse(equantBody);
+
+		g.setColour(findColour(gin::PluginLookAndFeel::title1ColourId));
+		g.fillRect(0, 0, getWidth(), 1);
 	}
 
 	inline void setEquant(float input)

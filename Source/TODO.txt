@@ -1,5 +1,3 @@
 add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
 
-envelope live values
-
 allow swapping out orbit viz for global and macros?

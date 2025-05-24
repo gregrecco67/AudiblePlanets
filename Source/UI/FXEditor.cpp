@@ -91,6 +91,9 @@ FXEditor::FXEditor(APAudioProcessor &proc_) : proc(proc_)
 
 	addAndMakeVisible(laneBLabel);
 
+	mod.setHeaderRight(false);
+	matrix.setHeaderRight(false);
+
 	setAllControls();
 }
 

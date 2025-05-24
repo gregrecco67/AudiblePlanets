@@ -29,7 +29,6 @@ Editor::Editor(APAudioProcessor &proc_) : proc(proc_)
 	addAndMakeVisible(env4);
 	addAndMakeVisible(filter);
 	addAndMakeVisible(modsrc);
-	addAndMakeVisible(global);
 	addAndMakeVisible(timbre);
 	addAndMakeVisible(matrix);
 	addAndMakeVisible(orbitViz);
@@ -45,10 +44,38 @@ Editor::Editor(APAudioProcessor &proc_) : proc(proc_)
 	speedSlider.setRange(0.0, 2.0);
 	speedSlider.setSkewFactor(0.5);
 	speedSlider.setValue(0.1);
+
+	addAndMakeVisible(swap);
+	swap.changeWidthToFitText();
+	swap.onClick = [this]() {
+		if (orbitViz.isVisible()) {
+			orbitViz.setVisible(false);
+			liveViz.setVisible(false);
+			speedSlider.setVisible(false);
+			global.setVisible(true);
+			macros.setVisible(true);
+		} else {
+			orbitViz.setVisible(true);
+			liveViz.setVisible(true);
+			speedSlider.setVisible(true);
+			global.setVisible(false);
+			macros.setVisible(false);
+		}
+		resized();
+	};
+	
+	addChildComponent(global);
+	addChildComponent(macros);
+
 	osc1.setRight(true);
 	osc2.setRight(true);
 	osc3.setRight(true);
 	osc4.setRight(true);
+
+	// osc1.setHeaderLeft(true);
+	// osc2.setHeaderLeft(true);
+	// osc3.setHeaderLeft(true);
+	// osc4.setHeaderLeft(true);
 
 	env1.setRight(true);
 	env2.setRight(true);
@@ -59,6 +86,12 @@ Editor::Editor(APAudioProcessor &proc_) : proc(proc_)
 	timbre.setRight(true);
 	aux.setRight(true);
 	global.setRight(true);
+	macros.setRight(true);
+	global.bottom = true;
+	macros.bottom = true;
+
+	modsrc.setHeaderRight(false);
+	matrix.setHeaderRight(false);
 
 	volumeBox.setRight(true);
 	levelBox.setRight(true);
@@ -80,6 +113,14 @@ void Editor::setGrid(
 	    (int)(w * 56.f), (int)(h * 70.f + 23.f));
 }
 
+void Editor::paint(juce::Graphics &g)
+{
+	juce::Component::paint(g);
+	g.setColour(findColour(gin::PluginLookAndFeel::title1ColourId));
+	// matrix.setBounds(16 * 56, 326, 5 * 56, 326);
+	g.drawLine(16 * 56, 326, 16 * 56, 652, 1.0f);
+}
+
 void Editor::resized()
 {
 	auto area = getLocalBounds();
@@ -99,17 +140,20 @@ void Editor::resized()
 	setGrid(&filter, 10, 0, 0, 2, 2);
 	setGrid(&timbre, 12, 0, 0, 3, 2);
 	setGrid(&aux, 10, 2, 1, 5, 2);
-	// setGrid(&global, 14, 0, 0, 2, 2);
+	setGrid(&global, 10, 4, 2, 3, 2);
+	global.setBounds(10 * 56, 4 * 70 + 2 * 23, 3 * 56, 2 * 70 + 24);
+	setGrid(&macros, 13, 4, 2, 3, 2);
+	macros.setBounds(13 * 56, 4 * 70 + 2 * 23, 3 * 56, 2 * 70 + 24);
 	volumeBox.setBounds(15 * 56, 0, 56, 163);
 	levelBox.setBounds(15 * 56, 163, 56, 163);
-	orbitViz.setBounds(10 * 56 + 5, 4 * 70 + 2 * 23, 6 * 56, 5 * 70);
+	orbitViz.setBounds(10 * 56, 4 * 70 + 2 * 23, 6 * 56, 5 * 70);
+	swap.setBounds(10 * 56 - 5, 4 * 70 + 2 * 23 + 4 * 70 + 20, 45, 25);
+	swap.changeWidthToFitText();
 	liveViz.setBounds(static_cast<int>(10 * 56.f),
 	    static_cast<int>(4 * 70.f + 2 * 23.f), 75, 25);
-	speedSlider.setBounds(14 * 56, 4 * 70 + 2 * 23, 112, 25);
+	speedSlider.setBounds(14 * 56, 4 * 70 + 2 * 23 + 1, 111, 25);
 
-	//setGrid(&modsrc, 16, 0, 0, 5, 4.328571f);
     modsrc.setBounds(16 * 56, 0, 5 * 56, 326);
-	// setGrid(&matrix,  16,  4.328571f, 1, 5, 4.328571f);
 	matrix.setBounds(16 * 56, 326, 5 * 56, 326);
 }
 

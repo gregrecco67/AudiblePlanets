@@ -33,6 +33,7 @@ public:
 	void setGrid(
 	    gin::ParamBox *box, float x, float y, float heds, float w, float h);
 	void timerCallback() override;
+	void paint(juce::Graphics &g) override;
 
 private:
 	APAudioProcessor &proc;
@@ -48,7 +49,6 @@ private:
 	ENVBox env4{proc, proc.env4Params, 3};
 
 	FilterBox filter{"  flt", proc};
-	GlobalBox global{"  global", proc};
 	ModBox modsrc{"  mod", proc};
 	TimbreBox timbre{"  timbre", proc};
 	AuxBox aux{"      Aux Oscillator", proc};
@@ -56,10 +56,14 @@ private:
 	OrbitViz orbitViz;
 	VolumeBox volumeBox{proc};
 	LevelBox levelBox{proc.levelTracker};
+
+	GlobalBox global{"  global", proc};
+	MacrosBox macros{proc};
+
 	int frameRate{24};
-	float vizDefPhase{0.f}, vizEpi1Phase{0.f}, vizEpi2Phase{0.f},
-	    vizEpi3Phase{0.f};
+	float vizDefPhase{0.f}, vizEpi1Phase{0.f}, vizEpi2Phase{0.f}, vizEpi3Phase{0.f};
 	juce::ToggleButton liveViz{"Live"};
+	juce::TextButton swap{"Swap"};
 	APModMatrixBox::Row::APDepthSlider speedSlider;
 	float phaseIncrement{juce::MathConstants<float>::pi / (2.0f * frameRate)};
 	APLNF aplnf;

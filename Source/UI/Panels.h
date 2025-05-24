@@ -35,6 +35,22 @@ inline void gradientRect(juce::Graphics &g,
 
 //===============================================================================
 
+// class APBox : public gin::ParamBox {
+// public:
+// 	APBox(const juce::String &name) : gin::ParamBox(name)
+// 	{
+// 		setName(name);
+// 		setTitle(name);
+// 	}
+// 	void paint(juce::Graphics &g) override
+// 	{
+// 		gin::ParamBox::paint(g);
+// 		g.setColour(juce::Colours::white.darker(0.2f));
+// 		g.fillRect(2, 54, getWidth() - 4, 2);
+// 	}
+// 	bool left, right, top, bottom;
+// };
+
 class OSCBox : public gin::ParamBox {
 public:
 	OSCBox(
@@ -426,6 +442,8 @@ public:
 		g.setColour(juce::Colours::white);
 		g.drawText("Level", 0, 0, getWidth(), 20,
 		    juce::Justification::centred, true);
+		g.setColour(findColour(gin::PluginLookAndFeel::title1ColourId));
+		g.fillRect(getWidth() - 1, 0, 1, getHeight());
 	}
 
 	void resized() override
