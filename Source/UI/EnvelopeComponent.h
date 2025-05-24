@@ -274,7 +274,7 @@ public:
 		    attackSecondControlX, attackSecondControlY, attackLength, height);
 
 		// check for attack phase, 
-		// getPointAlongPath(distance = sqrt(attackLength^2 + height^2) * envState.phase))
+		// getPointAlongPath()
 		// draw that point! rinse and repeat!
 		auto pathLength1 = myPath.getLength();
 		g.setColour(juce::Colours::white);
@@ -292,9 +292,7 @@ public:
 		myPath.cubicTo(decayFirstControlX, decayFirstControlY,
 		    decaySecondControlX, decaySecondControlY, decayEndX, decayEndY);
 
-		// check for decay phase,
-		// getPointAlongPath(distance = sqrt(decayLength^2 + (height - decayEndY)^2) * envState.phase))
-		auto pathLength2 = myPath.getLength() - pathLength1;
+			auto pathLength2 = myPath.getLength() - pathLength1;
 		g.setColour(juce::Colours::white);
 		for (auto &state : states) {
 			if (state.state == Envelope::State::decay ||
@@ -358,15 +356,13 @@ public:
 		    releaseSecondControlX, releaseSecondControlY, releaseEndX,
 		    releaseEndY);
 
-		// check for release phase,
-		// getPointAlongPath(distance = sqrt(releaseLength^2 + releaseEndY^2) * envState.phase))
 		auto pathLength3 = myPath.getLength() - pathLength1 - pathLength2 - width / 4.f;
 		g.setColour(juce::Colours::white);
 		for (auto &state : states) {
 			if (state.state == Envelope::State::release ||
 			    state.state == Envelope::State::ADRrelease) {
 				auto pointAlongPath = myPath.getPointAlongPath(
-				    pathLength3 * (1 - state.phase) * sustain + pathLength1 + pathLength2
+				    pathLength3 * (1 - state.phase) + pathLength1 + pathLength2
 					+ width / 4.f);
 				g.fillEllipse(juce::Rectangle<float>(4.f, 4.f).withCentre(
 				    juce::Point<float>(pointAlongPath.x, height - pointAlongPath.y + 5)));
