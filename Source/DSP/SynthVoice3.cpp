@@ -36,6 +36,11 @@ SynthVoice3::SynthVoice3(APAudioProcessor &p)
 
 void SynthVoice3::noteStarted()
 {
+	voiceShouldStop = false;
+	isStopping = false;
+	antipop = 0.f; // ramp up
+	antipop2 = 1.f; // ramp down
+
 	curNote = getCurrentlyPlayingNote();
 
 	proc.modMatrix.setPolyValue(
@@ -105,6 +110,11 @@ void SynthVoice3::noteStarted()
 
 void SynthVoice3::noteRetriggered()
 {
+	voiceShouldStop = false;
+	isStopping = false;
+	// antipop = 0.f; // ramp up
+	antipop2 = 1.f; // ramp down
+
 	auto note = getCurrentlyPlayingNote();
 	curNote = getCurrentlyPlayingNote();
 
@@ -160,10 +170,10 @@ void SynthVoice3::noteStopped(bool allowTailOff)
 	curNote = getCurrentlyPlayingNote();
 	proc.modMatrix.setPolyValue(
 	    *this, proc.modSrcVelOff, curNote.noteOffVelocity.asUnsignedFloat());
-	if (!allowTailOff) {
-		clearCurrentNote();
-		stopVoice();
-	}
+	// if (!allowTailOff) {
+	// 	clearCurrentNote();
+	// 	stopVoice();
+	// }
 }
 
 void SynthVoice3::notePressureChanged()
@@ -216,8 +226,7 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 
 }
 
-void SynthVoice3::renderNextBlock(
-    juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples)
+void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples)
 {
 	updateParams(numSamples);
 
@@ -234,14 +243,15 @@ void SynthVoice3::renderNextBlock(
 	// the whole enchilada
 	for (int i = 0; i < std::ceil((static_cast<float>(numSamples)) / 4.f);i++) 
 	{
-		env1.advance(1);
-		env2.advance(1);
-		env3.advance(1);
-		env4.advance(1);
 		mipp::Reg<float> a = envs[0]->getOutput();  // assigned in updateParams
 		mipp::Reg<float> b = envs[1]->getOutput();  // envs[0] ~= env1!, etc.
 		mipp::Reg<float> c = envs[2]->getOutput();
 		mipp::Reg<float> d = envs[3]->getOutput();
+
+		env1.advance(1);
+		env2.advance(1);
+		env3.advance(1);
+		env4.advance(1);
 
 		osc1x.load(&osc1xs[i * 4]);  // vectors of samples
 		osc1y.load(&osc1ys[i * 4]);
@@ -303,12 +313,12 @@ void SynthVoice3::renderNextBlock(
 		invDist4 = mipp::Reg<float>(1.0f) / (dist4 + .000001f);
 
 		// get sine/cosine directly, without calculating angle, apply envelopes
-		sine4 = (epi4ys[i] - equant) * invDist4 * d;
-		cos4 = epi4xs[i] * invDist4 * d;
-		sine3 = (epi3ys[i] - equant) * invDist3 * c;
-		cos3 = epi3xs[i] * invDist3 * c;
-		sine2 = (epi2ys[i] - equant) * invDist2 * b;
-		cos2 = epi2xs[i] * invDist2 * b;
+		sine4 = (epi4ys[i] - equant) * invDist4 * d * antipop2;
+		cos4 = epi4xs[i] * invDist4 * d * antipop2;
+		sine3 = (epi3ys[i] - equant) * invDist3 * c * antipop2;
+		cos3 = epi3xs[i] * invDist3 * c * antipop2;
+		sine2 = (epi2ys[i] - equant) * invDist2 * b * antipop2;
+		cos2 = epi2xs[i] * invDist2 * b * antipop2;
 
 		dmCos4 = (epi4ys[i] - equant) * dist4;
 		dmSine4 = epi4xs[i] * dist4;
@@ -337,8 +347,20 @@ void SynthVoice3::renderNextBlock(
 				sampleR = mix((cos2 + cos3 + cos4) * 0.333f, (dmCos2 + dmCos3 + dmCos4) * 0.333f * demodVol, demodMix);
 				break;
 		}
-		sampleL = mipp::sat(sampleL, -1.0f, 1.0f);
-		sampleR = mipp::sat(sampleR, -1.0f, 1.0f);
+		sampleL = mipp::sat(sampleL, -1.0f, 1.0f) * antipop;
+		sampleR = mipp::sat(sampleR, -1.0f, 1.0f) * antipop;
+		if (antipop >= 1.0f) {
+			antipop = 1.0f;
+		} else {
+			antipop += .03f;
+		}
+		if (isStopping) {
+			antipop2 -= .03f;
+			if (antipop2 <= 0.f) {
+				antipop2 = 0.f;
+				isStopping = false;
+			}
+		}
 
 		// SHIP IT OUT
 		sampleL.store(&synthBufferL[i * mipp::N<float>()]);
@@ -348,35 +370,8 @@ void SynthVoice3::renderNextBlock(
 	// Get and apply velocity according to keytrack param
 	float velocity = currentlyPlayingNote.noteOnVelocity.asUnsignedFloat();
 	float ampKeyTrack = getValue(proc.globalParams.velSens);
-	synthBuffer.applyGain(
-	    gin::velocityToGain(velocity, ampKeyTrack) * baseAmplitude);
-
+	synthBuffer.applyGain(gin::velocityToGain(velocity, ampKeyTrack) * baseAmplitude);
 	filter.process(synthBuffer);
-
-	bool voiceShouldStop = false;
-	switch (algo) {
-		case 0:
-			if (!envs[3]->isActive())  // 1-2-3-(4)
-				voiceShouldStop = true;
-			break;
-		case 1:
-			if (!envs[2]->isActive() && !envs[3]->isActive())  // 1-2-(3), 2-(4)
-				voiceShouldStop = true;
-			break;
-		case 2:
-			if (!envs[1]->isActive() && !envs[3]->isActive())  // 1-(2), 1-3-(4)
-				voiceShouldStop = true;
-			break;
-		case 3:
-			if (!envs[1]->isActive() && !envs[2]->isActive() &&
-			    !envs[3]->isActive())  // 1-(2), 1-(3), 1-(4)
-				voiceShouldStop = true;
-			break;
-	}
-	if (voiceShouldStop) {
-		clearCurrentNote();
-		stopVoice();
-	}
 
 	// Add synth voice to output
 	outputBuffer.addFrom(0, startSample, synthBuffer, 0, 0, numSamples);
@@ -384,6 +379,41 @@ void SynthVoice3::renderNextBlock(
 
 	// for timing
 	finishBlock(numSamples);
+
+	if (voiceShouldStop && !isStopping) {
+		clearCurrentNote();
+		stopVoice();
+		return;
+	}
+	switch (algo) {
+		case 0:
+			if (!envs[3]->isActive()) {
+				voiceShouldStop = true;
+				isStopping = true;
+			}
+			break;
+		case 1:
+			if (!envs[2]->isActive() && !envs[3]->isActive()) {
+				voiceShouldStop = true;
+				isStopping = true;
+			}
+			break;
+		case 2:
+			if (!envs[1]->isActive() && !envs[3]->isActive()) {
+				voiceShouldStop = true;
+				isStopping = true;
+			}
+			break;
+		case 3:
+			if (!envs[1]->isActive() && !envs[2]->isActive() &&
+			    !envs[3]->isActive())  {
+				voiceShouldStop = true;
+				isStopping = true;
+			}
+			break;
+	}
+
+
 }
 
 mipp::Reg<float> SynthVoice3::mix(mipp::Reg<float> a, mipp::Reg<float> b, float mix) {

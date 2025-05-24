@@ -145,6 +145,9 @@ private:
 	mipp::Reg<float> sampleL{0.f, 0.f, 0.f, 0.f}, sampleR{0.f, 0.f, 0.f, 0.f};
 
 	float demodMix{0.f}, demodVol{0.f};
+	float antipop{0.f};
+	bool isStopping{false}, voiceShouldStop{false};
+	float antipop2{1.f};
 
 	friend class APSynth;
 	juce::MPENote curNote;
