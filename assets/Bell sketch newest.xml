@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<state name="Bell sketch newest" author="built-in 2" tags="bells keys">
+  <state sample="">
+    <instance selectedAuthors="" selectedTags=""/>
+    <MODMATRIX>
+      <MODITEM srcId="lfo2" depth="0.0293333325535059" enabled="1" dstId="osc2fine"
+               function="linear" biPolarMapping="1"/>
+      <MODITEM srcId="mseg1" depth="-0.03733333200216293" enabled="1" dstId="osc2fine"
+               function="linear" biPolarMapping="0"/>
+    </MODMATRIX>
+    <mseg1 startIndex="0" endIndex="7">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.25" v="0.1333324313163757" c="0.0"/>
+      <PT t="0.25" v="-0.3147683143615723" c="0.0"/>
+      <PT t="0.5" v="-0.3147683143615723" c="0.0"/>
+      <PT t="0.5" v="0.6523913145065308" c="0.0"/>
+      <PT t="0.75" v="0.6523913145065308" c="0.0"/>
+      <PT t="0.75" v="0.4999979734420776" c="0.0"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg1>
+    <mseg2 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg2>
+    <mseg3 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg3>
+    <mseg4 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg4>
+    <sample/>
+  </state>
+  <param uid="osc2coarse" val="12.0"/>
+  <param uid="osc2fine" val="-0.07393753528594971"/>
+  <param uid="osc2phase" val="0.492000013589859"/>
+  <param uid="osc3coarse" val="8.0"/>
+  <param uid="osc3fine" val="0.2919998168945312"/>
+  <param uid="osc3volume" val="-16.47817611694336"/>
+  <param uid="osc4coarse" val="12.0"/>
+  <param uid="env1attack" val="0.0"/>
+  <param uid="env1decay" val="2.700000524520874"/>
+  <param uid="env1sustain" val="-40.0"/>
+  <param uid="env1release" val="4.061388969421387"/>
+  <param uid="env1time" val="0.09999998658895493"/>
+  <param uid="env2attack" val="0.0"/>
+  <param uid="env2decay" val="4.600000858306885"/>
+  <param uid="env2sustain" val="-40.0"/>
+  <param uid="env2release" val="0.550000011920929"/>
+  <param uid="env2time" val="0.09999998658895493"/>
+  <param uid="env3attack" val="0.0"/>
+  <param uid="env3decay" val="7.134391307830811"/>
+  <param uid="env3sustain" val="-40.0"/>
+  <param uid="env3release" val="0.5744780898094177"/>
+  <param uid="env3time" val="0.09999998658895493"/>
+  <param uid="env4attack" val="0.0"/>
+  <param uid="env4decay" val="0.1137580201029778"/>
+  <param uid="env4sustain" val="-40.0"/>
+  <param uid="env4release" val="5.766530990600586"/>
+  <param uid="env4time" val="0.09999998658895493"/>
+  <param uid="lfo1depth" val="0.1478437185287476"/>
+  <param uid="lfo2beat" val="19.0"/>
+  <param uid="algo" val="3.0"/>
+  <param uid="demodmix" val="0.1759999990463257"/>
+  <param uid="fltfreq" val="86.86246490478516"/>
+  <param uid="level" val="10.0"/>
+  <param uid="fxgain" val="3.814697265625e-6"/>
+  <param uid="cpattack" val="0.0000199999994947575"/>
+  <param uid="chrate" val="0.05500001460313797"/>
+  <param uid="rmmodfreq1" val="39.9999885559082"/>
+  <param uid="rmmodfreq2" val="39.9999885559082"/>
+  <param uid="laneAGain" val="3.814697265625e-6"/>
+  <param uid="laneBGain" val="3.814697265625e-6"/>
+  <param uid="mseg1xgrid" val="4.0"/>
+  <param uid="mseg1draw" val="1.0"/>
+</state>
