@@ -65,25 +65,19 @@ float Envelope::getNextSample() noexcept
 	switch (state) {
 		case State::idle: {
 			finalOut = 0.0;
-			break;
 		}
+		break;
 
 		case State::attack: {
 			linearIdxVal += attackRate;
 			linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 			if (parameters.aCurve > 0.0f) {
-				curveVal =
-				    convex[std::clamp(static_cast<int>(linearIdxVal * 2000.), 0, 1999)];
-				finalOut = std::clamp((1.0 - parameters.aCurve) * linearIdxVal +
-				                          parameters.aCurve * curveVal,
-				                      0.0, 1.0);
+				curveVal = convex[std::clamp(static_cast<int>(linearIdxVal * 2000.), 0, 1999)];
+				finalOut = std::clamp((1.0 - parameters.aCurve) * linearIdxVal + parameters.aCurve * curveVal, 0.0, 1.0);
 			} else {
-				curveVal = 
-					concave[std::clamp(static_cast<int>(linearIdxVal * 2000.), 0, 1999)];
-				finalOut = 
-					std::clamp((1.0 + parameters.aCurve) * linearIdxVal - 
-						parameters.aCurve * curveVal, 0.0, 1.0);
+				curveVal = concave[std::clamp(static_cast<int>(linearIdxVal * 2000.), 0, 1999)];
+				finalOut = std::clamp((1.0 + parameters.aCurve) * linearIdxVal - parameters.aCurve * curveVal, 0.0, 1.0);
 			}
 
 			releaseStart = finalOut;  // in case note is released before attack finishes
@@ -93,9 +87,8 @@ float Envelope::getNextSample() noexcept
 				releaseStart = 1.0;
 				goToNextState();
 			}
-
-			break;
 		}
+		break;
 
 		case State::ADRattack: {
 			linearIdxVal += attackRate;
@@ -128,40 +121,29 @@ float Envelope::getNextSample() noexcept
 				releaseStart = 1.0;
 				goToNextState();
 			}
-
-			break;
 		}
+		break;
 
 		case State::decay: {
 			linearIdxVal -= decayRate;
 			linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 			if (parameters.dRCurve > 0.0) {
-				curveVal =
-				    convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-				unmappedVal =
-				    std::clamp(((1.0 - parameters.dRCurve) * linearIdxVal +
-				                parameters.dRCurve * curveVal),
-				               0.0, 1.0);
+				curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
+				unmappedVal = std::clamp(((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal), 0.0, 1.0);
 			} else {
-				curveVal =
-				    concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-				unmappedVal =
-				    std::clamp(((1.0 + parameters.dRCurve) * linearIdxVal -
-				                parameters.dRCurve * curveVal),
-				               0.0, 1.0);
+				curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
+				unmappedVal = std::clamp(((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal), 0.0, 1.0);
 			}
 
-			finalOut =
-			    juce::jmap(unmappedVal, 0.0, 1.0, parameters.sustainLevel, 1.0);
+			finalOut = juce::jmap(unmappedVal, 0.0, 1.0, parameters.sustainLevel, 1.0);
 			releaseStart = finalOut;
 
 			if (finalOut <= parameters.sustainLevel) {
 				goToNextState();
 			}
-
-			break;
 		}
+		break;
 
 		case State::ADRdecay: {
 			linearIdxVal -= decayRate;
@@ -194,62 +176,44 @@ float Envelope::getNextSample() noexcept
 			if (finalOut <= parameters.sustainLevel) {
 				goToNextState();
 			}
-
-			break;
 		}
+		break;
 
 		case State::sustain: {
 			linearIdxVal = 1.0;
 			finalOut = parameters.sustainLevel;
 			releaseStart = finalOut;
-			break;
 		}
+		break;
 
 		case State::release: {
 			linearIdxVal -= releaseRate;
 			linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
 			if (parameters.dRCurve > 0.0) {
-				curveVal =
-				    convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-				unmappedVal =
-				    std::clamp((1.0 - parameters.dRCurve) * linearIdxVal +
-				                   parameters.dRCurve * curveVal,
-				               0.0, 1.0);
+				curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
+				unmappedVal = std::clamp((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal, 0.0, 1.0);
 			} else if (parameters.dRCurve <= 0.0) {
-				curveVal =
-				    concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-				unmappedVal =
-				    std::clamp((1.0 + parameters.dRCurve) * linearIdxVal -
-				                   parameters.dRCurve * curveVal,
-				               0.0, 1.0);
+				curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
+				unmappedVal = std::clamp((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal, 0.0, 1.0);
 			}
 
 			finalOut = juce::jmap(unmappedVal, 0.0, 1.0, 0.0, releaseStart);
-			if (linearIdxVal <= 0.0f)
+			if (linearIdxVal <= 0.001f)
 				goToNextState();
-
-			break;
 		}
+		break;
 
 		case State::ADRrelease: {
 			linearIdxVal -= releaseRate;
 			linearIdxVal = std::clamp(linearIdxVal, 0.0, 0.999);
 
 			if (parameters.dRCurve > 0.0) {
-				curveVal =
-				    convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-				unmappedVal =
-				    std::clamp((1.0 - parameters.dRCurve) * linearIdxVal +
-				                   parameters.dRCurve * curveVal,
-				               0.0, 1.0);
+				curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
+				unmappedVal = std::clamp((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal, 0.0, 1.0);
 			} else if (parameters.dRCurve <= 0.0) {
-				curveVal =
-				    concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-				unmappedVal =
-				    std::clamp((1.0 + parameters.dRCurve) * linearIdxVal -
-				                   parameters.dRCurve * curveVal,
-				               0.0, 1.0);
+				curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
+				unmappedVal = std::clamp((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal, 0.0, 1.0);
 			}
 
 			finalOut = juce::jmap(unmappedVal, 0.0, 1.0, 0.0, releaseStart);
@@ -257,17 +221,21 @@ float Envelope::getNextSample() noexcept
 			if (timeSinceStart >= duration)
 				noteOn();
 
-			if (linearIdxVal <= 0.0f)
+			if (linearIdxVal <= 0.001f)
 				goToNextState();
-
-			break;
 		}
+		break;
 
 		case State::ADRSyncIdle: {
 			finalOut = 0.0;
 			if (timeSinceStart >= duration)
 				noteOn();
-			break;
+		}
+		break;
+
+		default: {
+		    finalOut = 0.0;
+		    state = State::idle;
 		}
 	}
 

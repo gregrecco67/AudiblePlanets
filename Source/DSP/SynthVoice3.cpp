@@ -36,10 +36,7 @@ SynthVoice3::SynthVoice3(APAudioProcessor &p)
 
 void SynthVoice3::noteStarted()
 {
-	voiceShouldStop = false;
-	isStopping = false;
 	antipop = 0.f; // ramp up
-	antipop2 = 1.f; // ramp down
 
 	curNote = getCurrentlyPlayingNote();
 
@@ -110,11 +107,7 @@ void SynthVoice3::noteStarted()
 
 void SynthVoice3::noteRetriggered()
 {
-	voiceShouldStop = false;
-	isStopping = false;
-	// antipop = 0.f; // ramp up
-	antipop2 = 1.f; // ramp down
-
+	antipop = 0.f;
 	auto note = getCurrentlyPlayingNote();
 	curNote = getCurrentlyPlayingNote();
 
@@ -313,20 +306,23 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 		invDist4 = mipp::Reg<float>(1.0f) / (dist4 + .000001f);
 
 		// get sine/cosine directly, without calculating angle, apply envelopes
-		sine4 = (epi4ys[i] - equant) * invDist4 * d * antipop2;
-		cos4 = epi4xs[i] * invDist4 * d * antipop2;
-		sine3 = (epi3ys[i] - equant) * invDist3 * c * antipop2;
-		cos3 = epi3xs[i] * invDist3 * c * antipop2;
-		sine2 = (epi2ys[i] - equant) * invDist2 * b * antipop2;
-		cos2 = epi2xs[i] * invDist2 * b * antipop2;
+		auto s4 = epi4ys[i] - (d * equant);
+		auto s3 = epi3ys[i] - (c * equant);
+		auto s2 = epi2ys[i] - (b * equant);
 
-		dmCos4 = (epi4ys[i] - equant) * dist4;
+		sine4 = s4 * invDist4 * d;
+		cos4 = epi4xs[i] * invDist4 * d;
+		sine3 = s3 * invDist3 * c;
+		cos3 = epi3xs[i] * invDist3 * c;
+		sine2 = s2 * invDist2 * b;
+		cos2 = epi2xs[i] * invDist2 * b;
+
+		dmCos4 = s4 * dist4;
 		dmSine4 = epi4xs[i] * dist4;
-		dmCos3 = (epi3ys[i] - equant) * dist3;
+		dmCos3 = s3 * dist3;
 		dmSine3 = epi3xs[i] * dist3;
-		dmCos2 = (epi2ys[i] - equant) * dist2;
+		dmCos2 = s2 * dist2;
 		dmSine2 = epi2xs[i] * dist2;
-
 
 		// mix by algorithm
 		switch (algo) {
@@ -347,19 +343,14 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 				sampleR = mix((cos2 + cos3 + cos4) * 0.333f, (dmCos2 + dmCos3 + dmCos4) * 0.333f * demodVol, demodMix);
 				break;
 		}
+
 		sampleL = mipp::sat(sampleL, -1.0f, 1.0f) * antipop;
 		sampleR = mipp::sat(sampleR, -1.0f, 1.0f) * antipop;
+
 		if (antipop >= 1.0f) {
 			antipop = 1.0f;
 		} else {
 			antipop += .03f;
-		}
-		if (isStopping) {
-			antipop2 -= .03f;
-			if (antipop2 <= 0.f) {
-				antipop2 = 0.f;
-				isStopping = false;
-			}
 		}
 
 		// SHIP IT OUT
@@ -379,40 +370,35 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 
 	// for timing
 	finishBlock(numSamples);
-
-	if (voiceShouldStop && !isStopping) {
-		clearCurrentNote();
-		stopVoice();
-		return;
-	}
+	
+	bool voiceShouldStop = false;
 	switch (algo) {
 		case 0:
 			if (!envs[3]->isActive()) {
 				voiceShouldStop = true;
-				isStopping = true;
 			}
 			break;
 		case 1:
 			if (!envs[2]->isActive() && !envs[3]->isActive()) {
 				voiceShouldStop = true;
-				isStopping = true;
 			}
 			break;
 		case 2:
 			if (!envs[1]->isActive() && !envs[3]->isActive()) {
 				voiceShouldStop = true;
-				isStopping = true;
 			}
 			break;
 		case 3:
-			if (!envs[1]->isActive() && !envs[2]->isActive() &&
-			    !envs[3]->isActive())  {
+			if (!envs[1]->isActive() && !envs[2]->isActive() && !envs[3]->isActive())  {
 				voiceShouldStop = true;
-				isStopping = true;
 			}
 			break;
 	}
 
+	if (voiceShouldStop) {
+		clearCurrentNote();
+		stopVoice();
+	}
 
 }
 
