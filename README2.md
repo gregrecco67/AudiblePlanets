@@ -41,8 +41,7 @@ cd AudiblePlanets
 Then, if on Mac OS:
 ```
 cmake -B build -G Xcode .
-cd build
-open AudiblePlanets.xcodeproj
+open build/AudiblePlanets.xcodeproj
 ```
 and compile the project in Xcode.
 
@@ -65,7 +64,7 @@ As seen above, the synth has three pages: "Main," "Mods," and "Effects." The Mai
 
 ### Main Page
 
-The four revolving bodies are controlled by the four panes of the OSC section. Their distances from the center can be modulated by any of the four envelopes to the right. Their relative speeds can be adjusted with the "Coarse" and "Fine" controls, or an absolute frequency can be set with the "Fixed" control. Normally (when the wave is set to "Sine"), the motion of the body is uniform and circular. In this mode, adjusting the relative starting points of the various oscillations (with the "Phase" control) can change the sound a lot. When a different wave is selected, the sound is richer and individual phase differences matter less.
+The four revolving bodies are controlled by the four panes of the OSC section. The radii of their orbits can be modulated by any of the four envelopes to the right. Their relative speeds can be adjusted with the "Coarse" and "Fine" controls, or an absolute frequency can be set with the "Fixed" control. Normally (when the wave is set to "Sine"), the motion of the body is uniform and circular. In this mode, adjusting the relative starting points of the various oscillations (with the "Phase" control) can change the sound a lot. When a different wave is selected, the sound is richer and individual phase differences matter less.
 
 In the Timbre section, you can modify the position of the equant and the mix of modulated and demodulated signal. Since the size of all the orbits is variable, a planet or planets may pass very close to the equant, or even through it, resulting in sharp corners and/or discontinuities (and some aliasing, less in v1.2). This could (and can) be avoided by making the outer orbits smaller, but that also reduces their contribution to the overall sound. Finally, the "Algorithm" control switches between different arrangements of the oscillators, with different "terminal" bodies. In many cases, the first algorithm (1-2-3-4) is the harshest, and the last the least harsh (since the modulation is less compounded), but the effects vary depending on the relative sizes of the orbits and other factors, so it's worth trying out different algorithm settings as you're trying to dial in a sound. There's also a dedicated filter, with cutoff, resonance, and key tracking controls, and a variety of common filter types. There's also an auxiliary oscillator, for the sake of layering.
 
@@ -83,7 +82,7 @@ The "Effects" page contains slots for up to eight built-in effects, arranged in 
 
 ## Presets
 
-Presets can be viewed either as a flat list, by clicking on the current preset name, or in a browser that divides them by author and category, by clicking on the folder icon to the left of the current preset name. In case you want to install any manually, on Windows, the folder location should be ```%HOMEPATH%\AppData\Roaming\com.void-star\Audible Planets\programs```. On Mac OS, it should be ```~/Library/Application Support/com.void-star/Audible Planets/programs```. On Linux, it should be ```~/.config/com.void-star/Audible Planets/programs```. If you come up with any patches you'd like to share, please feel free to make a pull request on that repo or just message me here on Github.
+Presets can be viewed either as a flat list, by clicking on the current preset name, or in a browser that divides them by author and category, by clicking on the folder icon to the left of the current preset name. In case you want to install any manually, on Windows, the folder location should be ```%HOMEPATH%\AppData\Roaming\com.void-star\Audible Planets\programs```. On Mac OS, it should be ```~/Library/Application Support/com.void-star/Audible Planets/programs```. On Linux, it should be ```~/.config/com.void-star/Audible Planets/programs```. In any case, you can right-click on any preset name in the browser pane and select the option to show the file location. Also, if you come up with any patches you'd like to share, please feel free to make a pull request on that repo or just message me here on Github.
 
 # Motivation / Inspiration
 
