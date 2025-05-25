@@ -40,14 +40,11 @@ void SynthVoice3::noteStarted()
 
 	curNote = getCurrentlyPlayingNote();
 
-	proc.modMatrix.setPolyValue(
-	    *this, proc.randSrc1Poly, static_cast<float>(dist(gen)));
-	proc.modMatrix.setPolyValue(
-	    *this, proc.randSrc2Poly, static_cast<float>(dist(gen)));
+	proc.modMatrix.setPolyValue(*this, proc.randSrc1Poly, static_cast<float>(dist(gen)));
+	proc.modMatrix.setPolyValue(*this, proc.randSrc2Poly, static_cast<float>(dist(gen)));
 
-	if (MTS_ShouldFilterNote(
-        proc.client, static_cast<char>(curNote.initialNote), static_cast<char>(curNote.midiChannel)))
-    { return; }
+	if (MTS_ShouldFilterNote(proc.client, static_cast<char>(curNote.initialNote), 
+		static_cast<char>(curNote.midiChannel))) { return; }
 
 	fastKill = false;
 	startVoice();
@@ -62,12 +59,9 @@ void SynthVoice3::noteStarted()
 		noteSmoother.setValueUnsmoothed(note.initialNote / 127.0f);
 	}
 
-	proc.modMatrix.setPolyValue(
-	    *this, proc.modSrcVelocity, note.noteOnVelocity.asUnsignedFloat());
-	proc.modMatrix.setPolyValue(
-	    *this, proc.modSrcTimbre, note.initialTimbre.asUnsignedFloat());
-	proc.modMatrix.setPolyValue(
-	    *this, proc.modSrcPressure, note.pressure.asUnsignedFloat());
+	proc.modMatrix.setPolyValue(*this, proc.modSrcVelocity, note.noteOnVelocity.asUnsignedFloat());
+	proc.modMatrix.setPolyValue(*this, proc.modSrcTimbre, note.initialTimbre.asUnsignedFloat());
+	proc.modMatrix.setPolyValue(*this, proc.modSrcPressure, note.pressure.asUnsignedFloat());
 
 	juce::ScopedValueSetter<bool> svs(disableSmoothing, true);
 
@@ -191,18 +185,19 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 	osc4.setSampleRate(newRate);
 
 	filter.setSampleRate(newRate);
+	noteSmoother.setSampleRate(quarter);
 
 	lfo1.setSampleRate(quarter);
 	lfo2.setSampleRate(quarter);
 	lfo3.setSampleRate(quarter);
 	lfo4.setSampleRate(quarter);
 
-	noteSmoother.setSampleRate(quarter);
-	Envelope::Params p;
 	env1.setSampleRate(quarter);
 	env2.setSampleRate(quarter);
 	env3.setSampleRate(quarter);
 	env4.setSampleRate(quarter);
+	
+	Envelope::Params p;
 	env1.setParameters(p);
 	env2.setParameters(p);
 	env3.setParameters(p);
@@ -212,8 +207,6 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 	mseg2.setSampleRate(quarter);
 	mseg3.setSampleRate(quarter);
 	mseg4.setSampleRate(quarter);
-
-
 }
 
 void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples)
@@ -260,8 +253,7 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 
 		// save distance/inverse for modulated sample, where we only care about
 		// angle
-		dist2sq = mipp::fmadd((epi2ys[i] - equant), (epi2ys[i] - equant),
-		          (epi2xs[i] * epi2xs[i]));
+		dist2sq = mipp::fmadd((epi2ys[i] - equant), (epi2ys[i] - equant), (epi2xs[i] * epi2xs[i]));
 		dist2 = mipp::sqrt(dist2sq);
 		invDist2 = mipp::Reg<float>(1.0f) / (dist2 + .000001f);
 
@@ -293,12 +285,10 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 				break;
 		}
 
-		dist3sq = mipp::fmadd((epi3ys[i] - equant), (epi3ys[i] - equant),
-		          (epi3xs[i] * epi3xs[i]));
+		dist3sq = mipp::fmadd((epi3ys[i] - equant), (epi3ys[i] - equant), (epi3xs[i] * epi3xs[i]));
 		dist3 = mipp::sqrt(dist3sq);
 		invDist3 = mipp::Reg<float>(1.0f) / (dist3 + .000001f);
-		dist4sq = mipp::fmadd((epi4ys[i] - equant), (epi4ys[i] - equant),
-		          (epi4xs[i] * epi4xs[i]));
+		dist4sq = mipp::fmadd((epi4ys[i] - equant), (epi4ys[i] - equant), (epi4xs[i] * epi4xs[i]));
 		dist4 = mipp::sqrt(dist4sq);
 		invDist4 = mipp::Reg<float>(1.0f) / (dist4 + .000001f);
 
@@ -371,24 +361,17 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 	bool voiceShouldStop = false;
 	switch (algo) {
 		case 0:
-			if (!envs[3]->isActive()) {
-				voiceShouldStop = true;
-			}
+			if (!envs[3]->isActive()) {voiceShouldStop = true;}
 			break;
 		case 1:
-			if (!envs[2]->isActive() && !envs[3]->isActive()) {
-				voiceShouldStop = true;
-			}
+			if (!envs[2]->isActive() && !envs[3]->isActive()) {voiceShouldStop = true;}
 			break;
 		case 2:
-			if (!envs[1]->isActive() && !envs[3]->isActive()) {
-				voiceShouldStop = true;
-			}
+			if (!envs[1]->isActive() && !envs[3]->isActive()) {voiceShouldStop = true;}
 			break;
 		case 3:
-			if (!envs[1]->isActive() && !envs[2]->isActive() && !envs[3]->isActive())  {
-				voiceShouldStop = true;
-			}
+			if (!envs[1]->isActive() && !envs[2]->isActive() && !envs[3]->isActive())
+			{ voiceShouldStop = true; }
 			break;
 	}
 
@@ -431,60 +414,51 @@ void SynthVoice3::updateParams(int blockSize)
 	float remainder = std::modf(currentMidiNote, &dummy);
 	float baseFreq = static_cast<float>(MTS_NoteToFrequency(
 	    proc.client, static_cast<char>(currentMidiNote), static_cast<char>(note.midiChannel)));
-	baseFreq *= static_cast<float>(std::pow(1.05946309436f,
-	    note.totalPitchbendInSemitones *
-	            (proc.globalParams.pitchbendRange->getUserValue() / 2.0f) +
-	        remainder));
-	baseFreq = juce::jlimit(
-	    20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
+	baseFreq *= static_cast<float>(
+		std::pow(1.05946309436f, note.totalPitchbendInSemitones 
+		* (proc.globalParams.pitchbendRange->getUserValue() / 2.0f) 
+		+ remainder));
+	baseFreq = juce::jlimit(20.0f, 20000.f, baseFreq * getValue(proc.timbreParams.pitch));
 
 	if (proc.osc1Params.fixed->isOn()) {
 		osc1Freq = std::clamp(
-		    (static_cast<int>(getValue(proc.osc1Params.coarse) + 0.0001f) +
-		        getValue(proc.osc1Params.fine)) *
-		        100.f,
-		    0.01f, 20000.f);
+		    (static_cast<int>(getValue(proc.osc1Params.coarse) + 0.0001f)
+			+ getValue(proc.osc1Params.fine)) * 100.f, 0.01f, 20000.f);
 	} else {
-		osc1Freq = baseFreq * (static_cast<int>(
-		                           getValue(proc.osc1Params.coarse) + 0.0001f) +
-		                          getValue(proc.osc1Params.fine));
+		osc1Freq = baseFreq
+			* (static_cast<int>(getValue(proc.osc1Params.coarse) + 0.0001f)
+			+ getValue(proc.osc1Params.fine));
 	}
 	if (proc.osc2Params.fixed->isOn()) {
 		osc2Freq = std::clamp(
-		    (static_cast<int>(getValue(proc.osc2Params.coarse) + 0.0001f) +
-		        getValue(proc.osc2Params.fine)) *
-		        100.f,
-		    0.01f, 20000.f);
+		    (static_cast<int>(getValue(proc.osc2Params.coarse) + 0.0001f) 
+			+ getValue(proc.osc2Params.fine)) * 100.f, 0.01f, 20000.f);
 	} else {
-		osc2Freq = baseFreq * (static_cast<int>(
-		                           getValue(proc.osc2Params.coarse) + 0.0001f) +
-		                          getValue(proc.osc2Params.fine));
+		osc2Freq = baseFreq 
+			* (static_cast<int>(getValue(proc.osc2Params.coarse) + 0.0001f)
+		    + getValue(proc.osc2Params.fine));
 	}
 	if (proc.osc3Params.fixed->isOn()) {
 		osc3Freq = std::clamp(
-		    (static_cast<int>(getValue(proc.osc3Params.coarse) + 0.0001f) +
-		        getValue(proc.osc3Params.fine)) *
-		        100.f,
-		    0.01f, 20000.f);
+		    (static_cast<int>(getValue(proc.osc3Params.coarse) + 0.0001f)
+			+ getValue(proc.osc3Params.fine)) * 100.f, 0.01f, 20000.f);
 	} else {
-		osc3Freq = baseFreq * (static_cast<int>(
-		                           getValue(proc.osc3Params.coarse) + 0.0001f) +
-		                          getValue(proc.osc3Params.fine));
+		osc3Freq = baseFreq 
+			* (static_cast<int>(getValue(proc.osc3Params.coarse) + 0.0001f) 
+			+ getValue(proc.osc3Params.fine));
 	}
 	if (proc.osc4Params.fixed->isOn()) {
 		osc4Freq = std::clamp(
-		    (static_cast<int>(getValue(proc.osc4Params.coarse) + 0.0001f) +
-		        getValue(proc.osc4Params.fine)) *
-		        100.f,
-		    0.01f, 20000.f);
+		    (static_cast<int>(getValue(proc.osc4Params.coarse) + 0.0001f) 
+			+ getValue(proc.osc4Params.fine)) 
+			* 100.f, 0.01f, 20000.f);
 	} else {
-		osc4Freq = baseFreq * (static_cast<int>(
-		                           getValue(proc.osc4Params.coarse) + 0.0001f) +
-		                          getValue(proc.osc4Params.fine));
+		osc4Freq = baseFreq 
+			* (static_cast<int>(getValue(proc.osc4Params.coarse) + 0.0001f)
+			+ getValue(proc.osc4Params.fine));
 	}
 
-	osc1Params.wave =
-	    waveForChoice(static_cast<int>(getValue(proc.osc1Params.wave)));
+	osc1Params.wave = waveForChoice(static_cast<int>(getValue(proc.osc1Params.wave)));
 	osc1Params.vol = getValue(proc.osc1Params.volume);
 	auto phaseParam = getValue(proc.osc1Params.phase);
 	auto diff = phaseParam - lastp1;
@@ -495,8 +469,7 @@ void SynthVoice3::updateParams(int blockSize)
 	// osc 2
 	//==================================================
 
-	osc2Params.wave =
-	    waveForChoice(static_cast<int>(getValue(proc.osc2Params.wave)));
+	osc2Params.wave = waveForChoice(static_cast<int>(getValue(proc.osc2Params.wave)));
 	osc2Params.vol = getValue(proc.osc2Params.volume);
 	phaseParam = getValue(proc.osc2Params.phase);
 	diff = phaseParam - lastp2;
@@ -507,8 +480,7 @@ void SynthVoice3::updateParams(int blockSize)
 	// osc 3
 	// ------------------
 
-	osc3Params.wave =
-	    waveForChoice(static_cast<int>(getValue(proc.osc3Params.wave)));
+	osc3Params.wave = waveForChoice(static_cast<int>(getValue(proc.osc3Params.wave)));
 	osc3Params.vol = getValue(proc.osc3Params.volume);
 	phaseParam = getValue(proc.osc3Params.phase);
 	diff = phaseParam - lastp3;
@@ -518,8 +490,7 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// osc4
 	// -------------
-	osc4Params.wave =
-	    waveForChoice(static_cast<int>(getValue(proc.osc4Params.wave)));
+	osc4Params.wave = waveForChoice(static_cast<int>(getValue(proc.osc4Params.wave)));
 	osc4Params.vol = getValue(proc.osc4Params.volume);
 	phaseParam = getValue(proc.osc4Params.phase);
 	diff = phaseParam - lastp4;
@@ -581,14 +552,11 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// lfo 1
 	if (proc.lfo1Params.sync->getUserValue() > 0.0f)
-		freq = 1.f /
-		       gin::NoteDuration::getNoteDurations()
-		           [static_cast<size_t>(proc.lfo1Params.beat->getUserValue())]
-		               .toSeconds(proc.playhead);
+		freq = 1.f / gin::NoteDuration::getNoteDurations()
+		    [static_cast<size_t>(proc.lfo1Params.beat->getUserValue())].toSeconds(proc.playhead);
 	else
 		freq = getValue(proc.lfo1Params.rate);
-	params.waveShape = static_cast<gin::LFO::WaveShape>(
-	    proc.lfo1Params.wave->getUserValueInt());
+	params.waveShape = static_cast<gin::LFO::WaveShape>(proc.lfo1Params.wave->getUserValueInt());
 	params.frequency = freq;
 	params.phase = getValue(proc.lfo1Params.phase);
 	params.offset = getValue(proc.lfo1Params.offset);
@@ -601,14 +569,11 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// lfo 2
 	if (proc.lfo2Params.sync->getUserValue() > 0.0f)
-		freq = 1.f /
-		       gin::NoteDuration::getNoteDurations()
-		           [static_cast<size_t>(proc.lfo2Params.beat->getUserValue())]
-		               .toSeconds(proc.playhead);
+		freq = 1.f / gin::NoteDuration::getNoteDurations()
+			[static_cast<size_t>(proc.lfo2Params.beat->getUserValue())].toSeconds(proc.playhead);
 	else
 		freq = getValue(proc.lfo2Params.rate);
-	params.waveShape = static_cast<gin::LFO::WaveShape>(
-	    proc.lfo2Params.wave->getUserValueInt());
+	params.waveShape = static_cast<gin::LFO::WaveShape>(proc.lfo2Params.wave->getUserValueInt());
 	params.frequency = freq;
 	params.phase = getValue(proc.lfo2Params.phase);
 	params.offset = getValue(proc.lfo2Params.offset);
@@ -621,14 +586,11 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// lfo 3
 	if (proc.lfo3Params.sync->getUserValue() > 0.0f)
-		freq = 1.f /
-		       gin::NoteDuration::getNoteDurations()
-		           [static_cast<size_t>(proc.lfo3Params.beat->getUserValue())]
-		               .toSeconds(proc.playhead);
+		freq = 1.f / gin::NoteDuration::getNoteDurations()
+		    [static_cast<size_t>(proc.lfo3Params.beat->getUserValue())].toSeconds(proc.playhead);
 	else
 		freq = getValue(proc.lfo3Params.rate);
-	params.waveShape = static_cast<gin::LFO::WaveShape>(
-	    proc.lfo3Params.wave->getUserValueInt());
+	params.waveShape = static_cast<gin::LFO::WaveShape>(proc.lfo3Params.wave->getUserValueInt());
 	params.frequency = freq;
 	params.phase = getValue(proc.lfo3Params.phase);
 	params.offset = getValue(proc.lfo3Params.offset);
@@ -641,14 +603,11 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// lfo 4
 	if (proc.lfo4Params.sync->getUserValue() > 0.0f)
-		freq = 1.f /
-		       gin::NoteDuration::getNoteDurations()
-		           [static_cast<size_t>(proc.lfo4Params.beat->getUserValue())]
-		               .toSeconds(proc.playhead);
+		freq = 1.f / gin::NoteDuration::getNoteDurations()
+			[static_cast<size_t>(proc.lfo4Params.beat->getUserValue())].toSeconds(proc.playhead);
 	else
 		freq = getValue(proc.lfo4Params.rate);
-	params.waveShape = static_cast<gin::LFO::WaveShape>(
-	    proc.lfo4Params.wave->getUserValueInt());
+	params.waveShape = static_cast<gin::LFO::WaveShape>(proc.lfo4Params.wave->getUserValueInt());
 	params.frequency = freq;
 	params.phase = getValue(proc.lfo4Params.phase);
 	params.offset = getValue(proc.lfo4Params.offset);
@@ -671,10 +630,8 @@ void SynthVoice3::updateParams(int blockSize)
 	p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
-		p.syncduration =
-		    1.f * gin::NoteDuration::getNoteDurations()
-		               [size_t(proc.env1Params.duration->getUserValue())]
-		                   .toSeconds(proc.playhead);
+		p.syncduration = 1.f * gin::NoteDuration::getNoteDurations()
+		    [size_t(proc.env1Params.duration->getUserValue())].toSeconds(proc.playhead);
 	}
 	if (mode == 2) {
 		p.sync = true;
@@ -695,8 +652,7 @@ void SynthVoice3::updateParams(int blockSize)
 		p.sync = true;
 		p.syncduration =
 		    1.f * gin::NoteDuration::getNoteDurations()
-		               [size_t(proc.env2Params.duration->getUserValue())]
-		                   .toSeconds(proc.playhead);
+			[size_t(proc.env2Params.duration->getUserValue())].toSeconds(proc.playhead);
 	}
 	if (mode == 2) {
 		p.sync = true;
@@ -715,10 +671,8 @@ void SynthVoice3::updateParams(int blockSize)
 	p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
-		p.syncduration =
-		    1.f * gin::NoteDuration::getNoteDurations()
-		               [size_t(proc.env3Params.duration->getUserValue())]
-		                   .toSeconds(proc.playhead);
+		p.syncduration = 1.f * gin::NoteDuration::getNoteDurations()
+		    [size_t(proc.env3Params.duration->getUserValue())].toSeconds(proc.playhead);
 	}
 	if (mode == 2) {
 		p.sync = true;
@@ -737,10 +691,8 @@ void SynthVoice3::updateParams(int blockSize)
 	p.repeat = (!(mode == 0));
 	if (mode == 1) {
 		p.sync = true;
-		p.syncduration =
-		    1.f * gin::NoteDuration::getNoteDurations()
-		               [size_t(proc.env4Params.duration->getUserValue())]
-		                   .toSeconds(proc.playhead);
+		p.syncduration = 1.f * gin::NoteDuration::getNoteDurations()
+		    [size_t(proc.env4Params.duration->getUserValue())].toSeconds(proc.playhead);
 	}
 	if (mode == 2) {
 		p.sync = true;
@@ -755,25 +707,18 @@ void SynthVoice3::updateParams(int blockSize)
 
 	// MSEGs
 	if (proc.mseg1Params.sync->isOn()) {
-		mseg1Params.frequency =
-		    1.f /
-		    gin::NoteDuration::getNoteDurations()[size_t(getValue(
-		                                              proc.mseg1Params.beat))]
-		        .toSeconds(proc.playhead);
+		mseg1Params.frequency = 1.f / gin::NoteDuration::getNoteDurations()
+			[size_t(getValue(proc.mseg1Params.beat))].toSeconds(proc.playhead);
 	} else {
 		mseg1Params.frequency = getValue(proc.mseg1Params.rate);
 	}
-	mseg1Params.depth = getValue(
-	    proc.mseg1Params.depth);  // proc.mseg1Params.depth->getUserValue();
+	mseg1Params.depth = getValue(proc.mseg1Params.depth);  // proc.mseg1Params.depth->getUserValue();
 	mseg1Params.offset = getValue(proc.mseg1Params.offset);
 	mseg1Params.loop = proc.mseg1Params.loop->isOn();
 
 	if (proc.mseg2Params.sync->isOn()) {
-		mseg2Params.frequency =
-		    1.f /
-		    gin::NoteDuration::getNoteDurations()[size_t(getValue(
-		                                              proc.mseg2Params.beat))]
-		        .toSeconds(proc.playhead);
+		mseg2Params.frequency = 1.f / gin::NoteDuration::getNoteDurations()
+			[size_t(getValue(proc.mseg2Params.beat))].toSeconds(proc.playhead);
 	} else {
 		mseg2Params.frequency = getValue(proc.mseg2Params.rate);
 	}
@@ -782,25 +727,18 @@ void SynthVoice3::updateParams(int blockSize)
 	mseg2Params.loop = proc.mseg2Params.loop->isOn();
 
 	if (proc.mseg3Params.sync->isOn()) {
-		mseg3Params.frequency =
-		    1.f /
-		    gin::NoteDuration::getNoteDurations()[size_t(getValue(
-		                                              proc.mseg3Params.beat))]
-		        .toSeconds(proc.playhead);
+		mseg3Params.frequency = 1.f / gin::NoteDuration::getNoteDurations()
+			[size_t(getValue(proc.mseg3Params.beat))].toSeconds(proc.playhead);
 	} else {
 		mseg3Params.frequency = getValue(proc.mseg3Params.rate);
 	}
-	mseg3Params.depth = getValue(
-	    proc.mseg3Params.depth);  // proc.mseg3Params.depth->getUserValue();
+	mseg3Params.depth = getValue(proc.mseg3Params.depth);  // proc.mseg3Params.depth->getUserValue();
 	mseg3Params.offset = getValue(proc.mseg3Params.offset);
 	mseg3Params.loop = proc.mseg3Params.loop->isOn();
 
 	if (proc.mseg4Params.sync->isOn()) {
-		mseg4Params.frequency =
-		    1.f /
-		    gin::NoteDuration::getNoteDurations()[size_t(getValue(
-		                                              proc.mseg4Params.beat))]
-		        .toSeconds(proc.playhead);
+		mseg4Params.frequency = 1.f / gin::NoteDuration::getNoteDurations()
+			[size_t(getValue(proc.mseg4Params.beat))].toSeconds(proc.playhead);
 	} else {
 		mseg4Params.frequency = getValue(proc.mseg4Params.rate);
 	}
@@ -828,8 +766,7 @@ float SynthVoice3::getFilterCutoffNormalized()
 {
 	float freq = filter.getFrequency();
 	auto range = proc.filterParams.frequency->getUserRange();
-	return range.convertTo0to1(
-	    juce::jlimit(range.start, range.end, gin::getMidiNoteFromHertz(freq)));
+	return range.convertTo0to1(juce::jlimit(range.start, range.end, gin::getMidiNoteFromHertz(freq)));
 }
 
 gin::Wave SynthVoice3::waveForChoice(int choice)
