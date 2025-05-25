@@ -107,14 +107,12 @@ void SynthVoice3::noteStarted()
 
 void SynthVoice3::noteRetriggered()
 {
-	antipop = 0.f;
+	// antipop = 0.f;
 	auto note = getCurrentlyPlayingNote();
 	curNote = getCurrentlyPlayingNote();
 
-	proc.modMatrix.setPolyValue(
-	    *this, proc.randSrc1Poly, static_cast<float>(dist(gen)));
-	proc.modMatrix.setPolyValue(
-	    *this, proc.randSrc2Poly, static_cast<float>(dist(gen)));
+	proc.modMatrix.setPolyValue(*this, proc.randSrc1Poly, static_cast<float>(dist(gen)));
+	proc.modMatrix.setPolyValue(*this, proc.randSrc2Poly, static_cast<float>(dist(gen)));
 
 	if (glideInfo.fromNote >= 0 &&
 	    (glideInfo.glissando || glideInfo.portamento)) {
