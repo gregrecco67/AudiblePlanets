@@ -17,7 +17,7 @@ The relative speeds of revolution of the various bodies have their analogues in 
 
 - "Orbital Modulation" (OM) synthesis :tm: :wink:
 - Modulation matrix with monophonic and polyphonic modulation for most parameters
-- Built-in effects chains
+- Built-in modulatable effects chains
 - Changes in version 1.2: simplified control scheme for oscillators, somewhat less aliasing, refined effects (waveshaper and chorus).
 
 ## *Raison d'être*
