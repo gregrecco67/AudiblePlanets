@@ -68,7 +68,6 @@ if (MSVC)
 endif ()
 
 # Binary Data
-
 set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
 
 file (GLOB_RECURSE source_files CONFIGURE_DEPENDS

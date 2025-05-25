@@ -46,9 +46,8 @@ void SynthVoice3::noteStarted()
 	    *this, proc.randSrc2Poly, static_cast<float>(dist(gen)));
 
 	if (MTS_ShouldFilterNote(
-	        proc.client, curNote.initialNote, curNote.midiChannel)) {
-		return;
-	}
+        proc.client, static_cast<char>(curNote.initialNote), static_cast<char>(curNote.midiChannel)))
+    { return; }
 
 	fastKill = false;
 	startVoice();
@@ -161,10 +160,10 @@ void SynthVoice3::noteStopped(bool allowTailOff)
 	curNote = getCurrentlyPlayingNote();
 	proc.modMatrix.setPolyValue(
 	    *this, proc.modSrcVelOff, curNote.noteOffVelocity.asUnsignedFloat());
-	// if (!allowTailOff) {
-	// 	clearCurrentNote();
-	// 	stopVoice();
-	// }
+	if (!allowTailOff) {
+	 	clearCurrentNote();
+	 	stopVoice();
+	}
 }
 
 void SynthVoice3::notePressureChanged()
@@ -198,7 +197,7 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 	lfo3.setSampleRate(quarter);
 	lfo4.setSampleRate(quarter);
 
-	noteSmoother.setSampleRate(newRate);
+	noteSmoother.setSampleRate(quarter);
 	Envelope::Params p;
 	env1.setSampleRate(quarter);
 	env2.setSampleRate(quarter);
@@ -431,7 +430,7 @@ void SynthVoice3::updateParams(int blockSize)
 	float dummy;
 	float remainder = std::modf(currentMidiNote, &dummy);
 	float baseFreq = static_cast<float>(MTS_NoteToFrequency(
-	    proc.client, static_cast<char>(currentMidiNote), note.midiChannel));
+	    proc.client, static_cast<char>(currentMidiNote), static_cast<char>(note.midiChannel)));
 	baseFreq *= static_cast<float>(std::pow(1.05946309436f,
 	    note.totalPitchbendInSemitones *
 	            (proc.globalParams.pitchbendRange->getUserValue() / 2.0f) +
@@ -491,7 +490,7 @@ void SynthVoice3::updateParams(int blockSize)
 	auto diff = phaseParam - lastp1;
 	osc1.bumpPhase(diff);
 	lastp1 = phaseParam;
-	envs[0] = envsByNum[proc.osc1Params.env->getUserValueInt()];
+	envs[0] = envsByNum[static_cast<size_t>(proc.osc1Params.env->getUserValueInt())];
 
 	// osc 2
 	//==================================================
@@ -503,7 +502,7 @@ void SynthVoice3::updateParams(int blockSize)
 	diff = phaseParam - lastp2;
 	osc2.bumpPhase(diff);
 	lastp2 = phaseParam;
-	envs[1] = envsByNum[proc.osc2Params.env->getUserValueInt()];
+	envs[1] = envsByNum[static_cast<size_t>(proc.osc2Params.env->getUserValueInt())];
 
 	// osc 3
 	// ------------------
@@ -515,7 +514,7 @@ void SynthVoice3::updateParams(int blockSize)
 	diff = phaseParam - lastp3;
 	osc3.bumpPhase(diff);
 	lastp3 = phaseParam;
-	envs[2] = envsByNum[proc.osc3Params.env->getUserValueInt()];
+	envs[2] = envsByNum[static_cast<size_t>(proc.osc3Params.env->getUserValueInt())];
 
 	// osc4
 	// -------------
@@ -526,7 +525,7 @@ void SynthVoice3::updateParams(int blockSize)
 	diff = phaseParam - lastp4;
 	osc4.bumpPhase(diff);
 	lastp4 = phaseParam;
-	envs[3] = envsByNum[proc.osc4Params.env->getUserValueInt()];
+	envs[3] = envsByNum[static_cast<size_t>(proc.osc4Params.env->getUserValueInt())];
 
 	// filter
 	float noteNum = getValue(proc.filterParams.frequency);

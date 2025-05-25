@@ -455,9 +455,6 @@ public:
 		addControl(legato = new gin::Select(proc.globalParams.legato));
 		addControl(mono = new gin::Select(proc.globalParams.mono));
 		addControl(glideMode = new gin::Select(proc.globalParams.glideMode));
-
-		vol->setLookAndFeel(&aplnf5);
-		auxvol->setLookAndFeel(&aplnf5);
 	}
 
 	~GlobalBox() override
@@ -474,16 +471,6 @@ public:
 		glideMode->setBounds(56, 23, 56, 35);
 		mpe->setBounds(56, 58, 56, 35);
 	}
-
-	class APLookAndFeel5 : public APLNF {
-	public:
-		APLookAndFeel5()
-		{
-			setColour(juce::Slider::rotarySliderFillColourId,
-			    gin::CopperLookAndFeel::findColour(accentColourId));
-			setColour(juce::Slider::trackColourId, juce::Colours::black);
-		}
-	} aplnf5;
 
 	gin::ParamComponent::Ptr legato = nullptr, mono = nullptr,
 	                         glideMode = nullptr, mpe = nullptr;

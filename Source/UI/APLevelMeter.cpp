@@ -2,7 +2,7 @@
 
 APLevelMeter::APLevelMeter(
     const gin::LevelTracker &l, juce::NormalisableRange<float> r, bool vertical_)
-    : tracker(l), range(r), vertical(vertical_)
+    : vertical(vertical_), tracker(l), range(r)
 {
     startTimerHz(30);
 	setColour(lineColourId, juce::Colours::white);

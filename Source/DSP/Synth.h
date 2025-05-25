@@ -26,6 +26,16 @@ public:
 		return values;
 	}
 
+	void shutItDown()
+	{
+		for (auto v : voices) {
+			if (v->isActive()) {
+				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				vav->setFastKill();
+			}
+		}
+	}
+
 	inline std::vector<float> getMSEG1Phases() const
 	{
 		std::vector<float> values;

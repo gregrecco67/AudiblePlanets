@@ -1242,6 +1242,7 @@ void APAudioProcessor::processBlock(
 
 	if (presetLoaded) {
 		presetLoaded = false;
+		synth.shutItDown();
 		synth.turnOffAllVoices(false);
 		auxSynth.turnOffAllVoices(false);
 		stereoDelay.resetBuffers();

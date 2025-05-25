@@ -32,8 +32,8 @@ void AuxSynthVoice::noteStarted()
 {
 	curNote = getCurrentlyPlayingNote();
 
-	if (MTS_ShouldFilterNote(proc.client, curNote.initialNote,
-	                         curNote.midiChannel)) {
+	if (MTS_ShouldFilterNote(proc.client, static_cast<char>(curNote.initialNote),
+        static_cast<char>(curNote.midiChannel))) {
 		return;
 	}
 
@@ -257,8 +257,8 @@ void AuxSynthVoice::updateParams(int blockSize)
 
 	float dummy;
 	float remainder = std::modf(currentMidiNote, &dummy);
-	float baseFreq = static_cast<float>(MTS_NoteToFrequency(
-	    proc.client, static_cast<char>(currentMidiNote), note.midiChannel));
+	float baseFreq = static_cast<float>(
+        MTS_NoteToFrequency(proc.client, static_cast<char>(currentMidiNote), static_cast<char>(note.midiChannel)));
 	if (!proc.auxParams.ignorepb->isOn())
 		baseFreq *= static_cast<float>(std::pow(
 		    1.05946309436f, note.totalPitchbendInSemitones 

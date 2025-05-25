@@ -229,13 +229,14 @@ public:
 
 	void resetBuffers()
 	{
-		inBuffer.clear();
 		delayBuffer_L.clear();
 		delayBuffer_R.clear();
+		cutoff.setCurrentAndTargetValue(cutoff.getTargetValue());
+		delayTimeL.setCurrentAndTargetValue(delayTimeL.getTargetValue());
+		delayTimeR.setCurrentAndTargetValue(delayTimeR.getTargetValue());
 	}
 
 private:
-	juce::AudioBuffer<float> inBuffer;
 	float delayDry{1.0f}, delayWet{0.5f}, delayFB{0.5f};
 	juce::LinearSmoothedValue<float> delayTimeL{.40f}, delayTimeR{.40f},
 	    cutoff{2000.f};
