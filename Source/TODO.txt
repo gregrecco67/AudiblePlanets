@@ -1,3 +1,29 @@
-add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
+RELEASE TODO:
+
+- demo video: just sounds and UI
+	- show a few patches
+		- horns/ww with mpe, evolving pads, gnarly leads, noise patches
+	- UI pages and controls (over music?)
+
+- user "manual" README (save the deeper dives for this)
+- longer demo video? (for whatever is quicker just to see) OR second half of demo above?
+	- show main controls
+		- OSC, then ENV, then Timbre, Filter, vol, aux
+			- (show that knobs can accept text input)
+		- swap viz for global, show mono/legato, glide, pb
+		- show pages
+			- Effects: assignment/relocation, lanes/routing, 
+			- Mods: LFO wave/depth/beat/time, mono/poly?, MSEG select/grid/loop
+
+	- show modulation
+		- icon src, then modsrc list icon, then dest 
+		- show matrix controls (enable, depth, bipolar, curve, delete)
+		- show knob mod-depth slider (drag edit, rt click edit/delete)
+		- show popup-style assignment
+		- show macros getting CC assignment (insert shot of keyboard sliders?)
+		- demo with osc234 vol, transition to MSEG sforzando?
+
+
+add phase distortion effect to FXProcessors via PDistort (with fifo/latency) ... when it's ready
 
 check transition from incomplete attack to release: we set releaseStart but don't use it

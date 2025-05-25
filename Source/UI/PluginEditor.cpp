@@ -71,11 +71,9 @@ bool APAudioProcessorEditor::keyPressed(
 		tabbed.setCurrentTabIndex(2);
 		return true;
 	}
-	if (key.isKeyCode(juce::KeyPress::escapeKey) ||
-	    key.isKeyCode(76)) {  // "L" for learning
+	if (key.isKeyCode(juce::KeyPress::escapeKey) || key.isKeyCode(76)) {  // "L" for learning
 		proc.modMatrix.disableLearn();
-		return !key.isKeyCode(
-		    76);  // let the "L" through, since it's often a note
+		return !key.isKeyCode(76);  // let the "L" through, since it's often a note
 	}
 	return false;
 }
