@@ -1,1 +1,3 @@
 add phase distortion effect to FXProcessors via PDistort (with fifo/latency)
+
+check transition from incomplete attack to release: we set releaseStart but don't use it

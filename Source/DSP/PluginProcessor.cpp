@@ -432,7 +432,7 @@ void APAudioProcessor::FilterParams::setup(APAudioProcessor &p)
 	keyTracking = p.addExtParam(id + "key", nm + " Key", "Key", "%",
 	    {0.0, 100.0, 0.0f, 1.0}, 0.0, 0.0f);
 	frequency = p.addExtParam(id + "freq", nm + " Freq", "Freq", " Hz",
-	    {0.0, maxFreq, 0.0f, 1.0}, 95.0, 0.05f, freqTextFunction);
+	    {0.0, maxFreq, 0.0f, 1.0}, 95.0, 0.1f, freqTextFunction);
 	resonance = p.addExtParam(
 	    id + "res", nm + " Res", "Res", "", {0.0, 100.0, 0.0f, 1.0}, 0.0, 0.0f);
 

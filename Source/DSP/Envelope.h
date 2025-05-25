@@ -80,9 +80,9 @@ public:
 		recalculateRates();
 	}
 
-	bool isActive() const noexcept { return state != State::idle; }
-	float getValue() const { return  static_cast<float>(finalOut); }
-	float getOutput() const { return static_cast<float>(finalOut); }
+	inline bool isActive() const noexcept { return state != State::idle; }
+	inline float getValue() const { return  static_cast<float>(finalOut); }
+	inline float getOutput() const { return static_cast<float>(finalOut); }
 	
 
 	inline void setSampleRate(double newSampleRate) noexcept
