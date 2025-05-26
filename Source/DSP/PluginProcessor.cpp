@@ -1003,17 +1003,6 @@ APAudioProcessor::~APAudioProcessor()
 //==============================================================================
 void APAudioProcessor::setupModMatrix()
 {
-	modSrcPressure = modMatrix.addPolyModSource("mpep", "MPE Pressure", false);
-	modSrcTimbre = modMatrix.addPolyModSource("mpet", "MPE Timbre", false);
-	modSrcModwheel = modMatrix.addMonoModSource("mw", "Mod Wheel", false);
-	modSrcMonoPitchbend = modMatrix.addMonoModSource("pb", "Pitch Wheel", true);
-	modPolyAT = modMatrix.addPolyModSource("polyAT", "Poly AT", false);
-
-	modSrcNote = modMatrix.addPolyModSource("note", "MIDI Note #", false);
-	modSrcVelocity = modMatrix.addPolyModSource("vel", "MIDI Velocity", false);
-	modSrcVelOff =
-	    modMatrix.addPolyModSource("velOff", "MIDI Off Velocity", false);
-
 	modSrcMonoLFO1 = modMatrix.addMonoModSource("mlfo1", "Mono LFO1", true);
 	modSrcMonoLFO2 = modMatrix.addMonoModSource("mlfo2", "Mono LFO2", true);
 	modSrcMonoLFO3 = modMatrix.addMonoModSource("mlfo3", "Mono LFO3", true);
@@ -1022,7 +1011,17 @@ void APAudioProcessor::setupModMatrix()
 	modSrcLFO1 = modMatrix.addPolyModSource("lfo1", "Poly LFO1", true);
 	modSrcLFO2 = modMatrix.addPolyModSource("lfo2", "Poly LFO2", true);
 	modSrcLFO3 = modMatrix.addPolyModSource("lfo3", "Poly LFO3", true);
-	modSrcLFO4 = modMatrix.addPolyModSource("lfo4", "Poly LFO4", true);
+	modSrcLFO4 = modMatrix.addPolyModSource("lfo4", "Poly LFO4", true); 
+	
+	modSrcPressure = modMatrix.addPolyModSource("mpep", "MPE Pressure", false);
+	modSrcTimbre = modMatrix.addPolyModSource("mpet", "MPE Timbre", false);
+	modSrcModwheel = modMatrix.addMonoModSource("mw", "Mod Wheel", false);
+	modSrcMonoPitchbend = modMatrix.addMonoModSource("pb", "Pitch Wheel", true);
+	modPolyAT = modMatrix.addPolyModSource("polyAT", "Poly AT", false);
+
+	modSrcNote = modMatrix.addPolyModSource("note", "MIDI Note #", false);
+	modSrcVelocity = modMatrix.addPolyModSource("vel", "MIDI Velocity", false);
+	modSrcVelOff =  modMatrix.addPolyModSource("velOff", "MIDI Off Velocity", false);
 
 	modSrcEnv1 = modMatrix.addPolyModSource("env1", "ENV1", false);
 	modSrcEnv2 = modMatrix.addPolyModSource("env2", "ENV2", false);
