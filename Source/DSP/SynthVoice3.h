@@ -130,7 +130,7 @@ private:
 
 	gin::EasedValueSmoother<float> noteSmoother;
 
-	double ffa0, ffb1, ffz1, fqa0, fqb1, fqz1;
+	double fna0, fnb1, fnz1, fqa0, fqb1, fqz1;
 
 	juce::AudioBuffer<float> synthBuffer;
 
@@ -148,8 +148,6 @@ private:
 
 	float demodMix{0.f}, demodVol{0.f};
 	float antipop{0.f};
-	// slower filter modulation
-	double ffa0, ffb1, ffz1, fqa0, fqb1, fqz1;
 
 	friend class APSynth;
 	juce::MPENote curNote;

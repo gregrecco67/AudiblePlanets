@@ -67,11 +67,8 @@ void SynthVoice3::noteStarted()
 
 	filter.reset();
 
-	float f = gin::getMidiNoteInHertz(proc.filterParams.frequency->getUserValue());
-	f = juce::jlimit(4.0f, maxFreq, f);
+	fnz1 = proc.filterParams.frequency->getUserValue(); // in midi note #
 	float q = gin::Q / (1.0f - (proc.filterParams.resonance->getUserValue() / 100.0f) * 0.99f);
-
-	ffz1 = f;
 	fqz1 = q;
 
 	lfo1.reset();
@@ -215,11 +212,11 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 	mseg3.setSampleRate(quarter);
 	mseg4.setSampleRate(quarter);
 
-	ffb1 = std::exp(-2.0 * pi * 200 / quarter);
-	ffa0 = 1 - ffb1;
-	ffz1 = 2000; // proc.filterParams.frequency->getUserValue();
-	fqb1 = ffb1;
-	fqa0 = ffa0;
+	fnb1 = std::exp(-2.0 * pi * 3500 / quarter);
+	fna0 = 1 - fnb1;
+	fnz1 = 95; // proc.filterParams.frequency->getUserValue();
+	fqb1 = fnb1;
+	fqa0 = fna0;
 	fqz1 = 0; // proc.filterParams.resonance->getUserValue();
 }
 
@@ -511,17 +508,6 @@ void SynthVoice3::updateParams(int blockSize)
 	osc4.bumpPhase(diff);
 	lastp4 = phaseParam;
 	envs[3] = envsByNum[static_cast<size_t>(proc.osc4Params.env->getUserValueInt())];
-
-	// filter
-	float noteNum = getValue(proc.filterParams.frequency);
-	noteNum += (currentlyPlayingNote.initialNote - 50) *
-	           getValue(proc.filterParams.keyTracking);
-
-	float f = gin::getMidiNoteInHertz(noteNum);
-	f = juce::jlimit(4.0f, maxFreq, f);
-
-	float q = gin::Q / (1.0f - (getValue(proc.filterParams.resonance) / 100.0f) * 0.99f);
-
 	
 	switch (proc.filterParams.type->getUserValueInt())
 	{
@@ -559,9 +545,17 @@ void SynthVoice3::updateParams(int blockSize)
 			break;
 	}
 
-	ffz1 = juce::jlimit<float>(20.f, maxFreq, ffa0 * f + ffb1 * ffz1);
+// filter
+	float noteNum = getValue(proc.filterParams.frequency);
+	noteNum += (currentlyPlayingNote.initialNote - 50) *
+	           getValue(proc.filterParams.keyTracking);
+	float f = gin::getMidiNoteInHertz(noteNum);
+	f = juce::jlimit(4.0f, maxFreq, f);
+	float q = gin::Q / (1.0f - (getValue(proc.filterParams.resonance) / 100.0f) * 0.99f);
+
+	fnz1 = fna0 * noteNum + fnb1 * fnz1;
 	fqz1 = fqa0 * q + fqb1 * fqz1;
-	filter.setParams(ffz1, fqz1);
+	filter.setParams(juce::jlimit<float>(4.f, maxFreq, gin::getMidiNoteInHertz(fnz1)), fqz1);
 
 	gin::LFO::Parameters params;
 	float freq = 0;

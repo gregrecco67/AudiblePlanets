@@ -247,9 +247,9 @@ float Envelope::getNextSample() noexcept
 
 void Envelope::recalculateRates() noexcept
 {
-	attackRate = (1.0 / (parameters.attackTimeMs * sampleRate));
-	decayRate = (1.0 / (parameters.decayTimeMs * sampleRate));
-	releaseRate = (1.0 / (parameters.releaseTimeMs * sampleRate));
+	attackRate = std::min((1.0 / (parameters.attackTimeMs * sampleRate)), 1.0);
+	decayRate = std::min((1.0 / (parameters.decayTimeMs * sampleRate)), 1.0);
+	releaseRate = std::min((1.0 / (parameters.releaseTimeMs * sampleRate)), 1.0);
 	duration = parameters.syncduration;
 	inverseSampleRate = 1.0 / sampleRate;
 }
