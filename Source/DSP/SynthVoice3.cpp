@@ -67,6 +67,13 @@ void SynthVoice3::noteStarted()
 
 	filter.reset();
 
+	float f = gin::getMidiNoteInHertz(proc.filterParams.frequency->getUserValue());
+	f = juce::jlimit(4.0f, maxFreq, f);
+	float q = gin::Q / (1.0f - (proc.filterParams.resonance->getUserValue() / 100.0f) * 0.99f);
+
+	ffz1 = f;
+	fqz1 = q;
+
 	lfo1.reset();
 	lfo2.reset();
 	lfo3.reset();
@@ -76,11 +83,6 @@ void SynthVoice3::noteStarted()
     snapParams();
     updateParams(0);
     snapParams();
-
-	ffz1 = proc.filterParams.frequency->getUserValue();
-	fqb1 = ffb1;
-	fqa0 = ffa0;
-	fqz1 = proc.filterParams.resonance->getUserValue();
 
 	lfo1.noteOn();
 	lfo2.noteOn();
@@ -215,10 +217,10 @@ void SynthVoice3::setCurrentSampleRate(double newRate)
 
 	ffb1 = std::exp(-2.0 * pi * 200 / quarter);
 	ffa0 = 1 - ffb1;
-	ffz1 = proc.filterParams.frequency->getUserValue();
+	ffz1 = 2000; // proc.filterParams.frequency->getUserValue();
 	fqb1 = ffb1;
 	fqa0 = ffa0;
-	fqz1 = proc.filterParams.resonance->getUserValue();
+	fqz1 = 0; // proc.filterParams.resonance->getUserValue();
 }
 
 void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples)
@@ -557,10 +559,8 @@ void SynthVoice3::updateParams(int blockSize)
 			break;
 	}
 
-	// smooth rapid cutoff/reso changes
-	ffz1 = ffa0 * f + ffb1 * ffz1;
+	ffz1 = juce::jlimit<float>(20.f, maxFreq, ffa0 * f + ffb1 * ffz1);
 	fqz1 = fqa0 * q + fqb1 * fqz1;
-
 	filter.setParams(ffz1, fqz1);
 
 	gin::LFO::Parameters params;
