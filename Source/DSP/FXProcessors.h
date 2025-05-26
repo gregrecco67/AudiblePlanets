@@ -27,6 +27,7 @@
 #include "ADAAsrc/HardClip.h"
 #include "ADAAsrc/ADAA/ADAA1LUT.h"
 #include "ADAAsrc/ADAA/ADAA2LUT.h"
+#include "ADAAsrc/ADAA/ADAA2.h"
 #include "ADAAsrc/SoftClip.h"
 #include "ADAAsrc/Fullwave.h"
 #include "ADAAsrc/Folder.h"
@@ -911,14 +912,22 @@ class WaveShaperProcessor {
 public:
     WaveShaperProcessor() {
 		for (int ch = 0; ch < 2; ++ch) {
-			tanhprocs[ch] = std::make_unique<TanhNL<ADAA2LUT<(1 << 18)>>>();
-			halfwaveprocs[ch] = std::make_unique<HalfwaveNL<ADAA2LUT<(1 << 18)>>>();
-			hardclipprocs[ch] = std::make_unique<HardClip<ADAA2LUT<(1 << 18)>>>();
-			softclipprocs[ch] = std::make_unique<SoftClip<ADAA2LUT<(1 << 18)>>>();
-			fullwaveprocs[ch] = std::make_unique<Fullwave<ADAA1LUT<(1 << 12)>>>();
-			folderprocs[ch] = std::make_unique<Folder<ADAA2LUT<(1 << 18)>>>();
+			tanhprocs[ch] = std::make_unique<TanhNL<ADAA2LUT<(1 << 20)>>>();
+			halfwaveprocs[ch] = std::make_unique<HalfwaveNL<ADAA2LUT<(1 << 20)>>>();
+			hardclipprocs[ch] = std::make_unique<HardClip<ADAA2LUT<(1 << 20)>>>();
+			softclipprocs[ch] = std::make_unique<SoftClip<ADAA2LUT<(1 << 20)>>>();
+			fullwaveprocs[ch] = std::make_unique<Fullwave<ADAA1LUT<(1 << 18)>>>();
+			folderprocs[ch] = std::make_unique<Folder<ADAA2LUT<(1 << 20)>>>();
 		}
 	}
+
+	std::array<std::unique_ptr<TanhNL<ADAA2LUT<(1 << 20)>>>, 2> tanhprocs;
+	std::array<std::unique_ptr<HalfwaveNL<ADAA2LUT<(1 << 20)>>>, 2> halfwaveprocs;
+	std::array<std::unique_ptr<HardClip<ADAA2LUT<(1 << 20)>>>, 2> hardclipprocs;
+	std::array<std::unique_ptr<SoftClip<ADAA2LUT<(1 << 20)>>>, 2>  softclipprocs;
+	std::array<std::unique_ptr<Fullwave<ADAA1LUT<(1 << 18)>>>, 2> fullwaveprocs;
+	std::array<std::unique_ptr<Folder<ADAA2LUT<(1 << 20)>>>, 2> folderprocs;
+	
 	~WaveShaperProcessor() = default;
 
 	void prepare(juce::dsp::ProcessSpec spec)
@@ -1096,12 +1105,7 @@ private:
     float us2L[MINI_BLOCK_SIZE*2]{0.f}; // copy to be mixed wet/dry
     float us2R[MINI_BLOCK_SIZE*2]{0.f};
 
-	std::array<std::unique_ptr<TanhNL<ADAA2LUT<(1 << 18)>>>, 2> tanhprocs;
-	std::array<std::unique_ptr<HalfwaveNL<ADAA2LUT<(1 << 18)>>>, 2> halfwaveprocs;
-	std::array<std::unique_ptr<HardClip<ADAA2LUT<(1 << 18)>>>, 2> hardclipprocs;
-	std::array<std::unique_ptr<SoftClip<ADAA2LUT<(1 << 18)>>>, 2> softclipprocs;
-	std::array<std::unique_ptr<Fullwave<ADAA1LUT<(1 << 12)>>>, 2> fullwaveprocs;
-	std::array<std::unique_ptr<Folder<ADAA2LUT<(1 << 18)>>>, 2> folderprocs;
+
 
     using Filter = juce::dsp::IIR::Filter<float>;
     using Coefficients = juce::dsp::IIR::Coefficients<float>;

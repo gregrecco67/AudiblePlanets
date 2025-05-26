@@ -72,24 +72,9 @@ set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
 
 file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.cpp
-    # ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/hiir/*.cpp
-	#${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/ADAAsrc/*.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/ADAAsrc/polylogarithm/Li2.cpp
- 
-
-    # ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.h
-
-    # ${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.h
-
-	# S${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.h
-	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.c
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.cpp
 )
 
