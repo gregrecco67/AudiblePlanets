@@ -130,6 +130,8 @@ private:
 
 	gin::EasedValueSmoother<float> noteSmoother;
 
+	double ffa0, ffb1, ffz1, fqa0, fqb1, fqz1;
+
 	juce::AudioBuffer<float> synthBuffer;
 
 	mipp::Reg<float> sine2{0.f, 0.f, 0.f, 0.f}, cos2{0.f, 0.f, 0.f, 0.f},

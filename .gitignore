@@ -6,6 +6,7 @@ build/
 ninja-build/
 xcode-build/
 xcb/
+.idea/
 # Prerequisites
 *.d
 
