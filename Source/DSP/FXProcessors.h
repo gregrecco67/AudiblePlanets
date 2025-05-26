@@ -1485,7 +1485,6 @@ public:
     // window periodic, set size to 1025 but only use the first 1024 samples.
     }
 
-
     int getLatencyInSamples() const { return fftSize; }
 
     void reset()
@@ -1501,15 +1500,6 @@ public:
         void processBlock(float* data, int numSamples, bool bypassed);
         void setF(float f);
     }
-
-	void process(juce::dsp::ProcessContextReplacing<float> context)
-	{
-		auto numSamples = context.getOutputBlock().getNumSamples();
-		auto* data = context.getOutputBlock().getChannelPointer(0);
-
-		// Process the audio block.
-		processBlock(data, numSamples, false);
-	}
 
     void processBlock(float* data, int numSamples, bool bypassed)
     {
@@ -1609,7 +1599,7 @@ public:
 
             // Silly example where we change the phase of each frequency bin
             // somewhat randomly. Uncomment the following line to enable.
-            phase *= std::pow(f, 1 + weird*.15f);
+            //phase *= 1; // std::pow(f, weird*.15f);
 
             // Convert magnitude and phase back into a complex number.
             cdata[i] = std::polar(magnitude, phase);
@@ -1662,6 +1652,13 @@ public:
 	}
 	~Weird() = default;
 
+
+	int getLatencyInSamples() const
+	{
+		return fft[0].getLatencyInSamples();
+	}
+
+
 	void prepare(juce::dsp::ProcessSpec spec)
 	{
 	    oversampler->reset();
@@ -1669,8 +1666,6 @@ public:
     
 	    fft[0].reset();
     	fft[1].reset();
-
-
 	}
 
 	void setWeird(float w) { 

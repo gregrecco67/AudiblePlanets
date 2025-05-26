@@ -233,8 +233,6 @@ static juce::String fxListTextFunction(const gin::Parameter &, float v)
 		return juce::String("Gain");
 	case 9:
 		return juce::String("Ladder Filter");
-	case 10:
-		return juce::String("Weird");
 	default:
 		jassertfalse;
 		return {};
@@ -842,21 +840,21 @@ static juce::String fxPrePostFunction(const gin::Parameter &, float v)
 void APAudioProcessor::FXOrderParams::setup(APAudioProcessor &p)
 {
 	float maxFreq = float(gin::getMidiNoteFromHertz(20000.0));
-	fxa1 = p.addIntParam("fxa1", "FX A1", "", "", {0.0, 10.0, 1.0, 1.0}, 0.0f,
+	fxa1 = p.addIntParam("fxa1", "FX A1", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f,
 	    0.0f, fxListTextFunction);
-	fxa2 = p.addIntParam("fxa2", "FX A2", "", "", {0.0, 10.0, 1.0, 1.0}, 0.0f,
+	fxa2 = p.addIntParam("fxa2", "FX A2", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f,
 	    0.0f, fxListTextFunction);
-	fxa3 = p.addIntParam("fxa3", "FX A3", "", "", {0.0, 10.0, 1.0, 1.0}, 0.0f,
+	fxa3 = p.addIntParam("fxa3", "FX A3", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f,
 	    0.0f, fxListTextFunction);
-	fxa4 = p.addIntParam("fxa4", "FX A4", "", "", {0.0, 10.0, 1.0, 1.0}, 0.0f,
+	fxa4 = p.addIntParam("fxa4", "FX A4", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f,
 	    0.0f, fxListTextFunction);
-	fxb1 = p.addIntParam("fxb1", "FX B1", "", "", {0.0, 10.0, 1.0, 1.0}, 0.0f,
+	fxb1 = p.addIntParam("fxb1", "FX B1", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f,
 	    0.0f, fxListTextFunction);
-	fxb2 = p.addIntParam("fxb2", "FX B2", "", "", {0.0, 10.0, 1.0, 1.0}, 0.0f,
+	fxb2 = p.addIntParam("fxb2", "FX B2", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f,
 	    0.0f, fxListTextFunction);
-	fxb3 = p.addIntParam("fxb3", "FX B3", "", "", {0.0, 10.0, 1.0, 1.0}, 0.0f,
+	fxb3 = p.addIntParam("fxb3", "FX B3", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f,
 	    0.0f, fxListTextFunction);
-	fxb4 = p.addIntParam("fxb4", "FX B4", "", "", {0.0, 10.0, 1.0, 1.0}, 0.0f,
+	fxb4 = p.addIntParam("fxb4", "FX B4", "", "", {0.0, 9.0, 1.0, 1.0}, 0.0f,
 	    0.0f, fxListTextFunction);
 	chainAtoB = p.addIntParam("chainAtoB", "FX Chain Routing", "", "",
 	    {0.0, 1.0, 1.0, 1.0}, 1.0f, 0.0f, fxRouteFunction);
@@ -884,8 +882,6 @@ void APAudioProcessor::FXOrderParams::setup(APAudioProcessor &p)
 	    {0.0, 1.0, 1.0, 1.0}, 0.0f, 0.0f, fxPrePostFunction);
 	laneBPrePost = p.addIntParam("laneBPrePost", "Pre/Post", "", "",
 	    {0.0, 1.0, 1.0, 1.0}, 0.0f, 0.0f, fxPrePostFunction);
-	weird = p.addExtParam("weird", "Weird", "Weird", "",
-	    {0.0, 1.0, 0.0, 1.0}, 0.0f, 0.0f, percentTextFunction);
 }
 
 void APAudioProcessor::MacroParams::setup(APAudioProcessor &p)
@@ -1487,9 +1483,6 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 			case 9:
 				ladder.process(outContext);
 				break;
-			case 10:
-				weird.process(outContext);
-				break;
 			default:
 				break;
 			}
@@ -1545,9 +1538,6 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 				break;
 			case 9:
 				ladder.process(outContext);
-				break;
-			case 10:
-				weird.process(outContext);
 				break;
 			default:
 				break;
@@ -1624,9 +1614,6 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 			case 9:
 				ladder.process(AContext);
 				break;
-			case 10:
-				weird.process(AContext);
-				break;
 			default:
 				break;
 			}
@@ -1661,9 +1648,6 @@ void APAudioProcessor::applyEffects(juce::AudioSampleBuffer &fxALaneBuffer)
 				break;
 			case 9:
 				ladder.process(BContext);
-				break;
-			case 10:
-				weird.process(BContext);
 				break;
 			default:
 				break;
@@ -1901,8 +1885,6 @@ void APAudioProcessor::updateParams(int newBlockSize)
 		ladder.filter.setResonance(modMatrix.getValue(ladderParams.reso));
 		ladder.gain.setGainDecibels(modMatrix.getValue(ladderParams.gain));
 	}
-
-	weird.setWeird(modMatrix.getValue(fxOrderParams.weird));
 
 	// Output gain
 	outputGain.setGain(modMatrix.getValue(globalParams.level));

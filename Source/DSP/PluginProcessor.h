@@ -246,7 +246,7 @@ public:
 		gin::Parameter::Ptr fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4,
 		    chainAtoB, laneAGain, laneBGain, laneAType, laneAFreq, laneARes,
 		    laneBType, laneBFreq, laneBRes, laneAPrePost, laneAPan,
-		    laneBPrePost, laneBPan, weird;
+		    laneBPrePost, laneBPan;
 
 		void setup(APAudioProcessor &p);
 
@@ -323,7 +323,6 @@ public:
 	MBFilterProcessor mbfilter;
 	RingModulator ringmod;
 	LadderFilterProcessor ladder;
-	Weird weird;
 	juce::dsp::Limiter<float> limiter;
 	
 	gin::GainProcessor outputGain;
