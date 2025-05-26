@@ -246,7 +246,7 @@ public:
 		gin::Parameter::Ptr fxa1, fxa2, fxa3, fxa4, fxb1, fxb2, fxb3, fxb4,
 		    chainAtoB, laneAGain, laneBGain, laneAType, laneAFreq, laneARes,
 		    laneBType, laneBFreq, laneBRes, laneAPrePost, laneAPan,
-		    laneBPrePost, laneBPan;
+		    laneBPrePost, laneBPan, weird;
 
 		void setup(APAudioProcessor &p);
 
@@ -312,7 +312,7 @@ public:
 	MSEGParams mseg1Params, mseg2Params, mseg3Params, mseg4Params;
 	MacroParams macroParams;
 	AuxParams auxParams;
-
+	
 	//==============================================================================
 	GainProcessor effectGain;
 	WaveShaperProcessor waveshaper;
@@ -323,8 +323,9 @@ public:
 	MBFilterProcessor mbfilter;
 	RingModulator ringmod;
 	LadderFilterProcessor ladder;
+	Weird weird;
 	juce::dsp::Limiter<float> limiter;
-
+	
 	gin::GainProcessor outputGain;
 
 	//==============================================================================

@@ -136,6 +136,10 @@ public:
 		addControl(ldrtype = new APKnob(proc.ladderParams.type), 1, 0);
 		addControl(ldrgain = new APKnob(proc.ladderParams.gain), 1, 1);
 
+		// WRD = 10
+		addControl(weirdness = new APKnob(proc.fxOrderParams.weird), 0, 0, 2, 2);
+
+
 		addAndMakeVisible(dynamicsMeter);
 		addAndMakeVisible(funcImage);
 
@@ -295,6 +299,9 @@ public:
 				ldrtype->setVisible(true);
 				ldrgain->setVisible(true);
 				break;
+			case 10:
+				weirdness->setVisible(true);
+				break;
 		}
 	}
 
@@ -375,6 +382,8 @@ public:
 		ldrdrive->setVisible(false);
 		ldrtype->setVisible(false);
 		ldrgain->setVisible(false);
+		// WRD = 10
+		weirdness->setVisible(false);
 	}
 
 	APAudioProcessor &proc;
@@ -394,6 +403,7 @@ public:
 	    mbfilterlowshelfq, mbfilterpeakfreq, mbfilterpeakgain, mbfilterpeakq,
 	    mbfilterhighshelffreq, mbfilterhighshelfgain, mbfilterhighshelfq;
 	gin::ParamComponent::Ptr ldrcutoff, ldrreso, ldrdrive, ldrtype, ldrgain;
+	gin::ParamComponent::Ptr weirdness;
 	gin::DynamicsMeter dynamicsMeter;
 	juce::ImageComponent funcImage{"function"};
 	int currentEffect = 0;
@@ -454,3 +464,4 @@ public:
 
 	APAudioProcessor &proc;
 };
+
