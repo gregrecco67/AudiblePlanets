@@ -37,7 +37,7 @@ I wanted to know what Ptolemy's "equant" would sound like. More on that below.
 ## Installation
 The plugin is available in a variety of formats [here](https://github.com/gregrecco67/AudiblePlanets/releases). Since there is no installer, you will have to place the plugin file in the right place yourself. On Windows, place the VST3 file in /Program Files/Common Files/VST3. On Mac OS, place the VST3 file in ~/Library/Audio/Plug-Ins/VST3 and/or the AU file in ~/Library/Audio/Plug-Ins/Components. (You will need the AU component if you plan to run the synth in Logic or GarageBand.) On Linux, place the VST3 file wherever your DAW looks for it, which should include ~/.vst3 as a default. More info on default VST3 file locations [here](https://steinbergmedia.github.io/vst3_dev_portal/pages/Technical+Documentation/Locations+Format/Plugin+Locations.html) and LV2 locations [here](https://lv2plug.in/pages/filesystem-hierarchy-standard.html). On a Mac, you will need to take the further step of authorizing the plugin to run, either from the Privacy & Security settings panel, or by typing `xattr -dr com.apple.quarantine <file location>` in a Terminal window.
 
-Alternatively (or if you want an AU, LV2, or standalone version), you can build it from source:
+Alternatively, you can build it from source:
 ```
 git clone --recurse-submodules https://github.com/gregrecco67/AudiblePlanets.git
 cd AudiblePlanets
