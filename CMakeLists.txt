@@ -76,7 +76,17 @@ file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/ADAAsrc/polylogarithm/Li2.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.cpp
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/hiir/*.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/hiir/*.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/ADAAsrc/polylogarithm/Li2.*
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.hpp
+
+	)
 
 target_sources (${PROJECT_NAME} PRIVATE ${source_files})
 source_group (TREE ${CMAKE_CURRENT_SOURCE_DIR}/Source PREFIX Source FILES ${source_files})

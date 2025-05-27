@@ -71,7 +71,7 @@ public:
 
 	inline EnvelopeState getState() const noexcept
 	{
-		return {state, static_cast<float>(linearIdxVal)};
+		return {state, static_cast<float>(finalOut)};
 	}
 
 	inline void setParameters(const Params &newParameters)
