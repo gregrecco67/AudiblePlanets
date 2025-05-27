@@ -266,7 +266,7 @@ void AuxSynthVoice::updateParams(int blockSize)
 			+ remainder));
 	baseFreq = juce::jlimit(20.0f, 20000.f,
 			baseFreq * getValue(proc.timbreParams.pitch)
-	        * std::powf(2.0f, static_cast<int>(getValue(proc.auxParams.octave))));
+	        * static_cast<float>(std::pow(2.0f, static_cast<int>(getValue(proc.auxParams.octave)))));
 	osc1Note = gin::getMidiNoteFromHertz(baseFreq);
 
 	currentEnv = proc.auxParams.env->getUserValueInt();

@@ -16,7 +16,7 @@ add_subdirectory(modules/JUCE)
 
 foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_simd)
 	juce_add_module (
-		"${CMAKE_CURRENT_LIST_DIR}/modules/gin/modules/${module_name}"
+		"${CMAKE_CURRENT_LIST_DIR}/modules/Gin/modules/${module_name}"
 		)
 
 	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
@@ -56,8 +56,6 @@ if (APPLE)
 			-ffast-math -fno-finite-math-only -Wfloat-equal
 #			"$<$<CONFIG:RELEASE>:-Werror>"
 		)
-	add_compile_definitions(NDEBUG)
-	#add_compile_options(-mfloat-abi=hard)
 endif ()
 
 if (MSVC)
@@ -66,6 +64,11 @@ if (MSVC)
 		)
     add_compile_definitions(MIPP_ALIGNED_LOADS USE_SSE)
 endif ()
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	add_compile_definitions(USE_SSE)
+endif ()
+
 
 # Binary Data
 set_property (DIRECTORY APPEND PROPERTY LABELS Assets)

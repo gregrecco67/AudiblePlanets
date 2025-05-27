@@ -19,6 +19,7 @@
 #include <numbers>
 #include "Envelope.h"
 #include "third_party/MTS-ESP/libMTSClient.h"
+#include <cmath>
 class APAudioProcessor;
 
 using namespace std::numbers;
