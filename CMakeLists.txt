@@ -4,6 +4,7 @@ if (APPLE)
 	set (CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum OS X deployment version" FORCE)
 	set (CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 	set (CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+    add_definitions( -DUSE_NEON )
 endif()
 
 
@@ -21,7 +22,8 @@ foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_sim
 	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
 endforeach()
 
-set(VersionString 1.1.5)
+set(VersionString 1.2.0)
+add_definitions( -DVERSION_STRING="${VersionString}" )
 # also set this in PluginEditor.cpp -> showAboutInfo()
 
 juce_add_plugin (${PROJECT_NAME}
@@ -30,7 +32,7 @@ juce_add_plugin (${PROJECT_NAME}
 				COMPANY_NAME "Void-Star"
 				COMPANY_WEBSITE "https://void-star.com/"
     			ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
-				FORMATS "VST3" #"AU" "Standalone" "LV2"
+				FORMATS "VST3" "LV2" # "Standalone" # "AU" # "LV2"
 				BUNDLE_ID com.void-star.audible-planets
 				DESCRIPTION "An expressive, quasi-Ptolemaic semi-modular synthesizer."
 				PLUGIN_MANUFACTURER_CODE "Vdst"
@@ -50,31 +52,40 @@ if (APPLE)
 			-Wall -Wstrict-aliasing -Wunused-parameter -Wconditional-uninitialized -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wbool-conversion -Wextra-semi 
 			-Wunreachable-code -Winconsistent-missing-destructor-override -Wshift-sign-overflow -Wnullable-to-nonnull-conversion -Wuninitialized -Wno-missing-field-initializers 
 			-Wno-ignored-qualifiers -Wno-missing-braces -Wno-char-subscripts -Wno-unused-private-field -fno-aligned-allocation -Wunused-private-field -Wunreachable-code 
-			-Wenum-compare -Wshadow -Wfloat-conversion -Wshadow-uncaptured-local -Wshadow-field -Wsign-compare -Wdeprecated-this-capture -Wimplicit-float-conversion 
+			-Wenum-compare -Wshadow -Wno-float-conversion -Wshadow-uncaptured-local -Wshadow-field -Wsign-compare -Wdeprecated-this-capture -Wno-implicit-float-conversion 
 			-ffast-math -fno-finite-math-only -Wfloat-equal
 #			"$<$<CONFIG:RELEASE>:-Werror>"
 		)
+	add_compile_definitions(NDEBUG)
+	#add_compile_options(-mfloat-abi=hard)
 endif ()
 
 if (MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE 
-			/wd26495 /wd4459 /wd4244 /wd4996 /wd4267 /wd4244
+            # /wd26495 /wd4459 /wd4244 /wd4996 /wd4267 /wd4244
 		)
-    add_compile_definitions(MIPP_ALIGNED_LOADS)
+    add_compile_definitions(MIPP_ALIGNED_LOADS USE_SSE)
 endif ()
 
 # Binary Data
-
 set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
 
 file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/hiir/*.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/ADAAsrc/polylogarithm/Li2.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.cpp
+)
 
 target_sources (${PROJECT_NAME} PRIVATE ${source_files})
 source_group (TREE ${CMAKE_CURRENT_SOURCE_DIR}/Source PREFIX Source FILES ${source_files})
+target_include_directories(${PROJECT_NAME} PUBLIC 
+		"${CMAKE_CURRENT_SOURCE_DIR}/Source"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Source/UI"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party"
+	)
 
 file(GLOB_RECURSE AssetFiles CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.png"
@@ -100,26 +111,24 @@ target_link_libraries (${PROJECT_NAME}
 						gin_dsp
 						gin_plugin
 						gin_simd
+						juce::juce_core
+						juce::juce_dsp
 						juce::juce_events
 						juce::juce_graphics
 						juce::juce_gui_basics
 						juce::juce_gui_extra
-						juce::juce_core
 						juce::juce_audio_basics
-
 						$<$<PLATFORM_ID:Linux>:curl>
 					PUBLIC
 						Assets
 						juce::juce_recommended_config_flags
 						juce::juce_recommended_lto_flags
-						#juce::juce_recommended_warning_flags
+						juce::juce_recommended_warning_flags
 					)
 
 if (APPLE)
 	set_target_properties(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO")
 endif()
-
-#juce_generate_juce_header (${PROJECT_NAME})
 
 get_property (debug_configs GLOBAL PROPERTY DEBUG_CONFIGURATIONS)
 

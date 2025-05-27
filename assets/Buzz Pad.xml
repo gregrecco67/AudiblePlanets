@@ -30,21 +30,13 @@
   <param uid="osc1coarse" val="2.0"/>
   <param uid="osc1volume" val="-2.62"/>
   <param uid="osc1phase" val="0.7860000133514404"/>
-  <param uid="osc1detune" val="0.04399999976158142"/>
-  <param uid="osc1spread" val="100.0"/>
   <param uid="osc2coarse" val="3.0"/>
   <param uid="osc2volume" val="-1.11"/>
   <param uid="osc2phase" val="0.2840000092983246"/>
-  <param uid="osc2detune" val="0.05999999865889549"/>
-  <param uid="osc2spread" val="100.0"/>
   <param uid="osc3volume" val="-40.0"/>
-  <param uid="osc3spread" val="100.0"/>
   <param uid="osc4coarse" val="1.0"/>
   <param uid="osc4volume" val="0.0"/>
   <param uid="osc4phase" val="0.8740000128746033"/>
-  <param uid="osc4detune" val="0.07199999690055847"/>
-  <param uid="osc4spread" val="100.0"/>
-  <param uid="osc4pan" val="0.03999996185302734"/>
   <param uid="env1attack" val="0.01000000350177288"/>
   <param uid="env1decay" val="0.268838495016098"/>
   <param uid="env1sustain" val="-10.574166"/>

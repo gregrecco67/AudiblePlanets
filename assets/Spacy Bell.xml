@@ -2,7 +2,7 @@
 
 <state name="Spacy Bell" author="builtin" tags="bells keys">
   <state>
-    <instance selectedAuthors="" selectedTags="" browserOpen="0"/>
+    <instance selectedAuthors="" selectedTags=""/>
     <MODMATRIX/>
     <mseg1 startIndex="0" endIndex="2">
       <PT t="0.0" v="0.0" c="5.5"/>
@@ -26,18 +26,17 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="-10.457575"/>
+  <param uid="osc1volume" val="-10.45757484436035"/>
   <param uid="osc1phase" val="0.399577409029007"/>
   <param uid="osc2coarse" val="12.0"/>
   <param uid="osc2fine" val="-0.07393753528594971"/>
-  <param uid="osc2volume" val="-10.457575"/>
+  <param uid="osc2volume" val="-10.45757484436035"/>
   <param uid="osc2phase" val="0.5003144145011902"/>
   <param uid="osc3coarse" val="8.0"/>
   <param uid="osc3fine" val="0.2919998168945312"/>
-  <param uid="osc3volume" val="-16.478175"/>
+  <param uid="osc3volume" val="-16.47817420959473"/>
   <param uid="osc4coarse" val="12.0"/>
-  <param uid="osc4volume" val="-10.457575"/>
-  <param uid="osc4saw" val="1.0"/>
+  <param uid="osc4volume" val="-10.45757484436035"/>
   <param uid="env1attack" val="0.0"/>
   <param uid="env1decay" val="2.700000524520874"/>
   <param uid="env1sustain" val="-40.0"/>
@@ -55,16 +54,17 @@
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="0.0"/>
   <param uid="env4decay" val="0.1137580201029778"/>
-  <param uid="env4sustain" val="-27.493751"/>
+  <param uid="env4sustain" val="-27.49375152587891"/>
   <param uid="env4release" val="5.766530990600586"/>
   <param uid="env4time" val="0.09999998658895493"/>
   <param uid="lfo1depth" val="0.1478437185287476"/>
-  <param uid="demodmix" val="0.3287031352519989"/>
   <param uid="algo" val="3.0"/>
+  <param uid="demodmix" val="0.3287031352519989"/>
   <param uid="flttype" val="1.0"/>
-  <param uid="fltfreq" val="94.42040252685547"/>
+  <param uid="fltkey" val="48.10469055175781"/>
+  <param uid="fltfreq" val="96.99951171875"/>
   <param uid="auxvolume" val="-11.99999809265137"/>
-  <param uid="level" val="10.0"/>
+  <param uid="level" val="9.999998092651367"/>
   <param uid="fxgain" val="1.000001430511475"/>
   <param uid="cpattack" val="0.0000199999994947575"/>
   <param uid="dlbeatsright" val="14.0"/>

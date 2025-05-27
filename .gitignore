@@ -4,7 +4,9 @@ libs/
 out/
 build/
 ninja-build/
-TODO
+xcode-build/
+xcb/
+.idea/
 # Prerequisites
 *.d
 
@@ -449,5 +451,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-modules/melatonin_perfetto/
 /source/.VSCodeCounter/2024-01-15_13-05-45

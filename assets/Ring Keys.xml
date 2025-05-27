@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<state name="Ring Keys" author="built-in" tags="keys">
+  <state>
+    <instance selectedAuthors="" selectedTags=""/>
+    <MODMATRIX>
+      <MODITEM srcId="env2" depth="-0.4979999959468842" enabled="1" dstId="fltfreq"
+               function="linear" biPolarMapping="0"/>
+    </MODMATRIX>
+    <mseg1 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg1>
+    <mseg2 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg2>
+    <mseg3 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg3>
+    <mseg4 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg4>
+  </state>
+  <param uid="osc1volume" val="-5.999999046325684"/>
+  <param uid="osc2fine" val="0.006000041961669922"/>
+  <param uid="osc2volume" val="-16.25224685668945"/>
+  <param uid="osc2wave" val="2.0"/>
+  <param uid="osc3volume" val="-11.57980155944824"/>
+  <param uid="osc4volume" val="-40.0"/>
+  <param uid="env1attack" val="0.01000000350177288"/>
+  <param uid="env1sustain" val="-5.999999046325684"/>
+  <param uid="env1release" val="0.09999998658895493"/>
+  <param uid="env1time" val="0.09999998658895493"/>
+  <param uid="env2attack" val="0.01000000350177288"/>
+  <param uid="env2sustain" val="-5.999999046325684"/>
+  <param uid="env2release" val="2.923245429992676"/>
+  <param uid="env2time" val="0.09999998658895493"/>
+  <param uid="env3attack" val="0.01000000350177288"/>
+  <param uid="env3sustain" val="-5.999999046325684"/>
+  <param uid="env3release" val="4.519120216369629"/>
+  <param uid="env3time" val="0.09999998658895493"/>
+  <param uid="env4attack" val="0.01000000350177288"/>
+  <param uid="env4sustain" val="-5.999999046325684"/>
+  <param uid="env4release" val="0.09999998658895493"/>
+  <param uid="env4time" val="0.09999998658895493"/>
+  <param uid="algo" val="2.0"/>
+  <param uid="fltfreq" val="135.0762329101562"/>
+  <param uid="auxvolume" val="-11.99999809265137"/>
+  <param uid="level" val="7.152557373046875e-7"/>
+  <param uid="fxgain" val="2.384185791015625e-6"/>
+  <param uid="cpthreshold" val="-32.28622817993164"/>
+  <param uid="cpratio" val="2.146028757095337"/>
+  <param uid="cpknee" val="2.829999923706055"/>
+  <param uid="cpoutput" val="1.602956533432007"/>
+  <param uid="dlbeatsright" val="10.0"/>
+  <param uid="chrate" val="0.02147885411977768"/>
+  <param uid="chdepth" val="0.6041937470436096"/>
+  <param uid="chfeedback" val="0.2773678600788116"/>
+  <param uid="rvsize" val="1.293529987335205"/>
+  <param uid="rvdecay" val="0.5765430331230164"/>
+  <param uid="rvdamping" val="2706.296875"/>
+  <param uid="rvpredelay" val="0.01052300445735455"/>
+  <param uid="rmmodfreq1" val="39.9999885559082"/>
+  <param uid="rmmodfreq2" val="39.9999885559082"/>
+  <param uid="ldrcutoff" val="122.6663131713867"/>
+  <param uid="ldrdrive" val="11.97889804840088"/>
+  <param uid="fxa1" val="9.0"/>
+  <param uid="fxa2" val="4.0"/>
+  <param uid="fxa3" val="3.0"/>
+  <param uid="fxa4" val="2.0"/>
+  <param uid="fxb1" val="6.0"/>
+  <param uid="laneAGain" val="2.384185791015625e-6"/>
+  <param uid="laneBGain" val="2.384185791015625e-6"/>
+</state>

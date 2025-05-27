@@ -2,7 +2,7 @@
 
 <state name="Clashing Strings" author="builtin" tags="pluck">
   <state>
-    <instance selectedAuthors="" selectedTags="" browserOpen="0"/>
+    <instance selectedAuthors="" selectedTags=""/>
     <MODMATRIX>
       <MODITEM srcId="mlfo1" depth="0.1722656190395355" enabled="1" dstId="auxfiltercutoff"
                function="linear" biPolarMapping="1"/>
@@ -33,16 +33,13 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="-4.152166"/>
-  <param uid="osc1tones" val="3.930000066757202"/>
-  <param uid="osc2volume" val="-2.383728"/>
-  <param uid="osc2tones" val="3.276000022888184"/>
-  <param uid="osc3volume" val="-30.457575"/>
-  <param uid="osc3tones" val="1.450999975204468"/>
+  <param uid="osc1volume" val="-4.152164459228516"/>
+  <param uid="osc2volume" val="-2.38372802734375"/>
+  <param uid="osc3volume" val="-30.45757484436035"/>
   <param uid="osc4volume" val="-40.0"/>
   <param uid="env1attack" val="0.0"/>
   <param uid="env1decay" val="0.1553593724966049"/>
-  <param uid="env1sustain" val="-24.959031"/>
+  <param uid="env1sustain" val="-24.95903015136719"/>
   <param uid="env1release" val="2.713393688201904"/>
   <param uid="env1time" val="0.09999998658895493"/>
   <param uid="env2attack" val="0.01000000350177288"/>
@@ -50,9 +47,11 @@
   <param uid="env2release" val="0.09999998658895493"/>
   <param uid="env2time" val="0.09999998658895493"/>
   <param uid="env3attack" val="0.01000000350177288"/>
+  <param uid="env3sustain" val="-5.999999046325684"/>
   <param uid="env3release" val="0.09999998658895493"/>
   <param uid="env3time" val="0.09999998658895493"/>
   <param uid="env4attack" val="0.01000000350177288"/>
+  <param uid="env4sustain" val="-5.999999046325684"/>
   <param uid="env4release" val="0.09999998658895493"/>
   <param uid="env4time" val="0.09999998658895493"/>
   <param uid="lfo1enable" val="1.0"/>
@@ -60,15 +59,17 @@
   <param uid="lfo1beat" val="7.0"/>
   <param uid="lfo3enable" val="1.0"/>
   <param uid="lfo3wave" val="7.0"/>
-  <param uid="demodmix" val="1.0"/>
+  <param uid="demodmix" val="0.307812511920929"/>
+  <param uid="fltfreq" val="135.0762329101562"/>
   <param uid="auxenable" val="1.0"/>
   <param uid="auxwave" val="4.0"/>
-  <param uid="auxvolume" val="4.570499897003174"/>
+  <param uid="auxvolume" val="4.570504188537598"/>
   <param uid="auxfiltertype" val="5.0"/>
-  <param uid="auxfiltercutoff" val="77.26068115234375"/>
+  <param uid="auxfiltercutoff" val="101.0932006835938"/>
   <param uid="auxres" val="78.92812347412109"/>
+  <param uid="level" val="7.152557373046875e-7"/>
   <param uid="fxgain" val="2.384185791015625e-6"/>
-  <param uid="wsdrive" val="33.61312484741211"/>
+  <param uid="wsdrive" val="24.17906188964844"/>
   <param uid="wsfunc" val="3.0"/>
   <param uid="dltimeleft" val="0.02331971935927868"/>
   <param uid="dltimeright" val="0.003161603352054954"/>

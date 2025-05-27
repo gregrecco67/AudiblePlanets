@@ -2,7 +2,7 @@
 
 <state name="Foreign Keypad" author="builtin" tags="keys pad">
   <state>
-    <instance selectedAuthors="" selectedTags="" browserOpen="0"/>
+    <instance selectedAuthors="" selectedTags=""/>
     <MODMATRIX/>
     <mseg1 startIndex="0" endIndex="2">
       <PT t="0.0" v="0.0" c="5.5"/>
@@ -26,29 +26,15 @@
     </mseg4>
     <sample sampleName=""/>
   </state>
-  <param uid="osc1volume" val="-5.352125"/>
-  <param uid="osc1tones" val="3.68500018119812"/>
-  <param uid="osc1detune" val="0.05940624698996544"/>
-  <param uid="osc1spread" val="52.3046875"/>
-  <param uid="osc1pan" val="-0.3578328788280487"/>
+  <param uid="osc1volume" val="-5.352127552032471"/>
   <param uid="osc2coarse" val="12.0"/>
   <param uid="osc2fine" val="0.02099990844726562"/>
-  <param uid="osc2volume" val="-21.9382"/>
-  <param uid="osc2detune" val="0.1136381253600121"/>
-  <param uid="osc2spread" val="100.0"/>
-  <param uid="osc2pan" val="-0.3447827100753784"/>
+  <param uid="osc2volume" val="-21.93819999694824"/>
   <param uid="osc3coarse" val="2.0"/>
-  <param uid="osc3volume" val="-11.372725"/>
-  <param uid="osc3tones" val="3.646000146865845"/>
-  <param uid="osc3detune" val="0.03755273297429085"/>
-  <param uid="osc3spread" val="63.52812576293945"/>
-  <param uid="osc3pan" val="0.3472526967525482"/>
+  <param uid="osc3volume" val="-11.37272453308105"/>
   <param uid="osc4coarse" val="11.0"/>
   <param uid="osc4fine" val="0.04417967796325684"/>
-  <param uid="osc4volume" val="-16.478175"/>
-  <param uid="osc4detune" val="0.09828124940395355"/>
-  <param uid="osc4spread" val="100.0"/>
-  <param uid="osc4pan" val="0.3690703213214874"/>
+  <param uid="osc4volume" val="-16.47817420959473"/>
   <param uid="env1attack" val="0.0"/>
   <param uid="env1decay" val="20.48162078857422"/>
   <param uid="env1sustain" val="-34.0"/>
@@ -76,7 +62,7 @@
   <param uid="fltfreq" val="102.4372482299805"/>
   <param uid="fltres" val="23.2788200378418"/>
   <param uid="auxvolume" val="-11.99999809265137"/>
-  <param uid="squash" val="0.3190468847751617"/>
+  <param uid="level" val="7.152557373046875e-7"/>
   <param uid="fxgain" val="1.000001430511475"/>
   <param uid="wsdrive" val="15.5920934677124"/>
   <param uid="wswet" val="0.2561771869659424"/>

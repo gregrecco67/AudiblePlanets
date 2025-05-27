@@ -2,7 +2,7 @@
 
 <state name="Endurance Like the Liberty Bell" author="builtin" tags="bells keys">
   <state startIndex="0" endIndex="5" sample="">
-    <instance selectedAuthors="" selectedTags="" browserOpen="0"/>
+    <instance selectedAuthors="" selectedTags=""/>
     <PT t="0.0" v="0.0" c="0.0"/>
     <PT t="0.4285714328289032" v="0.0" c="0.0"/>
     <PT t="0.4285714328289032" v="1.0" c="0.0"/>
@@ -40,13 +40,14 @@
     <MODMATRIX/>
     <sample sampleName=""/>
   </state>
+  <param uid="osc1volume" val="-5.999999046325684"/>
   <param uid="osc2coarse" val="12.0"/>
   <param uid="osc2fine" val="-0.07393753528594971"/>
+  <param uid="osc2volume" val="-5.999999046325684"/>
   <param uid="osc3coarse" val="8.0"/>
   <param uid="osc3fine" val="0.2919998168945312"/>
-  <param uid="osc3volume" val="-16.478175"/>
+  <param uid="osc3volume" val="-16.47817420959473"/>
   <param uid="osc4coarse" val="12.0"/>
-  <param uid="osc4saw" val="1.0"/>
   <param uid="env1attack" val="0.0"/>
   <param uid="env1decay" val="2.700000524520874"/>
   <param uid="env1sustain" val="-40.0"/>
@@ -68,18 +69,23 @@
   <param uid="env4release" val="5.766530990600586"/>
   <param uid="env4time" val="0.09999998658895493"/>
   <param uid="lfo1depth" val="0.1478437185287476"/>
-  <param uid="demodmix" val="0.3287031352519989"/>
-  <param uid="fltfreq" val="86.86246490478516"/>
+  <param uid="algo" val="1.0"/>
+  <param uid="demodmix" val="0.05653125047683716"/>
+  <param uid="flttype" val="1.0"/>
+  <param uid="fltkey" val="56.24843978881836"/>
+  <param uid="fltfreq" val="92.27395629882812"/>
+  <param uid="fltres" val="19.93906211853027"/>
   <param uid="auxenable" val="1.0"/>
   <param uid="auxwave" val="1.0"/>
-  <param uid="auxvolume" val="-10.6504373550415"/>
+  <param uid="auxvolume" val="-10.65043544769287"/>
   <param uid="auxdetune" val="0.1591532826423645"/>
   <param uid="auxspread" val="100.0"/>
   <param uid="auxres" val="42.19218826293945"/>
-  <param uid="level" val="10.0"/>
+  <param uid="level" val="9.999998092651367"/>
   <param uid="fxgain" val="1.000001430511475"/>
-  <param uid="wsdrive" val="19.52622032165527"/>
-  <param uid="wsfunc" val="13.0"/>
+  <param uid="wsdrive" val="13.45403289794922"/>
+  <param uid="wsfunc" val="5.0"/>
+  <param uid="wshighshelf" val="7905.759765625"/>
   <param uid="cpthreshold" val="-26.77358627319336"/>
   <param uid="cpratio" val="3.325140953063965"/>
   <param uid="cpattack" val="0.0000199999994947575"/>

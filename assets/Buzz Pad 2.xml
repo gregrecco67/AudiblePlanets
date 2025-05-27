@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<state name="Buzz Pad 2" author="builtin" tags="pad">
+  <state sample="">
+    <instance editorScale="1.249578356742859" selectedAuthors="" selectedTags=""/>
+    <MODMATRIX>
+      <MODITEM srcId="rand2Poly" depth="0.02543464675545692" enabled="1" dstId="pitch"
+               function="linear" biPolarMapping="1"/>
+      <MODITEM srcId="rand1Poly" depth="1.0" enabled="1" dstId="algo" function="linear"
+               biPolarMapping="1"/>
+      <MODITEM srcId="rand2Poly" depth="0.09600000083446503" enabled="1" dstId="fltfreq"
+               function="linear" biPolarMapping="1"/>
+    </MODMATRIX>
+    <mseg1 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg1>
+    <mseg2 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg2>
+    <mseg3 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg3>
+    <mseg4 startIndex="0" endIndex="2">
+      <PT t="0.0" v="0.0" c="5.5"/>
+      <PT t="0.5" v="1.0" c="5.5"/>
+      <PT t="1.0" v="0.0" c="5.5"/>
+    </mseg4>
+    <sample sampleName=""/>
+  </state>
+  <param uid="osc1coarse" val="2.0"/>
+  <param uid="osc1volume" val="-2.619998455047607"/>
+  <param uid="osc1phase" val="0.7860000133514404"/>
+  <param uid="osc2coarse" val="3.0"/>
+  <param uid="osc2volume" val="-1.110000610351562"/>
+  <param uid="osc2phase" val="0.2840000092983246"/>
+  <param uid="osc3volume" val="-40.0"/>
+  <param uid="osc4coarse" val="1.0"/>
+  <param uid="osc4volume" val="0.0"/>
+  <param uid="osc4phase" val="0.8740000128746033"/>
+  <param uid="env1attack" val="0.01000000350177288"/>
+  <param uid="env1decay" val="0.268838495016098"/>
+  <param uid="env1sustain" val="-10.57416439056396"/>
+  <param uid="env1release" val="0.09999998658895493"/>
+  <param uid="env1drcurve" val="0.3440000116825104"/>
+  <param uid="env1time" val="0.09999998658895493"/>
+  <param uid="env2attack" val="0.01000000350177288"/>
+  <param uid="env2decay" val="1.033528804779053"/>
+  <param uid="env2sustain" val="-12.76544094085693"/>
+  <param uid="env2release" val="0.09999998658895493"/>
+  <param uid="env2drcurve" val="0.4000000059604645"/>
+  <param uid="env2time" val="0.09999998658895493"/>
+  <param uid="env3attack" val="0.01000000350177288"/>
+  <param uid="env3sustain" val="-5.999999046325684"/>
+  <param uid="env3release" val="0.09999998658895493"/>
+  <param uid="env3time" val="0.09999998658895493"/>
+  <param uid="env4attack" val="0.0"/>
+  <param uid="env4sustain" val="0.0"/>
+  <param uid="env4release" val="0.09999998658895493"/>
+  <param uid="env4time" val="0.09999998658895493"/>
+  <param uid="equant" val="0.5"/>
+  <param uid="fltfreq" val="89.46306610107422"/>
+  <param uid="fltres" val="57.59999847412109"/>
+  <param uid="auxvolume" val="-11.99999809265137"/>
+  <param uid="level" val="-9.5367431640625e-7"/>
+  <param uid="fxgain" val="2.384185791015625e-6"/>
+  <param uid="cpattack" val="0.0000199999994947575"/>
+  <param uid="chrate" val="0.05000001192092896"/>
+  <param uid="rvsize" val="1.583999991416931"/>
+  <param uid="rvdecay" val="0.7879999876022339"/>
+  <param uid="rvwet" val="0.1319999992847443"/>
+  <param uid="rmmodfreq1" val="39.9999885559082"/>
+  <param uid="rmmodfreq2" val="39.9999885559082"/>
+  <param uid="fxa1" val="6.0"/>
+  <param uid="laneAGain" val="2.384185791015625e-6"/>
+  <param uid="laneBGain" val="2.384185791015625e-6"/>
+</state>
