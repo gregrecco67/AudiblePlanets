@@ -32,7 +32,7 @@ juce_add_plugin (${PROJECT_NAME}
 				COMPANY_NAME "Void-Star"
 				COMPANY_WEBSITE "https://void-star.com/"
     			ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
-				FORMATS "VST3" "LV2" # "Standalone" # "AU" # "LV2"
+				FORMATS "VST3" "LV2" "Standalone" # "AU" # "LV2"
 				BUNDLE_ID com.void-star.audible-planets
 				DESCRIPTION "An expressive, quasi-Ptolemaic semi-modular synthesizer."
 				PLUGIN_MANUFACTURER_CODE "Vdst"
@@ -135,7 +135,7 @@ target_link_libraries (${PROJECT_NAME}
 					PUBLIC
 						Assets
 						juce::juce_recommended_config_flags
-						#juce::juce_recommended_lto_flags
+						juce::juce_recommended_lto_flags
 						#juce::juce_recommended_warning_flags
 					)
 
