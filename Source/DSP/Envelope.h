@@ -116,7 +116,7 @@ private:
 
 	double sampleRate = 44100.0;
 	double inverseSampleRate = 1.0 / sampleRate;
-	double linearIdxVal{0.0}, curveVal{0.0}, attackRate{0.0}, decayRate{0.0},
+	double linearIdxVal{0.0}, attackRate{0.0}, decayRate{0.0},
 	    releaseRate{0.0}, finalOut{0.0}, unmappedVal{0.0}, releaseStart{0.0};
 
 	float timeSinceStart{0.f}, duration{1.f};

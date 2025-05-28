@@ -50,7 +50,7 @@ double Envelope::getValForIdx(double idx, bool isAttack)
 			cVal = (1 + c) * idx - c * lookup;
 		}
 	}
-	if (!isAttack)
+	else
 	{
 		if (c < 0)
 		{

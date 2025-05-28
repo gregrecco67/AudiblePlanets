@@ -912,21 +912,21 @@ class WaveShaperProcessor {
 public:
     WaveShaperProcessor() {
 		for (int ch = 0; ch < 2; ++ch) {
-			tanhprocs[ch] = std::make_unique<TanhNL<ADAA2LUT<(1 << 20)>>>();
-			halfwaveprocs[ch] = std::make_unique<HalfwaveNL<ADAA2LUT<(1 << 20)>>>();
-			hardclipprocs[ch] = std::make_unique<HardClip<ADAA2LUT<(1 << 20)>>>();
-			softclipprocs[ch] = std::make_unique<SoftClip<ADAA2LUT<(1 << 20)>>>();
-			fullwaveprocs[ch] = std::make_unique<Fullwave<ADAA1LUT<(1 << 18)>>>();
-			folderprocs[ch] = std::make_unique<Folder<ADAA2LUT<(1 << 20)>>>();
+			tanhprocs[ch] = std::make_unique<TanhNL<ADAA2>>();
+			halfwaveprocs[ch] = std::make_unique<HalfwaveNL<ADAA2>>();
+			hardclipprocs[ch] = std::make_unique<HardClip<ADAA2>>();
+			softclipprocs[ch] = std::make_unique<SoftClip<ADAA2>>();
+			fullwaveprocs[ch] = std::make_unique<Fullwave<ADAA1>>();
+			folderprocs[ch] = std::make_unique<Folder<ADAA2>>();
 		}
 	}
 
-	std::array<std::unique_ptr<TanhNL<ADAA2LUT<(1 << 20)>>>, 2> tanhprocs;
-	std::array<std::unique_ptr<HalfwaveNL<ADAA2LUT<(1 << 20)>>>, 2> halfwaveprocs;
-	std::array<std::unique_ptr<HardClip<ADAA2LUT<(1 << 20)>>>, 2> hardclipprocs;
-	std::array<std::unique_ptr<SoftClip<ADAA2LUT<(1 << 20)>>>, 2>  softclipprocs;
-	std::array<std::unique_ptr<Fullwave<ADAA1LUT<(1 << 18)>>>, 2> fullwaveprocs;
-	std::array<std::unique_ptr<Folder<ADAA2LUT<(1 << 20)>>>, 2> folderprocs;
+	std::array<std::unique_ptr<TanhNL<ADAA2>>, 2> tanhprocs;
+	std::array<std::unique_ptr<HalfwaveNL<ADAA2>>, 2> halfwaveprocs;
+	std::array<std::unique_ptr<HardClip<ADAA2>>, 2> hardclipprocs;
+	std::array<std::unique_ptr<SoftClip<ADAA2>>, 2>  softclipprocs;
+	std::array<std::unique_ptr<Fullwave<ADAA1>>, 2> fullwaveprocs;
+	std::array<std::unique_ptr<Folder<ADAA2>>, 2> folderprocs;
 	
 	~WaveShaperProcessor() = default;
 
