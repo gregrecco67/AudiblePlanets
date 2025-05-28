@@ -32,7 +32,7 @@ juce_add_plugin (${PROJECT_NAME}
 				COMPANY_NAME "Void-Star"
 				COMPANY_WEBSITE "https://void-star.com/"
     			ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
-				FORMATS "VST3" "LV2" # "Standalone" # "AU" # "LV2"
+				FORMATS "VST3" "LV2" "Standalone" # "AU" # "LV2"
 				BUNDLE_ID com.void-star.audible-planets
 				DESCRIPTION "An expressive, quasi-Ptolemaic semi-modular synthesizer."
 				PLUGIN_MANUFACTURER_CODE "Vdst"
@@ -60,7 +60,7 @@ endif ()
 
 if (MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE 
-            # /wd26495 /wd4459 /wd4244 /wd4996 /wd4267 /wd4244
+            /wd26495 /wd4459 /wd4244 /wd4996 /wd4267 /wd4244
 		)
     add_compile_definitions(MIPP_ALIGNED_LOADS USE_SSE)
 endif ()
@@ -136,7 +136,7 @@ target_link_libraries (${PROJECT_NAME}
 						Assets
 						juce::juce_recommended_config_flags
 						juce::juce_recommended_lto_flags
-						juce::juce_recommended_warning_flags
+						#juce::juce_recommended_warning_flags
 					)
 
 if (APPLE)

@@ -25,7 +25,8 @@
 SynthVoice3::SynthVoice3(APAudioProcessor &p)
     : proc(p), mseg1(proc.mseg1Data), mseg2(proc.mseg2Data),
       mseg3(proc.mseg3Data), mseg4(proc.mseg4Data), osc1(p.upsampledTables),
-      osc2(p.upsampledTables), osc3(p.upsampledTables), osc4(p.upsampledTables)
+      osc2(p.upsampledTables), osc3(p.upsampledTables), osc4(p.upsampledTables),
+	  env1(p.convex), env2(p.convex), env3(p.convex), env4(p.convex)
 {
 	mseg1.reset();
 	mseg2.reset();

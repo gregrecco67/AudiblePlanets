@@ -1,37 +1,5 @@
 #include "Envelope.h"
 
-double Envelope::convex[2000];
-double Envelope::concave[2000];
-bool Envelope::isInitialized{false};
-//==============================================================================
-Envelope::Envelope()
-{
-	if (!isInitialized) {
-		// generate lookup tables for MMA curves
-		for (int i = 1; i < 1999; i++) {
-			// MMA curve transforms
-			if (i / 2000.0 > 0.99) {
-				// linear segment avoids blow-up
-				concave[i] = 16.6666666666667 * (i / 2000. - 0.99) + 0.8333333333333;
-			} else {
-				concave[i] = -(5.0 / 12.0) * std::log10(1.0 - (i / 2000.0));
-			}
-
-			if (i / 2000.0 < 0.01) {
-				// here it comes to save the day
-				convex[i] = 16.666666666667 * (i/2000.0);
-			} else {
-				convex[i] = 1 + (5.0 / 12.0) * std::log10(i / 2000.0);
-			}
-		}
-		concave[0] = 0.0;
-		convex[0] = 0.0;
-		concave[1999] = 1.0;
-		convex[1999] = 1.0;
-		isInitialized = true;
-	}
-	recalculateRates();
-}
 
 //==============================================================================
 
@@ -58,6 +26,71 @@ void Envelope::noteOff() noexcept
 	}
 }
 
+double Envelope::getValForIdx(double idx, bool isAttack)
+{
+	idx = std::clamp(idx, 0.0, 1.0);
+	double c = isAttack ? parameters.aCurve : parameters.dRCurve;
+	double cVal;
+	if (isAttack)
+	{
+		if (c > 0) {
+			int x = std::clamp(static_cast<int>((1 - idx) * 1024.), 0, 1023);
+			auto l1 = convex[x];
+			auto l2 = convex[std::min(x + 1, 1023)];
+			auto frac = (1 - idx) * 1024.0 - std::floor((1 - idx) * 1024.);
+			auto lookup = (1 - frac) * l1 + frac * l2;
+			cVal = (1 - c) * idx + c * (1 - lookup);
+		}
+		else {
+			int x = std::clamp(static_cast<int>(idx * 1024.), 0, 1023);
+			auto l1 = convex[x];
+			auto l2 = convex[std::min(x + 1, 1023)];
+			auto frac = idx * 1024.0 - std::floor(idx * 1024.);
+			auto lookup = (1 - frac) * l1 + frac * l2;
+			cVal = (1 + c) * idx - c * lookup;
+		}
+	}
+	if (!isAttack)
+	{
+		if (c < 0)
+		{
+			int x = std::clamp(static_cast<int>(idx * 1024.), 0, 1023);
+			auto l1 = convex[x];
+			auto l2 = convex[std::min(x + 1, 1023)];
+			auto frac = idx * 1024.0 - std::floor(idx * 1024.);
+			auto lookup = (1 - frac) * l1 + frac * l2;
+			cVal = (1 + c) * idx - c * lookup;
+		}
+		else {
+			int x = std::clamp((int)((1 - idx) * 1024.), 0, 1023);
+			auto l1 = 1 - convex[x];
+			auto l2 = 1 - convex[std::min(x + 1, 1023)];
+			auto frac = idx * 1024.0 - std::floor(idx * 1024.);
+			auto lookup = (1 - frac) * l1 + frac * l2;
+			cVal = (1 - c) * idx + c * lookup;
+		}
+	}
+	return cVal;
+}
+
+double Envelope::getIdxForVal(double val)
+{
+	double low{0}, high{1}, mid{0.5}, tol{0.05};
+	double diff = getValForIdx(mid, false) - val;
+	while (std::abs(diff) > tol) {
+		if (diff > 0) {	
+		    high = mid;
+		    mid = (high + low) * 0.5;
+		}
+		else { 
+		    low = mid;
+		    mid = (high + low) * 0.5;
+		}
+		diff = getValForIdx(mid, false) - val;
+	}
+	return mid;
+}
+
 float Envelope::getNextSample() noexcept
 {
 	timeSinceStart += (float)inverseSampleRate;
@@ -71,14 +104,7 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal += attackRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
-		if (parameters.aCurve > 0.0f) {
-			curveVal = convex[std::clamp(static_cast<int>(linearIdxVal * 2000.), 0, 1999)];
-			finalOut = std::clamp((1.0 - parameters.aCurve) * linearIdxVal + parameters.aCurve * curveVal, 0.0, 1.0);
-		} else {
-			curveVal = concave[std::clamp(static_cast<int>(linearIdxVal * 2000.), 0, 1999)];
-			finalOut = std::clamp((1.0 + parameters.aCurve) * linearIdxVal - parameters.aCurve * curveVal, 0.0, 1.0);
-		}
-
+		finalOut = getValForIdx(linearIdxVal, true);
 		releaseStart = finalOut;  // in case note is released before attack finishes
 
 		if (linearIdxVal >= .999) {
@@ -90,23 +116,7 @@ float Envelope::getNextSample() noexcept
 	break;
 
 	case State::ADRattack: {
-		linearIdxVal += attackRate;
-		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
-
-		if (parameters.aCurve > 0.0f) {
-			curveVal =
-				convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			finalOut = std::clamp((1.0 - parameters.aCurve) * linearIdxVal +
-										parameters.aCurve * curveVal,
-									0.0, 1.0);
-		} else {
-			curveVal =
-				concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			finalOut = std::clamp((1.0 + parameters.aCurve) * linearIdxVal -
-										parameters.aCurve * curveVal,
-									0.0, 1.0);
-		}
-
+		finalOut = getValForIdx(linearIdxVal, true);
 		releaseStart = finalOut;  // in case note is released before attack finishes
 
 		if (timeSinceStart >= duration) {
@@ -128,14 +138,7 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal -= decayRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
-		if (parameters.dRCurve > 0.0) {
-			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			unmappedVal = std::clamp(((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal), 0.0, 1.0);
-		} else {
-			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			unmappedVal = std::clamp(((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal), 0.0, 1.0);
-		}
-
+		auto unmappedVal = getValForIdx(linearIdxVal, false);
 		finalOut = juce::jmap(unmappedVal, 0.0, 1.0, parameters.sustainLevel, 1.0);
 		releaseStart = finalOut;
 
@@ -149,19 +152,7 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal -= decayRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
-		if (parameters.dRCurve > 0.0) 
-		{
-			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			unmappedVal = std::clamp(((1.0 - parameters.dRCurve) * linearIdxVal 
-				+ parameters.dRCurve * curveVal), 0.0, 1.0);
-		} 
-		else 
-		{
-			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			unmappedVal = std::clamp(((1.0 + parameters.dRCurve) * linearIdxVal 
-				- parameters.dRCurve * curveVal), 0.0, 1.0);
-		}
-
+		auto unmappedVal = getValForIdx(linearIdxVal, false);
 		finalOut = juce::jmap(unmappedVal, 0.0, 1.0, parameters.sustainLevel, 1.0);
 		releaseStart = finalOut;
 
@@ -181,20 +172,13 @@ float Envelope::getNextSample() noexcept
 	case State::release: {
 		if (juce::approximatelyEqual(linearIdxVal, 1.0))
 		{
-			linearIdxVal = releaseStart;
+			linearIdxVal = getIdxForVal(linearIdxVal);
 		}
 
 		linearIdxVal -= releaseRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
-		if (parameters.dRCurve > 0.0) {
-			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			unmappedVal = std::clamp((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal, 0.0, 1.0);
-		} else if (parameters.dRCurve <= 0.0) {
-			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			unmappedVal = std::clamp((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal, 0.0, 1.0);
-		}
-
+		auto unmappedVal = getValForIdx(linearIdxVal, false);
 		finalOut = juce::jmap(unmappedVal, 0.0, 1.0, 0.0, releaseStart);
 		if (linearIdxVal <= 0.001f)
 			goToNextState();
@@ -202,17 +186,14 @@ float Envelope::getNextSample() noexcept
 	break;
 
 	case State::ADRrelease: {
+		if (juce::approximatelyEqual(linearIdxVal, 1.0))
+		{
+			linearIdxVal = getIdxForVal(linearIdxVal);
+		}
 		linearIdxVal -= releaseRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 0.999);
 
-		if (parameters.dRCurve > 0.0) {
-			curveVal = convex[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			unmappedVal = std::clamp((1.0 - parameters.dRCurve) * linearIdxVal + parameters.dRCurve * curveVal, 0.0, 1.0);
-		} else if (parameters.dRCurve <= 0.0) {
-			curveVal = concave[std::clamp((int)(linearIdxVal * 2000.), 0, 1999)];
-			unmappedVal = std::clamp((1.0 + parameters.dRCurve) * linearIdxVal - parameters.dRCurve * curveVal, 0.0, 1.0);
-		}
-
+		auto unmappedVal = getValForIdx(linearIdxVal, false);
 		finalOut = juce::jmap(unmappedVal, 0.0, 1.0, 0.0, releaseStart);
 
 		if (timeSinceStart >= duration)
