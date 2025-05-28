@@ -19,7 +19,7 @@ void AuxSynth::handleMidiEvent(const juce::MidiMessage &m)
 
 	if (m.isAftertouch()) {
 		for (auto &voice : voices) {
-			AuxSynthVoice *svoice = static_cast<AuxSynthVoice *>(voice);
+			auto *svoice = static_cast<AuxSynthVoice *>(voice);
 			if (svoice->curNote.initialNote == m.getNoteNumber()) {
 				proc.modMatrix.setPolyValue(*svoice, proc.modPolyAT,
 				                            m.getAfterTouchValue() / 127.0f);

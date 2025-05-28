@@ -14,7 +14,7 @@ public:
 	void processBlock(float *x, const int nSamples) override
 	{
 		for (int n = 0; n < nSamples; ++n)
-			x[n] = 0.8f * (float)Type::process((double)x[n]);
+			x[n] = 0.8f * static_cast<float>(Type::process(static_cast<double>(x[n])));
 	}
 
 	inline double func(double x) const noexcept override

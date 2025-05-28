@@ -12,10 +12,10 @@ public:
 
     void initialise() override
     {
-        lut.initialise ([=] (double x) { return func (x); },
+        lut.initialise ([this] (double x) { return func (x); },
             LUTConst::minVal, LUTConst::maxVal, N);
 
-        lut_AD1.initialise ([=] (double x) { return func_AD1 (x); },
+        lut_AD1.initialise ([this] (double x) { return func_AD1 (x); },
             2 * LUTConst::minVal, 2 * LUTConst::maxVal, 2 * N);
     }
 

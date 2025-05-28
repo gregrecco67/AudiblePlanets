@@ -17,7 +17,7 @@ public:
 
     void initialise() override
     {
-        lut.initialise ([=] (double x) { return func (x); },
+        lut.initialise ([this] (double x) { return func (x); },
             LUTConst::minVal, LUTConst::maxVal, N);
     }
 

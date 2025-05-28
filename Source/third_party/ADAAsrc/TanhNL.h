@@ -23,7 +23,7 @@ public:
     void processBlock (float* x, const int nSamples) override
     {
         for (int n = 0; n < nSamples; ++n)
-            x[n] = (float) Type::process ((double) x[n]);
+            x[n] = static_cast<float>(Type::process (static_cast<double>(x[n])));
     }
 
 protected:
