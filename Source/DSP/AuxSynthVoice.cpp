@@ -18,7 +18,8 @@
 //==============================================================================
 AuxSynthVoice::AuxSynthVoice(APAudioProcessor &p)
     : proc(p), osc(proc.analogTables, 8), mseg1(proc.mseg1Data),
-      mseg2(proc.mseg2Data), mseg3(proc.mseg3Data), mseg4(proc.mseg4Data)
+      mseg2(proc.mseg2Data), mseg3(proc.mseg3Data), mseg4(proc.mseg4Data),
+	  env1(proc.convex), env2(proc.convex), env3(proc.convex), env4(proc.convex)
 {
 	mseg1.reset();
 	mseg2.reset();

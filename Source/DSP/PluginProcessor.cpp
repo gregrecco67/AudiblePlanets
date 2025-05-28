@@ -927,6 +927,18 @@ APAudioProcessor::APAudioProcessor()
 					extractProgram(BinaryData::originalFilenames[i], data, sz);
 	}
 
+	for (int i = 1; i < 1024; i++) {
+		if (i / 1024.0 > 0.99) {
+			convex[i] = 16.6666666666667 * (i / 1024.0 - 0.99) + 0.8333333333333;
+		}
+		else {
+			convex[i] = -(5.0 / 12.0) * std::log10(1.0 - (i / 1024.0));
+		}
+	}
+	convex[0] = 0.0;
+	convex[1023] = 1.0;
+
+
 	hiir::PolyphaseIir2Designer::compute_coefs_spec_order_tbw(coefs1, nbr_coefs1, .28);
 	hiir::PolyphaseIir2Designer::compute_coefs_spec_order_tbw(coefs2, nbr_coefs2, .03);
 

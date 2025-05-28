@@ -60,7 +60,7 @@ endif ()
 
 if (MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE 
-            # /wd26495 /wd4459 /wd4244 /wd4996 /wd4267 /wd4244
+            /wd26495 /wd4459 /wd4244 /wd4996 /wd4267 /wd4244
 		)
     add_compile_definitions(MIPP_ALIGNED_LOADS USE_SSE)
 endif ()
@@ -135,8 +135,8 @@ target_link_libraries (${PROJECT_NAME}
 					PUBLIC
 						Assets
 						juce::juce_recommended_config_flags
-						juce::juce_recommended_lto_flags
-						juce::juce_recommended_warning_flags
+						#juce::juce_recommended_lto_flags
+						#juce::juce_recommended_warning_flags
 					)
 
 if (APPLE)

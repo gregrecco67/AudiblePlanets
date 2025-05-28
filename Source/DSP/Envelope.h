@@ -22,9 +22,13 @@
 class Envelope {
 public:
 	//==============================================================================
-	Envelope();
+	Envelope(const std::array<double, 1024>& convex_) : convex(convex_)  {
+		recalculateRates();
+	}
 
 	~Envelope() = default;
+
+	const std::array<double, 1024>& convex;
 
 	//==============================================================================
 	enum class State {
@@ -95,16 +99,9 @@ public:
 
 	void noteOn() noexcept;
 	void noteOff() noexcept;
+	double getValForIdx(double idx, bool isAttack);
 	float getNextSample() noexcept;
-	void advance(int frames)
-	{
-		for (int i = 0; i < frames; i++) {
-			getNextSample();
-		}
-	}
-
-	static double convex[2000], concave[2000];
-	static bool isInitialized;
+	void advance(int frames) { for (int i = 0; i < frames; i++) { getNextSample(); } }
 
 private:
 	//==============================================================================
