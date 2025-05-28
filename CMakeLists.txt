@@ -22,7 +22,7 @@ foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_sim
 	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
 endforeach()
 
-set(VersionString 1.2.0)
+set(VersionString 1.2.2)
 add_definitions( -DVERSION_STRING="${VersionString}" )
 # also set this in PluginEditor.cpp -> showAboutInfo()
 
