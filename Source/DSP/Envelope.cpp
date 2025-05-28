@@ -73,6 +73,24 @@ double Envelope::getValForIdx(double idx, bool isAttack)
 	return cVal;
 }
 
+double Envelope::getIdxForVal(double val)
+{
+	double low{0}, high{1}, mid{0.5}, tol{0.05};
+	double diff = getValForIdx(mid, false) - val;
+	while (std::abs(diff) > tol) {
+		if (diff > 0) {	
+		    high = mid;
+		    mid = (high + low) * 0.5;
+		}
+		else { 
+		    low = mid;
+		    mid = (high + low) * 0.5;
+		}
+		diff = getValForIdx(mid, false) - val;
+	}
+	return mid;
+}
+
 float Envelope::getNextSample() noexcept
 {
 	timeSinceStart += (float)inverseSampleRate;
@@ -154,8 +172,7 @@ float Envelope::getNextSample() noexcept
 	case State::release: {
 		if (juce::approximatelyEqual(linearIdxVal, 1.0))
 		{
-			// replace with solver
-			linearIdxVal = releaseStart;
+			linearIdxVal = getIdxForVal(linearIdxVal);
 		}
 
 		linearIdxVal -= releaseRate;
@@ -169,6 +186,10 @@ float Envelope::getNextSample() noexcept
 	break;
 
 	case State::ADRrelease: {
+		if (juce::approximatelyEqual(linearIdxVal, 1.0))
+		{
+			linearIdxVal = getIdxForVal(linearIdxVal);
+		}
 		linearIdxVal -= releaseRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 0.999);
 

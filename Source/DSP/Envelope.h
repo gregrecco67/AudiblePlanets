@@ -100,6 +100,7 @@ public:
 	void noteOn() noexcept;
 	void noteOff() noexcept;
 	double getValForIdx(double idx, bool isAttack);
+	double getIdxForVal(double idx);
 	float getNextSample() noexcept;
 	void advance(int frames) { for (int i = 0; i < frames; i++) { getNextSample(); } }
 
