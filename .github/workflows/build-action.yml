@@ -108,65 +108,34 @@ jobs:
           curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_${{ matrix.name }}.zip"
           7z x pluginval_${{ matrix.name }}.zip
           ${{ matrix.pluginval-binary }} --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"
-      #- name: Import Certificates (macOS)
-      #  uses: sudara/basic-macos-keychain-action@v1
-      #  id: keychain
-      #  if: ${{ matrix.name == 'macOS'}}
-      #  with:
-      #    dev-id-app-cert: ${{ secrets.DEV_ID_APP_CERT }}
-      #    dev-id-app-password: ${{ secrets.DEV_ID_APP_PASSWORD }}
-      #    dev-id-installer-cert: ${{ secrets.DEV_ID_INSTALLER_CERT }}
-      #    dev-id-installer-password: ${{ secrets.DEV_ID_INSTALLER_PASSWORD }}
+          
+      - name: Upload Exe (Windows)
+        if: ${{ matrix.name == 'Windows' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}.exe
+          path: "${{ env.ARTIFACTS_PATH }}/${{ env.ARTIFACT_NAME }}.exe"
+	  
+      - name: Upload Zip (Linux)
+        if: ${{ matrix.name == 'Linux' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}.zip
+          path: "${{ env.ARTIFACTS_PATH }}/${{ env.ARTIFACT_NAME }}.zip"
+	  
+      - name: Upload pkg (macOS)
+        if: ${{ matrix.name == 'macOS' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}.pkg
+          path: packaging/${{ env.ARTIFACT_NAME }}.pkg
 
-      #- name: Codesign (macOS)
-      #  if: ${{ matrix.name == 'macOS' }}
-      #  timeout-minutes: 5
-      #  run: |
-      #    # Each plugin must be code signed
-      #    codesign --force -s "${{ secrets.DEVELOPER_ID_APPLICATION}}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
-      #    codesign --force -s "${{ secrets.DEVELOPER_ID_APPLICATION}}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
-      #    codesign --force -s "${{ secrets.DEVELOPER_ID_APPLICATION}}" -v "${{ env.CLAP_PATH }}" --deep --strict --options=runtime --timestamp
-      #    codesign --force -s "${{ secrets.DEVELOPER_ID_APPLICATION}}" -v "${{ env.STANDALONE_PATH }}" --deep --strict --options=runtime --timestamp
-
-      #
-	  #
-      #- name: Upload Exe (Windows)
-      #  if: ${{ matrix.name == 'Windows' }}
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: ${{ env.ARTIFACT_NAME }}.exe
-      #    path: "${{ env.ARTIFACTS_PATH }}/${{ env.ARTIFACT_NAME }}.exe"
-	  #
-      #- name: Upload Zip (Linux)
-      #  if: ${{ matrix.name == 'Linux' }}
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: ${{ env.ARTIFACT_NAME }}.zip
-      #    path: "${{ env.ARTIFACTS_PATH }}/${{ env.ARTIFACT_NAME }}.zip"
-	  #
-      #- name: Upload pkg (macOS)
-      #  if: ${{ matrix.name == 'macOS' }}
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: ${{ env.ARTIFACT_NAME }}.pkg
-      #    path: packaging/${{ env.ARTIFACT_NAME }}.pkg
-
-  #release:
-  #  if: contains(github.ref, 'tags/v')
-  #  runs-on: ubuntu-latest
-  #  needs: build_and_test
-  #
-  #  steps:
-  #    - name: Get Artifacts
-  #      uses: actions/download-artifact@v4
-  #
-  #    - name: Create Release
-  #      uses: softprops/action-gh-release@v2
-  #      with:
-  #        prerelease: true
-  #        # download-artifact puts these files in their own dirs...
-  #        # Using globs sidesteps having to pass the version around
-  #        files: |
-  #          */*.exe
-  #          */*.zip
-  #          */*.dmg
+  release:
+    if: contains(github.ref, 'tags/v')
+    runs-on: ubuntu-latest
+    needs: build_and_test
+  
+    steps:
+      - name: Get Artifacts
+        uses: actions/download-artifact@v4
+  
