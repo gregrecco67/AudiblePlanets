@@ -238,15 +238,15 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 	// the whole enchilada
 	for (int i = 0; i < std::ceil((static_cast<float>(numSamples)) / 4.f);i++) 
 	{
-		mipp::Reg<float> a = envs[0]->getOutput();  // assigned in updateParams
-		mipp::Reg<float> b = envs[1]->getOutput();  // envs[0] ~= env1!, etc.
-		mipp::Reg<float> c = envs[2]->getOutput();
-		mipp::Reg<float> d = envs[3]->getOutput();
+		a = envs[0]->getOutput();  // assigned in updateParams
+		b = envs[1]->getOutput();  // envs[0] ~= env1!, etc.
+		c = envs[2]->getOutput();
+		d = envs[3]->getOutput();
 
-		env1.advance(1);
-		env2.advance(1);
-		env3.advance(1);
-		env4.advance(1);
+		env1.getNextSample();
+		env2.getNextSample();
+		env3.getNextSample();
+		env4.getNextSample();
 
 		osc1x.load(&osc1xs[i * 4]);  // vectors of samples
 		osc1y.load(&osc1ys[i * 4]);
@@ -267,7 +267,7 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 		// angle
 		dist2sq = mipp::fmadd((epi2ys[i] - equant), (epi2ys[i] - equant), (epi2xs[i] * epi2xs[i]));
 		dist2 = mipp::sqrt(dist2sq);
-		invDist2 = mipp::Reg<float>(1.0f) / (dist2 + .000001f);
+		invDist2 = oneFloat / (dist2 + .000001f);
 
 		epi3xs[i] = mipp::fmadd(osc3x, c, epi2xs[i] * bits3[algo][0] + epi1xs[i] * bits3[algo][1]);
 		epi3ys[i] = mipp::fmadd(osc3y, c, epi2ys[i] * bits3[algo][0] + epi1ys[i] * bits3[algo][1]);
@@ -276,13 +276,13 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 
 		dist3sq = mipp::fmadd((epi3ys[i] - equant), (epi3ys[i] - equant), (epi3xs[i] * epi3xs[i]));
 		dist3 = mipp::sqrt(dist3sq);
-		invDist3 = mipp::Reg<float>(1.0f) / (dist3 + .000001f);
+		invDist3 = oneFloat / (dist3 + .000001f);
 		dist4sq = mipp::fmadd((epi4ys[i] - equant), (epi4ys[i] - equant), (epi4xs[i] * epi4xs[i]));
 		dist4 = mipp::sqrt(dist4sq);
-		invDist4 = mipp::Reg<float>(1.0f) / (dist4 + .000001f);
+		invDist4 = oneFloat / (dist4 + .000001f);
 
 		// get sine/cosine directly, without calculating angle, apply envelopes
-		auto s4 = epi4ys[i] - (d * equant);
+		auto s4 = epi4ys[i] - (d * equant); // let envelope help tame equant
 		auto s3 = epi3ys[i] - (c * equant);
 		auto s2 = epi2ys[i] - (b * equant);
 
@@ -316,7 +316,6 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 
 		antipop += .03f;
 		antipop = std::min(antipop, 1.0f);
-
 
 		// SHIP IT OUT
 		sampleL.store(&synthBufferL[i * mipp::N<float>()]);
