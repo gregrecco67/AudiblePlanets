@@ -2,6 +2,7 @@ name: Build All
 
 on:
   workflow_dispatch:
+  push:
 
 concurrency:
   group: ${{ github.ref }}
