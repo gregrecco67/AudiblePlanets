@@ -1394,7 +1394,7 @@ private:
 	// utility functions
 	[[nodiscard]] static juce::dsp::SIMDRegister<float> simdSaw(const juce::dsp::SIMDRegister<float> phases)
 	{
-		return (phases * (float)M_1_PI) * 2.0f - 1.0f;
+		return (phases * inv_pi_v<float>) * 2.0f - 1.0f;
 	}
 
 	static juce::dsp::SIMDRegister<float> simdSquare(const juce::dsp::SIMDRegister<float> phases)
