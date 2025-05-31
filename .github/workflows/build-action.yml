@@ -132,7 +132,7 @@ jobs:
           cmake -E tar cvf ${{ github.event.repository.name }}-${{ runner.os }}.zip --format=zip -- ${{ github.event.repository.name }}-${{ runner.os }}
 
       - name: Upload
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-${{ runner.os }}
           path: ${{ github.event.repository.name }}-${{ runner.os }}.zip
