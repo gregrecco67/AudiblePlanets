@@ -16,7 +16,6 @@
 
 #define _USE_MATH_DEFINES
 #include <juce_core/juce_core.h>
-#include <math.h>
 #include <cmath>
 #include <numbers>
 
@@ -55,7 +54,7 @@ public:
 		phaseIncrement = frequency / sampleRate;
 	}
 
-	inline double lerp(double a, double b, double t) const
+	static inline double lerp(double a, double b, double t)
 	{
 		return a + (b - a) * t;
 	}
@@ -69,12 +68,12 @@ public:
 		auto phase240 = phase + 2.0 / 3.0;
 		phase240 = phase240 - std::floor(phase240);
 
-		auto index1 = static_cast<int>(phase * 1024);
-		auto index2 = static_cast<int>(phase120 * 1024);
-		auto index3 = static_cast<int>(phase240 * 1024);
-		double frac1 = phase * 1024 - index1;
-		double frac2 = phase120 * 1024 - index2;
-		double frac3 = phase240 * 1024 - index3;
+		const auto index1 = static_cast<int>(phase * 1024);
+		const auto index2 = static_cast<int>(phase120 * 1024);
+		const auto index3 = static_cast<int>(phase240 * 1024);
+		const double frac1 = phase * 1024 - index1;
+		const double frac2 = phase120 * 1024 - index2;
+		const double frac3 = phase240 * 1024 - index3;
 		values.deg0Value =   static_cast<float>(lerp(sineTable[std::clamp(index1, 0, 1023)], sineTable[std::clamp(index1+1, 0, 1023)], frac1));
 		values.deg120Value = static_cast<float>(lerp(sineTable[std::clamp(index2, 0, 1023)], sineTable[std::clamp(index2+1, 0, 1023)], frac2));
 		values.deg240Value = static_cast<float>(lerp(sineTable[std::clamp(index3, 0, 1023)], sineTable[std::clamp(index3+1, 0, 1023)], frac3));

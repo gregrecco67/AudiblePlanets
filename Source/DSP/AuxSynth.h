@@ -5,9 +5,9 @@
 
 class APAudioProcessor;
 
-class AuxSynth : public gin::Synthesiser {
+class AuxSynth final : public gin::Synthesiser {
 public:
-	AuxSynth(APAudioProcessor &proc_);
+	explicit AuxSynth(APAudioProcessor &proc_);
 	~AuxSynth() override = default;
 
 	void handleMidiEvent(const juce::MidiMessage &m) override;
@@ -16,9 +16,9 @@ public:
 	{
 		juce::Array<float> values;
 
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<AuxSynthVoice *>(v);
+				const auto vav = dynamic_cast<AuxSynthVoice *>(v);
 				values.add(vav->getFilterCutoffNormalized());
 			}
 		}
@@ -30,9 +30,9 @@ public:
 	{
 		std::vector<float> values;
 
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<AuxSynthVoice *>(v);
+				const auto vav = dynamic_cast<AuxSynthVoice *>(v);
 				values.push_back(vav->getMSEG1Phase());
 			}
 		}
@@ -43,9 +43,9 @@ public:
 	{
 		std::vector<float> values;
 
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<AuxSynthVoice *>(v);
+				const auto vav = dynamic_cast<AuxSynthVoice *>(v);
 				values.push_back(vav->getMSEG2Phase());
 			}
 		}
@@ -56,9 +56,9 @@ public:
 	{
 		std::vector<float> values;
 
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<AuxSynthVoice *>(v);
+				const auto vav = dynamic_cast<AuxSynthVoice *>(v);
 				values.push_back(vav->getMSEG3Phase());
 			}
 		}

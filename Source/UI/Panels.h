@@ -26,8 +26,8 @@ inline void gradientRect(juce::Graphics &g,
     const juce::Colour c1,
     const juce::Colour c2)
 {
-	juce::ColourGradient gradient(c1, (float)rc.getX(), (float)rc.getY(), c2,
-	    (float)rc.getRight(), (float)rc.getBottom(), false);
+	const juce::ColourGradient gradient(c1, static_cast<float>(rc.getX()), static_cast<float>(rc.getY()), c2,
+	    static_cast<float>(rc.getRight()), static_cast<float>(rc.getBottom()), false);
 
 	g.setGradientFill(gradient);
 	g.fillRect(rc);
@@ -128,7 +128,7 @@ public:
 		else
 			coarseString += "x";
 		coarseLabel.setText(coarseString, juce::dontSendNotification);
-		int choice = oscparams.env->getUserValueInt();
+		const int choice = oscparams.env->getUserValueInt();
 		switch (num) {
 			case 0:
 				proc.env1osc1 = (choice == 0);
@@ -299,8 +299,7 @@ public:
 	void paramChanged() override
 	{
 		gin::ParamBox::paramChanged();
-		auto choice = envparams.syncrepeat->getUserValueInt();
-		switch (choice) {
+		switch (envparams.syncrepeat->getUserValueInt()) {
 			case 0:
 				beats1->setVisible(false);
 				rate1->setVisible(false);
@@ -366,9 +365,9 @@ public:
 		setName("flt");
 		setTitle("  filter");
 
-		auto &flt = proc.filterParams;
+		const auto &flt = proc.filterParams;
 
-		auto freq = new APKnob(flt.frequency);
+		const auto freq = new APKnob(flt.frequency);
 		addControl(freq, 0, 0);
 		addControl(new APKnob(flt.resonance), 1, 0);
 
@@ -404,9 +403,9 @@ public:
 	APAudioProcessor &proc;
 };
 
-class LevelBox : public gin::ParamBox, public juce::Timer {
+class LevelBox final : public gin::ParamBox, public juce::Timer {
 public:
-	LevelBox(gin::LevelTracker &level_)
+	explicit LevelBox(gin::LevelTracker &level_)
 	    : gin::ParamBox("  level"), levelMeter(level_, juce::NormalisableRange<float>{-60, 0}, true)
 	{
 		//startTimerHz(30);
@@ -538,8 +537,7 @@ public:
 		clearAllButton.setBounds(getWidth() - 60, 0, 55, 23);
 	}
 
-	void clearAll()
-	{
+	void clearAll() const {
 		auto &pluginParams = proc.getPluginParameters();
 		for (auto *param : pluginParams) {
 			if (param->getModIndex() == -1)
@@ -547,7 +545,7 @@ public:
 			if (proc.modMatrix.isModulated(
 			        gin::ModDstId(param->getModIndex()))) {
 				auto modSrcs = proc.modMatrix.getModSources(param);
-				for (auto &modSrc : modSrcs) {
+				for (const auto &modSrc : modSrcs) {
 					proc.modMatrix.clearModDepth(
 					    modSrc, gin::ModDstId(param->getModIndex()));
 				}
@@ -563,9 +561,9 @@ public:
 //==============================================================================
 //==============================================================================
 
-class MacrosBox : public gin::ParamBox {
+class MacrosBox final : public gin::ParamBox {
 public:
-	MacrosBox(APAudioProcessor &proc_) : gin::ParamBox("  macros"), proc(proc_)
+	explicit MacrosBox(APAudioProcessor &proc_) : gin::ParamBox("  macros"), proc(proc_)
 	{
 		setName("macros");
 
@@ -573,12 +571,9 @@ public:
 		addControl(new APKnob(proc.macroParams.macro2), 1, 0);
 		addControl(new APKnob(proc.macroParams.macro3), 2, 0);
 
-		addModSource(new gin::ModulationSourceButton(
-		    proc.modMatrix, proc.macroSrc3, true));
-		addModSource(new gin::ModulationSourceButton(
-		    proc.modMatrix, proc.macroSrc2, true));
-		addModSource(new gin::ModulationSourceButton(
-		    proc.modMatrix, proc.macroSrc1, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc3, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc2, true));
+		addModSource(new gin::ModulationSourceButton(proc.modMatrix, proc.macroSrc1, true));
 
 		addAndMakeVisible(midiLearnButton1);
 		addAndMakeVisible(midiLearnButton2);
@@ -626,7 +621,7 @@ public:
 	void valueUpdated(gin::Parameter *p) override
 	{
 		if (p == proc.macroParams.macro1cc) {
-			auto ccValue = proc.macroParams.macro1cc->getUserValueInt();
+			const auto ccValue = proc.macroParams.macro1cc->getUserValueInt();
 			if (ccValue >= 0) {
 				midiLearnButton1.setCCString(
 				    "CC " + proc.macroParams.macro1cc->getUserValueText());
@@ -638,7 +633,7 @@ public:
 			}
 		}
 		if (p == proc.macroParams.macro2cc) {
-			auto ccValue = proc.macroParams.macro2cc->getUserValueInt();
+			const auto ccValue = proc.macroParams.macro2cc->getUserValueInt();
 			if (ccValue >= 0) {
 				midiLearnButton2.setCCString(
 				    "CC " + proc.macroParams.macro2cc->getUserValueText());
@@ -650,7 +645,7 @@ public:
 			}
 		}
 		if (p == proc.macroParams.macro3cc) {
-			auto ccValue = proc.macroParams.macro3cc->getUserValueInt();
+			const auto ccValue = proc.macroParams.macro3cc->getUserValueInt();
 			if (ccValue >= 0) {
 				midiLearnButton3.setCCString(
 				    "CC " + proc.macroParams.macro3cc->getUserValueText());
@@ -674,9 +669,9 @@ public:
 		clear3.setBounds(112, 128, 56, 35);
 	}
 
-	class MIDILearnButton : public juce::Label {
+	class MIDILearnButton final : public juce::Label {
 	public:
-		MIDILearnButton(APAudioProcessor &p) : proc(p)
+		explicit MIDILearnButton(APAudioProcessor &p) : proc(p)
 		{
 			setEditable(false, false, false);
 			setJustificationType(juce::Justification::left);
@@ -724,13 +719,13 @@ public:
 
 		inline void setLearning(bool shouldLearn) { learning = shouldLearn; }
 
-		class MIDILearnLNF : public APLNF {
+		class MIDILearnLNF final : public APLNF {
 		public:
-			MIDILearnLNF() {}
+			MIDILearnLNF() = default;
 
 			void drawLabel(juce::Graphics &g, juce::Label &label) override
 			{
-				auto rc = label.getLocalBounds();
+				const auto rc = label.getLocalBounds();
 				g.setColour(juce::Colours::white);
 				g.setFont(14.f);
 				g.drawText(label.getText(), rc, juce::Justification::centred);
@@ -753,9 +748,9 @@ public:
 
 //==============================================================================
 
-class VolumeBox : public gin::ParamBox {
+class VolumeBox final : public gin::ParamBox {
 public:
-	VolumeBox(APAudioProcessor &proc_) : gin::ParamBox("  vol"), proc(proc_)
+	explicit VolumeBox(APAudioProcessor &proc_) : gin::ParamBox("  vol"), proc(proc_)
 	{
 		setName("  vol");
 		level = new gin::PluginSlider(proc.globalParams.level,

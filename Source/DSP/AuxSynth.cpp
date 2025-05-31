@@ -18,11 +18,9 @@ void AuxSynth::handleMidiEvent(const juce::MidiMessage &m)
 	MPESynthesiser::handleMidiEvent(m);
 
 	if (m.isAftertouch()) {
-		for (auto &voice : voices) {
-			auto *svoice = static_cast<AuxSynthVoice *>(voice);
-			if (svoice->curNote.initialNote == m.getNoteNumber()) {
-				proc.modMatrix.setPolyValue(*svoice, proc.modPolyAT,
-				                            m.getAfterTouchValue() / 127.0f);
+		for (const auto &voice : voices) {
+			if (auto *svoice = dynamic_cast<AuxSynthVoice *>(voice); svoice->curNote.initialNote == m.getNoteNumber()) {
+				proc.modMatrix.setPolyValue(*svoice, proc.modPolyAT, m.getAfterTouchValue() / 127.0f);
 			}
 		}
 	}

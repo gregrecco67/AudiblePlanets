@@ -8,7 +8,7 @@ class APAudioProcessor;
 
 class APSynth : public gin::Synthesiser {
 public:
-	APSynth(APAudioProcessor &proc_);
+	explicit APSynth(APAudioProcessor &proc_);
 	~APSynth() override = default;
 
 	void handleMidiEvent(const juce::MidiMessage &m) override;
@@ -16,10 +16,9 @@ public:
 	inline juce::Array<float> getLiveFilterCutoff() const
 	{
 		juce::Array<float> values;
-
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				values.add(vav->getFilterCutoffNormalized());
 			}
 		}
@@ -39,9 +38,9 @@ public:
 	inline std::vector<float> getMSEG1Phases() const
 	{
 		std::vector<float> values;
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				values.push_back(vav->getMSEG1Phase());
 			}
 		}
@@ -51,10 +50,9 @@ public:
 	inline std::vector<float> getMSEG2Phases() const
 	{
 		std::vector<float> values;
-
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				values.push_back(vav->getMSEG2Phase());
 			}
 		}
@@ -64,10 +62,9 @@ public:
 	inline std::vector<float> getMSEG3Phases() const
 	{
 		std::vector<float> values;
-
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				values.push_back(vav->getMSEG3Phase());
 			}
 		}
@@ -77,10 +74,9 @@ public:
 	inline std::vector<float> getMSEG4Phases() const
 	{
 		std::vector<float> values;
-
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				values.push_back(vav->getMSEG4Phase());
 			}
 		}
@@ -90,9 +86,9 @@ public:
 	inline std::vector<float> getLFO1Phases() const
 	{
 		std::vector<float> values;
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				values.push_back(vav->getLFO1Phase());
 			}
 		}
@@ -102,10 +98,9 @@ public:
 	inline std::vector<float> getLFO2Phases() const
 	{
 		std::vector<float> values;
-
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				values.push_back(vav->getLFO2Phase());
 			}
 		}
@@ -115,10 +110,9 @@ public:
 	inline std::vector<float> getLFO3Phases() const
 	{
 		std::vector<float> values;
-
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				values.push_back(vav->getLFO3Phase());
 			}
 		}
@@ -128,10 +122,9 @@ public:
 	inline std::vector<float> getLFO4Phases() const
 	{
 		std::vector<float> values;
-
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				values.push_back(vav->getLFO4Phase());
 			}
 		}
@@ -141,9 +134,9 @@ public:
 	inline std::vector<Envelope::EnvelopeState> getENV1States() const
 	{
 		std::vector<Envelope::EnvelopeState> states;
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				states.push_back(vav->getENV1State());
 			}
 		}
@@ -154,9 +147,9 @@ public:
 	{
 		std::vector<Envelope::EnvelopeState> states;
 
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				states.push_back(vav->getENV2State());
 			}
 		}
@@ -166,10 +159,9 @@ public:
 	inline std::vector<Envelope::EnvelopeState> getENV3States() const
 	{
 		std::vector<Envelope::EnvelopeState> states;
-
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				states.push_back(vav->getENV3State());
 			}
 		}
@@ -179,10 +171,9 @@ public:
 	inline std::vector<Envelope::EnvelopeState> getENV4States() const
 	{
 		std::vector<Envelope::EnvelopeState> states;
-
-		for (auto v : voices) {
+		for (const auto v : voices) {
 			if (v->isActive()) {
-				auto vav = dynamic_cast<SynthVoice3 *>(v);
+				const auto vav = dynamic_cast<SynthVoice3 *>(v);
 				states.push_back(vav->getENV4State());
 			}
 		}

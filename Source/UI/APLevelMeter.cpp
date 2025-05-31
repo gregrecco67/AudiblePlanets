@@ -19,7 +19,7 @@ void APLevelMeter::paint(juce::Graphics &g)
 {
 	g.setColour(findColour(lineColourId));
 	g.drawRect(getLocalBounds());
-	auto level = juce::jlimit(range.start, range.end, tracker.getLevel());
+	const auto level = juce::jlimit(range.start, range.end, tracker.getLevel());
 	auto rc = getLocalBounds().toFloat();
 	g.setColour(findColour(meterColourId));
 	if (vertical)

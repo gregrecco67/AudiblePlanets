@@ -75,7 +75,7 @@ public:
 
     static inline float minimaxSin(float x1) {
 		x1 = normalizePhase(x1);
-        float x2 = x1 * x1;
+        const float x2 = x1 * x1;
 
         return x1 * (0.99999999997884898600402426033768998f
         + x2 * (-0.166666666088260696413164261885310067f
@@ -100,7 +100,7 @@ public:
 
 	static inline juce::dsp::SIMDRegister<float> simdSin(juce::dsp::SIMDRegister<float> x1)
 	{
-		juce::dsp::SIMDRegister<float> x2 = x1 * x1;
+		const juce::dsp::SIMDRegister<float> x2 = x1 * x1;
 
 		return  x1 * (SIMD(0.99999999997884898600402426033768998f) +
 		    	x2 * (SIMD(-0.166666666088260696413164261885310067f) +
@@ -111,9 +111,8 @@ public:
 				x2)))));
 	}
 
-private:
-	FastMath() {}
-	~FastMath() {}
+	FastMath() = default;
+	~FastMath() = default;
 
 	FastMath(const FastMath &) = delete;
 	FastMath &operator=(const FastMath &) = delete;

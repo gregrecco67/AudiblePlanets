@@ -31,13 +31,13 @@ public:
 	{
 	}
 
-	~APModulationDepthSlider() override {}
+	~APModulationDepthSlider() override = default;
 
 	juce::String getTextFromValue(double value) override
 	{
 		if (onTextFromValue)
 			return onTextFromValue(value);
-		return juce::String(value, 2);
+		return {value, 2};
 	}
 
 	std::function<void()> onClick;
@@ -97,7 +97,7 @@ public:
 
 	juce::String getTextFromValue(double value) override
 	{
-		return juce::String(value, 3);
+		return {value, 3};
 	}
 
 	std::function<juce::String(double)> onTextFromValue;
@@ -134,7 +134,7 @@ public:
 
 		auto &params = proc.getPluginParameters();
 		for (gin::Parameter *p : params)
-			for (auto s : modMatrix.getModSources(p))
+			for (const auto& s : modMatrix.getModSources(p))
 				assignments.add({s, p});
 
 		updateContent();
@@ -160,7 +160,7 @@ public:
 
 	class Row : public juce::Component, private juce::Slider::Listener {
 	public:
-		Row(APModMatrixBox &o) : owner(o)
+		explicit Row(APModMatrixBox &o) : owner(o)
 		{
 			addAndMakeVisible(enableButton);
 			addAndMakeVisible(deleteButton);
@@ -439,7 +439,7 @@ public:
 
 			juce::String getTextFromValue(double value) override
 			{
-				return juce::String(value, 3);
+				return {value, 3};
 			}
 
 			std::function<juce::String(double)> onTextFromValue;
@@ -490,8 +490,8 @@ public:
 				} else {
 					g.setColour(juce::Colours::darkgrey.withAlpha(0.5f));
 				}
-				float t = static_cast<float>(rc.getY());
-				float h = static_cast<float>(rc.getHeight());
+				auto t = static_cast<float>(rc.getY());
+				auto h = static_cast<float>(rc.getHeight());
 				auto c =  static_cast<float>(rc.getCentreX());
 				if (sliderPos < c)
 					g.fillRect(
@@ -534,7 +534,7 @@ class APKnob : public gin::ParamComponent,
                private juce::Timer,
                private gin::ModMatrix::Listener {
 public:
-	APKnob(gin::Parameter *p, bool fromCentre = false)
+	explicit APKnob(gin::Parameter *p, bool fromCentre = false)
 	    : gin::ParamComponent(p), value(parameter),
 	      knob(parameter,
 	          juce::Slider::RotaryHorizontalVerticalDrag,
@@ -605,22 +605,16 @@ public:
 		};
 
 		if (auto mm = parameter->getModMatrix()) {
-			if (auto depths =
-			        mm->getModDepths(gin::ModDstId(parameter->getModIndex()));
-			    depths.size() > 0) {
-				currentModSrc = depths[0].first;
-			}
+			if (auto depths = mm->getModDepths(gin::ModDstId(parameter->getModIndex())); !depths.empty())
+				{ currentModSrc = depths[0].first; }
 		}
 		modDepthSlider.onClick = [this] { showModMenu(); };
 		modDepthSlider.setMouseDragSensitivity(500);
 		modDepthSlider.onValueChange = [this] {
 			if (auto mm = parameter->getModMatrix()) {
 				auto dst = gin::ModDstId(parameter->getModIndex());
-
-				if (auto depths = mm->getModDepths(dst); depths.size() > 0) {
-					mm->setModDepth(
-					    currentModSrc, dst, float(modDepthSlider.getValue()));
-				}
+				if (auto depths = mm->getModDepths(dst); !depths.empty())
+					{ mm->setModDepth(currentModSrc, dst, float(modDepthSlider.getValue())); }
 			}
 		};
 
@@ -628,7 +622,7 @@ public:
 			if (auto mm = parameter->getModMatrix()) {
 				auto dst = gin::ModDstId(parameter->getModIndex());
 
-				if (auto depths = mm->getModDepths(dst); depths.size() > 0) {
+				if (auto depths = mm->getModDepths(dst); !depths.empty()) {
 					auto pname = mm->getModSrcName(currentModSrc);
 					return pname + ": " + juce::String(v);
 				}
@@ -868,7 +862,7 @@ public:
 			if (!sources.contains(currentModSrc)) {
 				currentModSrc = gin::ModSrcId{-1};
 			}
-			for (auto src : sources) {
+			for (const auto& src : sources) {
 				if (currentModSrc == gin::ModSrcId{-1}) {
 					currentModSrc = src;
 				}
@@ -883,8 +877,8 @@ public:
 					resized();
 				}
 
-				if (auto depths = mm->getModDepths(dst); depths.size() > 0) {
-					for (auto depth : depths) {
+				if (auto depths = mm->getModDepths(dst); !depths.empty()) {
+					for (const auto& depth : depths) {
 						if (depth.first == currentModSrc)
 							modDepthSlider.setValue(
 							    depth.second, juce::dontSendNotification);
@@ -918,7 +912,7 @@ public:
 		m.setLookAndFeel(&getLookAndFeel());
 
 		auto &mm = *parameter->getModMatrix();
-		for (auto src : mm.getModSources(parameter)) {
+		for (const auto& src : mm.getModSources(parameter)) {
 			bool current{false};
 			if (currentModSrc == gin::ModSrcId{-1}) {
 				currentModSrc = src;
@@ -930,9 +924,7 @@ public:
 			    "Remove: " + mm.getModSrcName(src), true, current, [this, src] {
 				    auto dst = gin::ModDstId(parameter->getModIndex());
 				    parameter->getModMatrix()->clearModDepth(src, dst);
-				    if (auto depths =
-				            parameter->getModMatrix()->getModDepths(dst);
-				        depths.size() > 0) {
+				    if (auto depths = parameter->getModMatrix()->getModDepths(dst); !depths.empty()) {
 					    currentModSrc = depths[0].first;
 				    } else {
 					    currentModSrc = gin::ModSrcId(-1);
@@ -943,7 +935,7 @@ public:
 
 		m.addSeparator();
 
-		for (auto src : mm.getModSources(parameter)) {
+		for (const auto& src : mm.getModSources(parameter)) {
 			if (currentModSrc == gin::ModSrcId{-1}) {
 				currentModSrc = src;
 			}

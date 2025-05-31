@@ -78,7 +78,7 @@ public:
 
 		gin::Parameter::Ptr coarse, fine, volume, env, wave, fixed, phase;
 
-		void setup(APAudioProcessor &p, juce::String number);
+		void setup(APAudioProcessor &p, const juce::String& number);
 		int num;
 		JUCE_DECLARE_NON_COPYABLE(OSCParams)
 	};
@@ -99,7 +99,7 @@ public:
 		gin::Parameter::Ptr enable, sync, wave, rate, beat, depth, phase,
 		    offset, fade, delay, level, env;
 
-		void setup(APAudioProcessor &p, juce::String num);
+		void setup(APAudioProcessor &p, const juce::String& num);
 		int num;
 		JUCE_DECLARE_NON_COPYABLE(LFOParams)
 	};
@@ -110,7 +110,7 @@ public:
 		gin::Parameter::Ptr attack, decay, sustain, release, acurve, drcurve,
 		    syncrepeat, time, duration;
 
-		void setup(APAudioProcessor &p, juce::String number);
+		void setup(APAudioProcessor &p, const juce::String& number);
 		int num;
 		JUCE_DECLARE_NON_COPYABLE(ENVParams)
 	};
@@ -129,7 +129,7 @@ public:
 		MSEGParams() = default;
 		gin::Parameter::Ptr sync, rate, beat, depth, offset, phase, enable,
 		    xgrid, ygrid, loop, draw, drawmode;
-		void setup(APAudioProcessor &p, juce::String number);
+		void setup(APAudioProcessor &p, const juce::String& number);
 		int num;
 		JUCE_DECLARE_NON_COPYABLE(MSEGParams)
 	};

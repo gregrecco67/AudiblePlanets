@@ -27,9 +27,9 @@ class APAudioProcessor;
 using std::numbers::pi_v;
 
 //==============================================================================
-class SynthVoice3 : public gin::SynthesiserVoice, public gin::ModVoice {
+class SynthVoice3 final : public gin::SynthesiserVoice, public gin::ModVoice {
 public:
-	SynthVoice3(APAudioProcessor &p);
+	explicit SynthVoice3(APAudioProcessor &p);
 
 	void noteStarted() override;
 	void noteRetriggered() override;
@@ -46,7 +46,7 @@ public:
 	    int startSample,
 	    int numSamples) override;
 
-	mipp::Reg<float> mix(mipp::Reg<float> a, mipp::Reg<float> b, float mix);
+	mipp::Reg<float> mix(const mipp::Reg<float>& aReg, const mipp::Reg<float>& bReg, const float mix);
 
 	float getCurrentNote() override
 	{
@@ -55,22 +55,22 @@ public:
 
 	bool isVoiceActive() override { return isActive(); }
 	
-	float getFilterCutoffNormalized();
-	inline float getMSEG1Phase() { return mseg1.getCurrentPhase(); }
-	inline float getMSEG2Phase() { return mseg2.getCurrentPhase(); }
-	inline float getMSEG3Phase() { return mseg3.getCurrentPhase(); }
-	inline float getMSEG4Phase() { return mseg4.getCurrentPhase(); }
+	float getFilterCutoffNormalized() const;
+	[[nodiscard]] inline float getMSEG1Phase() const { return mseg1.getCurrentPhase(); }
+	[[nodiscard]] inline float getMSEG2Phase() const { return mseg2.getCurrentPhase(); }
+	[[nodiscard]] inline float getMSEG3Phase() const { return mseg3.getCurrentPhase(); }
+	[[nodiscard]] inline float getMSEG4Phase() const { return mseg4.getCurrentPhase(); }
 	inline float getLFO1Phase() { return lfo1.getCurrentPhase(); }
 	inline float getLFO2Phase() { return lfo2.getCurrentPhase(); }
 	inline float getLFO3Phase() { return lfo3.getCurrentPhase(); }
 	inline float getLFO4Phase() { return lfo4.getCurrentPhase(); }
 	
-	inline Envelope::EnvelopeState getENV1State() { return env1.getState(); }
-	inline Envelope::EnvelopeState getENV2State() { return env2.getState(); }
-	inline Envelope::EnvelopeState getENV3State() { return env3.getState(); }
-	inline Envelope::EnvelopeState getENV4State() { return env4.getState(); }
+	[[nodiscard]] inline Envelope::EnvelopeState getENV1State() const { return env1.getState(); }
+	[[nodiscard]] inline Envelope::EnvelopeState getENV2State() const { return env2.getState(); }
+	[[nodiscard]] inline Envelope::EnvelopeState getENV3State() const { return env3.getState(); }
+	[[nodiscard]] inline Envelope::EnvelopeState getENV4State() const { return env4.getState(); }
 	
-	gin::Wave waveForChoice(int choice);
+	gin::Wave waveForChoice(const int choice);
 
 private:
 	void updateParams(int blockSize);

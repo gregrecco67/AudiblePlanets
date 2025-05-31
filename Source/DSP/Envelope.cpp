@@ -26,27 +26,26 @@ void Envelope::noteOff() noexcept
 	}
 }
 
-double Envelope::getValForIdx(double idx, bool isAttack)
-{
+double Envelope::getValForIdx(double idx, const bool isAttack) const {
 	idx = std::clamp(idx, 0.0, 1.0);
-	double c = isAttack ? parameters.aCurve : parameters.dRCurve;
+	const double c = isAttack ? parameters.aCurve : parameters.dRCurve;
 	double cVal;
 	if (isAttack)
 	{
 		if (c > 0) {
-			int x = std::clamp(static_cast<int>((1 - idx) * 1024.), 0, 1023);
-			auto l1 = convex[x];
-			auto l2 = convex[std::min(x + 1, 1023)];
-			auto frac = (1 - idx) * 1024.0 - std::floor((1 - idx) * 1024.);
-			auto lookup = (1 - frac) * l1 + frac * l2;
+			const int x = std::clamp(static_cast<int>((1 - idx) * 1024.), 0, 1023);
+			const auto l1 = convex[x];
+			const auto l2 = convex[std::min(x + 1, 1023)];
+			const auto frac = (1 - idx) * 1024.0 - std::floor((1 - idx) * 1024.);
+			const auto lookup = (1 - frac) * l1 + frac * l2;
 			cVal = (1 - c) * idx + c * (1 - lookup);
 		}
 		else {
-			int x = std::clamp(static_cast<int>(idx * 1024.), 0, 1023);
-			auto l1 = convex[x];
-			auto l2 = convex[std::min(x + 1, 1023)];
-			auto frac = idx * 1024.0 - std::floor(idx * 1024.);
-			auto lookup = (1 - frac) * l1 + frac * l2;
+			const int x = std::clamp(static_cast<int>(idx * 1024.), 0, 1023);
+			const auto l1 = convex[x];
+			const auto l2 = convex[std::min(x + 1, 1023)];
+			const auto frac = idx * 1024.0 - std::floor(idx * 1024.);
+			const auto lookup = (1 - frac) * l1 + frac * l2;
 			cVal = (1 + c) * idx - c * lookup;
 		}
 	}
@@ -54,28 +53,29 @@ double Envelope::getValForIdx(double idx, bool isAttack)
 	{
 		if (c < 0)
 		{
-			int x = std::clamp(static_cast<int>(idx * 1024.), 0, 1023);
-			auto l1 = convex[x];
-			auto l2 = convex[std::min(x + 1, 1023)];
-			auto frac = idx * 1024.0 - std::floor(idx * 1024.);
-			auto lookup = (1 - frac) * l1 + frac * l2;
+			const int x = std::clamp(static_cast<int>(idx * 1024.), 0, 1023);
+			const auto l1 = convex[x];
+			const auto l2 = convex[std::min(x + 1, 1023)];
+			const auto frac = idx * 1024.0 - std::floor(idx * 1024.);
+			const auto lookup = (1 - frac) * l1 + frac * l2;
 			cVal = (1 + c) * idx - c * lookup;
 		}
 		else {
-			int x = std::clamp((int)((1 - idx) * 1024.), 0, 1023);
-			auto l1 = 1 - convex[x];
-			auto l2 = 1 - convex[std::min(x + 1, 1023)];
-			auto frac = idx * 1024.0 - std::floor(idx * 1024.);
-			auto lookup = (1 - frac) * l1 + frac * l2;
+			const int x = std::clamp(static_cast<int>((1 - idx) * 1024.), 0, 1023);
+			const auto l1 = 1 - convex[x];
+			const auto l2 = 1 - convex[std::min(x + 1, 1023)];
+			const auto frac = idx * 1024.0 - std::floor(idx * 1024.);
+			const auto lookup = (1 - frac) * l1 + frac * l2;
 			cVal = (1 - c) * idx + c * lookup;
 		}
 	}
 	return cVal;
 }
 
-double Envelope::getIdxForVal(double val)
+double Envelope::getIdxForVal(const double val) const
 {
-	double low{0}, high{1}, mid{0.5}, tol{0.05};
+	double low{0}, high{1}, mid{0.5};
+	constexpr double tol{0.05};
 	double diff = getValForIdx(mid, false) - val;
 	while (std::abs(diff) > tol) {
 		if (diff > 0) {	
@@ -93,7 +93,7 @@ double Envelope::getIdxForVal(double val)
 
 float Envelope::getNextSample() noexcept
 {
-	timeSinceStart += (float)inverseSampleRate;
+	timeSinceStart += static_cast<float>(inverseSampleRate);
 	switch (state) {
 	case State::idle: {
 		finalOut = 0.0;
@@ -138,7 +138,7 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal -= decayRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
-		auto unmappedVal = getValForIdx(linearIdxVal, false);
+		const auto unmappedVal = getValForIdx(linearIdxVal, false);
 		finalOut = juce::jmap(unmappedVal, 0.0, 1.0, parameters.sustainLevel, 1.0);
 		releaseStart = finalOut;
 
@@ -152,7 +152,7 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal -= decayRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
-		auto unmappedVal = getValForIdx(linearIdxVal, false);
+		const auto unmappedVal = getValForIdx(linearIdxVal, false);
 		finalOut = juce::jmap(unmappedVal, 0.0, 1.0, parameters.sustainLevel, 1.0);
 		releaseStart = finalOut;
 
@@ -178,7 +178,7 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal -= releaseRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
 
-		auto unmappedVal = getValForIdx(linearIdxVal, false);
+		const auto unmappedVal = getValForIdx(linearIdxVal, false);
 		finalOut = juce::jmap(unmappedVal, 0.0, 1.0, 0.0, releaseStart);
 		if (linearIdxVal <= 0.001f)
 			goToNextState();
@@ -193,7 +193,7 @@ float Envelope::getNextSample() noexcept
 		linearIdxVal -= releaseRate;
 		linearIdxVal = std::clamp(linearIdxVal, 0.0, 0.999);
 
-		auto unmappedVal = getValForIdx(linearIdxVal, false);
+		const auto unmappedVal = getValForIdx(linearIdxVal, false);
 		finalOut = juce::jmap(unmappedVal, 0.0, 1.0, 0.0, releaseStart);
 
 		if (timeSinceStart >= duration)
@@ -217,7 +217,7 @@ float Envelope::getNextSample() noexcept
 	}
 	} // switch
 
-	auto out = std::clamp((float)finalOut, 0.0f, 1.0f);
+	const auto out = std::clamp(static_cast<float>(finalOut), 0.0f, 1.0f);
 	return out;  // envelopeVal;
 }
 
@@ -234,36 +234,47 @@ void Envelope::recalculateRates() noexcept
 
 void Envelope::goToNextState() noexcept
 {
-	if (state == State::attack) {
-		state = State::decay;
-		linearIdxVal = 1.0;  // decay and release run from 1 to 0
-		return;
+	switch (state) {
+		case State::attack: {
+			state = State::decay;
+			linearIdxVal = 1.0;  // decay and release run from 1 to 0
+			return;
+		}
+		case State::ADRattack: {
+			state = State::ADRdecay;
+			linearIdxVal = 1.0;  // decay and release run from 1 to 0
+			return;
+		}
+		case State::decay: {
+			linearIdxVal = 1.0;
+			state = State::sustain;
+			return;
+		}
+		case State::ADRdecay: {
+			linearIdxVal = 1.0;
+			state = State::ADRrelease;
+			return;
+		}
+		case State::release: {
+			reset();
+			break;
+		}
+		case State::ADRrelease: {
+			if (!parameters.sync)
+				noteOn();
+			else
+				state = State::ADRSyncIdle;
+			break;
+		}
+		default:
+			state = State::idle;
 	}
 
-	if (state == State::ADRattack) {
-		state = State::ADRdecay;
-		linearIdxVal = 1.0;  // decay and release run from 1 to 0
-		return;
-	}
 
-	if (state == State::decay) {
-		linearIdxVal = 1.0;
-		state = State::sustain;
-		return;
-	}
 
-	if (state == State::ADRdecay) {
-		linearIdxVal = 1.0;
-		state = State::ADRrelease;
-		return;
-	}
 
-	if (state == State::release)
-		reset();
 
-	if (state == State::ADRrelease && !parameters.sync)
-		noteOn();
 
-	if (state == State::ADRrelease && parameters.sync)
-		state = State::ADRSyncIdle;
+
+
 }

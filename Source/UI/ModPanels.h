@@ -253,7 +253,7 @@ public:
 		show(1);
 	}
 
-	void show(int selected)
+	void show(const int selected)
 	{
 		for (gin::ParamComponent::Ptr c : {r1, b1, s1, l1, dp1, o1, dr1, ms1,
 		         x1, y1, r2, b2, s2, l2, dp2, o2, dr2, ms2, x2, y2}) {
@@ -307,12 +307,12 @@ public:
 	{
 		gin::ParamBox::paramChanged();
 		if (currentMSEG == 1) {
-			bool sync1 = m1.sync->getUserValueBool();
+			const bool sync1 = m1.sync->getUserValueBool();
 			r1->setVisible(!sync1);
 			b1->setVisible(sync1);
 		}
 		if (currentMSEG == 2) {
-			bool sync2 = m2.sync->getUserValueBool();
+			const bool sync2 = m2.sync->getUserValueBool();
 			r2->setVisible(!sync2);
 			b2->setVisible(sync2);
 		}

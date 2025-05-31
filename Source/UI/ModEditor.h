@@ -24,7 +24,7 @@ class ModEditor : public juce::Component,
                   public gin::Parameter::ParameterListener  // , juce::Timer
 {
 public:
-	ModEditor(APAudioProcessor &proc_);
+	explicit ModEditor(APAudioProcessor &proc_);
 	~ModEditor() override;
 
 	void resized() override;

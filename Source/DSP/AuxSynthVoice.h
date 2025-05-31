@@ -24,9 +24,9 @@ class APAudioProcessor;
 
 using namespace std::numbers;
 //==============================================================================
-class AuxSynthVoice : public gin::SynthesiserVoice, public gin::ModVoice {
+class AuxSynthVoice final : public gin::SynthesiserVoice, public gin::ModVoice {
 public:
-	AuxSynthVoice(APAudioProcessor &p);
+	explicit AuxSynthVoice(APAudioProcessor &p);
 
 	void noteStarted() override;
 	void noteRetriggered() override;
@@ -50,12 +50,12 @@ public:
 
 	bool isVoiceActive() override { return isActive(); }
 
-	float getFilterCutoffNormalized();
+	[[nodiscard]] float getFilterCutoffNormalized() const;
 
-	inline float getMSEG1Phase() const { return mseg1.getCurrentPhase(); }
-	inline float getMSEG2Phase() const { return mseg2.getCurrentPhase(); }
-	inline float getMSEG3Phase() const { return mseg3.getCurrentPhase(); }
-	inline float getMSEG4Phase() const { return mseg4.getCurrentPhase(); }
+	[[nodiscard]] inline float getMSEG1Phase() const { return mseg1.getCurrentPhase(); }
+	[[nodiscard]] inline float getMSEG2Phase() const { return mseg2.getCurrentPhase(); }
+	[[nodiscard]] inline float getMSEG3Phase() const { return mseg3.getCurrentPhase(); }
+	[[nodiscard]] inline float getMSEG4Phase() const { return mseg4.getCurrentPhase(); }
 
 private:
 	void updateParams(int blockSize);

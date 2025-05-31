@@ -25,7 +25,7 @@
 class FXEditor : public juce::Component,
                  public gin::Parameter::ParameterListener {
 public:
-	FXEditor(APAudioProcessor &proc_);
+	explicit FXEditor(APAudioProcessor &proc_);
 	~FXEditor() override;
 	void resized() override;
 	void valueUpdated(gin::Parameter *param) override;

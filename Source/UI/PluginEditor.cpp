@@ -169,7 +169,7 @@ void APAudioProcessorEditor::addMenuItems(juce::PopupMenu &m)
 		    proc.globalParams.mpe->getUserValueBool() ? 0.0f : 1.0f);
 	});
 
-	auto setSize = [this](float scale) {
+	auto setSize = [this](const float scale) {
 		if (auto p = findParentComponentOfClass<gin::ScaledPluginEditor>())
 			p->setScale(scale);
 	};

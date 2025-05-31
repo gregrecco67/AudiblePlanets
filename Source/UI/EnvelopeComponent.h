@@ -192,8 +192,8 @@ public:
 	void paint(juce::Graphics &g) override
 	{
 		auto bounds = getLocalBounds();
-		float width =  static_cast<float>(bounds.getWidth());
-		float height = static_cast<float>(bounds.getHeight() - 5);
+		auto width =  static_cast<float>(bounds.getWidth());
+		auto height = static_cast<float>(bounds.getHeight() - 5);
 		juce::Path myPath;
 		juce::NormalisableRange<float> attackRange{0.0, 60.0, 0.0, 0.2f};
 		auto attackLength = attackRange.convertTo0to1(attack) * width / 4.f;

@@ -24,12 +24,12 @@
 #include "ModEditor.h"
 
 //==============================================================================
-class APAudioProcessorEditor : public gin::ProcessorEditor,
-                               public juce::DragAndDropContainer,
-                               public juce::KeyListener,
-                               public juce::Timer {
+class APAudioProcessorEditor final : public gin::ProcessorEditor,
+                                     public juce::DragAndDropContainer,
+                                     public juce::KeyListener,
+                                     public juce::Timer {
 public:
-	APAudioProcessorEditor(APAudioProcessor &);
+	explicit APAudioProcessorEditor(APAudioProcessor &);
 	~APAudioProcessorEditor() override;
 
 	//==============================================================================

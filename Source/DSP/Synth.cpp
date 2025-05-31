@@ -60,14 +60,12 @@ void APSynth::handleMidiEvent(const juce::MidiMessage &m)
 	}
 	if (m.isPitchWheel()) {
 		proc.modMatrix.setMonoValue(proc.modSrcMonoPitchbend,
-		    float(m.getPitchWheelValue()) / 0x2000 - 1.0f);
+		    static_cast<float>(m.getPitchWheelValue()) / 0x2000 - 1.0f);
 	}
 	if (m.isAftertouch()) {
-		for (auto &voice : voices) {
-			SynthVoice3 *svoice = static_cast<SynthVoice3 *>(voice);
-			if (svoice->curNote.initialNote == m.getNoteNumber()) {
-				proc.modMatrix.setPolyValue(
-				    *svoice, proc.modPolyAT, m.getAfterTouchValue() / 127.0f);
+		for (const auto &voice : voices) {
+			if (auto *svoice = dynamic_cast<SynthVoice3 *>(voice); svoice->curNote.initialNote == m.getNoteNumber()) {
+				proc.modMatrix.setPolyValue(*svoice, proc.modPolyAT, m.getAfterTouchValue() / 127.0f);
 			}
 		}
 	}

@@ -152,7 +152,7 @@ public:
 		gin::ParamBox::paramChanged();
 
 		if (currentEffect == 3) {
-			auto choice = proc.stereoDelayParams.temposync->getUserValueBool();
+			const auto choice = proc.stereoDelayParams.temposync->getUserValueBool();
 			dlbeatsleft->setVisible(choice);
 			dlbeatsright->setVisible(choice);
 			dltimeleft->setVisible(!choice);
@@ -443,9 +443,8 @@ public:
 			if (proc.modMatrix.isModulated(
 			        gin::ModDstId(param->getModIndex()))) {
 				auto modSrcs = proc.modMatrix.getModSources(param);
-				for (auto &modSrc : modSrcs) {
-					proc.modMatrix.clearModDepth(
-					    modSrc, gin::ModDstId(param->getModIndex()));
+				for (const auto &modSrc : modSrcs) {
+					proc.modMatrix.clearModDepth(modSrc, gin::ModDstId(param->getModIndex()));
 				}
 			}
 		}

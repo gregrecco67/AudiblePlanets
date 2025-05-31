@@ -14,15 +14,12 @@
 
 #pragma once
 
-#pragma once
-
-#include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_core/juce_core.h>
 
 class Envelope {
 public:
 	//==============================================================================
-	Envelope(const std::array<double, 1024>& convex_) : convex(convex_)  {
+	explicit Envelope(const std::array<double, 1024>& convex_) : convex(convex_)  {
 		recalculateRates();
 	}
 
@@ -73,7 +70,7 @@ public:
 		float syncduration{1.0};
 	};
 
-	inline EnvelopeState getState() const noexcept
+	[[nodiscard]] inline EnvelopeState getState() const noexcept
 	{
 		return {state, static_cast<float>(finalOut)};
 	}
@@ -84,11 +81,10 @@ public:
 		recalculateRates();
 	}
 
-	inline bool isActive() const noexcept { return state != State::idle; }
-	inline float getValue() const { return  static_cast<float>(finalOut); }
-	inline float getOutput() const { return static_cast<float>(finalOut); }
+	[[nodiscard]] inline bool isActive() const noexcept { return state != State::idle; }
+	[[nodiscard]] inline float getValue() const { return  static_cast<float>(finalOut); }
+	[[nodiscard]] inline float getOutput() const { return static_cast<float>(finalOut); }
 	
-
 	inline void setSampleRate(double newSampleRate) noexcept
 	{
 		if (newSampleRate > 0.0) { sampleRate = newSampleRate; }
@@ -99,10 +95,12 @@ public:
 
 	void noteOn() noexcept;
 	void noteOff() noexcept;
-	double getValForIdx(double idx, bool isAttack);
-	double getIdxForVal(double idx);
+
+	[[nodiscard]] double getValForIdx(double idx, const bool isAttack) const;
+	[[nodiscard]] double getIdxForVal(const double val) const;
+
 	float getNextSample() noexcept;
-	void advance(int frames) { for (int i = 0; i < frames; i++) { getNextSample(); } }
+	void advance(const int frames) { for (int i = 0; i < frames; i++) { getNextSample(); } }
 
 private:
 	//==============================================================================

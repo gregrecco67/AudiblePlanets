@@ -25,12 +25,12 @@ class Editor : public juce::Component,
                public gin::Parameter::ParameterListener,
                juce::Timer {
 public:
-	Editor(APAudioProcessor &proc_);
+	explicit Editor(APAudioProcessor &proc_);
 	~Editor() override;
 
 	void resized() override;
 	void valueUpdated(gin::Parameter*) override {}
-	void setGrid(
+	static void setGrid(
 	    gin::ParamBox *box, float x, float y, float heds, float w, float h);
 	void timerCallback() override;
 	void paint(juce::Graphics &g) override;

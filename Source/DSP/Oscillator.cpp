@@ -13,7 +13,7 @@ void APOscillator::renderFloats(float freq,
     float *ys,
     const int numSamples)
 {
-	float delta = freq * invSampleRate;
+	const float delta = freq * invSampleRate;
 	for (int i = 0; i < numSamples; i++) {
 		xs[i] = bllt.process(settings.wave, freq, phase) * settings.vol;
 		ys[i] = bllt.process(settings.wave, freq, qrtPhase(phase)) * settings.vol;

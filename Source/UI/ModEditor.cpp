@@ -55,8 +55,8 @@ ModEditor::~ModEditor()
 void ModEditor::setGrid(
     gin::ParamBox *box, float x, float y, float heds, float w, float h)
 {
-	box->setBounds((int)(x * 56.f), (int)(y * 70.f + 23.f * heds),
-	    (int)(w * 56.f), (int)(h * 70.f + 23.f));
+	box->setBounds(static_cast<int>(x * 56.f), static_cast<int>(y * 70.f + 23.f * heds),
+	    static_cast<int>(w * 56.f), static_cast<int>(h * 70.f + 23.f));
 }
 
 void ModEditor::resized()

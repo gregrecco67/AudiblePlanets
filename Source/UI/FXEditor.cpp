@@ -113,8 +113,8 @@ FXEditor::~FXEditor()
 void FXEditor::setGrid(
     gin::ParamBox *box, float x, float y, float heds, float w, float h)
 {
-	box->setBounds((int)(x * 56.f), (int)(y * 70.f + 23.f * heds),
-	    (int)(w * 56.f), (int)(h * 70.f + 23.f));
+	box->setBounds(static_cast<int>(x * 56.f), static_cast<int>(y * 70.f + 23.f * heds),
+	    static_cast<int>(w * 56.f), static_cast<int>(h * 70.f + 23.f));
 }
 
 void FXEditor::resized()
@@ -183,35 +183,35 @@ void FXEditor::valueUpdated(
                             // effect selected to "None"
 {
 	if (param == proc.fxOrderParams.fxa1) {
-		auto fxa1Choice = param->getUserValueInt();
+		const auto fxa1Choice = param->getUserValueInt();
 		fxa1Box.setControls(fxa1Choice);
 		removeDuplicates(fxa1Choice, 1);
 	} else if (param == proc.fxOrderParams.fxa2) {
-		auto fxa2Choice = param->getUserValueInt();
+		const auto fxa2Choice = param->getUserValueInt();
 		fxa2Box.setControls(fxa2Choice);
 		removeDuplicates(fxa2Choice, 2);
 	} else if (param == proc.fxOrderParams.fxa3) {
-		auto fxa3Choice = param->getUserValueInt();
+		const auto fxa3Choice = param->getUserValueInt();
 		fxa3Box.setControls(fxa3Choice);
 		removeDuplicates(fxa3Choice, 3);
 	} else if (param == proc.fxOrderParams.fxa4) {
-		auto fxa4Choice = param->getUserValueInt();
+		const auto fxa4Choice = param->getUserValueInt();
 		fxa4Box.setControls(fxa4Choice);
 		removeDuplicates(fxa4Choice, 4);
 	} else if (param == proc.fxOrderParams.fxb1) {
-		auto fxb1Choice = param->getUserValueInt();
+		const auto fxb1Choice = param->getUserValueInt();
 		fxb1Box.setControls(fxb1Choice);
 		removeDuplicates(fxb1Choice, 5);
 	} else if (param == proc.fxOrderParams.fxb2) {
-		auto fxb2Choice = param->getUserValueInt();
+		const auto fxb2Choice = param->getUserValueInt();
 		fxb2Box.setControls(fxb2Choice);
 		removeDuplicates(fxb2Choice, 6);
 	} else if (param == proc.fxOrderParams.fxb3) {
-		auto fxb3Choice = param->getUserValueInt();
+		const auto fxb3Choice = param->getUserValueInt();
 		fxb3Box.setControls(fxb3Choice);
 		removeDuplicates(fxb3Choice, 7);
 	} else if (param == proc.fxOrderParams.fxb4) {
-		auto fxb4Choice = param->getUserValueInt();
+		const auto fxb4Choice = param->getUserValueInt();
 		fxb4Box.setControls(fxb4Choice);
 		removeDuplicates(fxb4Choice, 8);
 	}

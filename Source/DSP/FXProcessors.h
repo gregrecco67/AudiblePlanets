@@ -25,15 +25,13 @@
 #include "ADAAsrc/TanhNL.h"
 #include "ADAAsrc/Halfwave.h"
 #include "ADAAsrc/HardClip.h"
-#include "ADAAsrc/ADAA/ADAA1LUT.h"
-#include "ADAAsrc/ADAA/ADAA2LUT.h"
 #include "ADAAsrc/ADAA/ADAA2.h"
 #include "ADAAsrc/SoftClip.h"
 #include "ADAAsrc/Fullwave.h"
 #include "ADAAsrc/Folder.h"
 
 #define MINI_BLOCK_SIZE 32
-#define C5_95 -0.017005f
+#define C5_95 (-0.017005f)
 #define C5_m95 0.017005f
 
 
@@ -50,8 +48,8 @@
 
 class ChorusProcessor {
 public:
-	ChorusProcessor() {}
-	~ChorusProcessor() {}
+	ChorusProcessor() = default;
+	~ChorusProcessor() = default;
 
 public:
 	void prepare(juce::dsp::ProcessSpec spec)
@@ -69,32 +67,32 @@ public:
 		depth.setCurrentAndTargetValue(0.5f);
 	}
 
-	void process(juce::dsp::ProcessContextReplacing<float> context)
+	void process(const juce::dsp::ProcessContextReplacing<float> &context)
 	{
 		//
-		auto &inBlock = context.getOutputBlock();
+		const auto &inBlock = context.getOutputBlock();
 
-		auto numSamples = inBlock.getNumSamples();
-		auto samplesL = inBlock.getChannelPointer(0);
-		auto samplesR = inBlock.getChannelPointer(1);
+		const auto numSamples = inBlock.getNumSamples();
+		const auto samplesL = inBlock.getChannelPointer(0);
+		const auto samplesR = inBlock.getChannelPointer(1);
 
 		lfo.setFrequency(lfoRate);
 		for (int i = 0; i < static_cast<int>(numSamples); i++) {
-			auto lfoValues = lfo.getNextValues();
-			auto leftDelayTime_ms = std::clamp(
+			const auto lfoValues = lfo.getNextValues();
+			const auto leftDelayTime_ms = std::clamp(
 			    (lfoValues.deg0Value * 10.0f * depth.getNextValue()) + delayTime_ms.getNextValue(), 5.f, 40.f);
-			auto centerDelayTime_ms = std::clamp(
+			const auto centerDelayTime_ms = std::clamp(
 			    (lfoValues.deg120Value * 10.0f * depth.getNextValue()) + delayTime_ms.getNextValue(), 5.f, 40.f);
-			auto rightDelayTime_ms = std::clamp(
+			const auto rightDelayTime_ms = std::clamp(
 			    (lfoValues.deg240Value * 10.0f * depth.getNextValue()) + delayTime_ms.getNextValue(), 5.f, 40.f);
 
-			auto leftIn = samplesL[i];
-			auto rightIn = samplesR[i];
-			auto leftChorusOut =
+			const auto leftIn = samplesL[i];
+			const auto rightIn = samplesR[i];
+			const auto leftChorusOut =
 			    leftDelayBuffer.readLagrange(0, leftDelayTime_ms / 1000.0f);
-			auto centerChorusOut =
+			const auto centerChorusOut =
 			    centerDelayBuffer.readLagrange(0, centerDelayTime_ms / 1000.0f);
-			auto rightChorusOut =
+			const auto rightChorusOut =
 			    rightDelayBuffer.readLagrange(0, rightDelayTime_ms / 1000.0f);
 
 			leftDelayBuffer.write(0, leftIn + leftChorusOut * feedback);
@@ -143,7 +141,7 @@ public:
 
 	void prepare(juce::dsp::ProcessSpec spec)
 	{
-		auto sampleRate = spec.sampleRate;
+		const auto sampleRate = spec.sampleRate;
 
 		delayTimeL.reset(sampleRate, .015f);
 		delayTimeR.reset(sampleRate, .015f);
@@ -157,27 +155,27 @@ public:
 		LPFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
 	}
 
-	void process(juce::dsp::ProcessContextReplacing<float> context)
+	void process(const juce::dsp::ProcessContextReplacing<float> &context)
 	{
-		auto &inBlock = context.getOutputBlock();
+		const auto &inBlock = context.getOutputBlock();
 
-		auto numSamples = static_cast<int>(inBlock.getNumSamples());
+		const auto numSamples = static_cast<int>(inBlock.getNumSamples());
 		auto *leftSamples = inBlock.getChannelPointer(0);
 		auto *rightSamples = inBlock.getChannelPointer(1);
-		float freezeFactor = freeze ? 0.f : 0.5f;
+		const float freezeFactor = freeze ? 0.f : 0.5f;
 		cutoff.skip(std::min(numSamples - 1, 0));
 		LPFilter.setCutoffFrequency(cutoff.getNextValue());
 		delayFB = freeze ? 1.0f : delayFB;
 		if (ping) {
 			for (int i = 0; i < numSamples; i++) {
-				auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
-				auto dTimeR = std::min(delayTimeR.getNextValue(), 64.0f);
+				const auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
+				const auto dTimeR = std::min(delayTimeR.getNextValue(), 64.0f);
 
-				float delayedSample_L = delayBuffer_L.readLagrange(0, dTimeL);
-				float delayedSample_R = delayBuffer_R.readLagrange(0, dTimeR);
-				float inDelay_L =
+				const float delayedSample_L = delayBuffer_L.readLagrange(0, dTimeL);
+				const float delayedSample_R = delayBuffer_R.readLagrange(0, dTimeR);
+				const float inDelay_L =
 				    leftSamples[i] * freezeFactor + delayedSample_R * delayFB;
-				float inDelay_R =
+				const float inDelay_R =
 				    rightSamples[i] * freezeFactor + delayedSample_L * delayFB;
 
 				leftSamples[i] =
@@ -191,14 +189,14 @@ public:
 			}
 		} else {
 			for (int i = 0; i < numSamples; i++) {
-				auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
-				auto dTimeR = std::min(delayTimeR.getNextValue(), 64.0f);
+				const auto dTimeL = std::min(delayTimeL.getNextValue(), 64.0f);
+				const auto dTimeR = std::min(delayTimeR.getNextValue(), 64.0f);
 
-				float delayedSample_L = delayBuffer_L.readLagrange(0, dTimeL);
-				float delayedSample_R = delayBuffer_R.readLagrange(0, dTimeR);
-				float inDelay_L =
+				const float delayedSample_L = delayBuffer_L.readLagrange(0, dTimeL);
+				const float delayedSample_R = delayBuffer_R.readLagrange(0, dTimeR);
+				const float inDelay_L =
 				    leftSamples[i] * freezeFactor + delayedSample_L * delayFB;
-				float inDelay_R =
+				const float inDelay_R =
 				    rightSamples[i] * freezeFactor + delayedSample_R * delayFB;
 
 				leftSamples[i] =
@@ -298,8 +296,8 @@ public:
 	static constexpr F kMaxPredelay = 0.1f;  // seconds
 	static constexpr F kMaxSize = 3.0f;
 
-	PlateReverb() {}
-	~PlateReverb() {}
+	PlateReverb() = default;
+	~PlateReverb() = default;
 
 	// Set the sample rate.  Note that we are re-mallocing all of the various
 	// delay lines here.
@@ -414,7 +412,7 @@ public:
 		rightTank.setSizeRatio(sizeRatio);
 
 		// Scale the taps
-		for (I i = 0; i < kNumTaps; i++) {
+		for (I i = 0; i < kNumTaps; ++i) {
 			leftTaps[i] = baseLeftTaps[i] * sizeRatio;
 			rightTaps[i] = baseRightTaps[i] * sizeRatio;
 		}
@@ -436,11 +434,11 @@ public:
 		setPredelay(predelay);
 	}
 
-	void process(juce::dsp::ProcessContextReplacing<float> context)
+	void process(const juce::dsp::ProcessContextReplacing<float> &context)
 	{
-		auto &inBlock = context.getOutputBlock();
+		const auto &inBlock = context.getOutputBlock();
 
-		auto numSamples = inBlock.getNumSamples();
+		const auto numSamples = inBlock.getNumSamples();
 		auto outLeft = inBlock.getChannelPointer(0);
 		auto outRight = inBlock.getChannelPointer(1);
 		auto inLeft = inBlock.getChannelPointer(0);
@@ -506,8 +504,8 @@ private:
 
 	class OnePoleFilter {
 	public:
-		OnePoleFilter() {}
-		~OnePoleFilter() {}
+		OnePoleFilter() = default;
+		~OnePoleFilter() = default;
 
 		void setSampleRate(F sampleRate_)
 		{
@@ -549,7 +547,7 @@ private:
 
 	class DelayLine {
 	public:
-		DelayLine(I size_) : size(size_)
+		explicit DelayLine(I size_) : size(size_)
 		{
 			// For speed, create a bigger buffer than we really need.
 			I bufferSize = ceilPowerOfTwo(size);
@@ -561,7 +559,7 @@ private:
 			writeIdx = 0;
 		}
 
-		~DelayLine() {}
+		~DelayLine() = default;
 
 		inline void push(F val)
 		{
@@ -575,7 +573,7 @@ private:
 			// gets passed in here, without going past the original size.
 			jassert(delay <= size);
 
-			I d = (uint32_t)delay;
+			I d = static_cast<uint32_t>(delay);
 			F frac = 1 - (delay - d);
 
 			I readIdx = (writeIdx - 1) - d;
@@ -617,7 +615,7 @@ private:
 	public:
 		DelayAllpass(I size_, F gain_) : delayLine(size_), gain(gain_) {}
 
-		~DelayAllpass() {}
+		~DelayAllpass() = default;
 
 		inline F process(F x, F delay)
 		{
@@ -645,8 +643,8 @@ private:
 
 	class Lfo {
 	public:
-		Lfo() {}
-		~Lfo() {}
+		Lfo() = default;
+		~Lfo() = default;
 
 		void setSampleRate(F sampleRate_)
 		{
@@ -692,8 +690,8 @@ private:
 
 	class Tank {
 	public:
-		Tank() {}
-		~Tank() {}
+		Tank() = default;
+		~Tank() = default;
 
 		void resetDelayLines(I apf1Size_,
 		                     F apf1Gain_,  // First APF
@@ -821,15 +819,15 @@ public:
 		gainLevelSmoothed.reset(spec.sampleRate, 0.02f);
 	}
 
-	void process(juce::dsp::ProcessContextReplacing<float> context)
+	void process(const juce::dsp::ProcessContextReplacing<float> &context)
 	{
-		auto numSamples = context.getOutputBlock().getNumSamples();
-		gainLevelSmoothed.skip((int)numSamples);
+		const auto numSamples = context.getOutputBlock().getNumSamples();
+		gainLevelSmoothed.skip(static_cast<int>(numSamples));
 		gainLevelSmoothed.setTargetValue(gainLevelSmoothed.getCurrentValue());
 		gain.process(context);
 	}
 
-	inline void setGainLevel(float gainLevel)
+	inline void setGainLevel(const float gainLevel)
 	{
 		gainLevelSmoothed.setTargetValue(gainLevel);
 		gain.setGainDecibels(gainLevelSmoothed.getCurrentValue());
@@ -845,7 +843,7 @@ public:
 	MBFilterProcessor() = default;
 	~MBFilterProcessor() = default;
 
-	void prepare(juce::dsp::ProcessSpec spec)
+	void prepare(const juce::dsp::ProcessSpec spec)
 	{
 		currentSampleRate = static_cast<float>(spec.sampleRate);
 		*iirLS.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(
@@ -863,7 +861,7 @@ public:
 		iirHS.reset();
 	}
 
-	void process(juce::dsp::ProcessContextReplacing<float> context)
+	void process(const juce::dsp::ProcessContextReplacing<float> &context)
 	{
 		iirLS.process(context);
 		iirPeak.process(context);
@@ -970,10 +968,10 @@ public:
 		fullwaveprocs[1].get()->prepare(upsampledRate, spec.maximumBlockSize);
 	}
 
-	void process(juce::dsp::ProcessContextReplacing<float> context)
+	void process(const juce::dsp::ProcessContextReplacing<float> &context)
 	{
-		int numSamples = static_cast<int>(context.getOutputBlock().getNumSamples());
-		auto numSamples2 = numSamples * 2;
+		const int numSamples = static_cast<int>(context.getOutputBlock().getNumSamples());
+		const auto numSamples2 = numSamples * 2;
 
 		auto *dataL = context.getOutputBlock().getChannelPointer(0);
 		auto *dataR = context.getOutputBlock().getChannelPointer(1);
@@ -981,7 +979,7 @@ public:
         usR.process_block(us1R, dataR, numSamples);
 		float *channels[2]{us1L, us1R};
 		auto upblock = juce::dsp::AudioBlock<float>(channels, static_cast<size_t>(2), static_cast<size_t>(numSamples2));
-		auto upcontext = juce::dsp::ProcessContextReplacing<float>(upblock);
+		const auto upcontext = juce::dsp::ProcessContextReplacing<float>(upblock);
         
         for (int i = 0; i < MINI_BLOCK_SIZE * 2; ++i) {
             us2L[i] = us1L[i]; // copy for dry signal
@@ -1028,7 +1026,7 @@ public:
 		postGain.reset();
 	}
 
-	void setHighShelfFreqAndQ(float freq, float q)
+	void setHighShelfFreqAndQ(const float freq, const float q) const
 	{
 		*hsUp.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(
 		    upsampledRate, freq * 2.f, q, 25.0f);
@@ -1043,10 +1041,10 @@ public:
 	// 4: "Fullwave";
 	// 5: "Folder";
 
-    void applyWSFunction(juce::dsp::ProcessContextReplacing<float>& context) {
-        auto numS = static_cast<int>(context.getOutputBlock().getNumSamples());
+    void applyWSFunction(const juce::dsp::ProcessContextReplacing<float>& context) {
+        const auto numS = static_cast<int>(context.getOutputBlock().getNumSamples());
         for (int ch = 0; ch < 2; ++ch) {
-            auto source = context.getOutputBlock().getChannelPointer(ch);
+            const auto source = context.getOutputBlock().getChannelPointer(ch);
 			if (currentFunction == 0) {
 				softclipprocs[ch].get()->processBlock(source, numS);
 			}
@@ -1096,7 +1094,7 @@ public:
         }
 	}
 
-	float theSign(float x) { return (x > 0.f) ? 1.f : -1.f; }
+	static float theSign(const float x) { return (x > 0.f) ? 1.f : -1.f; }
 
 private:
 	juce::AudioBuffer<float> inBuffer;
@@ -1153,17 +1151,17 @@ public:
 		    mix1{0.f}, mix2{0.f}, spread{0.f}, highcut{20000.f}, lowcut{20.f};
 	};
 
-	inline void setParams(RingModParams &params_) { params = params_; }
+	inline void setParams(const RingModParams &params_) { params = params_; }
 
 	void prepare(juce::dsp::ProcessSpec spec)
 	{
 		sampleRate = spec.sampleRate;
 		oversampledSampleRate = sampleRate * oversampleRatio;
-		juce::dsp::ProcessSpec oversampledSpec{
+		const juce::dsp::ProcessSpec oversampledSpec{
 		    oversampledSampleRate,
 		    static_cast<juce::uint32>(spec.maximumBlockSize * oversampleRatio),
 		    static_cast<juce::uint32>(2)};
-		auto samplesPerBlock = spec.maximumBlockSize * oversampleRatio;
+		const auto samplesPerBlock = spec.maximumBlockSize * oversampleRatio;
 		constexpr auto filterType =
 		    juce::dsp::Oversampling<float>::filterHalfBandFIREquiripple;
 		oversampler = std::make_unique<juce::dsp::Oversampling<float>>(
@@ -1212,10 +1210,10 @@ public:
 		// setLatencySamples((int)oversampler->getLatencyInSamples());
 	}
 
-	void process(juce::dsp::ProcessContextReplacing<float> context)
+	void process(const juce::dsp::ProcessContextReplacing<float> &context)
 	{
-		auto numSamples = context.getOutputBlock().getNumSamples();
-		auto oversampledBlock =
+		const auto numSamples = context.getOutputBlock().getNumSamples();
+		const auto oversampledBlock =
 		    oversampler->processSamplesUp(context.getOutputBlock());
 		// auto oversampledContext =
 		// juce::dsp::ProcessContextReplacing<float>(oversampledBlock); do
@@ -1223,20 +1221,22 @@ public:
 
 		// 1. prepare derived parameters
 		juce::dsp::SIMDRegister<float> mod1freqs{params.mod1freq},
-		    mod2freqs{params.mod2freq}, spread{params.spread}, unity{1.f};
+		    mod2freqs{params.mod2freq};
+		const juce::dsp::SIMDRegister<float> unity{1.f};
+		const juce::dsp::SIMDRegister<float> spread{params.spread};
 
 		mod1freqs = mod1freqs * (unity + spread * semitones);
 		mod2freqs = mod2freqs * (unity + spread * semitones);
 
 		mod1PhaseIncs = mod1freqs * juce::dsp::SIMDRegister<float>(
-		                                2.0f * juce::MathConstants<float>::pi *
-		                                (float)inverseOversampledSampleRate);
+							2.0f * juce::MathConstants<float>::pi *
+		                    static_cast<float>(inverseOversampledSampleRate));
 		mod2PhaseIncs = mod2freqs * juce::dsp::SIMDRegister<float>(
-		                                2.0f * juce::MathConstants<float>::pi *
-		                                (float)inverseOversampledSampleRate);
+							2.0f * juce::MathConstants<float>::pi *
+		                    static_cast<float>(inverseOversampledSampleRate));
 
-		mod1LPCutoff.skip((int)numSamples);
-		mod2LPCutoff.skip((int)numSamples);
+		mod1LPCutoff.skip(static_cast<int>(numSamples));
+		mod2LPCutoff.skip(static_cast<int>(numSamples));
 
 		mod1LPCutoff.setTargetValue(
 		    std::clamp(params.mod1freq * 8.f, 20.f,
@@ -1254,9 +1254,9 @@ public:
 		auto *channelDataL = oversampledBlock.getChannelPointer(0);
 		auto *channelDataR = oversampledBlock.getChannelPointer(1);
 
-		auto oversampledNumSamples = oversampledBlock.getNumSamples();
+		const auto oversampledNumSamples = oversampledBlock.getNumSamples();
 
-		for (int i = 0; i < (int)oversampledNumSamples; i++) {
+		for (int i = 0; i < static_cast<int>(oversampledNumSamples); i++) {
 			auto sin1 = FastMath<float>::simdSin(mod1Phases);
 			auto sin2 = FastMath<float>::simdSin(mod2Phases);
 			auto square1 = simdSquare(mod1Phases);
@@ -1315,8 +1315,8 @@ public:
 
 			// 3. apply modulators to audio
 
-			auto sampleL = channelDataL[i];
-			auto sampleR = channelDataR[i];
+			const auto sampleL = channelDataL[i];
+			const auto sampleR = channelDataR[i];
 
 			// 4. apply filters to multipliers' outputs
 			auto modSampleL1Stage1 = sampleL * mod1[0] * params.mix1;
@@ -1332,14 +1332,10 @@ public:
 			modSampleR1Stage1 = lowCut2.processSample(0, modSampleR1Stage1);
 			modSampleR2Stage1 = lowCut2.processSample(1, modSampleR2Stage1);
 
-			auto sampleL1Stage1 =
-			    (sampleL * (1.f - params.mix1) + modSampleL1Stage1);
-			auto sampleL2Stage1 =
-			    (sampleL * (1.f - params.mix1) + modSampleL2Stage1);
-			auto sampleR1Stage1 =
-			    (sampleR * (1.f - params.mix1) + modSampleR1Stage1);
-			auto sampleR2Stage1 =
-			    (sampleR * (1.f - params.mix1) + modSampleR2Stage1);
+			const auto sampleL1Stage1 = (sampleL * (1.f - params.mix1) + modSampleL1Stage1);
+			const auto sampleL2Stage1 = (sampleL * (1.f - params.mix1) + modSampleL2Stage1);
+			const auto sampleR1Stage1 = (sampleR * (1.f - params.mix1) + modSampleR1Stage1);
+			const auto sampleR2Stage1 = (sampleR * (1.f - params.mix1) + modSampleR2Stage1);
 
 			auto modSampleL1Stage2 = sampleL1Stage1 * mod2[0] * params.mix2;
 			auto modSampleL2Stage2 = sampleL2Stage1 * mod2[1] * params.mix2;
@@ -1354,17 +1350,13 @@ public:
 			modSampleR1Stage2 = lowCut4.processSample(0, modSampleR1Stage2);
 			modSampleR2Stage2 = lowCut4.processSample(1, modSampleR2Stage2);
 
-			auto sampleL1Stage2 =
-			    (sampleL1Stage1 * (1.f - params.mix2) + modSampleL1Stage2);
-			auto sampleL2Stage2 =
-			    (sampleL2Stage1 * (1.f - params.mix2) + modSampleL2Stage2);
-			auto sampleR1Stage2 =
-			    (sampleR1Stage1 * (1.f - params.mix2) + modSampleR1Stage2);
-			auto sampleR2Stage2 =
-			    (sampleR2Stage1 * (1.f - params.mix2) + modSampleR2Stage2);
+			const auto sampleL1Stage2 = (sampleL1Stage1 * (1.f - params.mix2) + modSampleL1Stage2);
+			const auto sampleL2Stage2 = (sampleL2Stage1 * (1.f - params.mix2) + modSampleL2Stage2);
+			const auto sampleR1Stage2 = (sampleR1Stage1 * (1.f - params.mix2) + modSampleR1Stage2);
+			const auto sampleR2Stage2 = (sampleR2Stage1 * (1.f - params.mix2) + modSampleR2Stage2);
 
-			auto sampleLSum = (sampleL1Stage2 + sampleL2Stage2) * 0.5f;
-			auto sampleRSum = (sampleR1Stage2 + sampleR2Stage2) * 0.5f;
+			const auto sampleLSum = (sampleL1Stage2 + sampleL2Stage2) * 0.5f;
+			const auto sampleRSum = (sampleR1Stage2 + sampleR2Stage2) * 0.5f;
 
 			channelDataL[i] = sampleLSum;  // sampleLSum;
 			channelDataR[i] = sampleRSum;  // sampleRSum;
@@ -1400,12 +1392,12 @@ private:
 	double sampleRate{44100.0};
 
 	// utility functions
-	juce::dsp::SIMDRegister<float> simdSaw(juce::dsp::SIMDRegister<float> phases) const
+	[[nodiscard]] static juce::dsp::SIMDRegister<float> simdSaw(const juce::dsp::SIMDRegister<float> phases)
 	{
 		return (phases * (float)M_1_PI) * 2.0f - 1.0f;
 	}
 
-	juce::dsp::SIMDRegister<float> simdSquare(juce::dsp::SIMDRegister<float> phases)
+	static juce::dsp::SIMDRegister<float> simdSquare(const juce::dsp::SIMDRegister<float> phases)
 	{
 		juce::dsp::SIMDRegister<float> square;
 		square[0] = phases[0] > 0.f ? 1.f : -1.f;
@@ -1455,7 +1447,7 @@ public:
 		gain.setGainDecibels(0.f);
 	}
 
-	void process(juce::dsp::ProcessContextReplacing<float> context)
+	void process(const juce::dsp::ProcessContextReplacing<float> &context)
 	{
 		filter.process(context);
 		gain.process(context);

@@ -6,17 +6,18 @@ Copyright (c) 2019 - Roland Rabien.
 
 ==============================================================================
 */
+#pragma once
 
-#include "gin_plugin/gin_plugin.h"
 #include "juce_gui_basics/juce_gui_basics.h"
+#include "gin_plugin/gin_plugin.h"
 
 #pragma once
 
 /** Draws a simple level meter
  */
-class APLevelMeter : public juce::Component, juce::Timer {
+class APLevelMeter final : public juce::Component, juce::Timer {
 public:
-	APLevelMeter(
+	explicit APLevelMeter(
 	    const gin::LevelTracker &, juce::NormalisableRange<float> r = {-60, 0},
 	    bool vertical = false);
 	~APLevelMeter() override;

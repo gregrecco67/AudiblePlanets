@@ -72,8 +72,8 @@ void APLNF::drawRotarySlider(juce::Graphics &g,
 		const auto rcI =
 		    juce::Rectangle<float>(rx, ry, rw, rw)
 		        .withSizeKeepingCentre(radius * 0.08f, radius * 0.08f);
-		const auto c = 2.0f * (float)pi * radius;
-		const float gap = (rcI.getWidth() / c) * 2.0f * (float)pi;
+		const auto c = 2.0f * static_cast<float>(pi) * radius;
+		const float gap = (rcI.getWidth() / c) * 2.0f * static_cast<float>(pi);
 
 		float alpha = isMouseOver ? 1.0f : 0.7f;
 		float dimHL = slider.isEnabled() ? 0.7f : 0.4f;
@@ -86,10 +86,10 @@ void APLNF::drawRotarySlider(juce::Graphics &g,
 		    radius * 1.1f, radius * 1.1f, true};
 		g.setGradientFill(gradient);
 		knob.addArc(rcO.getX(), rcO.getY(), rcO.getWidth(), rcO.getHeight(),
-		    angle + gap, angle - gap + (float)pi * 2, true);
+		    angle + gap, angle - gap + static_cast<float>(pi) * 2, true);
 		knob.addArc(rcI.getX(), rcI.getY(), rcI.getWidth(), rcI.getHeight(),
-		    angle - (float)pi / 2, angle + (float)pi / 2 - (float)pi * 2,
-		    false);
+		    angle - static_cast<float>(pi) / 2, angle + static_cast<float>(pi) / 2 -
+		    static_cast<float>(pi) * 2, false);
 		knob.closeSubPath();
 		g.fillPath(knob);
 	}
@@ -120,7 +120,7 @@ void APLNF::drawRotarySlider(juce::Graphics &g,
 	}
 
 	if (slider.getProperties().contains("modDepth")) {
-		auto depth = (float)slider.getProperties()["modDepth"];
+		auto depth = static_cast<float>(slider.getProperties()["modDepth"]);
 		bool bipolar = (bool)slider.getProperties()["modBipolar"];
 
 		g.setColour(juce::Colour(0xffFFFFFF).withAlpha(0.9f));
@@ -145,13 +145,9 @@ void APLNF::drawRotarySlider(juce::Graphics &g,
 	if (slider.getProperties().contains("modValues") && slider.isEnabled()) {
 		g.setColour(juce::Colour(0xffFFFFFF).withAlpha(0.9f));
 
-		auto varArray = slider.getProperties()["modValues"];
-		if (varArray.isArray()) {
-			for (auto value : *varArray.getArray()) {
-				float modAngle =
-				    float(value) * (rotaryEndAngle - rotaryStartAngle) +
-				    rotaryStartAngle;
-
+		if (auto varArray = slider.getProperties()["modValues"]; varArray.isArray()) {
+			for (const auto& value : *varArray.getArray()) {
+				float modAngle = static_cast<float>(value) * (rotaryEndAngle - rotaryStartAngle) + rotaryStartAngle;
 				float modX = centreX + std::sin(modAngle) * radius;
 				float modY = centreY - std::cos(modAngle) * radius;
 
@@ -179,24 +175,25 @@ void APLNF::drawLinearSlider(juce::Graphics &g,
 	}
 	
     g.setColour(juce::Colours::black); // empty track
-    g.fillRoundedRectangle(juce::Rectangle<float>((float)x + 22.f, 5,
-        7, (float)y + ((float)height - 10)), 3.f);
+    g.fillRoundedRectangle(juce::Rectangle<float>(static_cast<float>(x) + 22.f, 5,
+        7, static_cast<float>(y) + (static_cast<float>(height) - 10)), 3.f);
 
-    auto constrained = juce::jlimit(y+5, y + height - 5, static_cast<int>(sliderPos));
+    const auto constrained = juce::jlimit(y+5, y + height - 5, static_cast<int>(sliderPos));
 	g.setColour(slider.findColour(juce::Slider::thumbColourId));
-	g.fillRoundedRectangle(juce::Rectangle<float>((float)x + 22.f, constrained, 7,
-	                           (float)y + ((float)height - 5 - constrained)),
+	g.fillRoundedRectangle(juce::Rectangle<float>(static_cast<float>(x) + 22.f, constrained, 7,
+	                           static_cast<float>(y) + (static_cast<float>(height) - 5 - constrained)),
 	    3.f); // filled track
 
 
 	g.setColour(juce::Colours::black);
-    float gap{4.f};
-	g.fillRoundedRectangle(float(x) + gap, constrained - 10.0f, float(width) - 2.f * gap, 20.0f, 5.f); // handle
+	constexpr float gap{4.f};
+	g.fillRoundedRectangle(static_cast<float>(x) + gap, constrained - 10.0f, static_cast<float>(width)
+		- 2.f * gap, 20.0f, 5.f); // handle
 	g.setColour(slider.findColour(juce::Slider::thumbColourId).darker(0.7f));
-	g.drawRoundedRectangle(
-	    float(x) + gap, constrained - 10.0f, float(width) - 2.f * gap, 20.0f, 5.f, 1.f); // handle outline
+	g.drawRoundedRectangle(static_cast<float>(x) + gap, constrained - 10.0f, static_cast<float>(width)
+		- 2.f * gap, 20.0f, 5.f, 1.f); // handle outline
 	g.setColour(slider.findColour(juce::Slider::thumbColourId));
 	g.fillRect(
-	    x + gap + 5.f, static_cast<float>(constrained) - 1, float(width - 2.f * gap - 10.f), 3.f); // handle indicator
+	    x + gap + 5.f, static_cast<float>(constrained) - 1, static_cast<float>(width - 2.f * gap - 10.f), 3.f); // handle indicator
 	
 }

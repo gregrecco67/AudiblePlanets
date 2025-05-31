@@ -109,8 +109,8 @@ Editor::~Editor()
 void Editor::setGrid(
     gin::ParamBox *box, float x, float y, float heds, float w, float h)
 {
-	box->setBounds((int)(x * 56.f), (int)(y * 70.f + 23.f * heds),
-	    (int)(w * 56.f), (int)(h * 70.f + 23.f));
+	box->setBounds(static_cast<int>(x * 56.f), static_cast<int>(y * 70.f + 23.f * heds),
+	    static_cast<int>(w * 56.f), static_cast<int>(h * 70.f + 23.f));
 }
 
 void Editor::paint(juce::Graphics &g)
@@ -123,7 +123,7 @@ void Editor::paint(juce::Graphics &g)
 
 void Editor::resized()
 {
-	auto area = getLocalBounds();
+	const auto area = getLocalBounds();
 
 	if (area.getWidth() > 1186 || area.getHeight() > 725) {
 		return;
@@ -159,27 +159,27 @@ void Editor::resized()
 
 void Editor::timerCallback()
 {
-	auto speed = static_cast<float>(speedSlider.getValue());
+	const auto speed = static_cast<float>(speedSlider.getValue());
 	// auto c1S = (APKnob*)osc.c1;
-	bool live = liveViz.getToggleState();
+	const bool live = liveViz.getToggleState();
 
-	auto defRatio = live ? proc.viz.defRat : proc.viz2.defRat;
-	auto defPhaseIncrement = defRatio * phaseIncrement;
+	const auto defRatio = live ? proc.viz.defRat : proc.viz2.defRat;
+	const auto defPhaseIncrement = defRatio * phaseIncrement;
 	vizDefPhase += defPhaseIncrement * speed;
 	if (vizDefPhase > juce::MathConstants<float>::twoPi)
 		vizDefPhase -= juce::MathConstants<float>::twoPi;
-	auto epi1Ratio = live ? proc.viz.epi1Rat : proc.viz2.epi1Rat;
-	auto vizEpi1PhaseIncrement = epi1Ratio * phaseIncrement;
+	const auto epi1Ratio = live ? proc.viz.epi1Rat : proc.viz2.epi1Rat;
+	const auto vizEpi1PhaseIncrement = epi1Ratio * phaseIncrement;
 	vizEpi1Phase += vizEpi1PhaseIncrement * speed;
 	if (vizEpi1Phase > juce::MathConstants<float>::twoPi)
 		vizEpi1Phase -= juce::MathConstants<float>::twoPi;
-	auto epi2Ratio = live ? proc.viz.epi2Rat : proc.viz2.epi2Rat;
-	auto vizEpi2PhaseIncrement = epi2Ratio * phaseIncrement;
+	const auto epi2Ratio = live ? proc.viz.epi2Rat : proc.viz2.epi2Rat;
+	const auto vizEpi2PhaseIncrement = epi2Ratio * phaseIncrement;
 	vizEpi2Phase += vizEpi2PhaseIncrement * speed;
 	if (vizEpi2Phase > juce::MathConstants<float>::twoPi)
 		vizEpi2Phase -= juce::MathConstants<float>::twoPi;
-	auto epi3Ratio = live ? proc.viz.epi3Rat : proc.viz2.epi3Rat;
-	auto vizEpi3PhaseIncrement = epi3Ratio * phaseIncrement;
+	const auto epi3Ratio = live ? proc.viz.epi3Rat : proc.viz2.epi3Rat;
+	const auto vizEpi3PhaseIncrement = epi3Ratio * phaseIncrement;
 	vizEpi3Phase += vizEpi3PhaseIncrement * speed;
 	if (vizEpi3Phase > juce::MathConstants<float>::twoPi)
 		vizEpi3Phase -= juce::MathConstants<float>::twoPi;

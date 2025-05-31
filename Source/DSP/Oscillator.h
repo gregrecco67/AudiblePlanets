@@ -10,7 +10,7 @@ public:
 	APOscillator(gin::BandLimitedLookupTables &bllt_);
 	~APOscillator() = default;
 
-	inline float qrtPhase(const float phase_) const
+	[[nodiscard]] static inline float qrtPhase(const float phase_)
 	{
 		float p2 = phase_ + 0.25f;
 		if (p2 >= 1.0f) {
@@ -27,13 +27,13 @@ public:
 			phase = 0.0f;
 	}
 
-	inline void setSampleRate(double sr)
+	inline void setSampleRate(const double sr)
 	{
 		sampleRate = sr;
 		invSampleRate = 1.0f / sampleRate;
 	}
 
-	inline void bumpPhase(float bump)
+	inline void bumpPhase(const float bump)
 	{
 		phase += bump;
 		while (phase < 0.0f) { phase += 1.0f; }
