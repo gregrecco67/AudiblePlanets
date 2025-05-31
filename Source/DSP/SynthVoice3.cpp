@@ -263,12 +263,12 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 		epi2xs[i] = mipp::fmadd(osc2x, b, epi1xs[i]);  // 2 always based on 1
 		epi2ys[i] = mipp::fmadd(osc2y, b, epi1ys[i]);
 
-		// save distance/inverse for modulated sample, where we only care about
-		// angle
+		// save distance/inverse for modulated sample, where we only care about angle
 		dist2sq = mipp::fmadd((epi2ys[i] - equant), (epi2ys[i] - equant), (epi2xs[i] * epi2xs[i]));
 		dist2 = mipp::sqrt(dist2sq);
 		invDist2 = oneFloat / (dist2 + .000001f);
 
+		// look ma, no branch
 		epi3xs[i] = mipp::fmadd(osc3x, c, epi2xs[i] * bits3[algo][0] + epi1xs[i] * bits3[algo][1]);
 		epi3ys[i] = mipp::fmadd(osc3y, c, epi2ys[i] * bits3[algo][0] + epi1ys[i] * bits3[algo][1]);
 		epi4xs[i] = mipp::fmadd(osc4x, d, epi3xs[i] * bits4[algo][0] + epi2xs[i] * bits4[algo][1] + epi1xs[i] * bits4[algo][2]);
@@ -359,10 +359,10 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 
 }
 
-mipp::Reg<float> SynthVoice3::mix(mipp::Reg<float> a, mipp::Reg<float> b, float mix) {
+mipp::Reg<float> SynthVoice3::mix(mipp::Reg<float> aReg, mipp::Reg<float> bReg, float mix) {
 	mipp::Reg<float> mixa = FastMath<float>::minimaxSin(mix * pi_v<float> * 0.5f);
 	mipp::Reg<float> mixb = FastMath<float>::minimaxSin((mix - 1.0f) * pi_v<float> * 0.5f);
-	return mipp::fmadd(a, mixa, (b * mixb));
+	return mipp::fmadd(aReg, mixa, (bReg * mixb));
 }
 
 void SynthVoice3::updateParams(int blockSize)

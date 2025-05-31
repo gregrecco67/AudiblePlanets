@@ -1044,8 +1044,8 @@ public:
 	// 5: "Folder";
 
     void applyWSFunction(juce::dsp::ProcessContextReplacing<float>& context) {
-        auto numS = static_cast<size_t>(context.getOutputBlock().getNumSamples());
-        for (size_t ch = 0; ch < 2; ++ch) {
+        auto numS = static_cast<int>(context.getOutputBlock().getNumSamples());
+        for (int ch = 0; ch < 2; ++ch) {
             auto source = context.getOutputBlock().getChannelPointer(ch);
 			if (currentFunction == 0) {
 				softclipprocs[ch].get()->processBlock(source, numS);
@@ -1067,7 +1067,7 @@ public:
 				folderprocs[ch].get()->processBlock(source, numS);
 			} 
 			else  {
-				for (size_t s = 0; s < numS; ++s) {
+				for (int s = 0; s < numS; ++s) {
 					source[s] = useFunction(source[s]);
 				}
 			}

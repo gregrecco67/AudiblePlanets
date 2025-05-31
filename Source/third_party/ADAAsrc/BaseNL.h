@@ -10,6 +10,6 @@ public:
     BaseNL() = default;
     virtual ~BaseNL() {}
 
-    virtual void prepare (double, int) {};
-    virtual void processBlock (float*, const int) {};
+    virtual void prepare (double, int) {}
+    virtual void processBlock (float*, const int) {}
 };

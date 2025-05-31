@@ -1,39 +1,32 @@
 cmake_minimum_required(VERSION 3.22)
 
-if (APPLE)
-	set (CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum OS X deployment version" FORCE)
-	set (CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
-	set (CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
-    add_definitions( -DUSE_NEON )
-endif()
-
-
-project(AudiblePlanets)
-set_property (DIRECTORY APPEND PROPERTY LABELS ${PROJECT_NAME})
-
+set_property(GLOBAL PROPERTY USE_FOLDERS YES)
+set(CMAKE_XCODE_GENERATE_SCHEME OFF)
+set(PROJECT_NAME "AudiblePlanets")
+set(PRODUCT_NAME "Audible Planets")
+set(COMPANY_NAME "Void-Star")
+set(BUNDLE_ID "com.void-star.audible-planets")
+set(FORMATS Standalone AU VST3 LV2)
+project(${PROJECT_NAME})
 
 add_subdirectory(modules/JUCE)
-
 foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_simd)
-	juce_add_module (
-		"${CMAKE_CURRENT_LIST_DIR}/modules/Gin/modules/${module_name}"
-		)
-
+	juce_add_module ("${CMAKE_CURRENT_LIST_DIR}/modules/Gin/modules/${module_name}")
 	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
 endforeach()
 
-set(VersionString 1.2.2)
+set(VersionString 1.2.3)
 add_definitions( -DVERSION_STRING="${VersionString}" )
-# also set this in PluginEditor.cpp -> showAboutInfo()
+SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g")
 
 juce_add_plugin (${PROJECT_NAME}
-				PRODUCT_NAME "Audible Planets" 
+				PRODUCT_NAME ${PRODUCT_NAME}
 				VERSION ${VersionString}
-				COMPANY_NAME "Void-Star"
+				COMPANY_NAME ${COMPANY_NAME}
 				COMPANY_WEBSITE "https://void-star.com/"
     			ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
-				FORMATS "VST3" "LV2" "Standalone" # "AU" # "LV2"
-				BUNDLE_ID com.void-star.audible-planets
+				FORMATS "${FORMATS}"
+				BUNDLE_ID "${BUNDLE_ID}"
 				DESCRIPTION "An expressive, quasi-Ptolemaic semi-modular synthesizer."
 				PLUGIN_MANUFACTURER_CODE "Vdst"
 				PLUGIN_CODE "APts" 
@@ -46,6 +39,19 @@ juce_add_plugin (${PROJECT_NAME}
 				JUCE_DONT_DECLARE_PROJECTINFO TRUE
 			)
 
+if (MSVC)
+	target_compile_options(${PROJECT_NAME} INTERFACE $<$<CONFIG:RELEASE>:/fp:fast>)
+else ()
+	target_compile_options(${PROJECT_NAME} INTERFACE $<$<CONFIG:RELEASE>:-Ofast>)
+	target_compile_options(${PROJECT_NAME} INTERFACE $<$<CONFIG:RelWithDebInfo>:-Ofast>)
+endif ()
+
+# Tell MSVC to properly report what c++ version is being used
+if (MSVC)
+	target_compile_options(${PROJECT_NAME} INTERFACE /Zc:__cplusplus)
+endif ()
+
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)			
 
 if (APPLE)
 	target_compile_options(${PROJECT_NAME} PRIVATE 
@@ -56,6 +62,7 @@ if (APPLE)
 			-ffast-math -fno-finite-math-only -Wfloat-equal
 #			"$<$<CONFIG:RELEASE>:-Werror>"
 		)
+	add_definitions( -DUSE_NEON )
 endif ()
 
 if (MSVC)
@@ -69,10 +76,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	add_compile_definitions(USE_SSE)
 endif ()
 
-
-# Binary Data
-set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
-
 file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/MTS-ESP/*.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/hiir/*.cpp
@@ -84,11 +87,12 @@ file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/hiir/*.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/hiir/*.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/ADAAsrc/polylogarithm/Li2.*
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/ADAAsrc/*.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/ADAAsrc/ADAA/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/DSP/*.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Source/UI/*.hpp
-
 	)
 
 target_sources (${PROJECT_NAME} PRIVATE ${source_files})
@@ -100,6 +104,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 		"${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party"
 	)
 
+set_property (DIRECTORY APPEND PROPERTY LABELS Assets)
 file(GLOB_RECURSE AssetFiles CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.png"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/*.svg"
@@ -108,13 +113,8 @@ file(GLOB_RECURSE AssetFiles CONFIGURE_DEPENDS
 	"${CMAKE_CURRENT_SOURCE_DIR}/assets/*.wav"
 	"${CMAKE_CURRENT_SOURCE_DIR}/assets/*.xml"
 )
-
 juce_add_binary_data(Assets SOURCES ${AssetFiles})
-
-# Required for Linux happiness:
 set_target_properties(Assets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-
-set_property(GLOBAL PROPERTY USE_FOLDERS YES)
 
 target_link_libraries (${PROJECT_NAME} 
 					PRIVATE
@@ -143,15 +143,6 @@ if (APPLE)
 	set_target_properties(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO")
 endif()
 
-get_property (debug_configs GLOBAL PROPERTY DEBUG_CONFIGURATIONS)
-
-if (NOT debug_configs)
-    set (debug_configs Debug)
-endif ()
-
-set (config_is_debug "$<IN_LIST:$<CONFIG>,${debug_configs}>")
-set (config_is_release "$<NOT:${config_is_debug}>")
-
 target_compile_definitions (${PROJECT_NAME} PRIVATE 
 								JUCE_MODAL_LOOPS_PERMITTED=1
 								JUCE_COREGRAPHICS_DRAW_ASYNC=1
@@ -160,10 +151,39 @@ target_compile_definitions (${PROJECT_NAME} PRIVATE
 								JUCE_SILENCE_XCODE_15_LINKER_WARNING=1
 							)
 
+foreach (target ${FORMATS} "All")
+    if (TARGET ${PROJECT_NAME}_${target})
+        set_target_properties(${PROJECT_NAME}_${target} PROPERTIES
+            # Tuck the actual plugin targets into a folder where they won't bother us
+            FOLDER "Targets"
+            # Let us build the target in Xcode
+            XCODE_GENERATE_SCHEME ON)
+
+        # Set the default executable that Xcode will open on build
+        # Note: you must manually build the AudioPluginHost.xcodeproj in the JUCE subdir
+        if ((NOT target STREQUAL "All") AND (NOT target STREQUAL "Standalone"))
+            set_target_properties(${PROJECT_NAME}_${target} PROPERTIES
+                XCODE_SCHEME_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/JUCE/extras/AudioPluginHost/Builds/MacOSX/build/Debug/AudioPluginHost.app")
+        endif ()
+    endif ()
+endforeach ()
+
+
 if (APPLE)
 	set_target_properties(${PROJECT_NAME} PROPERTIES
 			XCODE_ATTRIBUTE_DEPLOYMENT_POSTPROCESSING[variant=Release] YES
 			XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH[variant=Debug] "YES"
-            # XCODE_ATTRIBUTE_ARCHS '$(ARCHS_STANDARD)'
 			)
 endif()
+
+set (env_file "${PROJECT_SOURCE_DIR}/.env")
+message ("Writing ENV file for CI: ${env_file}")
+# the first call truncates, the rest append
+file(WRITE  "${env_file}" "PROJECT_NAME=${PROJECT_NAME}\n")
+file(APPEND "${env_file}" "PRODUCT_NAME=${PRODUCT_NAME}\n")
+file(APPEND "${env_file}" "VERSION=${CURRENT_VERSION}\n")
+file(APPEND "${env_file}" "MAJOR_VERSION=${MAJOR_VERSION}\n")
+file(APPEND "${env_file}" "MINOR_VERSION=${MINOR_VERSION}\n")
+file(APPEND "${env_file}" "PATCH_LEVEL=${PATCH_LEVEL}\n")
+file(APPEND "${env_file}" "BUNDLE_ID=${BUNDLE_ID}\n")
+file(APPEND "${env_file}" "COMPANY_NAME=${COMPANY_NAME}\n")
