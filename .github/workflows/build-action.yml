@@ -131,7 +131,6 @@ jobs:
           path: packaging/${{ env.ARTIFACT_NAME }}.pkg
 
   release:
-    if: contains(github.ref, 'tags/v')
     runs-on: ubuntu-latest
     needs: build_and_test
   
