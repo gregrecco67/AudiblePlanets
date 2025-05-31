@@ -269,33 +269,10 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 		dist2 = mipp::sqrt(dist2sq);
 		invDist2 = mipp::Reg<float>(1.0f) / (dist2 + .000001f);
 
-		// get position of bodies 3 & 4 by algorithm
-		switch (algo) {
-			case 0:
-				epi3xs[i] = mipp::fmadd(osc3x, c, epi2xs[i]);
-				epi3ys[i] = mipp::fmadd(osc3y, c, epi2ys[i]);
-				epi4xs[i] = mipp::fmadd(osc4x, d, epi3xs[i]);
-				epi4ys[i] = mipp::fmadd(osc4y, d, epi3ys[i]);
-				break;
-			case 1:
-				epi3xs[i] = mipp::fmadd(osc3x, c, epi2xs[i]);
-				epi3ys[i] = mipp::fmadd(osc3y, c, epi2ys[i]);
-				epi4xs[i] = mipp::fmadd(osc4x, d, epi2xs[i]);
-				epi4ys[i] = mipp::fmadd(osc4y, d, epi2ys[i]);
-				break;
-			case 2:
-				epi3xs[i] = mipp::fmadd(osc3x, c, epi1xs[i]);
-				epi3ys[i] = mipp::fmadd(osc3y, c, epi1ys[i]);
-				epi4xs[i] = mipp::fmadd(osc4x, d, epi3xs[i]);
-				epi4ys[i] = mipp::fmadd(osc4y, d, epi3ys[i]);
-				break;
-			case 3:
-				epi3xs[i] = mipp::fmadd(osc3x, c, epi1xs[i]);
-				epi3ys[i] = mipp::fmadd(osc3y, c, epi1ys[i]);
-				epi4xs[i] = mipp::fmadd(osc4x, d, epi1xs[i]);
-				epi4ys[i] = mipp::fmadd(osc4y, d, epi1ys[i]);
-				break;
-		}
+		epi3xs[i] = mipp::fmadd(osc3x, c, epi2xs[i] * bits3[algo][0] + epi1xs[i] * bits3[algo][1]);
+		epi3ys[i] = mipp::fmadd(osc3y, c, epi2ys[i] * bits3[algo][0] + epi1ys[i] * bits3[algo][1]);
+		epi4xs[i] = mipp::fmadd(osc4x, d, epi3xs[i] * bits4[algo][0] + epi2xs[i] * bits4[algo][1] + epi1xs[i] * bits4[algo][2]);
+		epi4ys[i] = mipp::fmadd(osc4y, d, epi3ys[i] * bits4[algo][0] + epi2ys[i] * bits4[algo][1] + epi1ys[i] * bits4[algo][2]);
 
 		dist3sq = mipp::fmadd((epi3ys[i] - equant), (epi3ys[i] - equant), (epi3xs[i] * epi3xs[i]));
 		dist3 = mipp::sqrt(dist3sq);
@@ -323,34 +300,23 @@ void SynthVoice3::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int st
 		dmCos2 = s2 * dist2;
 		dmSine2 = epi2xs[i] * dist2;
 
-		// mix by algorithm
-		switch (algo) {
-			case 0:
-				sampleL = mix(sine4, dmSine4 * demodVol, demodMix);
-				sampleR = mix(cos4, dmCos4 * demodVol, demodMix);
-				break;
-			case 1:
-				sampleL = mix((sine3 + sine4) * 0.5f, (dmSine3 + dmSine4) * 0.5f * demodVol, demodMix);
-				sampleR = mix((cos3 + cos4) * 0.5f, (dmCos3 + dmCos4) * 0.5f * demodVol, demodMix);
-				break;
-			case 2:
-				sampleL = mix((sine2 + sine4) * 0.5f, (dmSine2 + dmSine4) * 0.5f * demodVol, demodMix);
-				sampleR = mix((cos2 + cos4) * 0.5f, (dmCos2 + dmCos4) * 0.5f * demodVol, demodMix);
-				break;
-			case 3:
-				sampleL = mix((sine2 + sine3 + sine4) * 0.333f, (dmSine2 + dmSine3 + dmSine4) * 0.333f * demodVol, demodMix);
-				sampleR = mix((cos2 + cos3 + cos4) * 0.333f, (dmCos2 + dmCos3 + dmCos4) * 0.333f * demodVol, demodMix);
-				break;
-		}
+		sampleL = mix(
+			(sine4 * mb[algo][0] + sine3 * mb[algo][1] + sine2 * mb[algo][2]) * mb[algo][3],
+			(dmSine4 * mb[algo][0] + dmSine3 * mb[algo][1] + dmSine2 * mb[algo][2]) * (demodVol * mb[algo][3]),
+			demodMix
+		);
+		sampleR = mix(
+			(cos4 * mb[algo][0] + cos3 * mb[algo][1] + cos2 * mb[algo][2]) * mb[algo][3],
+			(dmCos4 * mb[algo][0] + dmCos3 * mb[algo][1] + dmCos2 * mb[algo][2]) * (demodVol * mb[algo][3]),
+			demodMix
+		);
 
-		sampleL = mipp::sat(sampleL, -1.0f, 1.0f) * antipop;
+		sampleL = mipp::sat(sampleL, -1.0f, 1.0f) * antipop; // sat's doing some work!
 		sampleR = mipp::sat(sampleR, -1.0f, 1.0f) * antipop;
 
-		if (antipop >= 1.0f) {
-			antipop = 1.0f;
-		} else {
-			antipop += .03f;
-		}
+		antipop += .03f;
+		antipop = std::min(antipop, 1.0f);
+
 
 		// SHIP IT OUT
 		sampleL.store(&synthBufferL[i * mipp::N<float>()]);

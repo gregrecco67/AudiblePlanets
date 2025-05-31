@@ -148,6 +148,13 @@ private:
 
 	float demodMix{0.f}, demodVol{0.f};
 	float antipop{0.f};
+	mipp::Reg<float> oneFloat{ 1.f, 1.f, 1.f, 1.f };
+	mipp::Reg<float> a, b, c, d;
+	float bits3[4][2] = { {1, 0}, {1, 0}, {0, 1}, {0, 1} }; // epi2, epi1
+	float bits4[4][3] = { {1, 0, 0}, {0, 1, 0}, {1, 0, 0}, {0, 0, 1} }; // epi3, epi2, epi1
+	float mb[4][4] = { // mixBits --> sine4, 3, 2, and mix reciprocal
+		{1, 0, 0, 1}, {1, 1, 0, 0.5f}, {1, 0, 1, 0.5f}, {1, 1, 1, 1.f / 3.f}
+	};
 
 	friend class APSynth;
 	juce::MPENote curNote;
