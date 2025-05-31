@@ -7,6 +7,18 @@ set(PRODUCT_NAME "Audible Planets")
 set(COMPANY_NAME "Void-Star")
 set(BUNDLE_ID "com.void-star.audible-planets")
 set(FORMATS Standalone AU VST3 LV2)
+
+if (WIN32)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE INTERNAL "")
+endif ()
+
+# Color our warnings and errors
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    add_compile_options(-fdiagnostics-color=always)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    add_compile_options(-fcolor-diagnostics)
+endif ()
+
 project(${PROJECT_NAME})
 
 add_subdirectory(modules/JUCE)

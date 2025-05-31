@@ -108,8 +108,6 @@ jobs:
           curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_${{ matrix.name }}.zip"
           7z x pluginval_${{ matrix.name }}.zip
           ${{ matrix.pluginval-binary }} --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"
-
-          - if: ${{ runner.os=='Windows'}}
       
       - if: ${{ runner.os=='Windows'}}
         name: Pack (Windows)
