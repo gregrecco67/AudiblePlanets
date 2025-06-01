@@ -94,6 +94,7 @@ double Envelope::getIdxForVal(const double val) const
 float Envelope::getNextSample() noexcept
 {
 	timeSinceStart += static_cast<float>(inverseSampleRate);
+
 	switch (state) {
 	case State::idle: {
 		finalOut = 0.0;
@@ -116,12 +117,15 @@ float Envelope::getNextSample() noexcept
 	break;
 
 	case State::ADRattack: {
+		linearIdxVal += attackRate;
+		linearIdxVal = std::clamp(linearIdxVal, 0.0, 1.0);
+
 		finalOut = getValForIdx(linearIdxVal, true);
 		releaseStart = finalOut;  // in case note is released before attack finishes
 
 		if (timeSinceStart >= duration) {
-			finalOut = 1.0;
-			releaseStart = 1.0;
+			finalOut = 0.0;
+			releaseStart = 0.0;
 			noteOn();
 		}
 
