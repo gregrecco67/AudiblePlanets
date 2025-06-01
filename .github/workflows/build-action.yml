@@ -109,15 +109,15 @@ jobs:
           7z x pluginval_${{ matrix.name }}.zip
           ${{ matrix.pluginval-binary }} --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"
       
-      - if: ${{ runner.os=='Windows'}}
-        name: Pack (Windows)
-        run: |
-            mkdir ${{ github.event.repository.name }}-${{ runner.os }}
-            cd ${{ env.BUILD_DIR }}\*_artefacts\Release
-            del *.*
-            move * ..\..\..\${{ github.event.repository.name }}-${{ runner.os }}
-            cd ..\..\..
-            cmake -E tar cvf ${{ github.event.repository.name }}-${{ runner.os }}.zip --format=zip -- ${{ github.event.repository.name }}-${{ runner.os }}
+      ## - if: ${{ runner.os=='Windows'}}
+      ##   name: Pack (Windows)
+      ##   run: |
+      ##       mkdir ${{ github.event.repository.name }}-${{ runner.os }}
+      ##       cd ${{ env.BUILD_DIR }}\*_artefacts\Release
+      ##       del *.*
+      ##       move * ..\..\..\${{ github.event.repository.name }}-${{ runner.os }}
+      ##       cd ..\..\..
+      ##       cmake -E tar cvf ${{ github.event.repository.name }}-${{ runner.os }}.zip --format=zip -- ${{ github.event.repository.name }}-${{ runner.os }}
 
       - if: ${{ runner.os!='Windows'}}
         name: Pack (Unix)
