@@ -6,7 +6,16 @@ set(PROJECT_NAME "AudiblePlanets")
 set(PRODUCT_NAME "Audible Planets")
 set(COMPANY_NAME "Void-Star")
 set(BUNDLE_ID "com.void-star.audible-planets")
+set(MAJOR_VERSION 1)
+set(MINOR_VERSION 2)
+set(PATCH_LEVEL 3)
+set(CURRENT_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_LEVEL}")
 set(FORMATS Standalone AU VST3 LV2)
+
+if(NOT CMAKE_BUILD_TYPE)
+  message(STATUS "CMAKE_BUILD_TYPE unspecified; picking Release")
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+endif()
 
 if (WIN32)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE INTERNAL "")
@@ -27,13 +36,13 @@ foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_sim
 	set_property (TARGET "${module_name}" APPEND PROPERTY LABELS Gin)
 endforeach()
 
-set(VersionString 1.2.3)
-add_definitions( -DVERSION_STRING="${VersionString}" )
+#set(VersionString 1.2.3)
+add_definitions( -DVERSION_STRING="${CURRENT_VERSION}" )
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g")
 
 juce_add_plugin (${PROJECT_NAME}
 				PRODUCT_NAME ${PRODUCT_NAME}
-				VERSION ${VersionString}
+				VERSION ${CURRENT_VERSION}
 				COMPANY_NAME ${COMPANY_NAME}
 				COMPANY_WEBSITE "https://void-star.com/"
     			ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
