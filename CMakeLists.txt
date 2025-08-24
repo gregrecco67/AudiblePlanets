@@ -8,9 +8,9 @@ set(COMPANY_NAME "Void-Star")
 set(BUNDLE_ID "com.void-star.audible-planets")
 set(MAJOR_VERSION 1)
 set(MINOR_VERSION 2)
-set(PATCH_LEVEL 3)
+set(PATCH_LEVEL 4)
 set(CURRENT_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_LEVEL}")
-set(FORMATS Standalone AU VST3 LV2)
+set(FORMATS VST3) # Standalone AU LV2
 
 if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "CMAKE_BUILD_TYPE unspecified; picking Release")
