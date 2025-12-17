@@ -94,7 +94,13 @@ if (MSVC)
 endif ()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	add_compile_definitions(USE_SSE)
+    if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        add_compile_definitions(USE_SSE)
+    elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+        add_compile_definitions(USE_NEON)
+    else ()
+        message(WARNING "Unsupported processor: ${CMAKE_SYSTEM_PROCESSOR}")
+    endif ()
 endif ()
 
 file (GLOB_RECURSE source_files CONFIGURE_DEPENDS
