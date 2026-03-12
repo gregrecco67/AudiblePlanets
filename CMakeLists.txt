@@ -56,7 +56,7 @@ juce_add_plugin (${PROJECT_NAME}
 				NEEDS_MIDI_INPUT TRUE
 				NEEDS_MIDI_OUTPUT FALSE
 				COPY_PLUGIN_AFTER_BUILD TRUE
-				LV2URI "urn:void-star:audibleplanets:${VersionString}"
+				LV2URI "urn:void-star:audibleplanets:${CURRENT_VERSION}"
 				JUCE_DONT_DECLARE_PROJECTINFO TRUE
 			)
 

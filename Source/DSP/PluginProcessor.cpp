@@ -987,6 +987,11 @@ APAudioProcessor::APAudioProcessor()
 	lfo3Params.setup(*this, juce::String{"3"});
 	lfo4Params.setup(*this, juce::String{"4"});
 
+	mseg1Params.setup(*this, juce::String{"1"});
+	mseg2Params.setup(*this, juce::String{"2"});
+	mseg3Params.setup(*this, juce::String{"3"});
+	mseg4Params.setup(*this, juce::String{"4"});
+
 	timbreParams.setup(*this);
 	filterParams.setup(*this);
 	auxParams.setup(*this);
@@ -1005,11 +1010,6 @@ APAudioProcessor::APAudioProcessor()
 	ladderParams.setup(*this);
 
 	fxOrderParams.setup(*this);
-
-	mseg1Params.setup(*this, juce::String{"1"});
-	mseg2Params.setup(*this, juce::String{"2"});
-	mseg3Params.setup(*this, juce::String{"3"});
-	mseg4Params.setup(*this, juce::String{"4"});
 
 	mseg1Data.reset();
 	mseg2Data.reset();
