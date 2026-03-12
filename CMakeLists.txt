@@ -8,7 +8,7 @@ set(COMPANY_NAME "Void-Star")
 set(BUNDLE_ID "com.void-star.audible-planets")
 set(MAJOR_VERSION 1)
 set(MINOR_VERSION 2)
-set(PATCH_LEVEL 4)
+set(PATCH_LEVEL 5)
 set(CURRENT_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_LEVEL}")
 set(FORMATS VST3) # Standalone AU LV2
 
