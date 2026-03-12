@@ -1757,7 +1757,7 @@ gin::ProcessorOptions APAudioProcessor::getOptions() const
 {
 	gin::ProcessorOptions options;
 	options.pluginName = "Audible Planets";
-	options.programmingCredits = {"Greg Recco"};
+	options.programmingCredits = {juce::SystemStats::getJUCEVersion()};
 	options.url = "https://github.com/gregrecco67/AudiblePlanets";
 	options.urlTitle = "Visit https://github.com/gregrecco67/AudiblePlanets";
 	options.useNewsChecker = false;

@@ -113,13 +113,14 @@ void APAudioProcessorEditor::showAboutInfo()
 
 	msg += "Audible Planets v";
 	msg.append(VERSION_STRING, 25);
-	msg += " (" __DATE__ ")\n\n";
+	msg += "\n (" __DATE__ ")\n\n";
 
 	msg += "Greg Recco\n\n";
 
 	msg += "Copyright ";
 	msg += juce::String(&__DATE__[7]);
 
+	msg += "\n" + juce::SystemStats::getJUCEVersion() + "\n";
 	auto w = std::make_shared<gin::PluginAlertWindow>(
 	    "---- Info ----", msg, juce::AlertWindow::NoIcon, this);
 	w->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey));
