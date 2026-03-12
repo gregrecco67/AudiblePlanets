@@ -30,6 +30,9 @@ endif ()
 
 project(${PROJECT_NAME})
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
 add_subdirectory(modules/JUCE)
 foreach(module_name IN ITEMS gin gin_dsp gin_graphics gin_gui gin_plugin gin_simd)
 	juce_add_module ("${CMAKE_CURRENT_LIST_DIR}/modules/Gin/modules/${module_name}")
@@ -63,7 +66,8 @@ juce_add_plugin (${PROJECT_NAME}
 if (MSVC)
 	target_compile_options(${PROJECT_NAME} INTERFACE $<$<CONFIG:RELEASE>:/fp:fast>)
 else ()
-	target_compile_options(${PROJECT_NAME} INTERFACE $<$<CONFIG:RELEASE>:-Ofast>)
+	message(STATUS "got some fast flags")
+	target_compile_options(${PROJECT_NAME} INTERFACE $<$<CONFIG:Release>:-Ofast>)
 	target_compile_options(${PROJECT_NAME} INTERFACE $<$<CONFIG:RelWithDebInfo>:-Ofast>)
 endif ()
 
@@ -94,6 +98,14 @@ if (MSVC)
 endif ()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+		target_compile_options(${PROJECT_NAME} PRIVATE 
+			-Wall -Wstrict-aliasing -Wunused-parameter -Woverloaded-virtual -Wreorder -Wextra-semi 
+			-Wunreachable-code -Wuninitialized -Wno-missing-field-initializers 
+			-Wno-ignored-qualifiers -Wno-missing-braces -Wno-char-subscripts -Wunreachable-code 
+			-Wenum-compare -Wshadow -Wno-float-conversion -Wsign-compare 
+			-ffast-math -fno-finite-math-only -Wfloat-equal
+#			"$<$<CONFIG:RELEASE>:-Werror>"
+		)
     if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
         add_compile_definitions(USE_SSE)
     elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
@@ -162,7 +174,7 @@ target_link_libraries (${PROJECT_NAME}
 					PUBLIC
 						Assets
 						juce::juce_recommended_config_flags
-						juce::juce_recommended_lto_flags
+						#juce::juce_recommended_lto_flags
 						#juce::juce_recommended_warning_flags
 					)
 
