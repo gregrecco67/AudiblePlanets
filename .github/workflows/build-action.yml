@@ -118,7 +118,7 @@ jobs:
       ##       cd ..\..\..
       ##       cmake -E tar cvf ${{ github.event.repository.name }}-${{ runner.os }}.zip --format=zip -- ${{ github.event.repository.name }}-${{ runner.os }}
 
-      - if: ${{ runner.os!='Windows'}}
+      - if: ${{ runner.os!='Windoze'}}
         name: Pack (Unix)
         run: |
           mkdir ${{ github.event.repository.name }}-${{ runner.os }}
